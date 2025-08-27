@@ -1,168 +1,91 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Fixed Hero (baseline aligned)</title>
-<style>
-  html,body{margin:0;padding:0;background:#000;color:#fff;
-    font-family:"Acumin Pro",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Gardenicity — Static Hero</title>
+  <style>
+    html,body {
+      margin: 0;
+      padding: 0;
+      font-family: "Acumin Pro", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      color: #fff;
+    }
 
-  /* Scroll progress + animated values (set by JS) */
-  :root{ --p:0; --shift:0px; --titleOpacity:0 }
+    /* Full-bleed hero image */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      background: url("assets/hero1gc.jpg") center/cover no-repeat;
+    }
 
-  /* Fixed hero layer so it NEVER scrolls */
-  .hero-fixed{ position:fixed; inset:0; pointer-events:none }
+    /* Overlay box with margins */
+    .hero-media {
+      position: absolute;
+      top: 96px;
+      bottom: 96px;
+      left: 82px;
+      right: 82px;
+      display: flex;
+      align-items: flex-end; /* stick to bottom */
+      justify-content: flex-start;
+    }
 
-  /* 800ms image fade */
-  .hero-bg{ position:absolute; inset:0;
-    background:#000 url("assets/hero1gc.jpg") center/cover no-repeat;
-    opacity:0; animation:heroIn 800ms ease-out forwards }
-  @keyframes heroIn{from{opacity:0}to{opacity:1}}
+    /* Column with title + links */
+    .col {
+      max-width: 700px;
+    }
 
-  /* Overlay box: we keep left/right margins (82px), but let it touch
-     the viewport bottom/top so we can align baselines to the *viewport*. */
-  .hero-media{ position:absolute; top:0; bottom:0; left:82px; right:82px;
-    display:flex; align-items:flex-end; justify-content:flex-start }
+    /* Title styling */
+    .hero-title {
+      margin: 0 0 24px 0;
+      font-weight: 400;
+      font-size: 100px;
+      line-height: 100px;
+    }
 
-  /* Whole column moves by --shift (computed in JS from the DOM) */
-  .col{ position:relative; max-width:700px;
-    transform:translateY(var(--shift)); will-change:transform }
-
-  /* EXACTLY three lines: force with block spans */
-  .hero-title{ margin:0 0 24px 0; font-weight:400; font-size:100px; line-height:100px; color:#fff;
-    opacity:var(--titleOpacity); will-change:opacity }
-  .hero-title .line{ display:block }
-
-  .hero-links{ display:flex; flex-direction:column; gap:10px; font-size:24px; line-height:30px }
-  .hero-links a{ color:#fff; text-decoration:none; border-bottom:1px solid transparent }
-  .hero-links a:hover{ border-color: currentColor }
-
-  /* Scroll driver section (controls phases B→C). Bigger = slower. */
-  .driver{ height:200vh }
-
-  /* Page content */
-  .spacer{ min-height:120vh; padding:48px 82px; background:#0a0a0a; border-top:1px solid #151515 }
-  .spacer h2{ margin:0 0 12px 0; color:#bbb; font-weight:600 }
-  .spacer p{ margin:0; color:#9a9a9a }
-
-  /* DEBUG: viewport baseline */
-  .debug-line{ position:fixed; left:0; right:0; bottom:0; height:0;
-    border-top:2px dashed rgba(0,255,128,.85); pointer-events:none; z-index:9999 }
-</style>
+    /* Links styling */
+    .hero-links {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 24px;
+      line-height: 30px;
+    }
+    .hero-links a {
+      color: #fff;
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+    }
+    .hero-links a:hover { border-color: currentColor; }
+  </style>
 </head>
 <body>
 
-<!-- Fixed hero (image + overlay) -->
-<div class="hero-fixed" id="hero-fixed">
-  <div class="hero-bg" id="hero-bg" aria-hidden="true"></div>
-
-  <div class="hero-media" id="hero-media">
-    <div class="col" id="hero-col">
-      <h1 class="hero-title" id="hero-title">
-        <span class="line">Gardenicity</span>
-        <span class="line">What did</span>
-        <span class="line">Geddes see?</span>
-      </h1>
-
-      <nav class="hero-links" id="hero-links" aria-label="Primary">
-        <a href="#civic-green">Civic Green</a>
-        <a href="#growth">Growth</a>
-        <a href="#sustenance">Sustenance</a>
-        <a href="#leafy-sdgs">Leafy SDGs</a>
-        <a href="#lang">EN/ער</a>
-      </nav>
+  <header class="hero">
+    <div class="hero-media">
+      <div class="col">
+        <h1 class="hero-title">
+          <span>Gardenicity</span><br/>
+          <span>What did Geddes see?</span>
+        </h1>
+        <nav class="hero-links" aria-label="Primary">
+          <a href="#">Civic Green</a>
+          <a href="#">Growth</a>
+          <a href="#">Sustenance</a>
+          <a href="#">Leafy SDGs</a>
+          <a href="#">EN/ער</a>
+        </nav>
+      </div>
     </div>
-  </div>
-</div>
+  </header>
 
-<!-- Scroll driver for B (fade) → C (slide) -->
-<section class="driver" id="driver"></section>
-
-<main>
-  <section class="spacer">
-    <h2 id="civic-green">Section 1</h2>
-    <p>Next content…</p>
-  </section>
-</main>
-
-<div class="debug-line" aria-hidden="true"></div>
-
-<script>
-/*
-Phases with fixed hero:
-  A) time 0–800ms: image fades in (CSS keyframes)
-  B) driver 0.00–0.45: title fades in on baseline (column fixed)
-  C) driver 0.45–1.00: entire column slides until LAST LINK baseline = viewport bottom
-*/
-(function(){
-  const driver = document.getElementById('driver');
-  const media  = document.getElementById('hero-media');
-  const col    = document.getElementById('hero-col');
-  const title  = document.getElementById('hero-title');
-  const links  = document.getElementById('hero-links');
-  if(!driver || !media || !col || !title || !links) return;
-
-  const root = document.documentElement;
-  const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
-
-  let startShift = 0; // move column so TITLE baseline sits on viewport bottom
-  let endShift   = 0; // move column so LAST LINK baseline sits on viewport bottom
-
-  function measureShifts(){
-    // Neutralize transform to measure true positions
-    const prev = col.style.transform;
-    col.style.transform = 'translateY(0px)';
-
-    const vh    = window.innerHeight || document.documentElement.clientHeight;
-    const tRect = title.getBoundingClientRect();
-    const lRect = links.getBoundingClientRect();
-
-    // Baselines as element bottoms:
-    const titleBaseline = tRect.bottom;
-    const linksBaseline = lRect.bottom;
-
-    startShift = vh - titleBaseline; // usually positive (push down)
-    endShift   = vh - linksBaseline; // often negative (pull up) or smaller
-
-    // Restore and prime CSS var
-    col.style.transform = prev || '';
-    root.style.setProperty('--shift', startShift.toFixed(1)+'px');
-  }
-
-  function driverProgress(){
-    const r  = driver.getBoundingClientRect();
-    const vh = window.innerHeight || document.documentElement.clientHeight;
-    const total = r.height - vh;
-    return clamp((vh - r.bottom) / total, 0, 1); // 0→1 across the driver
-  }
-
-  function update(){
-    const p = driverProgress();
-    root.style.setProperty('--p', p.toFixed(3));
-
-    // B) Title fade (0.00→0.45)
-    const pTitle = clamp(p / 0.45, 0, 1);
-    root.style.setProperty('--titleOpacity', pTitle.toFixed(3));
-
-    // C) Column slide (0.45→1.00)
-    const pSlide = clamp((p - 0.45) / 0.55, 0, 1);
-    const shift  = startShift + (endShift - startShift) * pSlide;
-    root.style.setProperty('--shift', shift.toFixed(1)+'px');
-  }
-
-  function init(){
-    // Measure twice to account for first paint vs. font metrics
-    measureShifts();
-    update();
-    window.addEventListener('load',   ()=>{ measureShifts(); update(); });
-    window.addEventListener('resize', ()=>{ measureShifts(); update(); });
-    window.addEventListener('scroll', update, { passive:true });
-  }
-
-  init();
-})();
-</script>
+  <main>
+    <section style="min-height:120vh; padding:48px 82px; background:#f5f5f5; color:#000;">
+      <h2>Next section</h2>
+      <p>This is placeholder content below the hero.</p>
+    </section>
+  </main>
 
 </body>
 </html>
