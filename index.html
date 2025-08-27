@@ -8,7 +8,8 @@
   html,body{margin:0;padding:0;color:#fff;
     font-family:"Acumin Pro",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
 
-  :root{ --shift: 0px; --titleOpacity: 0 }
+  /* CSS vars controlled by JS */
+  :root{ --shift: 0px; --titleOpacity: 0; --linksOpacity: 0 }
 
   /* Fixed hero (never scrolls) */
   .hero-fixed{ position:fixed; inset:0; }
@@ -25,6 +26,7 @@
   .hero-media{
     position:absolute; inset:96px 82px;
     display:flex; align-items:flex-end; justify-content:flex-start;
+    overflow:hidden;               /* clip anything below the baseline */
   }
 
   /* Column moves as a unit via --shift */
@@ -42,10 +44,12 @@
   }
   .hero-title .line{ display:block; }
 
-  /* Links (same column) */
+  /* Links (same column) — start hidden, fade in during slide */
   .hero-links{
     display:flex; flex-direction:column; gap:10px;
     font-size:24px; line-height:30px;
+    opacity: var(--linksOpacity);
+    transition: opacity .25s linear;
   }
   .hero-links a{ color:#fff; text-decoration:none; border-bottom:1px solid transparent }
   .hero-links a:hover{ border-color: currentColor }
@@ -94,16 +98,14 @@
 
 <script>
 /*
-Corrected logic:
- - We align to the media box bottom (96px above viewport bottom).
- - We wait for fonts, then measure:
+ - Align to media box bottom (96px above viewport bottom).
+ - Wait for fonts, then measure:
      startShift = mediaBottom - (third title line).bottom
      endShift   = mediaBottom - (last link).bottom
- - Scroll progress p = (-driverRect.top) / (driverRect.height - vh)  (0→1)
-     (This was the bug — previously used rect.bottom)
- - Phase split:
-     0.00–0.60: slow/soft fade-in on baseline (column parked at startShift)
-     0.60–1.00: slide startShift → endShift
+ - Progress p = (-driverRect.top) / (driverRect.height - vh)  (0→1)
+ - Phases:
+     0.00–0.60: title fades on baseline (column parked at startShift)
+     0.60–1.00: slide startShift → endShift; links fade 0→1
 */
 (function(){
   const driver = document.getElementById('driver');
@@ -117,13 +119,12 @@ Corrected logic:
   const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
   const easeInOutCubic = t => t<0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2;
 
-  // Optional tiny baseline tweak if you see 1–2px drift across browsers
-  const BASELINE_NUDGE = 0; // e.g. set to 1 or -1 if needed
+  // Tiny baseline tweak if needed across devices
+  const BASELINE_NUDGE = 0;
 
   let startShift = 0, endShift = 0;
 
   function measureShifts(){
-    // neutralize transform to read positions
     const prev = col.style.transform;
     col.style.transform = 'translateY(0px)';
 
@@ -139,7 +140,6 @@ Corrected logic:
     startShift = mediaBaseline - thirdRect.bottom;
     endShift   = mediaBaseline - lastLinkRect.bottom;
 
-    // restore and prime
     col.style.transform = prev || '';
     root.style.setProperty('--shift', startShift.toFixed(1)+'px');
   }
@@ -149,7 +149,6 @@ Corrected logic:
     const vh = window.innerHeight || document.documentElement.clientHeight;
     const total = r.height - vh;
     if (total <= 0) return 1;
-    // ✅ correct formula: 0 at top, 1 when driver scrolled by (height - vh)
     return clamp(-r.top / total, 0, 1);
   }
 
@@ -160,14 +159,14 @@ Corrected logic:
     const pFade = easeInOutCubic( clamp(p / 0.60, 0, 1) );
     root.style.setProperty('--titleOpacity', pFade.toFixed(3));
 
-    // Step 3: slide to final
+    // Step 3: slide to final + reveal links
     const pSlide = clamp((p - 0.60) / 0.40, 0, 1);
     const shift  = startShift + (endShift - startShift) * pSlide;
     root.style.setProperty('--shift', shift.toFixed(1)+'px');
+    root.style.setProperty('--linksOpacity', pSlide.toFixed(3));
   }
 
   async function init(){
-    // Wait for fonts so line metrics are final
     if (document.fonts && document.fonts.ready) {
       try { await document.fonts.ready; } catch(e){}
     }
@@ -182,6 +181,5 @@ Corrected logic:
   init();
 })();
 </script>
-
 </body>
 </html>
