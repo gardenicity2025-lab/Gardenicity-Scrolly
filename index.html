@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Correct baseline (96px bottom) → fade → reveal</title>
+<title>Gardenicity — fade on baseline → slide to final</title>
 <style>
   html,body{margin:0;padding:0;color:#fff;
     font-family:"Acumin Pro",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
 
   :root{ --shift: 0px; --titleOpacity: 0 }
 
-  /* Fixed hero: image never scrolls */
+  /* Fixed hero (never scrolls) */
   .hero-fixed{ position:fixed; inset:0; }
 
-  /* Hero image, 800ms fade */
+  /* Hero image (800ms fade) */
   .hero-bg{
     position:absolute; inset:0;
     background:url("assets/hero1gc.jpg") center/cover no-repeat;
@@ -21,28 +21,39 @@
   }
   @keyframes heroIn{ from{opacity:0} to{opacity:1} }
 
-  /* ✅ Media box honors your margins: top/bottom 96, left/right 82 */
+  /* Media box with your margins: top/bottom 96, left/right 82 */
   .hero-media{
-    position:absolute; inset:96px 82px;   /* ← important: bottom=96px */
+    position:absolute; inset:96px 82px;
     display:flex; align-items:flex-end; justify-content:flex-start;
   }
 
-  /* One column that we translate by --shift */
-  .col{ position:relative; max-width:700px; transform:translateY(var(--shift)); will-change:transform }
+  /* Column moves as a unit via --shift */
+  .col{
+    position:relative; max-width:700px;
+    transform: translateY(var(--shift));
+    will-change: transform;
+  }
 
-  /* Title: exactly 3 lines; fades in while parked on media baseline */
-  .hero-title{ margin:0 0 24px 0; font-weight:400; font-size:100px; line-height:100px; opacity:var(--titleOpacity); will-change:opacity }
-  .hero-title .line{ display:block }
+  /* Title: exactly three lines; fades while parked on baseline */
+  .hero-title{
+    margin:0 0 24px 0;
+    font-weight:400; font-size:100px; line-height:100px;
+    opacity: var(--titleOpacity); will-change: opacity;
+  }
+  .hero-title .line{ display:block; }
 
   /* Links (same column) */
-  .hero-links{ display:flex; flex-direction:column; gap:10px; font-size:24px; line-height:30px }
+  .hero-links{
+    display:flex; flex-direction:column; gap:10px;
+    font-size:24px; line-height:30px;
+  }
   .hero-links a{ color:#fff; text-decoration:none; border-bottom:1px solid transparent }
   .hero-links a:hover{ border-color: currentColor }
 
-  /* Scroll driver controls the timeline (increase height = slower) */
-  .driver{ height: 200vh }
+  /* Scroll driver controls the timeline (bigger height → slower) */
+  .driver{ height: 200vh; }
 
-  /* Page content after hero */
+  /* Content after */
   .spacer{ min-height:120vh; padding:48px 82px; background:#f5f5f5; color:#000; border-top:1px solid #e5e5e5 }
   .spacer h2{ margin:0 0 12px 0 }
 </style>
@@ -60,7 +71,6 @@
         <span class="line">What did</span>
         <span class="line">Geddes see?</span>
       </h1>
-
       <nav class="hero-links" id="hero-links" aria-label="Primary">
         <a href="#civic-green">Civic Green</a>
         <a href="#growth">Growth</a>
@@ -72,7 +82,7 @@
   </div>
 </div>
 
-<!-- Scroll driver plays Step 2 (fade) → Step 3 (reveal to final) -->
+<!-- Scroll driver (plays Step 2 → Step 3) -->
 <section class="driver" id="driver"></section>
 
 <main>
@@ -84,11 +94,16 @@
 
 <script>
 /*
-Timeline:
-  • Image fades in (800ms).
-  • Step 2: Column parked so the *third title line* baseline == media box bottom (96px from viewport bottom).
-            Title fades in slowly (no motion).
-  • Step 3: Column slides so the *last link* baseline == media box bottom (final).
+Corrected logic:
+ - We align to the media box bottom (96px above viewport bottom).
+ - We wait for fonts, then measure:
+     startShift = mediaBottom - (third title line).bottom
+     endShift   = mediaBottom - (last link).bottom
+ - Scroll progress p = (-driverRect.top) / (driverRect.height - vh)  (0→1)
+     (This was the bug — previously used rect.bottom)
+ - Phase split:
+     0.00–0.60: slow/soft fade-in on baseline (column parked at startShift)
+     0.60–1.00: slide startShift → endShift
 */
 (function(){
   const driver = document.getElementById('driver');
@@ -102,11 +117,13 @@ Timeline:
   const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
   const easeInOutCubic = t => t<0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2;
 
-  let startShift = 0; // align 3rd title line to media bottom (baseline)
-  let endShift   = 0; // align LAST link to media bottom (baseline)
+  // Optional tiny baseline tweak if you see 1–2px drift across browsers
+  const BASELINE_NUDGE = 0; // e.g. set to 1 or -1 if needed
+
+  let startShift = 0, endShift = 0;
 
   function measureShifts(){
-    // Measure without transform
+    // neutralize transform to read positions
     const prev = col.style.transform;
     col.style.transform = 'translateY(0px)';
 
@@ -114,14 +131,15 @@ Timeline:
     const third = lines[2] || lines[lines.length-1];
 
     const thirdRect = third.getBoundingClientRect();
-    const linksRect = links.getBoundingClientRect();
+    const lastLinkRect = (links.lastElementChild || links).getBoundingClientRect();
     const mediaRect = media.getBoundingClientRect();
 
-    const targetBaseline = mediaRect.bottom; // ✅ bottom of media box (== viewport bottom - 96px)
+    const mediaBaseline = mediaRect.bottom + BASELINE_NUDGE;
 
-    startShift = targetBaseline - thirdRect.bottom; // push down/up to land 3rd line on baseline
-    endShift   = targetBaseline - linksRect.bottom; // slide until last link baseline hits baseline
+    startShift = mediaBaseline - thirdRect.bottom;
+    endShift   = mediaBaseline - lastLinkRect.bottom;
 
+    // restore and prime
     col.style.transform = prev || '';
     root.style.setProperty('--shift', startShift.toFixed(1)+'px');
   }
@@ -130,25 +148,32 @@ Timeline:
     const r  = driver.getBoundingClientRect();
     const vh = window.innerHeight || document.documentElement.clientHeight;
     const total = r.height - vh;
-    return clamp((vh - r.bottom) / total, 0, 1); // 0→1 across driver
+    if (total <= 0) return 1;
+    // ✅ correct formula: 0 at top, 1 when driver scrolled by (height - vh)
+    return clamp(-r.top / total, 0, 1);
   }
 
   function update(){
     const p = progress();
 
-    // Step 2: slow/soft fade while parked (first 60%)
+    // Step 2: slow/soft fade on baseline
     const pFade = easeInOutCubic( clamp(p / 0.60, 0, 1) );
     root.style.setProperty('--titleOpacity', pFade.toFixed(3));
 
-    // Step 3: slide to final (last 40%)
+    // Step 3: slide to final
     const pSlide = clamp((p - 0.60) / 0.40, 0, 1);
     const shift  = startShift + (endShift - startShift) * pSlide;
     root.style.setProperty('--shift', shift.toFixed(1)+'px');
   }
 
-  function init(){
+  async function init(){
+    // Wait for fonts so line metrics are final
+    if (document.fonts && document.fonts.ready) {
+      try { await document.fonts.ready; } catch(e){}
+    }
     measureShifts();
     update();
+
     window.addEventListener('load',   ()=>{ measureShifts(); update(); });
     window.addEventListener('resize', ()=>{ measureShifts(); update(); });
     window.addEventListener('scroll', update, { passive:true });
