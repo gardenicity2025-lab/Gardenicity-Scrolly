@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Scrollytelling Starter</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <h1 id="title">Your Story Title</h1>
+    <p class="dek">A short subtitle that explains the story in one line.</p>
+  </header>
+
+  <main class="scrolly">
+    <!-- Sticky visual panel -->
+    <div class="graphic" id="graphic">
+      <img id="hero-image" src="assets/placeholder.jpg" alt="Hero graphic" />
+      <div id="graphic-caption" class="graphic-caption">Scroll to begin</div>
+    </div>
+
+    <!-- Scroll steps -->
+    <div class="article">
+      <section class="step" data-step="1">
+        <h2>Section 1</h2>
+        <p>Write your opening paragraph here. Keep each section to 2–5 sentences.</p>
+      </section>
+
+      <section class="step" data-step="2">
+        <h2>Section 2</h2>
+        <p>Introduce the main idea. The graphic will update as this section enters the viewport.</p>
+      </section>
+
+      <section class="step" data-step="3">
+        <h2>Section 3</h2>
+        <p>Add an image below if you like. Replace <code>assets/placeholder2.jpg</code> with your own.</p>
+        <figure>
+          <img src="assets/placeholder2.jpg" alt="Example visual" />
+          <figcaption>Optional figure caption.</figcaption>
+        </figure>
+      </section>
+
+      <section class="step" data-step="4">
+        <h2>Section 4</h2>
+        <p>Conclude with a takeaway and, if relevant, a call to action.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>© Your Name • <a href="#">About</a></p>
+  </footer>
+
+  <!-- Optional debug guide line at ~60% viewport -->
+  <div class="debug-line" aria-hidden="true"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
