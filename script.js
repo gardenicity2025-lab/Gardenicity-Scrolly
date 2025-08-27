@@ -1,4 +1,4 @@
-// Scrollytelling without external libraries (IntersectionObserver)
+// IntersectionObserver scrollytelling (no external libs)
 (() => {
   const steps = Array.from(document.querySelectorAll('.step'));
   const caption = document.getElementById('graphic-caption');
@@ -28,6 +28,9 @@
 
         if (caption) caption.textContent = `Now viewing section ${index + 1}`;
         if (heroImg) heroImg.src = mapping[index % mapping.length];
+
+        // Hook for future animations per section (fade/move/parallax)
+        // if (index === 0) { ... }
       }
     });
   };
