@@ -3,18 +3,17 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Fade on 3rd-line baseline → slide to final</title>
+<title>Gardenicity — Correct baseline (96px bottom) → fade → reveal</title>
 <style>
   html,body{margin:0;padding:0;color:#fff;
     font-family:"Acumin Pro",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
 
-  /* Animated values driven by JS */
   :root{ --shift: 0px; --titleOpacity: 0 }
 
-  /* Fixed hero (never scrolls) */
+  /* Fixed hero: image never scrolls */
   .hero-fixed{ position:fixed; inset:0; }
 
-  /* Hero image — 800ms fade (time-based) */
+  /* Hero image, 800ms fade */
   .hero-bg{
     position:absolute; inset:0;
     background:url("assets/hero1gc.jpg") center/cover no-repeat;
@@ -22,37 +21,30 @@
   }
   @keyframes heroIn{ from{opacity:0} to{opacity:1} }
 
-  /* Overlay box with left/right margins; touches viewport top/bottom for true baseline alignment */
+  /* ✅ Media box honors your margins: top/bottom 96, left/right 82 */
   .hero-media{
-    position:absolute; left:82px; right:82px; top:0; bottom:0;
+    position:absolute; inset:96px 82px;   /* ← important: bottom=96px */
     display:flex; align-items:flex-end; justify-content:flex-start;
   }
 
-  /* Single column that moves as a unit by --shift */
-  .col{
-    position:relative; max-width:700px;
-    transform: translateY(var(--shift));
-    will-change: transform;
-  }
+  /* One column that we translate by --shift */
+  .col{ position:relative; max-width:700px; transform:translateY(var(--shift)); will-change:transform }
 
-  /* Title: exactly three lines; fades in while parked on baseline */
+  /* Title: exactly 3 lines; fades in while parked on media baseline */
   .hero-title{ margin:0 0 24px 0; font-weight:400; font-size:100px; line-height:100px; opacity:var(--titleOpacity); will-change:opacity }
-  .hero-title .line{ display:block } /* force 3 lines */
+  .hero-title .line{ display:block }
 
-  /* Links live in same column; no separate animation */
+  /* Links (same column) */
   .hero-links{ display:flex; flex-direction:column; gap:10px; font-size:24px; line-height:30px }
   .hero-links a{ color:#fff; text-decoration:none; border-bottom:1px solid transparent }
   .hero-links a:hover{ border-color: currentColor }
 
-  /* Scroll driver — controls fade pause then slide (increase height = slower overall) */
+  /* Scroll driver controls the timeline (increase height = slower) */
   .driver{ height: 200vh }
 
   /* Page content after hero */
   .spacer{ min-height:120vh; padding:48px 82px; background:#f5f5f5; color:#000; border-top:1px solid #e5e5e5 }
   .spacer h2{ margin:0 0 12px 0 }
-
-  /* (Optional) debug baseline at viewport bottom — remove when happy */
-  /* .debug { position:fixed; left:0; right:0; bottom:0; height:0; border-top:2px dashed rgba(0,255,128,.85); pointer-events:none; z-index:9999 } */
 </style>
 </head>
 <body>
@@ -80,82 +72,75 @@
   </div>
 </div>
 
-<!-- Scroll driver: 0→1 progress controls pause & slide -->
+<!-- Scroll driver plays Step 2 (fade) → Step 3 (reveal to final) -->
 <section class="driver" id="driver"></section>
 
 <main>
   <section class="spacer">
     <h2 id="civic-green">Next section</h2>
-    <p>Placeholder content after the hero.</p>
+    <p>Placeholder content…</p>
   </section>
 </main>
 
-<!-- <div class="debug" aria-hidden="true"></div> -->
-
 <script>
 /*
-Phases with fixed hero:
-  A) Image fades in (800ms) — CSS keyframes (already running).
-  B) Driver 0.00–0.60: Title slow/soft fade in, parked so the *third line* baseline = viewport bottom.
-  C) Driver 0.60–1.00: Entire column slides until the *last link* baseline = viewport bottom (final).
+Timeline:
+  • Image fades in (800ms).
+  • Step 2: Column parked so the *third title line* baseline == media box bottom (96px from viewport bottom).
+            Title fades in slowly (no motion).
+  • Step 3: Column slides so the *last link* baseline == media box bottom (final).
 */
 (function(){
   const driver = document.getElementById('driver');
+  const media  = document.getElementById('hero-media');
   const col    = document.getElementById('hero-col');
   const title  = document.getElementById('hero-title');
   const links  = document.getElementById('hero-links');
-  if(!driver || !col || !title || !links) return;
+  if(!driver || !media || !col || !title || !links) return;
 
   const root  = document.documentElement;
   const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
+  const easeInOutCubic = t => t<0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2;
 
-  // Easing for the slow/soft fade (easeInOutCubic)
-  function easeInOutCubic(t){ return t<0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2; }
-
-  // Measure pixel shifts:
-  //  - startShift: move column so the THIRD title line's bottom sits on viewport bottom
-  //  - endShift:   move column so the LAST LINK's bottom sits on viewport bottom
-  let startShift = 0, endShift = 0;
+  let startShift = 0; // align 3rd title line to media bottom (baseline)
+  let endShift   = 0; // align LAST link to media bottom (baseline)
 
   function measureShifts(){
-    // neutralize transform to measure true layout
+    // Measure without transform
     const prev = col.style.transform;
     col.style.transform = 'translateY(0px)';
 
-    const vh      = window.innerHeight || document.documentElement.clientHeight;
-    const lines   = title.querySelectorAll('.line');
-    const third   = lines[2] || lines[lines.length-1];   // fall back if fewer lines
-    const tRect   = third.getBoundingClientRect();       // 3rd line only (baseline!)
-    const lRect   = links.getBoundingClientRect();
+    const lines = title.querySelectorAll('.line');
+    const third = lines[2] || lines[lines.length-1];
 
-    const thirdBaseline = tRect.bottom;
-    const lastLinkBase  = lRect.bottom;
+    const thirdRect = third.getBoundingClientRect();
+    const linksRect = links.getBoundingClientRect();
+    const mediaRect = media.getBoundingClientRect();
 
-    startShift = vh - thirdBaseline; // positive: push down to align 3rd line to baseline
-    endShift   = vh - lastLinkBase;  // usually negative/smaller: pull up so last link hits baseline
+    const targetBaseline = mediaRect.bottom; // ✅ bottom of media box (== viewport bottom - 96px)
 
-    // restore & set initial CSS var so first paint is correct
+    startShift = targetBaseline - thirdRect.bottom; // push down/up to land 3rd line on baseline
+    endShift   = targetBaseline - linksRect.bottom; // slide until last link baseline hits baseline
+
     col.style.transform = prev || '';
     root.style.setProperty('--shift', startShift.toFixed(1)+'px');
   }
 
-  // 0→1 progress across the driver section
   function progress(){
     const r  = driver.getBoundingClientRect();
     const vh = window.innerHeight || document.documentElement.clientHeight;
     const total = r.height - vh;
-    return clamp((vh - r.bottom) / total, 0, 1);
+    return clamp((vh - r.bottom) / total, 0, 1); // 0→1 across driver
   }
 
   function update(){
     const p = progress();
 
-    // Phase B (fade): first 60% (slow/soft with easing, no movement yet)
-    const pFadeLin = clamp(p / 0.60, 0, 1);
-    const pFade    = easeInOutCubic(pFadeLin);
+    // Step 2: slow/soft fade while parked (first 60%)
+    const pFade = easeInOutCubic( clamp(p / 0.60, 0, 1) );
     root.style.setProperty('--titleOpacity', pFade.toFixed(3));
 
-    // Phase C (slide): last 40% — interpolate startShift → endShift
+    // Step 3: slide to final (last 40%)
     const pSlide = clamp((p - 0.60) / 0.40, 0, 1);
     const shift  = startShift + (endShift - startShift) * pSlide;
     root.style.setProperty('--shift', shift.toFixed(1)+'px');
@@ -164,7 +149,6 @@ Phases with fixed hero:
   function init(){
     measureShifts();
     update();
-    // remeasure after fonts load and on resize (metrics can change)
     window.addEventListener('load',   ()=>{ measureShifts(); update(); });
     window.addEventListener('resize', ()=>{ measureShifts(); update(); });
     window.addEventListener('scroll', update, { passive:true });
