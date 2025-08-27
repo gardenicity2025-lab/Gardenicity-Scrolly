@@ -7,51 +7,60 @@ html, body {
   font-family: "Acumin Pro", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* Full-bleed hero image (uses the same working approach as test.html) */
+/* Scroll progress variables (set by JS) */
+:root {
+  --p: 0;   /* overall hero progress 0→1 */
+  --tp: 0;  /* title progress (fade+rise) 0→1 */
+  --lp: 0;  /* links progress (fade in) 0→1 */
+}
+
+/* Full-bleed hero image with gentle load fade */
 .hero {
   position: relative;
   min-height: 100vh;
   width: 100%;
   background: #000 url("assets/hero1gc.jpg") center/cover no-repeat;
-  /* subtle load fade */
-  opacity: 0;
+  opacity: 0;                          /* load fade */
   animation: heroIn 700ms ease-out forwards;
 }
 @keyframes heroIn { from { opacity: 0; } to { opacity: 1; } }
 
-/* Inset media area — EXACT margins (same as the test page) */
+/* Inset media area — EXACT margins */
 .hero-media {
   position: absolute;
-  top: 96px;           /* top/bottom margins */
-  bottom: 96px;
-  left: 82px;          /* left/right margins */
-  right: 82px;
-
+  top: 96px; bottom: 96px;
+  left: 82px; right: 82px;
   display: flex;
-  align-items: flex-end;      /* bottom-left anchor */
+  align-items: flex-end;         /* bottom-left anchor */
   justify-content: flex-start;
 }
 
 /* Text column width */
-.hero-bottom-left {
-  max-width: 700px;
-}
+.hero-bottom-left { max-width: 700px; }
 
-/* Title — 100/110, white, Regular */
+/* Title — 100/100, Regular, starts faded on baseline, then rises slightly */
 .hero-title {
   margin: 0 0 24px 0;
   font-weight: 400;
   font-size: 100px;
-  line-height: 110px;
+  line-height: 100px;
   color: #fff;
-  text-wrap: balance;
+
+  /* fade in on scroll, then lift a bit */
+  opacity: var(--tp);                                 /* 0 → 1 */
+  transform: translateY(calc(-12px * var(--tp)));     /* 0px → -12px */
+  will-change: transform, opacity;
 }
 
-/* Links stacked, 24/30, white */
+/* Links stacked, 24/30.
+   They are already in final position; we only fade them in later. */
 .hero-links {
   display: flex;
   flex-direction: column;
   gap: 10px;
+
+  opacity: var(--lp);          /* 0 → 1 later in the scroll */
+  will-change: opacity;
 }
 .hero-links a {
   color: #fff;
