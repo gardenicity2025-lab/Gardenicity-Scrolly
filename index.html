@@ -27,13 +27,23 @@
     @keyframes heroIn{from{opacity:0}to{opacity:1}}
 
     /* Inset media box; using flex so content sits on bottom-left */
-    .hero-media{
-      position:absolute;
-      inset:var(--hero-margin-y) var(--hero-margin-x);
-      display:flex;align-items:flex-end;justify-content:flex-start;z-index:1;
-      /* DIAGNOSTIC outline */
-      outline:2px dashed rgba(255,0,0,.6);
-    }
+.hero-media{
+  position:absolute;
+
+  /* ⬇️ use explicit offsets instead of `inset:` */
+  top: var(--hero-margin-y);
+  right: var(--hero-margin-x);
+  bottom: var(--hero-margin-y);
+  left: var(--hero-margin-x);
+
+  display:flex;
+  align-items:flex-end;    /* bottom align the content block */
+  justify-content:flex-start; /* left */
+  z-index:1;
+
+  /* DEBUG outline — remove when happy */
+  outline:2px dashed rgba(255,0,0,.6);
+}
 
     /* Text block constrained to 700px (scaled) */
     .hero-bottom-left{
