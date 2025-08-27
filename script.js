@@ -1,43 +1,61 @@
-// On load: hero image fades (CSS).
-// On scroll over a defined window:
-//   - Title fades in (baseline), then rises slightly.
-//   - Links stay fixed; we reveal them by reducing a bottom clip-mask and
-//     also fade them for polish.
+// Sticky overlay driver (no libraries).
+// We compute a smooth progress 0→1 across the four steps,
+// then map it to: title fade (early), title lift (later), links fade (latest).
 
 (() => {
-  const hero = document.getElementById('hero');
-  if (!hero) return;
+  const scrolly = document.getElementById('scrolly');
+  const steps = Array.from(document.querySelectorAll('.step'));
+  if (!scrolly || steps.length === 0) return;
 
   const root = document.documentElement;
-  const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
-  function update() {
-    const heroTop = hero.offsetTop;
-    const vh = window.innerHeight;
+  // Set up an IntersectionObserver to know which step is active,
+  // and also compute a fine-grained progress based on the step's
+  // position within the viewport.
+  const options = { root: null, rootMargin: '0px 0px -20% 0px', threshold: 0.0 };
 
-    // Animate between ~10% and ~85% of the viewport across the hero
-    const start = heroTop + 0.10 * vh;
-    const end   = heroTop + 0.85 * vh;
-    const y = window.scrollY;
-    const p = clamp((y - start) / (end - start), 0, 1);
+  function computeProgress() {
+    // We’ll blend progress from all steps to a single 0..1 timeline.
+    // Each step contributes a quarter of the timeline (since we have 4 steps).
+    // Within a step, we compute local progress from its bounding box.
+    let total = 0;
 
-    // Title: fade in during the first 35% of the window, then lift for the rest
-    const tFade = clamp(p / 0.35, 0, 1);
-    const tLift = clamp((p - 0.35) / 0.65, 0, 1);
+    steps.forEach((step, i) => {
+      const rect = step.getBoundingClientRect();
+      const vh = window.innerHeight || document.documentElement.clientHeight;
 
-    // Links: reveal by shrinking the bottom mask from ~170px → 0,
-    // and also cross-fade for polish starting around 55%.
-    const maskStart = 170; // px; matches CSS initial --linksMask
-    const maskNow = clamp(maskStart * (1 - p), 0, maskStart);
-    const linksFade = clamp((p - 0.55) / 0.35, 0, 1);
+      // When the step spans the viewport, local goes from 0→1.
+      const start = vh * 0.2;   // start contributing when the top reaches ~20% viewport
+      const end   = vh * 0.8;   // finish when top passes ~80%
+      const local = clamp(1 - (rect.top - start) / (end - start), 0, 1);
 
-    root.style.setProperty('--tFade', tFade.toFixed(3));
-    root.style.setProperty('--tLift', tLift.toFixed(3));
-    root.style.setProperty('--linksMask', `${maskNow.toFixed(1)}px`);
-    root.style.setProperty('--linksFade', linksFade.toFixed(3));
+      // Each step is worth an equal slice of the total 0..1 timeline
+      const slice = 1 / steps.length;
+      total += clamp(local, 0, 1) * slice;
+    });
+
+    total = clamp(total, 0, 1);
+    root.style.setProperty('--p', total.toFixed(3));
+
+    // Map the main progress to the individual effects:
+    //  - Title fade: first 30% of the timeline
+    //  - Title lift: 30% → 70%
+    //  - Links fade: 55% → 90%
+    const fade  = clamp(total / 0.30, 0, 1);
+    const lift  = clamp((total - 0.30) / 0.40, 0, 1);
+    const links = clamp((total - 0.55) / 0.35, 0, 1);
+
+    root.style.setProperty('--fade', fade.toFixed(3));
+    root.style.setProperty('--lift', lift.toFixed(3));
+    root.style.setProperty('--linksFade', links.toFixed(3));
   }
 
-  update(); // run once
-  window.addEventListener('scroll', update, { passive: true });
-  window.addEventListener('resize', update);
+  // IO just triggers recalculation; we also listen to scroll/resize for smoothness.
+  const io = new IntersectionObserver(() => computeProgress(), options);
+  steps.forEach(s => io.observe(s));
+
+  computeProgress();
+  window.addEventListener('scroll', computeProgress, { passive: true });
+  window.addEventListener('resize', computeProgress);
 })();
