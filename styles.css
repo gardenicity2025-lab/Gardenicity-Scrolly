@@ -1,9 +1,14 @@
+/* =================== Root / Base =================== */
 :root {
   --bg: #ffffff;
   --text: #111111;
   --muted: #666666;
   --accent: #0f62fe;
   --maxw: 1100px;
+
+  /* Hero measurements per spec (desktop first) */
+  --hero-margin-x: 82px;   /* left/right */
+  --hero-margin-y: 96px;   /* top/bottom */
 }
 
 * { box-sizing: border-box; }
@@ -16,18 +21,79 @@ html, body {
   font: 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
 }
 
+/* Optional custom font — upload to assets/fonts/ and uncomment the @font-face
+@font-face {
+  font-family: "Acumin Variable Concept";
+  src: url("assets/fonts/AcuminVariableConcept.woff2") format("woff2"),
+       url("assets/fonts/AcuminVariableConcept.woff") format("woff");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+*/
+
+/* =================== HERO =================== */
+.hero {
+  position: relative;
+  min-height: 100vh;                 /* desktop: fills viewport */
+  width: 100%;
+  background-image: url("assets/hero.jpg"); /* <-- upload hero.jpg to assets/ */
+  background-size: cover;            /* edge-to-edge */
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+/* Inset “media box” with exact margins */
+.hero-media {
+  position: absolute;
+  inset: var(--hero-margin-y) var(--hero-margin-x);
+  /* Optional: add a subtle backdrop to ensure legibility over busy images */
+  /* background: rgba(255,255,255,0.0); */
+  display: grid;
+}
+
+/* Title + links anchored bottom-left inside media box */
+.hero-bottom-left {
+  align-self: end;     /* push to bottom of the grid */
+  justify-self: start; /* left */
+}
+
+/* Title (desktop spec: 120px size, 60px line-height) */
+.hero-title {
+  margin: 0 0 16px 0;
+  font-family: "Acumin Variable Concept", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font-size: 120px;
+  line-height: 60px;   /* as requested */
+  letter-spacing: 0;
+  font-weight: 600;
+  color: #111;
+  text-wrap: balance;
+}
+
+/* Links block under title (24px size, 30px line-height) */
+.hero-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px 24px;
+}
+
+.hero-links a {
+  font-family: "Acumin Variable Concept", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font-size: 24px;
+  line-height: 30px;
+  text-decoration: none;
+  color: #111;
+  border-bottom: 1px solid transparent;
+  transition: border-color .15s ease;
+}
+.hero-links a:hover { border-color: currentColor; }
+
+/* =================== Scrolly Core =================== */
 .site-header, .site-footer {
   max-width: var(--maxw);
   margin: 0 auto;
   padding: 24px 16px;
 }
-
-.site-header h1 {
-  margin: 0 0 8px 0;
-  font-size: clamp(1.8rem, 3vw, 3rem);
-}
-
-.dek { color: var(--muted); }
 
 .scrolly {
   display: grid;
@@ -38,7 +104,6 @@ html, body {
   padding: 0 16px;
 }
 
-/* Sticky visual area */
 .graphic {
   position: sticky;
   top: 16px;
@@ -64,7 +129,6 @@ html, body {
   color: var(--muted);
 }
 
-/* Steps */
 .article {
   display: flex;
   flex-direction: column;
@@ -78,16 +142,14 @@ html, body {
   padding: 35vh 24px;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
-
 .step.is-active {
   border-color: var(--accent);
   box-shadow: 0 0 0 2px rgba(15, 98, 254, 0.15);
 }
-
 .step h2 { margin-top: 0; }
 
-/* Two-column on wide screens */
-@media (min-width: 900px) {
+/* Two-column layout for scrolly on wide screens */
+@media (min-width: 1100px) {
   .scrolly {
     grid-template-columns: 45% 55%;
     gap: 24px;
