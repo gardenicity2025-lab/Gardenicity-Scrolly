@@ -2,65 +2,83 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Sticky Hero (baseline → final)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Gardenicity — Sticky Hero (column scrolly)</title>
 <style>
-  html,body{margin:0;padding:0;background:#000;color:#fff;
-    font-family:"Acumin Pro",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+  html,body{
+    margin:0; padding:0; background:#000; color:#fff;
+    font-family:"Acumin Pro",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+  }
 
-  /* Progress var set by JS: 0→1 across the hero wrapper */
-  :root{ --p: 0 }
+  /* progress 0→1 across the hero wrapper (set by JS) */
+  :root{ --p: 0; --shift: 96px; }
 
-  /* The wrapper defines how long the effect plays (bigger = slower) */
-  .hero-wrap{ position:relative; height: 160vh; }
+  /* Make the hero play long enough to feel like scrolly text */
+  .hero-wrap{ position:relative; height: 180vh; } /* bigger = slower */
 
-  /* Sticky viewport: MUST be sticky + top:0 + height:100vh */
+  /* Sticky viewport (pinned) */
   .hero-sticky{
+    position: -webkit-sticky; /* Safari */
     position: sticky;
     top: 0;
     height: 100vh;
-    /* Use hidden (not clip) for max browser compatibility */
-    overflow: hidden;
+    overflow: hidden; /* safest for sticky */
   }
 
-  /* Full-bleed background image (static) */
+  /* Background hero image */
   .hero-bg{
     position:absolute; inset:0;
     background:#000 url("assets/hero1gc.jpg") center/cover no-repeat;
-    /* (optional) subtle load fade */
-    opacity:0; animation:heroIn 900ms ease-out forwards;
+    /* Optional: tiny load fade; comment out if distracting */
+    opacity:0; animation: heroIn 900ms ease-out forwards;
   }
   @keyframes heroIn{from{opacity:0}to{opacity:1}}
 
-  /* Your final composition margins: 96 top/bottom, 82 left/right */
+  /* Final composition margins (top/bottom 96, left/right 82) */
   .hero-media{
     position:absolute; inset:96px 82px;
     display:flex; align-items:flex-end; justify-content:flex-start;
-    /* IMPORTANT: don’t set overflow here; the column itself will move. */
   }
 
-  /* The ENTIRE column moves as one unit.
-     Start translated DOWN so its baseline sits on the viewport bottom.
-     End at translateY(0) = final position (96px margin). */
+  /* ONE column that moves as a unit:
+     p=0  → translated DOWN by --shift (title baseline on viewport bottom)
+     p=1  → translateY(0) (final position at 96px margin) */
   .col{
     position:relative;
     max-width:700px;
-    transform: translateY(calc(96px * (1 - var(--p))));
+    transform: translateY(calc(var(--shift) * (1 - var(--p))));
     will-change: transform;
   }
 
-  .hero-title{ margin:0 0 24px 0; font-weight:400; font-size:100px; line-height:100px; color:#fff; }
-  .hero-links{ display:flex; flex-direction:column; gap:10px; font-size:24px; line-height:30px }
+  /* Title (no fade yet; we’ll add after you confirm placement) */
+  .hero-title{
+    margin:0 0 24px 0;
+    font-weight:400;
+    font-size:100px;
+    line-height:100px;
+    color:#fff;
+  }
+
+  /* Links flow under title in the same column */
+  .hero-links{
+    display:flex; flex-direction:column; gap:10px;
+    font-size:24px; line-height:30px;
+  }
   .hero-links a{ color:#fff; text-decoration:none; border-bottom:1px solid transparent }
   .hero-links a:hover{ border-color: currentColor }
 
-  /* Spacer content so you can keep scrolling afterward */
+  /* Spacer so you can keep scrolling afterward */
   .spacer{ min-height:120vh; padding:48px 82px; background:#0a0a0a; border-top:1px solid #151515 }
   .spacer h2{ margin:0 0 12px 0; color:#bbb; font-weight:600 }
   .spacer p{ margin:0; color:#9a9a9a }
 
-  /* TEMP: a dashed line at the viewport bottom so you can verify the start baseline */
-  .debug-line{ position:fixed; left:0; right:0; bottom:0; height:0; border-top:2px dashed rgba(0,255,128,.8); z-index:9999; pointer-events:none }
+  /* DEBUG: a dashed line at the viewport bottom to verify the start baseline.
+     Remove when happy. */
+  .debug-line{
+    position:fixed; left:0; right:0; bottom:0;
+    height:0; border-top:2px dashed rgba(0,255,128,.8);
+    pointer-events:none; z-index:9999;
+  }
 </style>
 </head>
 <body>
@@ -91,10 +109,11 @@
 <main>
   <section class="spacer">
     <h2 id="civic-green">Section 1</h2>
-    <p>We’ll replace this with your next section.</p>
+    <p>We’ll replace this with your next scrolly section.</p>
   </section>
 </main>
 
+<!-- DEBUG baseline — remove when confirmed -->
 <div class="debug-line" aria-hidden="true"></div>
 
 <script>
@@ -109,8 +128,11 @@
     function update(){
       var rect = wrap.getBoundingClientRect();
       var vh = window.innerHeight || document.documentElement.clientHeight;
-      var total = rect.height - vh;                    // scrollable distance in the wrapper
-      var p = clamp((vh - rect.bottom) / total, 0, 1); // 0→1 as the wrapper scrolls
+
+      // total scrollable distance while the sticky is active
+      var total = rect.height - vh;
+      var p = clamp((vh - rect.bottom) / total, 0, 1); // 0→1 across hero
+
       root.style.setProperty('--p', p.toFixed(3));
     }
 
