@@ -1,79 +1,73 @@
 /* Base */
-html, body {
-  margin: 0;
-  padding: 0;
-  background: #000;
-  color: #fff;
-  font-family: "Acumin Pro", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+html,body{
+  margin:0; padding:0; background:#000; color:#fff;
+  font-family:"Acumin Pro", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* Progress vars (driven by JS) */
+/* Progress vars driven by JS */
 :root{
-  --titleFade: 0;   /* 0→1: title fades in on baseline */
-  --titleLift: 0;   /* 0→1: title rises slightly */
-  --reveal: 0;      /* 0→1: bottom mask opens to expose links */
+  --p: 0;              /* 0→1 across hero wrapper */
+  --fade: 0;           /* title fade 0→1 early */
+  --colShiftPx: 0px;   /* column upward shift in px (computed in JS) */
 }
 
-/* Full-bleed hero, subtle image fade on load */
-.hero {
+/* Hero wrapper controls how long the sequence plays (tweak 220vh if needed) */
+.hero-wrap{
   position: relative;
-  min-height: 100vh;
-  width: 100%;
-  background: #000 url("assets/hero1gc.jpg") center/cover no-repeat;
-  opacity: 0;
-  animation: heroIn 900ms ease-out forwards;
-}
-@keyframes heroIn { from { opacity: 0; } to { opacity: 1; } }
-
-/* Final placement: exact margins */
-.hero-media {
-  position: absolute;
-  top: 96px; bottom: 96px;
-  left: 82px; right: 82px;
-  display: flex;
-  align-items: flex-end;       /* bottom-left anchor */
-  justify-content: flex-start;
+  height: 220vh;            /* longer = slower slide */
 }
 
-/* One-column stack in final position */
-.hero-bottom-left {
+/* Sticky viewport area */
+.hero-sticky{
+  position: sticky; top: 0; height: 100vh; overflow: clip;
+}
+
+/* Background image with subtle load fade */
+.hero-bg{
+  position:absolute; inset:0;
+  background:#000 url("assets/hero1gc.jpg") center/cover no-repeat;
+  opacity:0; animation:heroIn 900ms ease-out forwards;
+}
+@keyframes heroIn{ from{opacity:0} to{opacity:1} }
+
+/* Your exact margins define the overlay viewport (clipping box) */
+.hero-media{
+  position:absolute;
+  inset:96px 82px;               /* top/right/bottom/left */
+  display:flex; align-items:flex-end; justify-content:flex-start;
+  overflow:hidden;               /* this is key: clip the sliding column */
+}
+
+/* One text column that SLIDES UP as you scroll */
+.col{
   position: relative;
-  max-width: 700px;
-
-  /* Bottom reveal mask:
-     When --reveal = 0  → mask ~170px (hides links)
-     When --reveal = 1  → mask 0 (links fully visible) */
-  --maskStart: 170px; /* approx: 5 lines × 30px + gaps */
-  clip-path: inset(0 0 calc(var(--maskStart) * (1 - var(--reveal))) 0);
+  max-width:700px;
+  transform: translateY(calc(-1 * var(--colShiftPx)));  /* slide up */
+  will-change: transform;
 }
 
-/* Title: 100/100, regular. Fades first, then rises slightly. */
-.hero-title {
-  margin: 0 0 24px 0;
-  font-weight: 400;
-  font-size: 100px;
-  line-height: 100px;
-  color: #fff;
-
-  opacity: var(--titleFade);
-  transform: translateY(calc(-20px * var(--titleLift)));
-  will-change: transform, opacity;
-}
-
-/* Links: already in final place; they do NOT move. */
-.hero-links {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  /* optional polish: cross-fade links in parallel to the mask */
-  opacity: calc(0.2 + 0.8 * var(--reveal));
+/* Title — 100/100; fades in on baseline (no movement by itself) */
+.hero-title{
+  margin:0 0 24px 0;
+  font-weight:400;
+  font-size:100px;
+  line-height:100px;
+  color:#fff;
+  opacity: var(--fade);          /* 0→1 early in the sequence */
   will-change: opacity;
 }
-.hero-links a {
-  color: #fff;
-  text-decoration: none;
-  font-size: 24px;
-  line-height: 30px;
-  border-bottom: 1px solid transparent;
+
+/* Links — normal flow below the title (same column), do not move independently */
+.hero-links{
+  display:flex; flex-direction:column; gap:10px;
+  font-size:24px; line-height:30px;
 }
-.hero-links a:hover { border-color: currentColor; }
+.hero-links a{
+  color:#fff; text-decoration:none; border-bottom:1px solid transparent;
+}
+.hero-links a:hover{ border-color: currentColor }
+
+/* Spacer content below the hero */
+.spacer{ min-height:120vh; padding:48px 82px; background:#0a0a0a; border-top:1px solid #151515 }
+.spacer h2{ margin:0 0 12px 0; color:#bbb; font-weight:600 }
+.spacer p{ margin:0; color:#9a9a9a }
