@@ -1,36 +1,45 @@
-// ============ Step observer (kept) ============
+// Scroll-driven animation for the HERO only.
+// Title: fade on baseline, then rise slightly.
+// Links: fade in after the title has moved.
+
 (() => {
-  const steps = Array.from(document.querySelectorAll('.step'));
-  const caption = document.getElementById('graphic-caption');
-  const heroImg = document.getElementById('hero-image');
+  const hero = document.getElementById('hero');
+  if (!hero) return;
 
-  const mapping = [
-    'assets/placeholder.jpg',
-    'assets/placeholder2.jpg',
-    'assets/placeholder.jpg',
-    'assets/placeholder2.jpg'
-  ];
+  const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+  let ticking = false;
 
-  const options = { root: null, rootMargin: '-40% 0px -40% 0px', threshold: 0.0 };
+  function updateVars() {
+    const rect = hero.getBoundingClientRect();
+    const vh = window.innerHeight || document.documentElement.clientHeight;
 
-  const onEnter = (entries) => {
-    entries.forEach(entry => {
-      const el = entry.target;
-      const index = steps.indexOf(el);
+    // Overall progress p: 0 when top hits viewport, 1 after ~60% hero has scrolled
+    const visible = vh - rect.top;
+    const p = clamp(visible / (rect.height * 0.6), 0, 1);
 
-      if (entry.isIntersecting) {
-        steps.forEach(s => s.classList.remove('is-active'));
-        el.classList.add('is-active');
+    // Title progress: start around 10%, finish by ~40% (fade + slight rise)
+    const tp = clamp((p - 0.10) / 0.30, 0, 1);
 
-        if (caption) caption.textContent = `Now viewing section ${index + 1}`;
-        if (heroImg) heroImg.src = mapping[index % mapping.length];
-      }
-    });
-  };
+    // Links progress: start after ~45%, finish by ~85% (fade only)
+    const lp = clamp((p - 0.45) / 0.40, 0, 1);
 
-  const observer = new IntersectionObserver(onEnter, options);
-  steps.forEach(step => observer.observe(step));
+    document.documentElement.style.setProperty('--p', p.toFixed(3));
+    document.documentElement.style.setProperty('--tp', tp.toFixed(3));
+    document.documentElement.style.setProperty('--lp', lp.toFixed(3));
+  }
+
+  function onScroll() {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        updateVars();
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }
+
+  // Init + listeners
+  updateVars();
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
 })();
-
-// ============ Hero scroll effects are DISABLED for baseline ============
-// (We’ll re-enable once layout/size look right.)
