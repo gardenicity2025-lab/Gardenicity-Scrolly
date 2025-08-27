@@ -1,74 +1,19 @@
 /* =================== Acumin Pro font family =================== */
-@font-face {
-  font-family: "Acumin Pro";
-  src: url("assets/fonts/fonnts.com-AcuminPro-Thin.woff2") format("woff2");
-  font-weight: 100;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Acumin Pro";
-  src: url("assets/fonts/fonnts.com-AcuminPro-ExtraLight.woff2") format("woff2");
-  font-weight: 200;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Acumin Pro";
-  src: url("assets/fonts/fonnts.com-AcuminPro-Medium.woff2") format("woff2");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Acumin Pro";
-  src: url("assets/fonts/fonnts.com-AcuminPro-Semibold.woff2") format("woff2");
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Acumin Pro";
-  src: url("assets/fonts/fonnts.com-Acumin_Pro_Bold.woff2") format("woff2");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Acumin Pro";
-  src: url("assets/fonts/fonnts.com-Acumin_Pro_Bold_Italic.woff2") format("woff2");
-  font-weight: 700;
-  font-style: italic;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Acumin Pro";
-  src: url("assets/fonts/fonnts.com-AcuminPro-Black.woff2") format("woff2");
-  font-weight: 900;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Acumin Pro";
-  src: url("assets/fonts/fonnts.com-AcuminPro-BlackItalic.woff2") format("woff2");
-  font-weight: 900;
-  font-style: italic;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Acumin Pro";
-  src: url("assets/fonts/fonnts.com-AcuminPro-UltraBlack.woff2") format("woff2");
-  font-weight: 950;
-  font-style: normal;
-  font-display: swap;
-}
+@font-face { font-family: "Acumin Pro"; src: url("assets/fonts/fonnts.com-AcuminPro-Thin.woff2") format("woff2"); font-weight: 100; font-style: normal; font-display: swap; }
+@font-face { font-family: "Acumin Pro"; src: url("assets/fonts/fonnts.com-AcuminPro-ExtraLight.woff2") format("woff2"); font-weight: 200; font-style: normal; font-display: swap; }
+@font-face { font-family: "Acumin Pro"; src: url("assets/fonts/fonnts.com-AcuminPro-Medium.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: "Acumin Pro"; src: url("assets/fonts/fonnts.com-AcuminPro-Semibold.woff2") format("woff2"); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: "Acumin Pro"; src: url("assets/fonts/fonnts.com-Acumin_Pro_Bold.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: "Acumin Pro"; src: url("assets/fonts/fonnts.com-Acumin_Pro_Bold_Italic.woff2") format("woff2"); font-weight: 700; font-style: italic; font-display: swap; }
+@font-face { font-family: "Acumin Pro"; src: url("assets/fonts/fonnts.com-AcuminPro-Black.woff2") format("woff2"); font-weight: 900; font-style: normal; font-display: swap; }
+@font-face { font-family: "Acumin Pro"; src: url("assets/fonts/fonnts.com-AcuminPro-BlackItalic.woff2") format("woff2"); font-weight: 900; font-style: italic; font-display: swap; }
+@font-face { font-family: "Acumin Pro"; src: url("assets/fonts/fonnts.com-AcuminPro-UltraBlack.woff2") format("woff2"); font-weight: 950; font-style: normal; font-display: swap; }
 
 /* =================== Root / Base =================== */
-/* Reference canvas: 1920 × 1440. Create a proportional scale --s */
+/* Reference canvas: 1920 × 1440 → proportional scale --s */
 :root {
-  /* raw scale vs reference canvas (choose the limiting dimension) */
   --scale-w: calc(100vw / 1920);
-  --scale-h: calc(100svh / 1440);    /* svh handles browser UI on mobile */
+  --scale-h: calc(100svh / 1440);
   --s: min(var(--scale-w), var(--scale-h));
 
   --bg: #ffffff;
@@ -77,9 +22,13 @@
   --accent: #0f62fe;
   --maxw: 1100px;
 
-  /* Hero measurements (design pixels × scale) */
+  /* Hero measurements (design px × scale) */
   --hero-margin-x: calc(var(--s) * 82px);
   --hero-margin-y: calc(var(--s) * 96px);
+
+  /* Scroll progress variables (set by JS) */
+  --p: 0;   /* hero progress 0→1 */
+  --lp: 0;  /* links progress 0→1 */
 }
 
 * { box-sizing: border-box; }
@@ -89,7 +38,6 @@ html, body {
   padding: 0;
   background: var(--bg);
   color: var(--text);
-  /* Base text stays readable; UI type scales a little but not as dramatically */
   font-family: "Acumin Pro", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   font-size: clamp(14px, calc(16px * var(--s)), 18px);
   line-height: 1.6;
@@ -98,12 +46,24 @@ html, body {
 /* =================== HERO =================== */
 .hero {
   position: relative;
-  min-height: 100svh;               /* full screen height including safe areas */
+  min-height: 100svh;
   width: 100%;
+  overflow: clip;
+}
+
+/* separate background layer so we can animate it */
+.hero-bg {
+  position: absolute;
+  inset: 0;
   background-image: url("assets/hero1gc.jpg");
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
+
+  /* Image fade + subtle scale as we scroll: p: 0→1 */
+  opacity: var(--p); /* starts 0, fades in to 1 */
+  transform: scale(calc(1.04 - 0.04 * var(--p))); /* 1.04 → 1.00 */
+  will-change: transform, opacity;
 }
 
 /* Inset media box uses scaled margins */
@@ -113,34 +73,46 @@ html, body {
   display: grid;
 }
 
-/* Bottom-left block stays within a scaled width (700px @ 1.0 scale) */
+/* Bottom-left block: 700px design width (scaled) */
 .hero-bottom-left {
   align-self: end;
   justify-self: start;
   max-width: clamp(420px, calc(var(--s) * 700px), 700px);
 }
 
-/* Title — design: 120px / 140px Regular, white, scaled with limits */
+/* Title — per request: 100/110 Regular, white.
+   It starts slightly lower and moves up as you scroll (p 0→1) */
 .hero-title {
   margin: 0 0 calc(var(--s) * 24px) 0;
-  font-weight: 400;
-  font-size: clamp(64px, calc(var(--s) * 120px), 120px);
-  line-height: clamp(74px, calc(var(--s) * 140px), 140px);
+  font-weight: 400; /* Regular */
+  font-size: clamp(56px, calc(var(--s) * 100px), 100px);
+  line-height: clamp(62px, calc(var(--s) * 110px), 110px);
   color: #fff;
   text-wrap: balance;
+
+  /* Motion on scroll: translateY 30px → 0, keep visible from start */
+  transform: translateY(calc((1 - var(--p)) * 30px * var(--s)));
+  opacity: 1;
+  will-change: transform;
   /* optional readability on bright images */
   /* text-shadow: 0 2px 8px rgba(0,0,0,0.35); */
 }
 
-/* Links stacked vertically — design: 24/30, scaled with limits */
+/* Links stacked vertically — 24/30, appear later with scroll */
 .hero-links {
   display: flex;
   flex-direction: column;
   gap: clamp(6px, calc(var(--s) * 10px), 12px);
+
+  /* Reveal after the title: lp stays 0 until ~mid scroll */
+  opacity: var(--lp);
+  transform: translateY(calc((1 - var(--lp)) * 20px * var(--s)));
+  pointer-events: auto;
+  will-change: transform, opacity;
 }
 
 .hero-links a {
-  font-weight: 400;
+  font-weight: 400; /* Regular */
   font-size: clamp(18px, calc(var(--s) * 24px), 24px);
   line-height: clamp(24px, calc(var(--s) * 30px), 30px);
   text-decoration: none;
@@ -178,55 +150,27 @@ html, body {
   flex-direction: column;
   gap: 8px;
 }
-.graphic img {
-  width: 100%;
-  height: auto;
-  border-radius: 6px;
-  display: block;
-}
-.graphic-caption {
-  font-size: 0.9rem;
-  color: var(--muted);
-}
+.graphic img { width: 100%; height: auto; border-radius: 6px; display: block; }
+.graphic-caption { font-size: 0.9rem; color: var(--muted); }
 
-.article {
-  display: flex;
-  flex-direction: column;
-  gap: 40px;
-}
+.article { display: flex; flex-direction: column; gap: 40px; }
 .step {
   background: #fafafa;
   border: 1px solid #eee;
   border-radius: 10px;
-  /* Keep steps tall, scale softly so shorter screens still scroll */
   padding: clamp(160px, calc(var(--s) * 35vh), 35vh) 24px;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
-.step.is-active {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px rgba(15, 98, 254, 0.15);
-}
+.step.is-active { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(15, 98, 254, 0.15); }
 .step h2 { margin-top: 0; }
 
-/* Two-column layout for scrolly on wide screens */
 @media (min-width: 1100px) {
-  .scrolly {
-    grid-template-columns: 45% 55%;
-    gap: 24px;
-  }
-  .graphic {
-    top: 24px;
-    min-height: 70vh;
-  }
+  .scrolly { grid-template-columns: 45% 55%; gap: 24px; }
+  .graphic { top: 24px; min-height: 70vh; }
 }
 
 /* Debug trigger line (~60% viewport) */
 .debug-line {
-  position: fixed;
-  left: 0; right: 0;
-  top: 60vh;
-  height: 0;
-  border-top: 1px dashed rgba(0,0,0,0.2);
-  pointer-events: none;
-  z-index: 9999;
+  position: fixed; left: 0; right: 0; top: 60vh; height: 0;
+  border-top: 1px dashed rgba(0,0,0,0.2); pointer-events: none; z-index: 9999;
 }
