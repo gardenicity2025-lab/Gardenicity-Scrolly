@@ -27,8 +27,9 @@
   --hero-margin-y: calc(var(--s) * 96px);
 
   /* Scroll progress variables (set by JS) */
-  --p: 0;   /* hero progress 0→1 */
-  --lp: 0;  /* links progress 0→1 */
+  --p: 0;   /* overall hero progress 0→1 */
+  --tp: 0;  /* title progress (fade+move) 0→1 */
+  --lp: 0;  /* links progress (reveal) 0→1 */
 }
 
 * { box-sizing: border-box; }
@@ -51,7 +52,7 @@ html, body {
   overflow: clip;
 }
 
-/* separate background layer so we can animate it */
+/* Background image layer — now fades in on load, then gently scales on scroll */
 .hero-bg {
   position: absolute;
   inset: 0;
@@ -60,10 +61,15 @@ html, body {
   background-position: center center;
   background-repeat: no-repeat;
 
-  /* Image fade + subtle scale as we scroll: p: 0→1 */
-  opacity: var(--p); /* starts 0, fades in to 1 */
-  transform: scale(calc(1.04 - 0.04 * var(--p))); /* 1.04 → 1.00 */
+  opacity: 0;                     /* start hidden */
+  animation: heroIn 800ms ease-out forwards; /* fade to 1 on load */
+  transform: scale(calc(1.04 - 0.04 * var(--p))); /* 1.04 → 1.00 as you scroll */
   will-change: transform, opacity;
+}
+
+@keyframes heroIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 /* Inset media box uses scaled margins */
@@ -80,39 +86,32 @@ html, body {
   max-width: clamp(420px, calc(var(--s) * 700px), 700px);
 }
 
-/* Title — per request: 100/110 Regular, white.
-   It starts slightly lower and moves up as you scroll (p 0→1) */
+/* Title — 100/110 Regular, white; fade in THEN move up */
 .hero-title {
   margin: 0 0 calc(var(--s) * 24px) 0;
-  font-weight: 400; /* Regular */
+  font-weight: 400;
   font-size: clamp(56px, calc(var(--s) * 100px), 100px);
   line-height: clamp(62px, calc(var(--s) * 110px), 110px);
   color: #fff;
   text-wrap: balance;
 
-  /* Motion on scroll: translateY 30px → 0, keep visible from start */
-  transform: translateY(calc((1 - var(--p)) * 30px * var(--s)));
-  opacity: 1;
-  will-change: transform;
-  /* optional readability on bright images */
-  /* text-shadow: 0 2px 8px rgba(0,0,0,0.35); */
+  opacity: var(--tp); /* 0→1 with scroll */
+  transform: translateY(calc((1 - var(--tp)) * 20px * var(--s)));
+  will-change: transform, opacity;
 }
 
-/* Links stacked vertically — 24/30, appear later with scroll */
+/* Links stacked vertically — appear later with scroll */
 .hero-links {
   display: flex;
   flex-direction: column;
   gap: clamp(6px, calc(var(--s) * 10px), 12px);
 
-  /* Reveal after the title: lp stays 0 until ~mid scroll */
   opacity: var(--lp);
   transform: translateY(calc((1 - var(--lp)) * 20px * var(--s)));
-  pointer-events: auto;
   will-change: transform, opacity;
 }
-
 .hero-links a {
-  font-weight: 400; /* Regular */
+  font-weight: 400;
   font-size: clamp(18px, calc(var(--s) * 24px), 24px);
   line-height: clamp(24px, calc(var(--s) * 30px), 30px);
   text-decoration: none;
