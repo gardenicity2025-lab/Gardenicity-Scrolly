@@ -23,8 +23,12 @@ html,body{
 
 /* Final composition margins: top/bottom 96, left/right 82 */
 .hero-media{
-  position:absolute; inset:96px 82px;
-  display:flex; align-items:flex-end; justify-content:flex-start;
+  position:absolute;
+  inset:96px 82px;             /* top/right/bottom/left margins */
+  display:flex;
+  align-items:flex-end;
+  justify-content:flex-start;
+  overflow:hidden;             /* ← clip below the media baseline */
 }
 
 /* Column starts at the viewport baseline ( +96px down ), then slides up to 0 */
