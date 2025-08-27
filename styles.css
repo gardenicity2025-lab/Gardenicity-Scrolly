@@ -24,11 +24,21 @@ html,body{
 /* Final composition margins: top/bottom 96, left/right 82 */
 .hero-media{
   position:absolute;
-  inset:96px 82px;             /* top/right/bottom/left margins */
+  inset:96px 82px;
   display:flex;
   align-items:flex-end;
   justify-content:flex-start;
-  overflow:hidden;             /* ← clip below the media baseline */
+  overflow:hidden;              /* clip anything below the media baseline */
+}
+
+/* add opacity control for links */
+:root{ --shift:0px; --titleOpacity:0; --linksOpacity:0; }  /* ← add --linksOpacity */
+
+.hero-links{
+  display:flex; flex-direction:column; gap:10px;
+  font-size:24px; line-height:30px;
+  opacity: var(--linksOpacity);           /* ← hide until slide starts */
+  transition: opacity .25s linear;        /* tiny polish */
 }
 
 /* Column starts at the viewport baseline ( +96px down ), then slides up to 0 */
