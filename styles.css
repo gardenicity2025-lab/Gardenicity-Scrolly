@@ -64,16 +64,22 @@
 }
 
 /* =================== Root / Base =================== */
+/* Reference canvas: 1920 × 1440. Create a proportional scale --s */
 :root {
+  /* raw scale vs reference canvas (choose the limiting dimension) */
+  --scale-w: calc(100vw / 1920);
+  --scale-h: calc(100svh / 1440);    /* svh handles browser UI on mobile */
+  --s: min(var(--scale-w), var(--scale-h));
+
   --bg: #ffffff;
   --text: #111111;
   --muted: #666666;
   --accent: #0f62fe;
   --maxw: 1100px;
 
-  /* Hero measurements per spec (desktop first) */
-  --hero-margin-x: 82px;   /* left/right */
-  --hero-margin-y: 96px;   /* top/bottom */
+  /* Hero measurements (design pixels × scale) */
+  --hero-margin-x: calc(var(--s) * 82px);
+  --hero-margin-y: calc(var(--s) * 96px);
 }
 
 * { box-sizing: border-box; }
@@ -83,13 +89,16 @@ html, body {
   padding: 0;
   background: var(--bg);
   color: var(--text);
-  font: 16px/1.6 "Acumin Pro", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  /* Base text stays readable; UI type scales a little but not as dramatically */
+  font-family: "Acumin Pro", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font-size: clamp(14px, calc(16px * var(--s)), 18px);
+  line-height: 1.6;
 }
 
 /* =================== HERO =================== */
 .hero {
   position: relative;
-  min-height: 100vh;
+  min-height: 100svh;               /* full screen height including safe areas */
   width: 100%;
   background-image: url("assets/hero1gc.jpg");
   background-size: cover;
@@ -97,44 +106,43 @@ html, body {
   background-repeat: no-repeat;
 }
 
-/* Inset “media box” with exact margins */
+/* Inset media box uses scaled margins */
 .hero-media {
   position: absolute;
   inset: var(--hero-margin-y) var(--hero-margin-x);
   display: grid;
 }
 
-/* Title + links anchored bottom-left inside media box */
+/* Bottom-left block stays within a scaled width (700px @ 1.0 scale) */
 .hero-bottom-left {
   align-self: end;
   justify-self: start;
-  max-width: 700px; /* fixes width of text box */
+  max-width: clamp(420px, calc(var(--s) * 700px), 700px);
 }
 
-/* Title — white, Regular 120/140 */
+/* Title — design: 120px / 140px Regular, white, scaled with limits */
 .hero-title {
-  margin: 0 0 24px 0;
-  font-family: "Acumin Pro", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-  font-weight: 400; /* Regular */
-  font-size: 120px;
-  line-height: 140px;
-  color: #fff; /* white text */
+  margin: 0 0 calc(var(--s) * 24px) 0;
+  font-weight: 400;
+  font-size: clamp(64px, calc(var(--s) * 120px), 120px);
+  line-height: clamp(74px, calc(var(--s) * 140px), 140px);
+  color: #fff;
   text-wrap: balance;
-  /* optional readability: uncomment if hero is bright */
+  /* optional readability on bright images */
   /* text-shadow: 0 2px 8px rgba(0,0,0,0.35); */
 }
 
-/* Links stacked vertically — white 24/30 */
+/* Links stacked vertically — design: 24/30, scaled with limits */
 .hero-links {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: clamp(6px, calc(var(--s) * 10px), 12px);
 }
+
 .hero-links a {
-  font-family: "Acumin Pro", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-  font-size: 24px;
-  line-height: 30px;
-  font-weight: 400; /* Regular */
+  font-weight: 400;
+  font-size: clamp(18px, calc(var(--s) * 24px), 24px);
+  line-height: clamp(24px, calc(var(--s) * 30px), 30px);
   text-decoration: none;
   color: #fff;
   border-bottom: 1px solid transparent;
@@ -190,7 +198,8 @@ html, body {
   background: #fafafa;
   border: 1px solid #eee;
   border-radius: 10px;
-  padding: 35vh 24px;
+  /* Keep steps tall, scale softly so shorter screens still scroll */
+  padding: clamp(160px, calc(var(--s) * 35vh), 35vh) 24px;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 .step.is-active {
