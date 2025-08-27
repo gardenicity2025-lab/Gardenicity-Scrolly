@@ -1,42 +1,75 @@
-// Drive a simple scroll window for the hero:
-// - Title fades on the baseline (first third)
-// - Then title lifts slightly (second third)
-// - Bottom mask opens to reveal links (final third)
+// Column-slide scrolly:
+// - The hero image is sticky and fades in on load (CSS).
+// - We compute a smooth 0→1 progress across the hero wrapper.
+// - Early portion: fade the title.
+// - Over the whole window: slide the ENTIRE text column up by an exact amount
+//   such that links (same column) scroll into the clipping viewport.
 
 (() => {
-  const hero = document.getElementById('hero');
-  if (!hero) return;
+  const wrap  = document.getElementById('hero-wrap');
+  const media = document.getElementById('hero-media');
+  const col   = document.getElementById('hero-col');
+  const title = document.getElementById('hero-title');
+  const links = document.getElementById('hero-links');
+  if (!wrap || !media || !col || !title || !links) return;
 
   const root = document.documentElement;
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
-  function update() {
-    const heroTop = hero.offsetTop;
-    const vh = window.innerHeight;
+  // Compute how far the column must slide so that links are fully visible.
+  function computeShiftPx() {
+    // distance from top of the column to the bottom edge of the clipping viewport
+    const mediaRect = media.getBoundingClientRect();
+    const colRect   = col.getBoundingClientRect();
+    const linksRect = links.getBoundingClientRect();
 
-    // Define a scroll window starting slightly into the hero and
-    // ending before you leave it. Adjust these two numbers to taste.
-    const start = heroTop + 0.10 * vh;
-    const end   = heroTop + 0.85 * vh;
-    const y = window.scrollY;
+    // Offsets relative to the column
+    const linksTopInCol = linksRect.top - colRect.top;
+    const linksBottomInCol = linksTopInCol + linksRect.height;
 
-    const p = clamp((y - start) / (end - start), 0, 1); // 0→1 across window
-
-    // Split the window into thirds:
-    // 0→0.33: title fades in
-    // 0.33→0.66: title lifts
-    // 0.66→1.00: links reveal (mask opens)
-    const fade   = clamp(p / 0.33, 0, 1);
-    const lift   = clamp((p - 0.33) / 0.33, 0, 1);
-    const reveal = clamp((p - 0.66) / 0.34, 0, 1);
-
-    root.style.setProperty('--titleFade', fade.toFixed(3));
-    root.style.setProperty('--titleLift', lift.toFixed(3));
-    root.style.setProperty('--reveal', reveal.toFixed(3));
+    // We want the bottom of links to be inside the media viewport bottom.
+    // How many pixels must we move the column up so that linksBottom aligns
+    // with media height? (Clamp to >= 0)
+    const needed = Math.max(0, linksBottomInCol - media.clientHeight);
+    return needed;
   }
 
-  // Init + listeners
-  update();
+  let targetShiftPx = 0;
+
+  function measure() {
+    // Measure after layout; add a small buffer (e.g., 12px breathing room)
+    targetShiftPx = computeShiftPx() + 12;
+  }
+
+  function update() {
+    const rect = wrap.getBoundingClientRect();
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+
+    // progress 0→1 while wrapper scrolls through viewport
+    const total = rect.height - vh;
+    const progressed = clamp((vh - rect.bottom) / total, 0, 1);
+
+    // Title fade during first 25% of sequence
+    const fade = clamp(progressed / 0.25, 0, 1);
+
+    // Column shift: interpolate 0 → targetShiftPx across the WHOLE sequence
+    const colShift = targetShiftPx * progressed;
+
+    root.style.setProperty('--fade', fade.toFixed(3));
+    root.style.setProperty('--colShiftPx', `${colShift.toFixed(1)}px`);
+  }
+
+  // Initial measure after images/fonts load; then update on scroll/resize
+  function init() {
+    measure();
+    update();
+  }
+
+  // Try to re-measure after load in case fonts change metrics
+  window.addEventListener('load', () => { measure(); update(); });
+
+  init();
+  window.addEventListener('resize', () => { measure(); update(); });
   window.addEventListener('scroll', update, { passive: true });
-  window.addEventListener('resize', update);
 })();
+
