@@ -3,35 +3,51 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Scrollytelling Starter</title>
+  <title>Gardenicity — Scrollytelling</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="site-header">
-    <h1 id="title">Your Story Title</h1>
-    <p class="dek">A short subtitle that explains the story in one line.</p>
+
+  <!-- =================== HERO (Section 1) =================== -->
+  <header class="hero" id="hero" role="banner" aria-label="Hero">
+    <!-- Full-bleed image is a CSS background on .hero -->
+    <div class="hero-media" role="group" aria-label="Hero media overlay">
+      <div class="hero-bottom-left">
+        <h1 class="hero-title">
+          <span>Gardenicity</span><br/>
+          <span>What did Geddes see?</span>
+        </h1>
+
+        <nav class="hero-links" aria-label="Primary">
+          <a href="#civic-green">Civic Green</a>
+          <a href="#growth">Growth</a>
+          <a href="#sustenance">Sustenance</a>
+          <a href="#leafy-sdgs">Leafy SDGs</a>
+          <a href="#lang">EN/ער</a>
+        </nav>
+      </div>
+    </div>
   </header>
 
-  <main class="scrolly">
-    <!-- Sticky visual panel -->
+  <!-- =================== SCROLLY CORE =================== -->
+  <main class="scrolly" id="scrolly-root">
     <div class="graphic" id="graphic">
-      <img id="hero-image" src="assets/placeholder.jpg" alt="Hero graphic" />
+      <img id="hero-image" src="assets/placeholder.jpg" alt="Sticky illustrative panel" />
       <div id="graphic-caption" class="graphic-caption">Scroll to begin</div>
     </div>
 
-    <!-- Scroll steps -->
     <div class="article">
-      <section class="step" data-step="1">
+      <section class="step" data-step="1" id="civic-green">
         <h2>Section 1</h2>
         <p>Write your opening paragraph here. Keep each section to 2–5 sentences.</p>
       </section>
 
-      <section class="step" data-step="2">
+      <section class="step" data-step="2" id="growth">
         <h2>Section 2</h2>
         <p>Introduce the main idea. The graphic will update as this section enters the viewport.</p>
       </section>
 
-      <section class="step" data-step="3">
+      <section class="step" data-step="3" id="sustenance">
         <h2>Section 3</h2>
         <p>Add an image below if you like. Replace <code>assets/placeholder2.jpg</code> with your own.</p>
         <figure>
@@ -40,7 +56,7 @@
         </figure>
       </section>
 
-      <section class="step" data-step="4">
+      <section class="step" data-step="4" id="leafy-sdgs">
         <h2>Section 4</h2>
         <p>Conclude with a takeaway and, if relevant, a call to action.</p>
       </section>
@@ -48,12 +64,10 @@
   </main>
 
   <footer class="site-footer">
-    <p>© Your Name • <a href="#">About</a></p>
+    <p>© Your Name • <a href="#" id="lang">About</a></p>
   </footer>
 
-  <!-- Optional debug guide line at ~60% viewport -->
   <div class="debug-line" aria-hidden="true"></div>
-
   <script src="script.js"></script>
 </body>
 </html>
