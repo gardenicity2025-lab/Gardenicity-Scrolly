@@ -1,92 +1,164 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Gardenicity — Static Hero</title>
-  <style>
-    html,body {
-      margin: 0;
-      padding: 0;
-      font-family: "Acumin Pro", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-      color: #fff;
-    }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Gardenicity — Step 2 (fade → reveal to final)</title>
+<style>
+  html,body{margin:0;padding:0;color:#fff;
+    font-family:"Acumin Pro",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
 
-    /* Full-bleed hero image */
-    .hero {
-      position: relative;
-      min-height: 100vh;
-      background: url("assets/hero1gc.jpg") center/cover no-repeat;
-    }
+  /* ===== Fixed hero layer (image + overlay column) ===== */
+  .hero-fixed{ position:fixed; inset:0; }
 
-    /* Overlay box with margins */
-    .hero-media {
-      position: absolute;
-      top: 96px;
-      bottom: 96px;
-      left: 82px;
-      right: 82px;
-      display: flex;
-      align-items: flex-end; /* stick to bottom */
-      justify-content: flex-start;
-    }
+  /* Image: full-bleed, 800ms fade, NEVER scrolls */
+  .hero-bg{
+    position:absolute; inset:0;
+    background:url("assets/hero1gc.jpg") center/cover no-repeat;
+    opacity:0; animation:heroIn 800ms ease-out forwards;
+  }
+  @keyframes heroIn{from{opacity:0}to{opacity:1}}
 
-    /* Column with title + links */
-    .col {
-      max-width: 700px;
-    }
+  /* Overlay box uses your margins L/R=82, T/B=96 for final composition.      *
+   * For baseline alignment we let it touch top/bottom (0) and handle the     *
+   * baseline via the column shift (computed in JS).                          */
+  .hero-media{ position:absolute; left:82px; right:82px; top:0; bottom:0;
+    display:flex; align-items:flex-end; justify-content:flex-start }
 
-    /* Title styling */
-    .hero-title {
-      margin: 0 0 24px 0;
-      font-weight: 400;
-      font-size: 100px;
-      line-height: 100px;
-    }
+  /* One column that moves as a unit from:
+     - startShift (title baseline = viewport bottom) → endShift (last link baseline = viewport bottom) */
+  :root{ --shift: 0px; --titleOpacity: 0 }
+  .col{ position:relative; max-width:700px; transform:translateY(var(--shift)); will-change:transform }
 
-    /* Links styling */
-    .hero-links {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      font-size: 24px;
-      line-height: 30px;
-    }
-    .hero-links a {
-      color: #fff;
-      text-decoration: none;
-      border-bottom: 1px solid transparent;
-    }
-    .hero-links a:hover { border-color: currentColor; }
-  </style>
+  /* Title: 100/100; slow fade-in while parked on the baseline */
+  .hero-title{ margin:0 0 24px 0; font:400 100px/100px "Acumin Pro",system-ui;
+    opacity:var(--titleOpacity); will-change:opacity }
+  /* If you want to guarantee 3 lines, keep each line in its own <span class="line">; for now we let it wrap naturally. */
+  /* .hero-title .line{ display:block } */
+
+  /* Links in the same column (no separate animation) */
+  .hero-links{ display:flex; flex-direction:column; gap:10px; font-size:24px; line-height:30px }
+  .hero-links a{ color:#fff; text-decoration:none; border-bottom:1px solid transparent }
+  .hero-links a:hover{ border-color: currentColor }
+
+  /* ===== Scroll driver (controls the scroll phase) =====
+     Bigger height => slower slide. Tune to taste. */
+  .driver{ height: 200vh }
+
+  /* Page content after hero (so you can keep scrolling) */
+  .spacer{ min-height:120vh; padding:48px 82px; background:#f5f5f5; color:#000; border-top:1px solid #e5e5e5 }
+  .spacer h2{ margin:0 0 12px 0 }
+</style>
 </head>
 <body>
 
-  <header class="hero">
-    <div class="hero-media">
-      <div class="col">
-        <h1 class="hero-title">
-          <span>Gardenicity</span><br/>
-          <span>What did Geddes see?</span>
-        </h1>
-        <nav class="hero-links" aria-label="Primary">
-          <a href="#">Civic Green</a>
-          <a href="#">Growth</a>
-          <a href="#">Sustenance</a>
-          <a href="#">Leafy SDGs</a>
-          <a href="#">EN/ער</a>
-        </nav>
-      </div>
-    </div>
-  </header>
+<!-- Fixed hero that never scrolls -->
+<div class="hero-fixed">
+  <div class="hero-bg" aria-hidden="true"></div>
 
-  <main>
-    <section style="min-height:120vh; padding:48px 82px; background:#f5f5f5; color:#000;">
-      <h2>Next section</h2>
-      <p>This is placeholder content below the hero.</p>
-    </section>
-  </main>
+  <div class="hero-media" id="hero-media">
+    <div class="col" id="hero-col">
+      <h1 class="hero-title" id="hero-title">
+        <span>Gardenicity</span><br/>
+        <span>What did Geddes see?</span>
+      </h1>
+      <nav class="hero-links" id="hero-links" aria-label="Primary">
+        <a href="#civic-green">Civic Green</a>
+        <a href="#growth">Growth</a>
+        <a href="#sustenance">Sustenance</a>
+        <a href="#leafy-sdgs">Leafy SDGs</a>
+        <a href="#lang">EN/ער</a>
+      </nav>
+    </div>
+  </div>
+</div>
+
+<!-- Scroll driver that plays Step 2 → Step 3 -->
+<section class="driver" id="driver"></section>
+
+<!-- Your normal page content below -->
+<main>
+  <section class="spacer">
+    <h2 id="civic-green">Next section</h2>
+    <p>Placeholder content after the hero.</p>
+  </section>
+</main>
+
+<script>
+/*
+Behavior:
+  - Image fades in by time (800ms).
+  - While the driver scroll is in its first 40%, the column is *parked* so the title’s
+    baseline sits on the viewport bottom, and the title slowly fades in.
+  - From 40%→100%, the *entire column* slides so that the last link’s baseline reaches
+    the viewport bottom (final state).
+*/
+(function(){
+  const driver = document.getElementById('driver');
+  const col    = document.getElementById('hero-col');
+  const title  = document.getElementById('hero-title');
+  const links  = document.getElementById('hero-links');
+  if(!driver || !col || !title || !links) return;
+
+  const root  = document.documentElement;
+  const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
+
+  let startShift = 0;  // shift so TITLE bottom aligns to viewport bottom
+  let endShift   = 0;  // shift so LAST LINK bottom aligns to viewport bottom
+
+  function measureShifts(){
+    // Neutralize transform to get true positions
+    const prev = col.style.transform;
+    col.style.transform = 'translateY(0px)';
+
+    const vh    = window.innerHeight || document.documentElement.clientHeight;
+    const tRect = title.getBoundingClientRect();
+    const lRect = links.getBoundingClientRect();
+
+    const titleBaseline = tRect.bottom;
+    const linksBaseline = lRect.bottom;
+
+    startShift = vh - titleBaseline; // usually positive (push down)
+    endShift   = vh - linksBaseline; // can be negative (pull up) or smaller
+
+    // Restore and prime CSS var for initial frame
+    col.style.transform = prev || '';
+    root.style.setProperty('--shift', startShift.toFixed(1)+'px');
+  }
+
+  function progress(){
+    const r  = driver.getBoundingClientRect();
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+    const total = r.height - vh;
+    return clamp((vh - r.bottom) / total, 0, 1);   // 0→1 across driver
+  }
+
+  function update(){
+    const p = progress();
+
+    // Phase split:
+    // 0.00–0.40: title fades in (slow), column fixed at startShift (pause)
+    // 0.40–1.00: column slides startShift → endShift
+    const fade = clamp(p / 0.40, 0, 1);
+    root.style.setProperty('--titleOpacity', fade.toFixed(3));
+
+    const slideP = clamp((p - 0.40) / 0.60, 0, 1);
+    const shift  = startShift + (endShift - startShift) * slideP;
+    root.style.setProperty('--shift', shift.toFixed(1)+'px');
+  }
+
+  function init(){
+    measureShifts();
+    update();
+    // Remeasure after fonts swap & on resize (affects text metrics)
+    window.addEventListener('load',   ()=>{ measureShifts(); update(); });
+    window.addEventListener('resize', ()=>{ measureShifts(); update(); });
+    window.addEventListener('scroll', update, { passive:true });
+  }
+
+  init();
+})();
+</script>
 
 </body>
 </html>
-
