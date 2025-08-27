@@ -37,7 +37,7 @@ html, body {
   position: relative;
   min-height: 100vh;                 /* desktop: fills viewport */
   width: 100%;
-  background-image: url("assets/hero.jpg"); /* <-- upload hero.jpg to assets/ */
+  background-image: url("assets/hero1gc.jpg"); /* <-- upload hero.jpg to assets/ */
   background-size: cover;            /* edge-to-edge */
   background-position: center center;
   background-repeat: no-repeat;
