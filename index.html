@@ -4,14 +4,17 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Gardenicity — Scrollytelling</title>
-  <!-- cache-bust the stylesheet -->
-  <link rel="stylesheet" href="styles.css?v=4" />
+  <!-- cache-busted stylesheet -->
+  <link rel="stylesheet" href="styles.css?v=5" />
 </head>
 <body>
 
-  <!-- =================== HERO (Section 1) =================== -->
+  <!-- ============== HERO (Section 1) ============== -->
   <header class="hero" id="hero" role="banner" aria-label="Hero">
-    <!-- Full-bleed image is set via CSS .hero background-image -->
+    <!-- Background image as a layer we can animate -->
+    <div class="hero-bg" aria-hidden="true"></div>
+
+    <!-- Inset media box -->
     <div class="hero-media" role="group" aria-label="Hero media overlay">
       <div class="hero-bottom-left">
         <h1 class="hero-title">
@@ -30,7 +33,7 @@
     </div>
   </header>
 
-  <!-- =================== SCROLLY CORE =================== -->
+  <!-- ============== SCROLLY CORE ============== -->
   <main class="scrolly" id="scrolly-root">
     <div class="graphic" id="graphic">
       <img id="hero-image" src="assets/placeholder.jpg" alt="Sticky illustrative panel" />
