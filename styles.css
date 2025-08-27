@@ -97,7 +97,7 @@ html, body {
 /* =================== HERO =================== */
 .hero {
   position: relative;
-  min-height: 100vh;                 /* desktop: fills viewport */
+  min-height: 100vh;
   width: 100%;
   background-image: url("assets/hero1gc.jpg");
   background-size: cover;
@@ -105,44 +105,43 @@ html, body {
   background-repeat: no-repeat;
 }
 
-/* Inset “media box” with exact margins */
 .hero-media {
   position: absolute;
   inset: var(--hero-margin-y) var(--hero-margin-x);
   display: grid;
 }
 
-/* Title + links anchored bottom-left inside media box */
 .hero-bottom-left {
   align-self: end;
   justify-self: start;
+  max-width: 700px; /* fixes width of text box */
 }
 
-/* Title (desktop spec: 120px size, 60px line-height) */
+/* Title */
 .hero-title {
-  margin: 0 0 16px 0;
+  margin: 0 0 24px 0;
   font-family: "Acumin Pro", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font-weight: 400; /* Regular */
   font-size: 120px;
-  line-height: 60px;
-  font-weight: 700;  /* Bold by default */
-  color: #111;
+  line-height: 140px;
+  color: #fff; /* white text */
   text-wrap: balance;
 }
 
-/* Links block under title (24px size, 30px line-height) */
+/* Links stacked vertically */
 .hero-links {
   display: flex;
-  flex-wrap: wrap;
-  gap: 18px 24px;
+  flex-direction: column; /* vertical layout */
+  gap: 10px; /* space between links */
 }
 
 .hero-links a {
   font-family: "Acumin Pro", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   font-size: 24px;
   line-height: 30px;
-  font-weight: 500; /* Medium weight */
+  font-weight: 400; /* Regular */
   text-decoration: none;
-  color: #111;
+  color: #fff; /* white text */
   border-bottom: 1px solid transparent;
   transition: border-color .15s ease;
 }
