@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Test inset box</title>
+  <style>
+    html,body{margin:0;height:100%}
+    .hero{
+      position:relative; height:100vh;
+      background:#ddd url("assets/hero1gc.jpg") center/cover no-repeat;
+    }
+    /* explicit offsets, no shorthand */
+    .media{
+      position:absolute;
+      top:96px; right:82px; bottom:96px; left:82px;
+      outline:3px dashed red;            /* should be a red frame inset */
+      display:flex; align-items:flex-end; justify-content:flex-start;
+    }
+    .text{
+      max-width:700px;
+      outline:3px solid cyan; padding:8px; color:#fff;
+      font: 400 100px/110px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    }
+    .links a{display:block; font: 24px/30px system-ui; color:#fff; text-decoration:none}
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="media">
+      <div class="text">
+        Gardenicity<br/>What did Geddes see?
+        <div class="links" style="margin-top:16px">
+          <a href="#">Civic Green</a>
+          <a href="#">Growth</a>
+          <a href="#">Sustenance</a>
+          <a href="#">Leafy SDGs</a>
+          <a href="#">EN/ער</a>
+        </div>
+      </div>
+    </div>
+  </header>
+</body>
+</html>
