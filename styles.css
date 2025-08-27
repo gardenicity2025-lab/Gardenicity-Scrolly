@@ -7,66 +7,77 @@ html, body {
   font-family: "Acumin Pro", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* Scroll progress variables (set by JS) */
-:root {
-  --p: 0;   /* overall hero progress 0→1 */
-  --tp: 0;  /* title progress (fade+rise) 0→1 */
-  --lp: 0;  /* links progress (fade in) 0→1 */
+/* Scroll vars driven by JS */
+:root{
+  --tFade: 0;        /* title fade 0→1 */
+  --tLift: 0;        /* title lift 0→1 */
+  --linksMask: 170px;/* bottom clip for links; JS animates towards 0 */
+  --linksFade: 0;    /* links opacity 0→1 (polish) */
 }
 
-/* Full-bleed hero image with gentle load fade */
-.hero {
+/* Hero with subtle load fade (900ms) */
+.hero{
   position: relative;
   min-height: 100vh;
   width: 100%;
   background: #000 url("assets/hero1gc.jpg") center/cover no-repeat;
-  opacity: 0;                          /* load fade */
-  animation: heroIn 700ms ease-out forwards;
+  opacity: 0;
+  animation: heroIn 900ms ease-out forwards;
 }
-@keyframes heroIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes heroIn{from{opacity:0}to{opacity:1}}
 
 /* Inset media area — EXACT margins */
-.hero-media {
-  position: absolute;
-  top: 96px; bottom: 96px;
-  left: 82px; right: 82px;
-  display: flex;
-  align-items: flex-end;         /* bottom-left anchor */
-  justify-content: flex-start;
+.hero-media{
+  position:absolute;
+  top:96px; bottom:96px;
+  left:82px; right:82px;
+  display:flex;
+  align-items:flex-end;           /* bottom-left anchor */
+  justify-content:flex-start;
 }
 
-/* Text column width */
-.hero-bottom-left { max-width: 700px; }
+/* Text column container; we mask the bottom to hide links initially */
+.hero-bottom-left{
+  position: relative;
+  max-width: 700px;
 
-/* Title — 100/100, Regular, starts faded on baseline, then rises slightly */
-.hero-title {
+  /* Bottom reveal mask: starts at ~170px (5×30 + gaps),
+     animates to 0 so links appear without moving */
+  clip-path: inset(0 0 var(--linksMask) 0);
+}
+
+/* Title — 100/100, fade first, then rise slightly */
+.hero-title{
   margin: 0 0 24px 0;
   font-weight: 400;
   font-size: 100px;
   line-height: 100px;
   color: #fff;
-
-  /* fade in on scroll, then lift a bit */
-  opacity: var(--tp);                                 /* 0 → 1 */
-  transform: translateY(calc(-12px * var(--tp)));     /* 0px → -12px */
+  opacity: var(--tFade);                          /* 0→1 */
+  transform: translateY(calc(-24px * var(--tLift))); /* 0→-24px */
   will-change: transform, opacity;
 }
 
-/* Links stacked, 24/30.
-   They are already in final position; we only fade them in later. */
-.hero-links {
+/* Links pinned at the bottom-left (don’t move), just fade as they are revealed */
+.hero-links{
+  position: absolute;
+  left: 0;
+  bottom: 0;
   display: flex;
   flex-direction: column;
   gap: 10px;
-
-  opacity: var(--lp);          /* 0 → 1 later in the scroll */
+  opacity: var(--linksFade);     /* polish fade (mask does the reveal) */
   will-change: opacity;
 }
-.hero-links a {
-  color: #fff;
-  text-decoration: none;
-  font-size: 24px;
-  line-height: 30px;
-  border-bottom: 1px solid transparent;
+.hero-links a{
+  color:#fff;
+  text-decoration:none;
+  font-size:24px;
+  line-height:30px;
+  border-bottom:1px solid transparent;
 }
-.hero-links a:hover { border-color: currentColor; }
+.hero-links a:hover{ border-color: currentColor; }
+
+/* Temporary spacers so there’s room to scroll */
+.spacer{ min-height:120vh; padding:48px 82px; background:#0a0a0a; border-top:1px solid #151515 }
+.spacer h2{ margin:0; color:#bbb; font-weight:600 }
