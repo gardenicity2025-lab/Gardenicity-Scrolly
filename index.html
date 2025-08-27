@@ -1,1 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Gardenicity — Sticky Overlay</title>
+  <link rel="stylesheet" href="styles.css?v=16">
+</head>
+<body>
 
+  <!-- STICKY OVERLAY SCROLLY -->
+  <section class="scrolly" id="scrolly">
+    <!-- Sticky panel that stays put; background image lives here -->
+    <div class="sticky">
+      <div class="bg"></div>
+
+      <!-- The overlay column (title + links) that animates with scroll -->
+      <div class="overlay">
+        <div class="overlay-inner">
+          <h1 class="hero-title">
+            <span>Gardenicity</span><br/>
+            <span>What did Geddes see?</span>
+          </h1>
+
+          <nav class="hero-links" aria-label="Primary">
+            <a href="#civic-green">Civic Green</a>
+            <a href="#growth">Growth</a>
+            <a href="#sustenance">Sustenance</a>
+            <a href="#leafy-sdgs">Leafy SDGs</a>
+            <a href="#lang">EN/ער</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <!-- Driving steps (plain, invisible “beats” that control the overlay) -->
+    <div class="steps">
+      <section class="step" data-step="0">
+        <!-- first beat: nothing visible; just positions us -->
+      </section>
+
+      <section class="step" data-step="1">
+        <!-- title fades in on baseline -->
+      </section>
+
+      <section class="step" data-step="2">
+        <!-- title lifts to reveal links -->
+      </section>
+
+      <section class="step" data-step="3">
+        <!-- settle in final composition (like your current static) -->
+      </section>
+    </div>
+  </section>
+
+  <!-- Spacer content just to allow scroll past the hero -->
+  <main>
+    <section class="spacer"><h2 id="civic-green">Section 1</h2><p>…</p></section>
+    <section class="spacer"><h2 id="growth">Section 2</h2><p>…</p></section>
+    <section class="spacer"><h2 id="sustenance">Section 3</h2><p>…</p></section>
+    <section class="spacer"><h2 id="leafy-sdgs">Section 4</h2><p>…</p></section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
