@@ -10,11 +10,10 @@
 @font-face { font-family: "Acumin Pro"; src: url("assets/fonts/fonnts.com-AcuminPro-UltraBlack.woff2") format("woff2"); font-weight: 950; font-style: normal; font-display: swap; }
 
 /* =================== Root / Base =================== */
-/* Reference canvas: 1920 × 1440 → proportional scale --s */
+/* Reference canvas: 1920 × 1440. For baseline, scale by WIDTH so it “matches design” on your iMac */
 :root {
   --scale-w: calc(100vw / 1920);
-  --scale-h: calc(100svh / 1440);
-  --s: min(var(--scale-w), var(--scale-h));
+  --s: var(--scale-w);
 
   --bg: #ffffff;
   --text: #111111;
@@ -25,11 +24,6 @@
   /* Hero measurements (design px × scale) */
   --hero-margin-x: calc(var(--s) * 82px);
   --hero-margin-y: calc(var(--s) * 96px);
-
-  /* Scroll progress variables (set by JS) */
-  --p: 0;   /* overall hero progress 0→1 */
-  --tp: 0;  /* title progress (fade+move) 0→1 */
-  --lp: 0;  /* links progress (reveal) 0→1 */
 }
 
 * { box-sizing: border-box; }
@@ -40,7 +34,7 @@ html, body {
   background: var(--bg);
   color: var(--text);
   font-family: "Acumin Pro", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-  font-size: clamp(14px, calc(16px * var(--s)), 18px);
+  font-size: 16px;
   line-height: 1.6;
 }
 
@@ -52,7 +46,7 @@ html, body {
   overflow: clip;
 }
 
-/* Background image layer — now fades in on load, then gently scales on scroll */
+/* Background image layer — small fade on load */
 .hero-bg {
   position: absolute;
   inset: 0;
@@ -61,32 +55,34 @@ html, body {
   background-position: center center;
   background-repeat: no-repeat;
 
-  opacity: 0;                     /* start hidden */
-  animation: heroIn 800ms ease-out forwards; /* fade to 1 on load */
-  transform: scale(calc(1.04 - 0.04 * var(--p))); /* 1.04 → 1.00 as you scroll */
-  will-change: transform, opacity;
+  opacity: 0;
+  animation: heroIn 700ms ease-out forwards;
 }
-
 @keyframes heroIn {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
 
-/* Inset media box uses scaled margins */
+/* Inset media box with exact margins (using FLEX for reliable bottom anchor) */
 .hero-media {
   position: absolute;
   inset: var(--hero-margin-y) var(--hero-margin-x);
-  display: grid;
+  display: flex;
+  align-items: flex-end;  /* bottom align the content block */
+  justify-content: flex-start; /* left */
+  z-index: 1;
+  /* DEBUG outline — remove when happy */
+  outline: 2px dashed rgba(255,255,255,.35);
 }
 
-/* Bottom-left block: 700px design width (scaled) */
+/* Constrain text block to 700px (scaled) */
 .hero-bottom-left {
-  align-self: end;
-  justify-self: start;
   max-width: clamp(420px, calc(var(--s) * 700px), 700px);
+  /* DEBUG outline — remove when happy */
+  outline: 2px solid rgba(255,255,255,.6);
 }
 
-/* Title — 100/110 Regular, white; fade in THEN move up */
+/* Title — static baseline: 100/110 Regular, white */
 .hero-title {
   margin: 0 0 calc(var(--s) * 24px) 0;
   font-weight: 400;
@@ -94,21 +90,15 @@ html, body {
   line-height: clamp(62px, calc(var(--s) * 110px), 110px);
   color: #fff;
   text-wrap: balance;
-
-  opacity: var(--tp); /* 0→1 with scroll */
-  transform: translateY(calc((1 - var(--tp)) * 20px * var(--s)));
-  will-change: transform, opacity;
+  /* optional helper for bright images:
+  text-shadow: 0 2px 8px rgba(0,0,0,0.35); */
 }
 
-/* Links stacked vertically — appear later with scroll */
+/* Links stacked vertically — 24/30, white */
 .hero-links {
   display: flex;
   flex-direction: column;
   gap: clamp(6px, calc(var(--s) * 10px), 12px);
-
-  opacity: var(--lp);
-  transform: translateY(calc((1 - var(--lp)) * 20px * var(--s)));
-  will-change: transform, opacity;
 }
 .hero-links a {
   font-weight: 400;
@@ -157,7 +147,7 @@ html, body {
   background: #fafafa;
   border: 1px solid #eee;
   border-radius: 10px;
-  padding: clamp(160px, calc(var(--s) * 35vh), 35vh) 24px;
+  padding: 35vh 24px;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 .step.is-active { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(15, 98, 254, 0.15); }
