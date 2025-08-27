@@ -1,88 +1,79 @@
-/* ============ Base ============ */
+/* Base */
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #000;
+  color: #fff;
+  font-family: "Acumin Pro", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Progress vars (driven by JS) */
 :root{
-  /* progress vars set by JS (0→1 across the sticky sequence) */
-  --p: 0;
-  --fade: 0;          /* title opacity 0→1 early */
-  --lift: 0;          /* title translateY 0→-24px later */
-  --linksFade: 0;     /* links opacity 0→1 after lift begins */
+  --titleFade: 0;   /* 0→1: title fades in on baseline */
+  --titleLift: 0;   /* 0→1: title rises slightly */
+  --reveal: 0;      /* 0→1: bottom mask opens to expose links */
 }
 
-html,body{
-  margin:0; padding:0; background:#000; color:#fff;
-  font-family:"Acumin Pro", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-}
-
-/* ============ Scrolly layout (sticky overlay + steps) ============ */
-.scrolly{
+/* Full-bleed hero, subtle image fade on load */
+.hero {
   position: relative;
-  min-height: 400vh; /* room for steps + sticky play */
-}
-
-/* Sticky viewport area (fills screen) */
-.sticky{
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  overflow: clip;
-}
-
-/* Background image layer with subtle load fade */
-.bg{
-  position: absolute; inset: 0;
+  min-height: 100vh;
+  width: 100%;
   background: #000 url("assets/hero1gc.jpg") center/cover no-repeat;
-  opacity: 0; animation: heroIn 900ms ease-out forwards;
+  opacity: 0;
+  animation: heroIn 900ms ease-out forwards;
 }
-@keyframes heroIn{from{opacity:0}to{opacity:1}}
+@keyframes heroIn { from { opacity: 0; } to { opacity: 1; } }
 
-/* Overlay column with exact margins (like your design 82/96) */
-.overlay{
+/* Final placement: exact margins */
+.hero-media {
   position: absolute;
-  inset: 96px 82px; /* top/right/bottom/left */
-  display: flex; align-items: end; justify-content: flex-start;
+  top: 96px; bottom: 96px;
+  left: 82px; right: 82px;
+  display: flex;
+  align-items: flex-end;       /* bottom-left anchor */
+  justify-content: flex-start;
 }
 
-/* One-column text block pinned bottom-left */
-.overlay-inner{
+/* One-column stack in final position */
+.hero-bottom-left {
   position: relative;
   max-width: 700px;
+
+  /* Bottom reveal mask:
+     When --reveal = 0  → mask ~170px (hides links)
+     When --reveal = 1  → mask 0 (links fully visible) */
+  --maskStart: 170px; /* approx: 5 lines × 30px + gaps */
+  clip-path: inset(0 0 calc(var(--maskStart) * (1 - var(--reveal))) 0);
 }
 
-/* Title — 100/100; fades first on baseline, then rises ~24px */
-.hero-title{
+/* Title: 100/100, regular. Fades first, then rises slightly. */
+.hero-title {
   margin: 0 0 24px 0;
   font-weight: 400;
   font-size: 100px;
   line-height: 100px;
   color: #fff;
 
-  opacity: var(--fade);
-  transform: translateY(calc(-24px * var(--lift)));
+  opacity: var(--titleFade);
+  transform: translateY(calc(-20px * var(--titleLift)));
   will-change: transform, opacity;
 }
 
-/* Links — fixed under title; DO NOT move, only fade after lift begins */
-.hero-links{
-  display: flex; flex-direction: column; gap:10px;
-  opacity: var(--linksFade);
+/* Links: already in final place; they do NOT move. */
+.hero-links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  /* optional polish: cross-fade links in parallel to the mask */
+  opacity: calc(0.2 + 0.8 * var(--reveal));
   will-change: opacity;
 }
-.hero-links a{
-  color:#fff; text-decoration:none;
-  font-size:24px; line-height:30px;
-  border-bottom:1px solid transparent;
+.hero-links a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 24px;
+  line-height: 30px;
+  border-bottom: 1px solid transparent;
 }
-.hero-links a:hover{ border-color: currentColor; }
-
-/* ============ Steps that drive the animation ============ */
-.steps{
-  position: relative;
-}
-.step{
-  height: 120vh;       /* tall beats to give smooth control */
-}
-
-/* ============ Spacer content below ============ */
-.spacer{ min-height:120vh; padding:48px 82px; background:#0a0a0a; border-top:1px solid #151515 }
-.spacer h2{ margin:0 0 12px 0; color:#bbb; font-weight:600 }
-.spacer p{ margin:0; color:#9a9a9a }
-
+.hero-links a:hover { border-color: currentColor; }
