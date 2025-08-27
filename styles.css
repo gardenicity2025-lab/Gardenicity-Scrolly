@@ -1,83 +1,88 @@
-/* Base */
-html, body {
-  margin: 0;
-  padding: 0;
-  background: #000;
-  color: #fff;
-  font-family: "Acumin Pro", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-}
-
-/* Scroll vars driven by JS */
+/* ============ Base ============ */
 :root{
-  --tFade: 0;        /* title fade 0→1 */
-  --tLift: 0;        /* title lift 0→1 */
-  --linksMask: 170px;/* bottom clip for links; JS animates towards 0 */
-  --linksFade: 0;    /* links opacity 0→1 (polish) */
+  /* progress vars set by JS (0→1 across the sticky sequence) */
+  --p: 0;
+  --fade: 0;          /* title opacity 0→1 early */
+  --lift: 0;          /* title translateY 0→-24px later */
+  --linksFade: 0;     /* links opacity 0→1 after lift begins */
 }
 
-/* Hero with subtle load fade (900ms) */
-.hero{
+html,body{
+  margin:0; padding:0; background:#000; color:#fff;
+  font-family:"Acumin Pro", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* ============ Scrolly layout (sticky overlay + steps) ============ */
+.scrolly{
   position: relative;
-  min-height: 100vh;
-  width: 100%;
+  min-height: 400vh; /* room for steps + sticky play */
+}
+
+/* Sticky viewport area (fills screen) */
+.sticky{
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: clip;
+}
+
+/* Background image layer with subtle load fade */
+.bg{
+  position: absolute; inset: 0;
   background: #000 url("assets/hero1gc.jpg") center/cover no-repeat;
-  opacity: 0;
-  animation: heroIn 900ms ease-out forwards;
+  opacity: 0; animation: heroIn 900ms ease-out forwards;
 }
 @keyframes heroIn{from{opacity:0}to{opacity:1}}
 
-/* Inset media area — EXACT margins */
-.hero-media{
-  position:absolute;
-  top:96px; bottom:96px;
-  left:82px; right:82px;
-  display:flex;
-  align-items:flex-end;           /* bottom-left anchor */
-  justify-content:flex-start;
+/* Overlay column with exact margins (like your design 82/96) */
+.overlay{
+  position: absolute;
+  inset: 96px 82px; /* top/right/bottom/left */
+  display: flex; align-items: end; justify-content: flex-start;
 }
 
-/* Text column container; we mask the bottom to hide links initially */
-.hero-bottom-left{
+/* One-column text block pinned bottom-left */
+.overlay-inner{
   position: relative;
   max-width: 700px;
-
-  /* Bottom reveal mask: starts at ~170px (5×30 + gaps),
-     animates to 0 so links appear without moving */
-  clip-path: inset(0 0 var(--linksMask) 0);
 }
 
-/* Title — 100/100, fade first, then rise slightly */
+/* Title — 100/100; fades first on baseline, then rises ~24px */
 .hero-title{
   margin: 0 0 24px 0;
   font-weight: 400;
   font-size: 100px;
   line-height: 100px;
   color: #fff;
-  opacity: var(--tFade);                          /* 0→1 */
-  transform: translateY(calc(-24px * var(--tLift))); /* 0→-24px */
+
+  opacity: var(--fade);
+  transform: translateY(calc(-24px * var(--lift)));
   will-change: transform, opacity;
 }
 
-/* Links pinned at the bottom-left (don’t move), just fade as they are revealed */
+/* Links — fixed under title; DO NOT move, only fade after lift begins */
 .hero-links{
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  opacity: var(--linksFade);     /* polish fade (mask does the reveal) */
+  display: flex; flex-direction: column; gap:10px;
+  opacity: var(--linksFade);
   will-change: opacity;
 }
 .hero-links a{
-  color:#fff;
-  text-decoration:none;
-  font-size:24px;
-  line-height:30px;
+  color:#fff; text-decoration:none;
+  font-size:24px; line-height:30px;
   border-bottom:1px solid transparent;
 }
 .hero-links a:hover{ border-color: currentColor; }
 
-/* Temporary spacers so there’s room to scroll */
+/* ============ Steps that drive the animation ============ */
+.steps{
+  position: relative;
+}
+.step{
+  height: 120vh;       /* tall beats to give smooth control */
+}
+
+/* ============ Spacer content below ============ */
 .spacer{ min-height:120vh; padding:48px 82px; background:#0a0a0a; border-top:1px solid #151515 }
-.spacer h2{ margin:0; color:#bbb; font-weight:600 }
+.spacer h2{ margin:0 0 12px 0; color:#bbb; font-weight:600 }
+.spacer p{ margin:0; color:#9a9a9a }
+
