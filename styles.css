@@ -1,69 +1,91 @@
-/* Base */
+/* ================== Base ================== */
 html,body{
   margin:0; padding:0; background:#000; color:#fff;
   font-family:"Acumin Pro", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* Progress var from JS: 0→1 across hero */
-:root{ --p: 0; }
+/* Vars controlled by JS */
+:root{
+  --p: 0;               /* generic scroll progress */
+  --shift: 0px;         /* vertical translation for column */
+  --titleOpacity: 0;    /* title fade */
+  --linksOpacity: 0;    /* links fade */
+}
 
-/* How long the slide lasts (bigger = slower) */
-.hero-wrap{ position:relative; height: 160vh; }
+/* ================== Hero ================== */
 
-/* Sticky viewport */
-.hero-sticky{ position:sticky; top:0; height:100vh; overflow:clip; }
+/* Wrapper defines scroll span (taller = slower scroll animation) */
+.hero-wrap{ 
+  position:relative; 
+  height:160vh; 
+}
 
-/* Background image with subtle load fade (keep or remove) */
+/* Sticky viewport: holds hero in place */
+.hero-sticky{ 
+  position:sticky; 
+  top:0; 
+  height:100vh; 
+  overflow:hidden; 
+}
+
+/* Background image — fades in on load */
 .hero-bg{
   position:absolute; inset:0;
   background:#000 url("assets/hero1gc.jpg") center/cover no-repeat;
-  opacity:0; animation:heroIn 900ms ease-out forwards;
+  opacity:0;
+  animation:heroIn 900ms ease-out forwards;
 }
 @keyframes heroIn{ from{opacity:0} to{opacity:1} }
 
-/* Final composition margins: top/bottom 96, left/right 82 */
+/* Media box with margins */
 .hero-media{
   position:absolute;
   inset:96px 82px;
   display:flex;
   align-items:flex-end;
   justify-content:flex-start;
-  overflow:hidden;              /* clip anything below the media baseline */
+  overflow:hidden;  /* clip below the baseline */
 }
 
-/* add opacity control for links */
-:root{ --shift:0px; --titleOpacity:0; --linksOpacity:0; }  /* ← add --linksOpacity */
-
-.hero-links{
-  display:flex; flex-direction:column; gap:10px;
-  font-size:24px; line-height:30px;
-  opacity: var(--linksOpacity);           /* ← hide until slide starts */
-  transition: opacity .25s linear;        /* tiny polish */
-}
-
-/* Column starts at the viewport baseline ( +96px down ), then slides up to 0 */
+/* Column: slides as a unit */
 .col{
   position:relative;
   max-width:700px;
-  transform: translateY(calc(96px * (1 - var(--p))));
+  transform: translateY(var(--shift));
   will-change: transform;
 }
 
-/* Title — 100/100; no fade (strictly per your frames). To add a soft fade,
-   uncomment the opacity line below and JS fade lines. */
+/* Title text */
 .hero-title{
   margin:0 0 24px 0;
   font-weight:400;
   font-size:100px;
   line-height:100px;
   color:#fff;
-  /* opacity: calc(0.2 + 0.8 * clamp(var(--p) / 0.2, 0, 1)); */
+  opacity: var(--titleOpacity);
+  will-change: opacity;
 }
+.hero-title .line{ display:block; }
 
-/* Links flow under the title (same column), so they enter as the column slides */
+/* Links below title, hidden until slide starts */
 .hero-links{
-  display:flex; flex-direction:column; gap:10px;
-  font-size:24px; line-height:30px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  font-size:24px;
+  line-height:30px;
+  opacity: var(--linksOpacity);
+  transition: opacity .25s linear;
 }
 .hero-links a{ color:#fff; text-decoration:none; border-bottom:1px solid transparent }
 .hero-links a:hover{ border-color: currentColor }
+
+/* ================== Content after ================== */
+.spacer{ 
+  min-height:120vh; 
+  padding:48px 82px; 
+  background:#f5f5f5; 
+  color:#000; 
+  border-top:1px solid #e5e5e5 
+}
+.spacer h2{ margin:0 0 12px 0 }
