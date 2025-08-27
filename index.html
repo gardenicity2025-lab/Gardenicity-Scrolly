@@ -3,135 +3,114 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero (fade → pause → reveal)</title>
+<title>Gardenicity — Fixed Hero (baseline aligned)</title>
 <style>
-  html,body{
-    margin:0; padding:0; background:#000; color:#fff;
-    font-family:"Acumin Pro",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-  }
+  html,body{margin:0;padding:0;background:#000;color:#fff;
+    font-family:"Acumin Pro",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
 
-  /* Scroll progress set by JS (0→1 across the hero block) */
-  :root{ --p: 0; --shift: 0px; --titleOpacity: 0; }
+  /* Scroll progress + animated values (set by JS) */
+  :root{ --p:0; --shift:0px; --titleOpacity:0 }
 
-  /* The hero sequence plays while this wrapper scrolls (taller = slower) */
-  .hero-wrap{ position:relative; height: 200vh; } /* tune speed here */
+  /* Fixed hero layer so it NEVER scrolls */
+  .hero-fixed{ position:fixed; inset:0; pointer-events:none }
 
-  /* Sticky viewport: keeps the hero fixed while wrapper scrolls */
-  .hero-sticky{
-    position: -webkit-sticky; /* Safari */
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    overflow: hidden; /* safest for sticky */
-  }
-
-  /* Full-bleed hero image (fades first) */
-  .hero-bg{
-    position:absolute; inset:0;
+  /* 800ms image fade */
+  .hero-bg{ position:absolute; inset:0;
     background:#000 url("assets/hero1gc.jpg") center/cover no-repeat;
-    opacity: 0;                 /* JS will ramp this 0→1 first */
-  }
+    opacity:0; animation:heroIn 800ms ease-out forwards }
+  @keyframes heroIn{from{opacity:0}to{opacity:1}}
 
-  /* Text overlay box with your margins (82 L/R, 96 T/B) */
-  .hero-media{
-    position:absolute; inset:96px 82px;
-    display:flex; align-items:flex-end; justify-content:flex-start;
-  }
+  /* Overlay box: we keep left/right margins (82px), but let it touch
+     the viewport bottom/top so we can align baselines to the *viewport*. */
+  .hero-media{ position:absolute; top:0; bottom:0; left:82px; right:82px;
+    display:flex; align-items:flex-end; justify-content:flex-start }
 
-  /* One column that moves as a unit; JS writes --shift in px */
-  .col{
-    position:relative;
-    max-width:700px;
-    transform: translateY(var(--shift));
-    will-change: transform;
-  }
+  /* Whole column moves by --shift (computed in JS from the DOM) */
+  .col{ position:relative; max-width:700px;
+    transform:translateY(var(--shift)); will-change:transform }
 
-  /* Title sits on baseline for the fade/PAUSE phase (no movement here) */
-  .hero-title{
-    margin:0 0 24px 0;
-    font-weight:400;
-    font-size:100px;
-    line-height:100px;
-    color:#fff;
-    opacity: var(--titleOpacity);    /* 0→1 slowly during the fade phase */
-    will-change: opacity;
-  }
+  /* EXACTLY three lines: force with block spans */
+  .hero-title{ margin:0 0 24px 0; font-weight:400; font-size:100px; line-height:100px; color:#fff;
+    opacity:var(--titleOpacity); will-change:opacity }
+  .hero-title .line{ display:block }
 
-  .hero-links{
-    display:flex; flex-direction:column; gap:10px;
-    font-size:24px; line-height:30px;
-  }
+  .hero-links{ display:flex; flex-direction:column; gap:10px; font-size:24px; line-height:30px }
   .hero-links a{ color:#fff; text-decoration:none; border-bottom:1px solid transparent }
   .hero-links a:hover{ border-color: currentColor }
 
-  /* Spacer content after hero */
+  /* Scroll driver section (controls phases B→C). Bigger = slower. */
+  .driver{ height:200vh }
+
+  /* Page content */
   .spacer{ min-height:120vh; padding:48px 82px; background:#0a0a0a; border-top:1px solid #151515 }
   .spacer h2{ margin:0 0 12px 0; color:#bbb; font-weight:600 }
   .spacer p{ margin:0; color:#9a9a9a }
 
-  /* DEBUG baseline — remove when confirmed */
-  .debug-line{
-    position:fixed; left:0; right:0; bottom:0;
-    height:0; border-top:2px dashed rgba(0,255,128,.85);
-    pointer-events:none; z-index:9999;
-  }
+  /* DEBUG: viewport baseline */
+  .debug-line{ position:fixed; left:0; right:0; bottom:0; height:0;
+    border-top:2px dashed rgba(0,255,128,.85); pointer-events:none; z-index:9999 }
 </style>
 </head>
 <body>
 
-<section class="hero-wrap" id="hero-wrap">
-  <div class="hero-sticky" id="hero-sticky">
-    <div class="hero-bg" id="hero-bg" aria-hidden="true"></div>
+<!-- Fixed hero (image + overlay) -->
+<div class="hero-fixed" id="hero-fixed">
+  <div class="hero-bg" id="hero-bg" aria-hidden="true"></div>
 
-    <div class="hero-media" id="hero-media">
-      <div class="col" id="hero-col">
-        <h1 class="hero-title" id="hero-title">
-          <span>Gardenicity</span><br/>
-          <span>What did Geddes see?</span>
-        </h1>
+  <div class="hero-media" id="hero-media">
+    <div class="col" id="hero-col">
+      <h1 class="hero-title" id="hero-title">
+        <span class="line">Gardenicity</span>
+        <span class="line">What did</span>
+        <span class="line">Geddes see?</span>
+      </h1>
 
-        <nav class="hero-links" id="hero-links" aria-label="Primary">
-          <a href="#civic-green">Civic Green</a>
-          <a href="#growth">Growth</a>
-          <a href="#sustenance">Sustenance</a>
-          <a href="#leafy-sdgs">Leafy SDGs</a>
-          <a href="#lang">EN/ער</a>
-        </nav>
-      </div>
+      <nav class="hero-links" id="hero-links" aria-label="Primary">
+        <a href="#civic-green">Civic Green</a>
+        <a href="#growth">Growth</a>
+        <a href="#sustenance">Sustenance</a>
+        <a href="#leafy-sdgs">Leafy SDGs</a>
+        <a href="#lang">EN/ער</a>
+      </nav>
     </div>
   </div>
-</section>
+</div>
+
+<!-- Scroll driver for B (fade) → C (slide) -->
+<section class="driver" id="driver"></section>
 
 <main>
   <section class="spacer">
     <h2 id="civic-green">Section 1</h2>
-    <p>We’ll replace this with the next scrolly section.</p>
+    <p>Next content…</p>
   </section>
 </main>
 
-<!-- Remove after verifying alignment -->
 <div class="debug-line" aria-hidden="true"></div>
 
 <script>
+/*
+Phases with fixed hero:
+  A) time 0–800ms: image fades in (CSS keyframes)
+  B) driver 0.00–0.45: title fades in on baseline (column fixed)
+  C) driver 0.45–1.00: entire column slides until LAST LINK baseline = viewport bottom
+*/
 (function(){
-  const wrap  = document.getElementById('hero-wrap');
-  const bg    = document.getElementById('hero-bg');
-  const media = document.getElementById('hero-media');
-  const col   = document.getElementById('hero-col');
-  const title = document.getElementById('hero-title');
-  const links = document.getElementById('hero-links');
-  if(!wrap || !bg || !media || !col || !title || !links) return;
+  const driver = document.getElementById('driver');
+  const media  = document.getElementById('hero-media');
+  const col    = document.getElementById('hero-col');
+  const title  = document.getElementById('hero-title');
+  const links  = document.getElementById('hero-links');
+  if(!driver || !media || !col || !title || !links) return;
 
-  const root  = document.documentElement;
+  const root = document.documentElement;
   const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
 
-  // We need two exact shifts:
-  //  - startShift: push column so TITLE bottom sits on viewport bottom
-  //  - endShift:   push/pull column so LAST LINK bottom sits on viewport bottom
-  let startShift = 0, endShift = 0;
+  let startShift = 0; // move column so TITLE baseline sits on viewport bottom
+  let endShift   = 0; // move column so LAST LINK baseline sits on viewport bottom
 
   function measureShifts(){
-    // Neutralize transform to measure true layout
+    // Neutralize transform to measure true positions
     const prev = col.style.transform;
     col.style.transform = 'translateY(0px)';
 
@@ -139,52 +118,43 @@
     const tRect = title.getBoundingClientRect();
     const lRect = links.getBoundingClientRect();
 
+    // Baselines as element bottoms:
     const titleBaseline = tRect.bottom;
     const linksBaseline = lRect.bottom;
 
-    startShift = vh - titleBaseline; // typically positive (push down)
-    endShift   = vh - linksBaseline; // typically negative or smaller
+    startShift = vh - titleBaseline; // usually positive (push down)
+    endShift   = vh - linksBaseline; // often negative (pull up) or smaller
 
-    // Restore; JS will set --shift each frame
+    // Restore and prime CSS var
     col.style.transform = prev || '';
     root.style.setProperty('--shift', startShift.toFixed(1)+'px');
   }
 
-  // Phasing (0→1 across the hero wrapper):
-  //   A) 0.00–0.25  : IMAGE fade in only (bg opacity 0→1), title stays 0
-  //   B) 0.25–0.55  : TITLE fade in on baseline (slow), column fixed at startShift (PAUSE)
-  //   C) 0.55–1.00  : COLUMN slides from startShift → endShift (reveals links)
-  function update(){
-    const rect = wrap.getBoundingClientRect();
-    const vh   = window.innerHeight || document.documentElement.clientHeight;
+  function driverProgress(){
+    const r  = driver.getBoundingClientRect();
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+    const total = r.height - vh;
+    return clamp((vh - r.bottom) / total, 0, 1); // 0→1 across the driver
+  }
 
-    const total = rect.height - vh;                    // scrollable distance in wrapper
-    const p = clamp((vh - rect.bottom) / total, 0, 1); // 0→1 across hero
+  function update(){
+    const p = driverProgress();
     root.style.setProperty('--p', p.toFixed(3));
 
-    // Phase A: bg fade (0→0.25)
-    const pA = clamp(p / 0.25, 0, 1);
-    bg.style.opacity = pA.toFixed(3);
+    // B) Title fade (0.00→0.45)
+    const pTitle = clamp(p / 0.45, 0, 1);
+    root.style.setProperty('--titleOpacity', pTitle.toFixed(3));
 
-    // Phase B: title fade (0.25→0.55)
-    const pB = clamp((p - 0.25) / 0.30, 0, 1);
-    root.style.setProperty('--titleOpacity', pB.toFixed(3));
-
-    // Keep column pinned at startShift until C begins
-    let shift = startShift;
-
-    // Phase C: slide column (0.55→1)
-    const pC = clamp((p - 0.55) / 0.45, 0, 1);
-    if (pC > 0) {
-      shift = startShift + (endShift - startShift) * pC;
-    }
+    // C) Column slide (0.45→1.00)
+    const pSlide = clamp((p - 0.45) / 0.55, 0, 1);
+    const shift  = startShift + (endShift - startShift) * pSlide;
     root.style.setProperty('--shift', shift.toFixed(1)+'px');
   }
 
   function init(){
+    // Measure twice to account for first paint vs. font metrics
     measureShifts();
     update();
-    // re-measure after fonts load (metrics change)
     window.addEventListener('load',   ()=>{ measureShifts(); update(); });
     window.addEventListener('resize', ()=>{ measureShifts(); update(); });
     window.addEventListener('scroll', update, { passive:true });
