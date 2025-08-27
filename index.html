@@ -3,28 +3,27 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Gardenicity — Hero Scrolly (column slide)</title>
-  <link rel="stylesheet" href="styles.css?v=19">
+  <title>Gardenicity — Hero (baseline → final)</title>
+  <link rel="stylesheet" href="styles.css?v=21">
 </head>
 <body>
 
-  <!-- HERO WRAPPER: provides scroll distance -->
+  <!-- Wrapper supplies scroll distance -->
   <section class="hero-wrap" id="hero-wrap">
-    <!-- STICKY LAYER: stays fixed while we scroll the wrapper -->
+    <!-- Sticky viewport; image stays put -->
     <div class="hero-sticky">
-      <!-- Background image -->
       <div class="hero-bg" aria-hidden="true"></div>
 
-      <!-- Clipping viewport with your exact margins -->
-      <div class="hero-media" id="hero-media">
-        <!-- The WHOLE COLUMN will slide up as you scroll -->
+      <!-- Final composition box: 96/82 margins -->
+      <div class="hero-media">
+        <!-- Entire column slides from viewport baseline → final margin -->
         <div class="col" id="hero-col">
-          <h1 class="hero-title" id="hero-title">
+          <h1 class="hero-title">
             <span>Gardenicity</span><br/>
             <span>What did Geddes see?</span>
           </h1>
 
-          <nav class="hero-links" id="hero-links" aria-label="Primary">
+          <nav class="hero-links" aria-label="Primary">
             <a href="#civic-green">Civic Green</a>
             <a href="#growth">Growth</a>
             <a href="#sustenance">Sustenance</a>
@@ -36,14 +35,15 @@
     </div>
   </section>
 
-  <!-- Content below to continue the page -->
+  <!-- Spacer so you can keep scrolling after the hero -->
   <main>
-    <section class="spacer"><h2 id="civic-green">Section 1</h2><p>…</p></section>
-    <section class="spacer"><h2 id="growth">Section 2</h2><p>…</p></section>
-    <section class="spacer"><h2 id="sustenance">Section 3</h2><p>…</p></section>
-    <section class="spacer"><h2 id="leafy-sdgs">Section 4</h2><p>…</p></section>
+    <section style="min-height:120vh;padding:48px 82px;background:#0a0a0a;border-top:1px solid #151515">
+      <h2 id="civic-green" style="margin:0 0 12px 0;color:#bbb;font-weight:600">Section 1</h2>
+      <p style="margin:0;color:#9a9a9a">We’ll replace this with the next scrolly sections.</p>
+    </section>
   </main>
 
   <script src="script.js"></script>
 </body>
 </html>
+
