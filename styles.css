@@ -6,7 +6,6 @@
   font-style: normal;
   font-display: swap;
 }
-
 @font-face {
   font-family: "Acumin Pro";
   src: url("assets/fonts/fonnts.com-AcuminPro-ExtraLight.woff2") format("woff2");
@@ -14,7 +13,6 @@
   font-style: normal;
   font-display: swap;
 }
-
 @font-face {
   font-family: "Acumin Pro";
   src: url("assets/fonts/fonnts.com-AcuminPro-Medium.woff2") format("woff2");
@@ -22,7 +20,6 @@
   font-style: normal;
   font-display: swap;
 }
-
 @font-face {
   font-family: "Acumin Pro";
   src: url("assets/fonts/fonnts.com-AcuminPro-Semibold.woff2") format("woff2");
@@ -30,7 +27,6 @@
   font-style: normal;
   font-display: swap;
 }
-
 @font-face {
   font-family: "Acumin Pro";
   src: url("assets/fonts/fonnts.com-Acumin_Pro_Bold.woff2") format("woff2");
@@ -38,7 +34,6 @@
   font-style: normal;
   font-display: swap;
 }
-
 @font-face {
   font-family: "Acumin Pro";
   src: url("assets/fonts/fonnts.com-Acumin_Pro_Bold_Italic.woff2") format("woff2");
@@ -46,7 +41,6 @@
   font-style: italic;
   font-display: swap;
 }
-
 @font-face {
   font-family: "Acumin Pro";
   src: url("assets/fonts/fonnts.com-AcuminPro-Black.woff2") format("woff2");
@@ -54,7 +48,6 @@
   font-style: normal;
   font-display: swap;
 }
-
 @font-face {
   font-family: "Acumin Pro";
   src: url("assets/fonts/fonnts.com-AcuminPro-BlackItalic.woff2") format("woff2");
@@ -62,7 +55,6 @@
   font-style: italic;
   font-display: swap;
 }
-
 @font-face {
   font-family: "Acumin Pro";
   src: url("assets/fonts/fonnts.com-AcuminPro-UltraBlack.woff2") format("woff2");
@@ -105,19 +97,21 @@ html, body {
   background-repeat: no-repeat;
 }
 
+/* Inset “media box” with exact margins */
 .hero-media {
   position: absolute;
   inset: var(--hero-margin-y) var(--hero-margin-x);
   display: grid;
 }
 
+/* Title + links anchored bottom-left inside media box */
 .hero-bottom-left {
   align-self: end;
   justify-self: start;
   max-width: 700px; /* fixes width of text box */
 }
 
-/* Title */
+/* Title — white, Regular 120/140 */
 .hero-title {
   margin: 0 0 24px 0;
   font-family: "Acumin Pro", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
@@ -126,22 +120,23 @@ html, body {
   line-height: 140px;
   color: #fff; /* white text */
   text-wrap: balance;
+  /* optional readability: uncomment if hero is bright */
+  /* text-shadow: 0 2px 8px rgba(0,0,0,0.35); */
 }
 
-/* Links stacked vertically */
+/* Links stacked vertically — white 24/30 */
 .hero-links {
   display: flex;
-  flex-direction: column; /* vertical layout */
-  gap: 10px; /* space between links */
+  flex-direction: column;
+  gap: 10px;
 }
-
 .hero-links a {
   font-family: "Acumin Pro", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   font-size: 24px;
   line-height: 30px;
   font-weight: 400; /* Regular */
   text-decoration: none;
-  color: #fff; /* white text */
+  color: #fff;
   border-bottom: 1px solid transparent;
   transition: border-color .15s ease;
 }
@@ -175,14 +170,12 @@ html, body {
   flex-direction: column;
   gap: 8px;
 }
-
 .graphic img {
   width: 100%;
   height: auto;
   border-radius: 6px;
   display: block;
 }
-
 .graphic-caption {
   font-size: 0.9rem;
   color: var(--muted);
@@ -193,7 +186,6 @@ html, body {
   flex-direction: column;
   gap: 40px;
 }
-
 .step {
   background: #fafafa;
   border: 1px solid #eee;
