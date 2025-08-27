@@ -3,19 +3,74 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Gardenicity — Scrollytelling</title>
-  <!-- cache-busted stylesheet -->
-  <link rel="stylesheet" href="styles.css?v=8" />
+  <title>Gardenicity — Scrollytelling (DIAGNOSTIC)</title>
+
+  <style>
+    /* ---- DIAGNOSTIC: inline to avoid cache issues ---- */
+
+    /* Reference canvas: 1920×1440. Scale by WIDTH for WYSIWYG on your iMac */
+    :root{
+      --s: calc(100vw / 1920);          /* width scale */
+      --hero-margin-x: calc(var(--s) * 82px);
+      --hero-margin-y: calc(var(--s) * 96px);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:#000;color:#fff;font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+
+    /* HERO */
+    .hero{position:relative;min-height:100svh;width:100%;overflow:clip}
+    .hero-bg{
+      position:absolute;inset:0;
+      background:url("assets/hero1gc.jpg") center/cover no-repeat;
+      opacity:0; animation:heroIn .7s ease-out forwards;
+    }
+    @keyframes heroIn{from{opacity:0}to{opacity:1}}
+
+    /* Inset media box; using flex so content sits on bottom-left */
+    .hero-media{
+      position:absolute;
+      inset:var(--hero-margin-y) var(--hero-margin-x);
+      display:flex;align-items:flex-end;justify-content:flex-start;z-index:1;
+      /* DIAGNOSTIC outline */
+      outline:2px dashed rgba(255,0,0,.6);
+    }
+
+    /* Text block constrained to 700px (scaled) */
+    .hero-bottom-left{
+      max-width: clamp(420px, calc(var(--s) * 700px), 700px);
+      /* DIAGNOSTIC outline */
+      outline:3px solid cyan; padding:6px;
+    }
+
+    /* Title: 100/110, white */
+    .hero-title{
+      margin:0 0 calc(var(--s) * 24px) 0;
+      font-weight:400;
+      font-size: clamp(56px, calc(var(--s) * 100px), 100px);
+      line-height: clamp(62px, calc(var(--s) * 110px), 110px);
+      color:#fff;
+    }
+
+    /* Links stacked vertically 24/30 */
+    .hero-links{display:flex;flex-direction:column;gap: clamp(6px, calc(var(--s) * 10px), 12px)}
+    .hero-links a{
+      color:#fff;text-decoration:none;border-bottom:1px solid transparent;
+      font-size: clamp(18px, calc(var(--s) * 24px), 24px);
+      line-height: clamp(24px, calc(var(--s) * 30px), 30px);
+    }
+    .hero-links a:hover{border-color:currentColor}
+
+    /* basic body content spacer so you can scroll a bit */
+    .spacer{height:120vh}
+  </style>
 </head>
 <body>
 
-  <!-- =================== HERO (Section 1) =================== -->
-  <header class="hero" id="hero" role="banner" aria-label="Hero">
-    <!-- Background image layer (fades in on load) -->
+  <!-- HERO -->
+  <header class="hero" id="hero">
     <div class="hero-bg" aria-hidden="true"></div>
 
-    <!-- Inset media box -->
-    <div class="hero-media" role="group" aria-label="Hero media overlay">
+    <div class="hero-media">
       <div class="hero-bottom-left">
         <h1 class="hero-title">
           <span>Gardenicity</span><br/>
@@ -33,48 +88,7 @@
     </div>
   </header>
 
-  <!-- =================== SCROLLY CORE (unchanged) =================== -->
-  <main class="scrolly" id="scrolly-root">
-    <div class="graphic" id="graphic">
-      <img id="hero-image" src="assets/placeholder.jpg" alt="Sticky illustrative panel" />
-      <div id="graphic-caption" class="graphic-caption">Scroll to begin</div>
-    </div>
-
-    <div class="article">
-      <section class="step" data-step="1" id="civic-green">
-        <h2>Section 1</h2>
-        <p>Write your opening paragraph here. Keep each section to 2–5 sentences.</p>
-      </section>
-
-      <section class="step" data-step="2" id="growth">
-        <h2>Section 2</h2>
-        <p>Introduce the main idea. The graphic will update as this section enters the viewport.</p>
-      </section>
-
-      <section class="step" data-step="3" id="sustenance">
-        <h2>Section 3</h2>
-        <p>Add an image below if you like. Replace <code>assets/placeholder2.jpg</code> with your own.</p>
-        <figure>
-          <img src="assets/placeholder2.jpg" alt="Example visual" />
-          <figcaption>Optional figure caption.</figcaption>
-        </figure>
-      </section>
-
-      <section class="step" data-step="4" id="leafy-sdgs">
-        <h2>Section 4</h2>
-        <p>Conclude with a takeaway and, if relevant, a call to action.</p>
-      </section>
-    </div>
-  </main>
-
-  <footer class="site-footer">
-    <p>© Your Name • <a href="#" id="lang">About</a></p>
-  </footer>
-
-  <div class="debug-line" aria-hidden="true"></div>
-
-  <!-- Static baseline: only the step observer JS (no hero scroll vars yet) -->
-  <script src="script.js"></script>
+  <div class="spacer"></div>
 </body>
 </html>
 
