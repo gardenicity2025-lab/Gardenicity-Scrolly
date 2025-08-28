@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — hero cross-fade to Section 1</title>
+<title>Gardenicity — hero → Section 1 cross-fade + scrolly text</title>
 <style>
   /* ===== Base & Vars ===== */
   html,body{
@@ -17,12 +17,21 @@
     --linksOpacity: 0;
 
     /* cross-fade controls */
-    --heroAlpha: 1;      /* 1 → 0 */
-    --section1In: 0;     /* 0 → 1 */
+    --heroAlpha: 1;                 /* 1 → 0 */
+    --heroBlur:  0;                 /* px, 0 → 6 */
+
+    /* section-1 progress (0 → 1 while pinned) */
+    --s1: 0;                         /* normalized progress */
+    --s1ImgAlpha: 0;                 /* image opacity 0.2 → 1 via JS */
   }
 
-  /* ===== HERO (unchanged, plus opacity var) ===== */
-  .hero-fixed{ position:fixed; inset:0; z-index:3; opacity:var(--heroAlpha); }
+  /* ===== HERO (fades + blurs out) ===== */
+  .hero-fixed{
+    position:fixed; inset:0; z-index:3;
+    opacity:var(--heroAlpha);
+    filter:blur(calc(var(--heroBlur) * 1px));
+    will-change:opacity, filter;
+  }
   .hero-bg{
     position:absolute; inset:0;
     background:#000 url("assets/hero1gc.jpg") center/cover no-repeat;
@@ -49,31 +58,34 @@
   .hero-links a:hover,
   .hero-links a:focus-visible{ color:#00A86B !important; text-decoration:none; }
 
-  /* How long the hero’s baseline-fade/slide lasts (bigger = slower) */
+  /* Hero timeline length (bigger = slower hero baseline/slide) */
   .driver{ height:240vh; }
 
   /* ===== SECTION 1 (pinned during cross-fade) ===== */
   .section-1{
-    /* this height spans the cross-fade; bigger = longer dissolve */
-    height:160vh;
-    background:#e5e4e0;
-    color:#111;
-    z-index:1;
-    position:relative;
+    /* longer height → slower dissolve; bumped up for a gentler transition */
+    height:220vh;                    /* was 160 */
+    background:#e5e4e0; color:#111;
+    position:relative; z-index:1;
   }
   .section-1 .inner{
-    /* pin the whole section while we scroll through .section-1 */
     position:sticky; top:0; min-height:100vh;
-    /* same margins as hero */
-    padding:96px 82px;
+    padding:96px 82px;               /* same margins as hero */
     display:grid;
     grid-template-columns: 512px 96px minmax(0,1fr);
     align-items:start;
-    opacity:var(--section1In);        /* fades in as hero fades out */
+    /* fade in as hero fades out */
+    opacity:var(--s1);               /* 0 → 1 */
+    will-change:opacity;
   }
 
-  /* Left text column */
-  .section-1 .copy{ font-size:20px; line-height:28px; }
+  /* Left scrolly text column: travels bottom → through → top */
+  .section-1 .copy{
+    font-size:20px; line-height:28px; color:#111;
+    /* Centered travel span of ~80vh: starts ~+40vh below, ends ~-40vh above */
+    transform:translateY(calc((0.5 - var(--s1)) * 80vh));
+    will-change:transform;
+  }
   .section-1 .copy p{ margin:0 0 16px 0; }
 
   /* Right media column */
@@ -81,9 +93,9 @@
   .section-1 .media figure{ margin:0; }
   .section-1 .media img{
     display:block; width:840px; height:1120px; object-fit:cover;
-    opacity:calc(.2 + .8 * var(--section1In));
-    transform:scale(calc(0.98 + 0.02 * var(--section1In)));
-    transition:opacity .2s linear, transform .2s linear;
+    opacity:var(--s1ImgAlpha);                                   /* 0.2 → 1 */
+    transform:translateY(calc((0.5 - var(--s1)) * 10vh));        /* slight drift */
+    will-change:opacity, transform;
   }
 
   /* follow-on content naturally flows after Section 1 */
@@ -102,7 +114,7 @@
 </head>
 <body>
 
-  <!-- ===== HERO (on top, fades out) ===== -->
+  <!-- ===== HERO (on top, fades+blurs out) ===== -->
   <div class="hero-fixed">
     <div class="hero-bg" aria-hidden="true"></div>
     <div class="hero-media" id="hero-media">
@@ -126,13 +138,13 @@
   <!-- hero timeline (fade on baseline → slide) -->
   <section class="driver" id="driver"></section>
 
-  <!-- ===== SECTION 1 (pinned; fades in under hero) ===== -->
+  <!-- ===== SECTION 1 (pinned; fades/moves in under hero) ===== -->
   <section class="section-1" id="section-1">
     <div class="inner">
       <div class="copy">
-        <p><strong>Lead paragraph.</strong> 512px column, 20/28 rhythm. As the hero fades out, this fades in under it (no black gap).</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer feugiat sem at nibh dictum, in commodo nisl elementum.</p>
-        <p>Aliquam erat volutpat. Vestibulum a massa eget leo imperdiet posuere. Sed vitae diam et urna vehicula fermentum at a arcu.</p>
+        <p><strong>Lead paragraph.</strong> 512px column, 20/28 rhythm. While the hero fades/blur out, this copy slides up from below, passes through, and exits above.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer feugiat sem at nibh dictum, in commodo nisl elementum. Duis placerat mattis nibh, vitae gravida risus.</p>
+        <p>Aliquam erat volutpat. Vestibulum a massa eget leo imperdiet posuere. Sed vitae diam et urna vehicula fermentum at a arcu. Maecenas sagittis, dui a commodo dictum.</p>
       </div>
       <div class="media">
         <figure>
@@ -204,23 +216,29 @@
     root.style.setProperty('--linksOpacity', pSlide.toFixed(3));
   }
 
-  /* ============== Cross-fade hero → Section 1 ============== */
+  /* ============== Cross-fade hero → Section 1 + scrolly text/motion ============== */
   const section1 = document.getElementById('section-1');
   const ease = t => t*t*(3 - 2*t);  // smoothstep
 
-  function updateCrossfade(){
-    const p = progressOf(section1);         // 0 → 1 while scrolling Section 1
+  function updateSection1(){
+    const p = progressOf(section1);       // 0 → 1 while scrolling Section 1
     const e = ease(p);
+
+    // cross-fade + blur
     root.style.setProperty('--heroAlpha', (1 - e).toFixed(3));   // hero out
-    root.style.setProperty('--section1In', e.toFixed(3));        // section in
+    root.style.setProperty('--heroBlur',  (6 * e).toFixed(2));   // 0 → 6px blur
+    root.style.setProperty('--s1',        e.toFixed(3));         // section in
+    // image opacity (start a bit visible if you’d like, here 0.2 → 1)
+    const imgAlpha = 0.2 + 0.8 * e;
+    root.style.setProperty('--s1ImgAlpha', imgAlpha.toFixed(3));
   }
 
   async function init(){
     if (document.fonts && document.fonts.ready) { try { await document.fonts.ready; } catch(e){} }
     measureShifts();
-    updateHero(); updateCrossfade();
+    updateHero(); updateSection1();
 
-    const onScroll = ()=>{ updateHero(); updateCrossfade(); };
+    const onScroll = ()=>{ updateHero(); updateSection1(); };
     window.addEventListener('load',   ()=>{ measureShifts(); onScroll(); });
     window.addEventListener('resize', ()=>{ measureShifts(); onScroll(); });
     window.addEventListener('scroll', onScroll, { passive:true });
