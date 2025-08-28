@@ -68,22 +68,17 @@ html,body{
 .hero-title .line{ display:block; }
 
 /* Links below title, hidden until slide starts */
-.hero-links{
-  display:flex; flex-direction:column; gap:10px;
-  font-size:24px; line-height:30px;
-  opacity: var(--linksOpacity);
-  transition: opacity .25s linear;
-}
 .hero-links a{
   color:#fff;
-  text-decoration: none;            /* no underline by default */
+  text-decoration:none;   /* never underlined */
+  transition: color .2s ease;
 }
+
 .hero-links a:hover{
-  color:#00A86B;                    /* garden green */
-  text-decoration: underline;       /* underline text only */
-  text-decoration-thickness: 1.5px;
-  text-underline-offset: 2px;
+  color:#00A86B;           /* just turns green on hover */
+  text-decoration:none;    /* ensure no underline ever */
 }
+
 
 /* ================== Content after ================== */
 .spacer{ 
