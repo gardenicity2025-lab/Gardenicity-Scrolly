@@ -3,40 +3,41 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — hero crossfade → Section 1</title>
+<title>Gardenicity — Hero → Section 1 handoff (pinned image)</title>
 <style>
   /* ============ Base ============ */
   html,body{
     margin:0; padding:0;
-    /* Match Section 1 so there’s no black flash behind the hero */
+    /* Match Section 1 so no black shows behind hero */
     background:#e5e4e0; color:#fff;
     font-family:"Acumin Pro",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
   }
   :root{
-    /* driven by JS */
-    --shift: 0px;           /* hero title/links vertical slide */
+    /* HERO vars (driven by JS) */
+    --shift: 0px;           /* hero column slide */
     --titleOpacity: 0;      /* hero title fade */
     --linksOpacity: 0;      /* hero links fade */
-    --heroAlpha: 1;         /* cross-fade hero opacity */
-    --heroBlur: 0;          /* 0→1 → multiplies into px below */
-    --s1Text: 0;            /* Section 1 text progress 0→1 (starts after img) */
-    --s1ImgOpacity: 0;      /* Section 1 right image fade */
+    --heroAlpha: 1;         /* cross-fade hero opacity (now keyed to Section 1) */
+    --heroBlur: 0;          /* 0→1, used as multiplier for px blur */
+
+    /* SECTION 1 vars */
+    --s1: 0;                /* Section 1 progress 0→1 while s1-wrap scrolls */
+    --s1ImgOpacity: 0;      /* right image fades in after hero is gone */
+    --s1Text: 0;            /* left text scroll phase; starts after img ~75% */
   }
 
   /* ============ HERO ============ */
   .hero-fixed{
-    position:fixed; inset:0;
-    /* Cross-fade and blur the *whole* hero as Section 1 scrolls in */
+    position:fixed; inset:0; z-index:3;
     opacity:var(--heroAlpha);
     filter: blur(calc(var(--heroBlur) * 10px));
-    pointer-events:none; /* the section under it stays interactive as it appears */
+    pointer-events:none; /* allow interaction with content underneath as it appears */
     will-change: opacity, filter;
   }
-
   .hero-bg{
     position:absolute; inset:0;
     background:url("assets/hero1gc.jpg") center/cover no-repeat;
-    opacity:0; animation:heroIn 1000ms ease-out forwards; /* slower load fade */
+    opacity:0; animation:heroIn 1000ms ease-out forwards;
   }
   @keyframes heroIn{ from{opacity:0} to{opacity:1} }
 
@@ -45,15 +46,9 @@
     display:flex; align-items:flex-end; justify-content:flex-start;
     overflow:hidden; /* clip below baseline */
   }
-
   .col{ position:relative; max-width:700px; transform: translateY(var(--shift)); will-change: transform; }
-
-  .hero-title{
-    margin:0 0 24px 0; font-weight:400; font-size:100px; line-height:100px;
-    opacity:var(--titleOpacity); will-change:opacity;
-  }
+  .hero-title{ margin:0 0 24px 0; font-weight:400; font-size:100px; line-height:100px; opacity:var(--titleOpacity); will-change:opacity; }
   .hero-title .line{ display:block; }
-
   .hero-links{
     display:flex; flex-direction:column; gap:10px;
     font-size:24px; line-height:30px;
@@ -63,137 +58,119 @@
   .hero-links a:hover,
   .hero-links a:focus-visible{ color:#00A86B; text-decoration:none; }
 
-  /* The driver section controls the hero’s title/links animation span. */
+  /* Controls the hero baseline/slide duration */
   .driver{ height:200vh; }
 
   /* ============ SECTION 1 (Article) ============ */
-  /* Wrapper is taller than viewport so we can animate text while image is sticky */
+  /* Wrapper taller than viewport so the sticky frame can play the animation */
   .s1-wrap{
     position:relative;
-    height: 220vh;            /* longer = slower overall experience */
-    background:#e5e4e0;       /* page bg matches this to avoid flashes */
+    height: 240vh;            /* bigger = slower Section 1 experience */
+    background:#e5e4e0;
+    z-index:1;
   }
-
-  /* Sticky viewport for the section’s visible frame */
+  /* Sticky viewport frame (exactly like hero margins) */
   .s1-sticky{
     position:sticky; top:0; height:100vh;
     display:grid;
-    /* margins match hero: inset:96/82; emulate with padding on a grid */
     padding:96px 82px;
-    /* 512px text col, 96px gutter, media auto */
-    grid-template-columns: 512px 96px 1fr;
-    gap:0;
-    align-items:center;      /* vertical center of the grid */
+    grid-template-columns: 512px 96px 1fr; /* left text, gutter, right media */
+    align-items:center;
   }
-
-  /* Left: scrolling text flows through the clipped window */
+  /* Left: scrolling text flows through a clipped window (full height minus top/bottom margins) */
   .s1-text-clip{
-    overflow:hidden; height: calc(100vh - 192px); /* 100vh minus top/bottom margins */
+    overflow:hidden; height: calc(100vh - 192px);
   }
   .s1-text{
-    /* Start below the window, end above it as --s1Text goes 0→1 */
-    transform: translateY(calc( (1 - var(--s1Text)) * 60vh - 30vh ));
-    /*               enter ▼                       exit ▲      */
-    color:#111;
-    will-change: transform;
+    /* Waits, then travels from below → above.
+       At --s1Text:0 it sits ~+30vh below midpoint; at 1 it reaches ~-30vh above. */
+    transform: translateY(calc((1 - var(--s1Text)) * 60vh - 30vh));
+    color:#111; will-change: transform;
   }
-  .s1-text p{
-    margin:0 0 14px 0;
-    font-size:20px; line-height:28px;
-  }
+  .s1-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
 
-  /* Right: media is centered and does NOT move (sticky with the frame) */
+  /* Right: pinned/centered image that ONLY fades in (no movement) */
   .s1-media{
-    grid-column: 3 / 4;
+    grid-column:3 / 4;
     display:flex; align-items:center; justify-content:center;
   }
   .s1-media img{
-    width:840px; height:1120px; object-fit:cover; /* scale from height */
+    width:840px; height:1120px; object-fit:cover;
     max-width:100%; max-height:100%;
     opacity: var(--s1ImgOpacity);
-    transition: opacity .3s linear;  /* micro smoothing */
+    transition: opacity .35s linear;
   }
 
-  /* Optional: subtle top border where the section begins under hero */
-  .s1-wrap::before{
-    content:"";
-    position:absolute; left:0; right:0; top:0; height:1px;
-    background:rgba(0,0,0,.06);
-  }
-
-  /* A little spacer after, just to see where S1 ends */
+  /* follow-on spacer so you can scroll past Section 1 */
   .after{ min-height:120vh; }
 </style>
 </head>
 <body>
 
-<!-- HERO (fixed, cross-fades/blur away) -->
-<div class="hero-fixed" id="hero">
-  <div class="hero-bg" aria-hidden="true"></div>
-
-  <div class="hero-media" id="hero-media">
-    <div class="col" id="hero-col">
-      <h1 class="hero-title" id="hero-title">
-        <span class="line">Gardenicity</span>
-        <span class="line">What did</span>
-        <span class="line">Geddes see?</span>
-      </h1>
-      <nav class="hero-links" id="hero-links" aria-label="Primary">
-        <a href="#civic-green">Civic Green</a>
-        <a href="#growth">Growth</a>
-        <a href="#sustenance">Sustenance</a>
-        <a href="#leafy-sdgs">Leafy SDGs</a>
-        <a href="#lang">EN/עב</a>
-      </nav>
-    </div>
-  </div>
-</div>
-
-<!-- Plays the hero title/links baseline fade + slide -->
-<section class="driver" id="driver"></section>
-
-<!-- SECTION 1 -->
-<section class="s1-wrap" id="s1-wrap">
-  <div class="s1-sticky">
-    <!-- Left column -->
-    <div class="s1-text-clip">
-      <div class="s1-text" id="s1-text">
-        <p><strong>HOURS AFTER MY</strong> mother took her last breath on earth…</p>
-        <p>After we opened the windows to let the spirits out…</p>
-        <p>After we lit incense stick after incense stick…</p>
-        <p>After we watched MMA fighters on TV in the basement…</p>
-        <p>And the smoke kept rising. The chain must not be broken.</p>
+  <!-- ===== HERO (fixed; fades ONLY once Section 1 starts) ===== -->
+  <div class="hero-fixed" id="hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="hero-media" id="hero-media">
+      <div class="col" id="hero-col">
+        <h1 class="hero-title" id="hero-title">
+          <span class="line">Gardenicity</span>
+          <span class="line">What did</span>
+          <span class="line">Geddes see?</span>
+        </h1>
+        <nav class="hero-links" id="hero-links" aria-label="Primary">
+          <a href="#civic-green">Civic Green</a>
+          <a href="#growth">Growth</a>
+          <a href="#sustenance">Sustenance</a>
+          <a href="#leafy-sdgs">Leafy SDGs</a>
+          <a href="#lang">EN/עב</a>
+        </nav>
       </div>
     </div>
-
-    <!-- Gutter (empty) -->
-    <div></div>
-
-    <!-- Right media (sticky, centered, fades in only) -->
-    <figure class="s1-media">
-      <!-- Upload your image as assets/section1.jpg or change the src below -->
-      <img id="s1-img" src="assets/section1.jpg" alt="Section 1 visual">
-    </figure>
   </div>
-</section>
 
-<section class="after" id="civic-green"></section>
+  <!-- Hero title/links choreography -->
+  <section class="driver" id="driver"></section>
+
+  <!-- ===== SECTION 1 (directly under hero; same margins) ===== -->
+  <section class="s1-wrap" id="s1-wrap">
+    <div class="s1-sticky">
+      <!-- Left column -->
+      <div class="s1-text-clip">
+        <div class="s1-text" id="s1-text">
+          <p><strong>HOURS AFTER MY</strong> mother took her last breath on earth…</p>
+          <p>After we opened the windows to let the spirits out…</p>
+          <p>After we lit incense stick after incense stick…</p>
+          <p>After we watched MMA fighters on TV in the basement…</p>
+          <p>And the smoke kept rising. The chain must not be broken.</p>
+        </div>
+      </div>
+
+      <!-- Gutter (empty) -->
+      <div></div>
+
+      <!-- Right media (pinned, centered, fades in only) -->
+      <figure class="s1-media">
+        <!-- Upload your image as assets/section1.jpg -->
+        <img id="s1-img" src="assets/section1.jpg" alt="Section 1 visual">
+      </figure>
+    </div>
+  </section>
+
+  <section class="after" id="civic-green"></section>
 
 <script>
 /*
-  WHAT THIS SCRIPT DOES
-  1) HERO baseline choreography (fade title on baseline, then slide up to reveal links)
-     — identical to what you liked.
-  2) Cross-fade + slight blur the entire hero as Section 1 scrolls in underneath.
-  3) SECTION 1:
-     - Image opacity goes 0→1 during the first ~35% of the section.
-     - Only AFTER the image is ~75% visible does the text begin its scroll.
+  Logic:
+  - Driver controls hero title fade-on-baseline and slide to final links (same as before).
+  - Hero fade/blur NO LONGER uses driver; it keys off Section 1 progress (so it only starts AFTER driver completes and you begin S1).
+  - Section 1:
+      * Right image is pinned and fades in ONLY after hero is fully gone.
+      * Left text waits until image ~75% visible, then scrolls up through the viewport.
 */
-
 (function(){
   const root  = document.documentElement;
 
-  /* ---------- HERO: title & links choreography ---------- */
+  /* ---------- HERO: title & links choreography (unchanged) ---------- */
   const driver = document.getElementById('driver');
   const media  = document.getElementById('hero-media');
   const col    = document.getElementById('hero-col');
@@ -202,6 +179,7 @@
 
   const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
   const easeInOutCubic = t => t<0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2;
+  const smoothstep = t => t*t*(3 - 2*t);
 
   let startShift = 0, endShift = 0;
 
@@ -217,7 +195,6 @@
     const mediaRect = media.getBoundingClientRect();
 
     const mediaBaseline = mediaRect.bottom;
-
     startShift = mediaBaseline - thirdRect.bottom;
     endShift   = mediaBaseline - lastLinkRect.bottom;
 
@@ -225,28 +202,20 @@
     root.style.setProperty('--shift', startShift.toFixed(1)+'px');
   }
 
-  function progressDriver(){
-    const r  = driver.getBoundingClientRect();
-    const vh = window.innerHeight || document.documentElement.clientHeight;
-    const total = r.height - vh;
-    if (total <= 0) return 1;
-    return clamp(-r.top / total, 0, 1);
-  }
-
-  /* ---------- SECTION 1 progress ---------- */
-  const s1Wrap = document.getElementById('s1-wrap');
-
-  function progressS1(){
-    const r  = s1Wrap.getBoundingClientRect();
+  function progressOf(el){
+    const r  = el.getBoundingClientRect();
     const vh = window.innerHeight || document.documentElement.clientHeight;
     const total = r.height - vh;
     if (total <= 0) return 0;
     return clamp(-r.top / total, 0, 1);
   }
 
+  /* ---------- SECTION 1 progress ---------- */
+  const s1Wrap = document.getElementById('s1-wrap');
+
   function update(){
-    /* HERO title/links */
-    const p = progressDriver();
+    /* Hero baseline fade + slide */
+    const p = progressOf(driver);    // 0→1 across driver
     const pFade  = easeInOutCubic( clamp(p / 0.60, 0, 1) );
     root.style.setProperty('--titleOpacity', pFade.toFixed(3));
     const pSlide = clamp((p - 0.60) / 0.40, 0, 1);
@@ -254,21 +223,32 @@
     root.style.setProperty('--shift', shift.toFixed(1)+'px');
     root.style.setProperty('--linksOpacity', pSlide.toFixed(3));
 
-    /* HERO cross-fade/blur into Section 1 (later & slower) */
-    const cross = clamp((p - 0.85) / 0.15, 0, 1);   // start near the end of hero motion
+    /* Section 1 progress */
+    const s1 = progressOf(s1Wrap);   // 0→1 as you scroll the S1 wrapper
+    root.style.setProperty('--s1', s1.toFixed(3));
+
+    /* Hero cross-fade/blur keyed to Section 1 (NOT driver):
+       - Start the dissolve only once S1 actually begins (s1 > 0).
+       - Complete by s1 ≈ 0.35 (tweak to taste). */
+    const cross = smoothstep( clamp((s1 - 0.02) / 0.33, 0, 1) ); // small 2% buffer, ~33% duration
     root.style.setProperty('--heroAlpha', (1 - cross).toFixed(3));
-    root.style.setProperty('--heroBlur',  (cross).toFixed(3));
+    root.style.setProperty('--heroBlur',  (cross * 0.8).toFixed(3)); // up to ~8px blur
 
-    /* SECTION 1 */
-    const s1 = progressS1();
+    /* Section 1 image fade:
+       - Wait until hero is fully gone (cross == 1).
+       - Then fade image from 0→1 over next ~30% of S1. */
+    let imgOpacity = 0;
+    if (cross >= 1){
+      const imgFade = clamp((s1 - 0.35) / 0.30, 0, 1); // start at 0.35, finish by 0.65
+      imgOpacity = imgFade;
+    }
+    root.style.setProperty('--s1ImgOpacity', imgOpacity.toFixed(3));
 
-    // Image fade during the first ~35% of the section
-    const imgFade = clamp(s1 / 0.35, 0, 1);
-    root.style.setProperty('--s1ImgOpacity', imgFade.toFixed(3));
-
-    // Text waits until the image is ~75% visible, then scrolls to 1 by the end
-    const startTextAt = 0.35 * 0.75;     // when imgFade ≈ 0.75
-    const t = clamp((s1 - startTextAt) / (1 - startTextAt), 0, 1);
+    /* Section 1 text:
+       - Do nothing until image ~75% visible.
+       - Then ramp text 0→1 by the end of S1. */
+    const img75_at = 0.35 + 0.30 * 0.75;            // 0.35 start + 75% of the 0.30 fade span = 0.575
+    const t = clamp((s1 - img75_at) / (1 - img75_at), 0, 1);
     root.style.setProperty('--s1Text', t.toFixed(3));
   }
 
@@ -283,9 +263,9 @@
     window.addEventListener('resize', ()=>{ measureHero(); update(); });
     window.addEventListener('scroll', update, { passive:true });
   }
-
   init();
 })();
 </script>
 </body>
 </html>
+
