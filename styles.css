@@ -69,16 +69,21 @@ html,body{
 
 /* Links below title, hidden until slide starts */
 .hero-links{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  font-size:24px;
-  line-height:30px;
+  display:flex; flex-direction:column; gap:10px;
+  font-size:24px; line-height:30px;
   opacity: var(--linksOpacity);
   transition: opacity .25s linear;
 }
-.hero-links a{ color:#fff; text-decoration:none; border-bottom:1px solid transparent }
-.hero-links a:hover{ border-color: currentColor }
+.hero-links a{
+  color:#fff;
+  text-decoration: none;            /* no underline by default */
+}
+.hero-links a:hover{
+  color:#00A86B;                    /* garden green */
+  text-decoration: underline;       /* underline text only */
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 2px;
+}
 
 /* ================== Content after ================== */
 .spacer{ 
