@@ -3,37 +3,37 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — hero → article cross-fade</title>
+<title>Gardenicity — hero cross-fade to Section 1</title>
 <style>
-  /* =============== Base & Vars =============== */
+  /* ===== Base & Vars ===== */
   html,body{
     margin:0; padding:0; background:#000; color:#fff;
     font-family:"Acumin Pro", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   }
   :root{
-    /* hero (already working) */
-    --shift: 0px;            /* column translateY */
-    --titleOpacity: 0;       /* title fade on baseline */
-    --linksOpacity: 0;       /* links fade */
+    /* hero (existing) */
+    --shift: 0px;
+    --titleOpacity: 0;
+    --linksOpacity: 0;
 
-    /* NEW: cross-fade bridge */
-    --heroAlpha: 1;          /* 1 → 0 as hero fades out */
-    --section1In: 0;         /* 0 → 1 as section fades in */
+    /* cross-fade controls */
+    --heroAlpha: 1;      /* 1 → 0 */
+    --section1In: 0;     /* 0 → 1 */
   }
 
-  /* =============== HERO (unchanged + 1 tweak) =============== */
-  .hero-fixed{ position:fixed; inset:0; z-index:1; opacity:var(--heroAlpha); }
+  /* ===== HERO (unchanged, plus opacity var) ===== */
+  .hero-fixed{ position:fixed; inset:0; z-index:3; opacity:var(--heroAlpha); }
   .hero-bg{
     position:absolute; inset:0;
     background:#000 url("assets/hero1gc.jpg") center/cover no-repeat;
-    opacity:0; animation:heroIn 1000ms ease-out forwards; /* slower */
+    opacity:0; animation:heroIn 1000ms ease-out forwards;
   }
   @keyframes heroIn{ from{opacity:0} to{opacity:1} }
 
   .hero-media{
     position:absolute; inset:96px 82px;
     display:flex; align-items:flex-end; justify-content:flex-start;
-    overflow:hidden; /* clips below baseline */
+    overflow:hidden;
   }
   .col{ position:relative; max-width:700px; transform:translateY(var(--shift)); will-change:transform; }
   .hero-title{ margin:0 0 24px 0; font-weight:400; font-size:100px; line-height:100px; opacity:var(--titleOpacity); will-change:opacity; }
@@ -42,72 +42,69 @@
   .hero-links{
     display:flex; flex-direction:column; gap:10px;
     font-size:24px; line-height:30px;
-    opacity:var(--linksOpacity);
-    transition:opacity .25s linear;
+    opacity:var(--linksOpacity); transition:opacity .25s linear;
   }
-  /* links: white → green on hover, never underlined */
   .hero-links a:link,
   .hero-links a:visited{ color:#fff; text-decoration:none; transition:color .2s ease; cursor:pointer; }
   .hero-links a:hover,
   .hero-links a:focus-visible{ color:#00A86B !important; text-decoration:none; }
 
-  /* controls the duration of the hero’s fade/slide timeline */
-  .driver{ height:240vh; } /* was 200vh; larger = slower */
+  /* How long the hero’s baseline-fade/slide lasts (bigger = slower) */
+  .driver{ height:240vh; }
 
-  /* =============== BRIDGE: cross-fade timeline =============== */
-  .bridge{ height:140vh; } /* tune: larger = more time to cross-fade */
-
-  /* =============== ARTICLE SECTION 1 =============== */
+  /* ===== SECTION 1 (pinned during cross-fade) ===== */
   .section-1{
+    /* this height spans the cross-fade; bigger = longer dissolve */
+    height:160vh;
     background:#e5e4e0;
     color:#111;
-    opacity:calc(var(--section1In));                /* fades in with bridge */
+    z-index:1;
+    position:relative;
   }
   .section-1 .inner{
-    /* same visual margins as hero */
+    /* pin the whole section while we scroll through .section-1 */
+    position:sticky; top:0; min-height:100vh;
+    /* same margins as hero */
     padding:96px 82px;
-    min-height:100vh; /* enough space to enjoy the scroll */
     display:grid;
     grid-template-columns: 512px 96px minmax(0,1fr);
     align-items:start;
-    gap:0; /* gutter handled as a column */
+    opacity:var(--section1In);        /* fades in as hero fades out */
   }
 
   /* Left text column */
-  .section-1 .copy{
-    font-size:20px; line-height:28px;
-  }
+  .section-1 .copy{ font-size:20px; line-height:28px; }
   .section-1 .copy p{ margin:0 0 16px 0; }
 
   /* Right media column */
-  .section-1 .media{
-    grid-column:3;
-    display:flex; align-items:flex-start; justify-content:flex-start;
-    min-height:60vh;
-  }
+  .section-1 .media{ grid-column:3; display:flex; align-items:flex-start; }
   .section-1 .media figure{ margin:0; }
   .section-1 .media img{
-    display:block;
-    width:840px; height:1120px;           /* desktop target size */
-    object-fit:cover;
-    opacity:calc(.2 + .8 * var(--section1In));  /* gentle scroll fade-in */
+    display:block; width:840px; height:1120px; object-fit:cover;
+    opacity:calc(.2 + .8 * var(--section1In));
     transform:scale(calc(0.98 + 0.02 * var(--section1In)));
     transition:opacity .2s linear, transform .2s linear;
   }
 
-  /* Simple responsive guardrails */
-  @media (max-width: 1200px){
+  /* follow-on content naturally flows after Section 1 */
+  .next{
+    background:#fafafa; color:#111;
+    padding:96px 82px; min-height:120vh;
+    border-top:1px solid #e5e5e5;
+  }
+
+  @media (max-width:1200px){
     .section-1 .inner{ grid-template-columns: minmax(0,1fr); }
+    .section-1 .media{ grid-column:auto; margin-top:24px; }
     .section-1 .media img{ width:100%; height:auto; }
   }
 </style>
 </head>
 <body>
 
-  <!-- ===== HERO (unchanged structure) ===== -->
+  <!-- ===== HERO (on top, fades out) ===== -->
   <div class="hero-fixed">
     <div class="hero-bg" aria-hidden="true"></div>
-
     <div class="hero-media" id="hero-media">
       <div class="col" id="hero-col">
         <h1 class="hero-title" id="hero-title">
@@ -115,7 +112,6 @@
           <span class="line">What did</span>
           <span class="line">Geddes see?</span>
         </h1>
-
         <nav class="hero-links" id="hero-links" aria-label="Primary">
           <a href="#civic-green">Civic Green</a>
           <a href="#growth">Growth</a>
@@ -127,47 +123,34 @@
     </div>
   </div>
 
-  <!-- Hero timeline (fade baseline → slide) -->
+  <!-- hero timeline (fade on baseline → slide) -->
   <section class="driver" id="driver"></section>
 
-  <!-- NEW: cross-fade hero → article -->
-  <section class="bridge" id="bridge"></section>
-
-  <!-- ===== ARTICLE SECTION 1 ===== -->
+  <!-- ===== SECTION 1 (pinned; fades in under hero) ===== -->
   <section class="section-1" id="section-1">
     <div class="inner">
       <div class="copy">
-        <p><strong>Lead paragraph.</strong> This column is 512px wide, 20/28 rhythm. It scrolls normally inside the section while the image on the right eases in.</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec id neque lobortis, aliquet mauris vitae, bibendum urna. Integer feugiat sem at nibh dictum, in commodo nisl elementum.</p>
+        <p><strong>Lead paragraph.</strong> 512px column, 20/28 rhythm. As the hero fades out, this fades in under it (no black gap).</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer feugiat sem at nibh dictum, in commodo nisl elementum.</p>
         <p>Aliquam erat volutpat. Vestibulum a massa eget leo imperdiet posuere. Sed vitae diam et urna vehicula fermentum at a arcu.</p>
       </div>
-
       <div class="media">
         <figure>
-          <!-- Replace with your actual image: assets/section1.jpg -->
+          <!-- Replace with your real first image -->
           <img src="assets/hero1gc.jpg" alt="Section 1 visual" />
         </figure>
       </div>
     </div>
   </section>
 
-  <!-- Placeholder content after -->
-  <main>
-    <section class="section-1" style="background:#fafafa; color:#111;">
-      <div class="inner">
-        <div class="copy">
-          <h2 id="civic-green">Next section</h2>
-          <p>More content…</p>
-        </div>
-        <div class="media"><figure><img src="assets/hero1gc.jpg" alt="" /></figure></div>
-      </div>
-    </section>
-  </main>
+  <!-- follow-on content -->
+  <section class="next">
+    <h2 id="civic-green">Next section</h2>
+    <p>More content here…</p>
+  </section>
 
 <script>
-/* ---------------------------------------------------------
-   HERO (as before): fade on baseline → slide to reveal links
---------------------------------------------------------- */
+/* ================= HERO timeline (unchanged) ================= */
 (function(){
   const driver = document.getElementById('driver');
   const media  = document.getElementById('hero-media');
@@ -221,23 +204,23 @@
     root.style.setProperty('--linksOpacity', pSlide.toFixed(3));
   }
 
-  /* ---------------------------------------------------------
-     NEW: bridge cross-fade (hero → article section 1)
-  --------------------------------------------------------- */
-  const bridge = document.getElementById('bridge');
-  function updateBridge(){
-    const p = progressOf(bridge);                 /* 0 → 1 across .bridge */
-    const eased = p*p*(3 - 2*p);                  /* easeInOut */
-    root.style.setProperty('--heroAlpha', (1 - eased).toFixed(3));   /* hero out */
-    root.style.setProperty('--section1In', eased.toFixed(3));        /* section in */
+  /* ============== Cross-fade hero → Section 1 ============== */
+  const section1 = document.getElementById('section-1');
+  const ease = t => t*t*(3 - 2*t);  // smoothstep
+
+  function updateCrossfade(){
+    const p = progressOf(section1);         // 0 → 1 while scrolling Section 1
+    const e = ease(p);
+    root.style.setProperty('--heroAlpha', (1 - e).toFixed(3));   // hero out
+    root.style.setProperty('--section1In', e.toFixed(3));        // section in
   }
 
   async function init(){
     if (document.fonts && document.fonts.ready) { try { await document.fonts.ready; } catch(e){} }
     measureShifts();
-    updateHero(); updateBridge();
+    updateHero(); updateCrossfade();
 
-    const onScroll = ()=>{ updateHero(); updateBridge(); };
+    const onScroll = ()=>{ updateHero(); updateCrossfade(); };
     window.addEventListener('load',   ()=>{ measureShifts(); onScroll(); });
     window.addEventListener('resize', ()=>{ measureShifts(); onScroll(); });
     window.addEventListener('scroll', onScroll, { passive:true });
