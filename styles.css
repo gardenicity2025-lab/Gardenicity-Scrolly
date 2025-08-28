@@ -33,7 +33,7 @@ html,body{
   position:absolute; inset:0;
   background:#000 url("assets/hero1gc.jpg") center/cover no-repeat;
   opacity:0;
-  animation:heroIn 900ms ease-out forwards;
+  animation:heroIn 1000ms ease-out forwards;
 }
 @keyframes heroIn{ from{opacity:0} to{opacity:1} }
 
