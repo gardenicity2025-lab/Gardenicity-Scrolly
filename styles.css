@@ -10,6 +10,9 @@ html,body{
   --shift: 0px;         /* vertical translation for column */
   --titleOpacity: 0;    /* title fade */
   --linksOpacity: 0;    /* links fade */
+  --s1: 0;              /* section 1 scroll progress */
+  --s1ImgOpacity: 0;    /* section 1 image fade */
+  --s1Text: 0;          /* section 1 text slide */
 }
 
 /* ================== Hero ================== */
@@ -93,16 +96,6 @@ html,body{
   text-decoration:none;       /* ensure no underline */
 }
 
-/* ================== Content after ================== */
-.spacer{ 
-  min-height:120vh; 
-  padding:48px 82px; 
-  background:#f5f5f5; 
-  color:#000; 
-  border-top:1px solid #e5e5e5 
-}
-.spacer h2{ margin:0 0 12px 0 }
-
 /* Force hero link colors */
 .hero-media .hero-links a{ 
   color:#fff !important; 
@@ -113,4 +106,49 @@ html,body{
 .hero-media .hero-links a:focus-visible{
   color:#00A86B !important;     /* garden green */
   text-decoration:none !important;
+}
+
+/* ================== Section 1 ================== */
+
+/* Wrapper (full viewport height, background color) */
+.section1{
+  position:relative;
+  height:100vh;
+  background:#e5e4e0;
+  display:flex;
+  inset:0;
+}
+
+/* Left text column (clipped to viewport) */
+.s1-text-clip{
+  flex:0 0 512px;
+  margin-left:82px;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+}
+
+/* Text itself slides up on scroll */
+.s1-text{
+  font-size:20px;
+  line-height:28px;
+  color:#111;
+  transform: translateY(calc((1 - var(--s1Text)) * 40vh));
+  will-change: transform;
+}
+
+/* Right media (sticky, centered image that fades in) */
+.s1-media{
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+}
+.s1-media img{
+  width:840px;
+  height:1120px;
+  object-fit:cover;
+  opacity:var(--s1ImgOpacity);
+  transition:opacity 0.4s linear;
 }
