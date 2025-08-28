@@ -102,3 +102,15 @@ html,body{
   border-top:1px solid #e5e5e5 
 }
 .spacer h2{ margin:0 0 12px 0 }
+
+/* Force hero link colors */
+.hero-media .hero-links a{ 
+  color:#fff !important; 
+  text-decoration:none !important; 
+  cursor:pointer;
+}
+.hero-media .hero-links a:hover,
+.hero-media .hero-links a:focus-visible{
+  color:#00A86B !important;     /* garden green */
+  text-decoration:none !important;
+}
