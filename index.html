@@ -3,134 +3,171 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — fade on baseline → slide to final</title>
-
+<title>Gardenicity — hero → article cross-fade</title>
 <style>
-  /* ================== Base ================== */
+  /* =============== Base & Vars =============== */
   html,body{
-    margin:0; padding:0; color:#fff; background:#000;
-    font-family:"Acumin Pro",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    margin:0; padding:0; background:#000; color:#fff;
+    font-family:"Acumin Pro", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  }
+  :root{
+    /* hero (already working) */
+    --shift: 0px;            /* column translateY */
+    --titleOpacity: 0;       /* title fade on baseline */
+    --linksOpacity: 0;       /* links fade */
+
+    /* NEW: cross-fade bridge */
+    --heroAlpha: 1;          /* 1 → 0 as hero fades out */
+    --section1In: 0;         /* 0 → 1 as section fades in */
   }
 
-  /* CSS vars controlled by JS */
-  :root{ --shift: 0px; --titleOpacity: 0; --linksOpacity: 0 }
-
-  /* ================== Hero ================== */
-  /* Fixed hero (stays above everything) */
-  .hero-fixed{
-    position:fixed; inset:0;
-    z-index: 3;                /* ← ensure hero stays on top */
-  }
-
-  /* Hero image — fades in on load (1000ms) */
+  /* =============== HERO (unchanged + 1 tweak) =============== */
+  .hero-fixed{ position:fixed; inset:0; z-index:1; opacity:var(--heroAlpha); }
   .hero-bg{
     position:absolute; inset:0;
-    background:url("assets/hero1gc.jpg") center/cover no-repeat;
-    opacity:0; animation:heroIn 1000ms ease-out forwards;
+    background:#000 url("assets/hero1gc.jpg") center/cover no-repeat;
+    opacity:0; animation:heroIn 1000ms ease-out forwards; /* slower */
   }
   @keyframes heroIn{ from{opacity:0} to{opacity:1} }
 
-  /* Media box with your margins: top/bottom 96, left/right 82 */
   .hero-media{
     position:absolute; inset:96px 82px;
     display:flex; align-items:flex-end; justify-content:flex-start;
-    overflow:hidden;               /* clip anything below the baseline */
+    overflow:hidden; /* clips below baseline */
   }
-
-  /* Column moves as a unit via --shift */
-  .col{
-    position:relative; max-width:700px;
-    transform: translateY(var(--shift));
-    will-change: transform;
-  }
-
-  /* Title: exactly three lines; fades while parked on baseline */
-  .hero-title{
-    margin:0 0 24px 0;
-    font-weight:400; font-size:100px; line-height:100px;
-    opacity: var(--titleOpacity); will-change: opacity;
-  }
+  .col{ position:relative; max-width:700px; transform:translateY(var(--shift)); will-change:transform; }
+  .hero-title{ margin:0 0 24px 0; font-weight:400; font-size:100px; line-height:100px; opacity:var(--titleOpacity); will-change:opacity; }
   .hero-title .line{ display:block; }
 
-  /* Links (same column) — start hidden, fade in during slide */
   .hero-links{
     display:flex; flex-direction:column; gap:10px;
     font-size:24px; line-height:30px;
-    opacity: var(--linksOpacity);
-    transition: opacity .25s linear;
+    opacity:var(--linksOpacity);
+    transition:opacity .25s linear;
   }
-
-  /* Live links + green hover, no underline */
+  /* links: white → green on hover, never underlined */
   .hero-links a:link,
-  .hero-links a:visited{
-    color:#fff;
-    text-decoration:none;
-    transition: color .2s ease;
-    cursor:pointer;
-  }
+  .hero-links a:visited{ color:#fff; text-decoration:none; transition:color .2s ease; cursor:pointer; }
   .hero-links a:hover,
-  .hero-links a:focus-visible{
-    color:#00A86B;
-    text-decoration:none;
-    outline: none;
+  .hero-links a:focus-visible{ color:#00A86B !important; text-decoration:none; }
+
+  /* controls the duration of the hero’s fade/slide timeline */
+  .driver{ height:240vh; } /* was 200vh; larger = slower */
+
+  /* =============== BRIDGE: cross-fade timeline =============== */
+  .bridge{ height:140vh; } /* tune: larger = more time to cross-fade */
+
+  /* =============== ARTICLE SECTION 1 =============== */
+  .section-1{
+    background:#e5e4e0;
+    color:#111;
+    opacity:calc(var(--section1In));                /* fades in with bridge */
+  }
+  .section-1 .inner{
+    /* same visual margins as hero */
+    padding:96px 82px;
+    min-height:100vh; /* enough space to enjoy the scroll */
+    display:grid;
+    grid-template-columns: 512px 96px minmax(0,1fr);
+    align-items:start;
+    gap:0; /* gutter handled as a column */
   }
 
-  /* ================== Scroll driver (bigger height → slower) ================== */
-  .driver{ height: 240vh; }  /* slowed from 200vh */
+  /* Left text column */
+  .section-1 .copy{
+    font-size:20px; line-height:28px;
+  }
+  .section-1 .copy p{ margin:0 0 16px 0; }
 
-  /* ================== Content after ================== */
-  /* Keep article below hero while hero sequence plays */
-  main{ position:relative; z-index:1; }  /* hero is z=3 */
-  .spacer{ min-height:120vh; padding:48px 82px; background:#f5f5f5; color:#000; border-top:1px solid #e5e5e5 }
-  .spacer h2{ margin:0 0 12px 0 }
+  /* Right media column */
+  .section-1 .media{
+    grid-column:3;
+    display:flex; align-items:flex-start; justify-content:flex-start;
+    min-height:60vh;
+  }
+  .section-1 .media figure{ margin:0; }
+  .section-1 .media img{
+    display:block;
+    width:840px; height:1120px;           /* desktop target size */
+    object-fit:cover;
+    opacity:calc(.2 + .8 * var(--section1In));  /* gentle scroll fade-in */
+    transform:scale(calc(0.98 + 0.02 * var(--section1In)));
+    transition:opacity .2s linear, transform .2s linear;
+  }
+
+  /* Simple responsive guardrails */
+  @media (max-width: 1200px){
+    .section-1 .inner{ grid-template-columns: minmax(0,1fr); }
+    .section-1 .media img{ width:100%; height:auto; }
+  }
 </style>
 </head>
 <body>
 
-<!-- Fixed hero -->
-<div class="hero-fixed">
-  <div class="hero-bg" aria-hidden="true"></div>
+  <!-- ===== HERO (unchanged structure) ===== -->
+  <div class="hero-fixed">
+    <div class="hero-bg" aria-hidden="true"></div>
 
-  <div class="hero-media" id="hero-media">
-    <div class="col" id="hero-col">
-      <h1 class="hero-title" id="hero-title">
-        <span class="line">Gardenicity</span>
-        <span class="line">What did</span>
-        <span class="line">Geddes see?</span>
-      </h1>
-      <nav class="hero-links" id="hero-links" aria-label="Primary">
-        <!-- temporary live links for testing -->
-        <a href="https://www.megama.net" target="_blank" rel="noopener">Civic Green</a>
-        <a href="https://www.megama.net" target="_blank" rel="noopener">Growth</a>
-        <a href="https://www.megama.net" target="_blank" rel="noopener">Sustenance</a>
-        <a href="https://www.megama.net" target="_blank" rel="noopener">Leafy SDGs</a>
-        <a href="https://www.megama.net" target="_blank" rel="noopener">EN/עב</a>
-      </nav>
+    <div class="hero-media" id="hero-media">
+      <div class="col" id="hero-col">
+        <h1 class="hero-title" id="hero-title">
+          <span class="line">Gardenicity</span>
+          <span class="line">What did</span>
+          <span class="line">Geddes see?</span>
+        </h1>
+
+        <nav class="hero-links" id="hero-links" aria-label="Primary">
+          <a href="#civic-green">Civic Green</a>
+          <a href="#growth">Growth</a>
+          <a href="#sustenance">Sustenance</a>
+          <a href="#leafy-sdgs">Leafy SDGs</a>
+          <a href="#lang">EN/עב</a>
+        </nav>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Scroll driver (plays Step 2 → Step 3) -->
-<section class="driver" id="driver"></section>
+  <!-- Hero timeline (fade baseline → slide) -->
+  <section class="driver" id="driver"></section>
 
-<main>
-  <section class="spacer">
-    <h2 id="civic-green">Next section</h2>
-    <p>Placeholder content…</p>
+  <!-- NEW: cross-fade hero → article -->
+  <section class="bridge" id="bridge"></section>
+
+  <!-- ===== ARTICLE SECTION 1 ===== -->
+  <section class="section-1" id="section-1">
+    <div class="inner">
+      <div class="copy">
+        <p><strong>Lead paragraph.</strong> This column is 512px wide, 20/28 rhythm. It scrolls normally inside the section while the image on the right eases in.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec id neque lobortis, aliquet mauris vitae, bibendum urna. Integer feugiat sem at nibh dictum, in commodo nisl elementum.</p>
+        <p>Aliquam erat volutpat. Vestibulum a massa eget leo imperdiet posuere. Sed vitae diam et urna vehicula fermentum at a arcu.</p>
+      </div>
+
+      <div class="media">
+        <figure>
+          <!-- Replace with your actual image: assets/section1.jpg -->
+          <img src="assets/hero1gc.jpg" alt="Section 1 visual" />
+        </figure>
+      </div>
+    </div>
   </section>
-</main>
+
+  <!-- Placeholder content after -->
+  <main>
+    <section class="section-1" style="background:#fafafa; color:#111;">
+      <div class="inner">
+        <div class="copy">
+          <h2 id="civic-green">Next section</h2>
+          <p>More content…</p>
+        </div>
+        <div class="media"><figure><img src="assets/hero1gc.jpg" alt="" /></figure></div>
+      </div>
+    </section>
+  </main>
 
 <script>
-/*
-  - Align to media box bottom (96px above viewport bottom).
-  - Measure:
-      startShift = mediaBottom - (third title line).bottom
-      endShift   = mediaBottom - (last link).bottom
-  - Progress p = (-driverRect.top) / (driverRect.height - vh)  (0→1)
-  - Phases:
-      0.00–0.60: title fades on baseline (column parked at startShift)
-      0.60–1.00: slide startShift → endShift; links fade 0→1
-*/
+/* ---------------------------------------------------------
+   HERO (as before): fade on baseline → slide to reveal links
+--------------------------------------------------------- */
 (function(){
   const driver = document.getElementById('driver');
   const media  = document.getElementById('hero-media');
@@ -143,8 +180,7 @@
   const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
   const easeInOutCubic = t => t<0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2;
 
-  const BASELINE_NUDGE = 0;  // tiny tweak if cross-browser baseline drifts
-
+  const BASELINE_NUDGE = 0;
   let startShift = 0, endShift = 0;
 
   function measureShifts(){
@@ -154,12 +190,11 @@
     const lines = title.querySelectorAll('.line');
     const third = lines[2] || lines[lines.length-1];
 
-    const thirdRect    = third.getBoundingClientRect();
+    const thirdRect = third.getBoundingClientRect();
     const lastLinkRect = (links.lastElementChild || links).getBoundingClientRect();
-    const mediaRect    = media.getBoundingClientRect();
+    const mediaRect = media.getBoundingClientRect();
 
     const mediaBaseline = mediaRect.bottom + BASELINE_NUDGE;
-
     startShift = mediaBaseline - thirdRect.bottom;
     endShift   = mediaBaseline - lastLinkRect.bottom;
 
@@ -167,43 +202,48 @@
     root.style.setProperty('--shift', startShift.toFixed(1)+'px');
   }
 
-  function progress(){
-    const r  = driver.getBoundingClientRect();
+  function progressOf(el){
+    const r  = el.getBoundingClientRect();
     const vh = window.innerHeight || document.documentElement.clientHeight;
     const total = r.height - vh;
     if (total <= 0) return 1;
     return clamp(-r.top / total, 0, 1);
   }
 
-  function update(){
-    const p = progress();
-
-    // Step 2: slow/soft fade on baseline
-    const pFade = easeInOutCubic( clamp(p / 0.60, 0, 1) );
+  function updateHero(){
+    const p = progressOf(driver);
+    const pFade  = easeInOutCubic( clamp(p / 0.60, 0, 1) );
     root.style.setProperty('--titleOpacity', pFade.toFixed(3));
 
-    // Step 3: slide to final + reveal links
     const pSlide = clamp((p - 0.60) / 0.40, 0, 1);
     const shift  = startShift + (endShift - startShift) * pSlide;
     root.style.setProperty('--shift', shift.toFixed(1)+'px');
     root.style.setProperty('--linksOpacity', pSlide.toFixed(3));
   }
 
-  async function init(){
-    if (document.fonts && document.fonts.ready) {
-      try { await document.fonts.ready; } catch(e){}
-    }
-    measureShifts();
-    update();
-
-    window.addEventListener('load',   ()=>{ measureShifts(); update(); });
-    window.addEventListener('resize', ()=>{ measureShifts(); update(); });
-    window.addEventListener('scroll', update, { passive:true });
+  /* ---------------------------------------------------------
+     NEW: bridge cross-fade (hero → article section 1)
+  --------------------------------------------------------- */
+  const bridge = document.getElementById('bridge');
+  function updateBridge(){
+    const p = progressOf(bridge);                 /* 0 → 1 across .bridge */
+    const eased = p*p*(3 - 2*p);                  /* easeInOut */
+    root.style.setProperty('--heroAlpha', (1 - eased).toFixed(3));   /* hero out */
+    root.style.setProperty('--section1In', eased.toFixed(3));        /* section in */
   }
 
+  async function init(){
+    if (document.fonts && document.fonts.ready) { try { await document.fonts.ready; } catch(e){} }
+    measureShifts();
+    updateHero(); updateBridge();
+
+    const onScroll = ()=>{ updateHero(); updateBridge(); };
+    window.addEventListener('load',   ()=>{ measureShifts(); onScroll(); });
+    window.addEventListener('resize', ()=>{ measureShifts(); onScroll(); });
+    window.addEventListener('scroll', onScroll, { passive:true });
+  }
   init();
 })();
 </script>
 </body>
 </html>
-
