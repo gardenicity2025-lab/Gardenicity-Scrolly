@@ -33,7 +33,7 @@ html,body{
   position:absolute; inset:0;
   background:#000 url("assets/hero1gc.jpg") center/cover no-repeat;
   opacity:0;
-  animation:heroIn 1200ms ease-out forwards;
+  animation: heroIn 1000ms ease-out forwards;  /* slowed to 1000ms */
 }
 @keyframes heroIn{ from{opacity:0} to{opacity:1} }
 
@@ -67,18 +67,31 @@ html,body{
 }
 .hero-title .line{ display:block; }
 
-/* Links below title, hidden until slide starts */
-.hero-links a{
+/* Links container (so opacity fade works if used in JS) */
+.hero-links{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  font-size:24px;
+  line-height:30px;
+  opacity: var(--linksOpacity);
+  transition: opacity .25s linear;
+}
+
+/* Links — white by default, green on hover, never underlined */
+.hero-links a:link,
+.hero-links a:visited{
   color:#fff;
-  text-decoration:none;   /* never underlined */
+  text-decoration:none;
   transition: color .2s ease;
+  cursor:pointer;
 }
 
-.hero-links a:hover{
-  color:#00A86B;           /* just turns green on hover */
-  text-decoration:none;    /* ensure no underline ever */
+.hero-links a:hover,
+.hero-links a:focus-visible{
+  color:#00A86B !important;   /* garden green */
+  text-decoration:none;       /* ensure no underline */
 }
-
 
 /* ================== Content after ================== */
 .spacer{ 
