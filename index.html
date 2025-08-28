@@ -8,7 +8,7 @@
   /* ============ Base ============ */
   html,body{
     margin:0; padding:0;
-    /* The page background is the same as Section 1 so there’s no black flash */
+    /* Match Section 1 so there’s no black flash behind the hero */
     background:#e5e4e0; color:#fff;
     font-family:"Acumin Pro",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
   }
@@ -19,7 +19,7 @@
     --linksOpacity: 0;      /* hero links fade */
     --heroAlpha: 1;         /* cross-fade hero opacity */
     --heroBlur: 0;          /* 0→1 → multiplies into px below */
-    --s1: 0;                /* Section 1 progress 0→1 */
+    --s1Text: 0;            /* Section 1 text progress 0→1 (starts after img) */
     --s1ImgOpacity: 0;      /* Section 1 right image fade */
   }
 
@@ -78,7 +78,7 @@
   .s1-sticky{
     position:sticky; top:0; height:100vh;
     display:grid;
-    /* margins match hero: inset:96/82; we emulate with padding on a grid */
+    /* margins match hero: inset:96/82; emulate with padding on a grid */
     padding:96px 82px;
     /* 512px text col, 96px gutter, media auto */
     grid-template-columns: 512px 96px 1fr;
@@ -89,16 +89,15 @@
   /* Left: scrolling text flows through the clipped window */
   .s1-text-clip{
     overflow:hidden; height: calc(100vh - 192px); /* 100vh minus top/bottom margins */
-    /* the clip area itself sits in the sticky frame */
   }
   .s1-text{
-    /* Start below the window, end above it as --s1 goes 0→1 */
-    transform: translateY(calc( (1 - var(--s1)) * 60vh - 30vh ));
-    /*               enter ▼                    exit ▲      */
+    /* Start below the window, end above it as --s1Text goes 0→1 */
+    transform: translateY(calc( (1 - var(--s1Text)) * 60vh - 30vh ));
+    /*               enter ▼                       exit ▲      */
     color:#111;
     will-change: transform;
   }
-  .s1-text p{ 
+  .s1-text p{
     margin:0 0 14px 0;
     font-size:20px; line-height:28px;
   }
@@ -172,7 +171,8 @@
 
     <!-- Right media (sticky, centered, fades in only) -->
     <figure class="s1-media">
-      <img id="s1-img" src="assets/placeholder1.jpg" alt="Example visual">
+      <!-- Upload your image as assets/section1.jpg or change the src below -->
+      <img id="s1-img" src="assets/section1.jpg" alt="Section 1 visual">
     </figure>
   </div>
 </section>
@@ -183,12 +183,11 @@
 /*
   WHAT THIS SCRIPT DOES
   1) HERO baseline choreography (fade title on baseline, then slide up to reveal links)
-     — identical to what you liked, unchanged in spirit.
+     — identical to what you liked.
   2) Cross-fade + slight blur the entire hero as Section 1 scrolls in underneath.
   3) SECTION 1:
-     - Progress var --s1 goes 0→1 across the s1-wrap.
-     - Left text (s1-text) translates from below window → above it.
-     - Right image fades from 0→1 while staying centered/sticky.
+     - Image opacity goes 0→1 during the first ~35% of the section.
+     - Only AFTER the image is ~75% visible does the text begin its scroll.
 */
 
 (function(){
@@ -236,7 +235,6 @@
 
   /* ---------- SECTION 1 progress ---------- */
   const s1Wrap = document.getElementById('s1-wrap');
-  const s1Img  = document.getElementById('s1-img');
 
   function progressS1(){
     const r  = s1Wrap.getBoundingClientRect();
@@ -256,19 +254,22 @@
     root.style.setProperty('--shift', shift.toFixed(1)+'px');
     root.style.setProperty('--linksOpacity', pSlide.toFixed(3));
 
-    /* HERO cross-fade/blur into Section 1 */
-    // Start dissolving once the hero motion is basically done
-    const cross = clamp((p - 0.85) / 0.15, 0, 1);  // slower & later
+    /* HERO cross-fade/blur into Section 1 (later & slower) */
+    const cross = clamp((p - 0.85) / 0.15, 0, 1);   // start near the end of hero motion
     root.style.setProperty('--heroAlpha', (1 - cross).toFixed(3));
     root.style.setProperty('--heroBlur',  (cross).toFixed(3));
 
     /* SECTION 1 */
     const s1 = progressS1();
-    root.style.setProperty('--s1', s1.toFixed(3));
 
-    // Right image fade: appear early (first 35% of the section)
+    // Image fade during the first ~35% of the section
     const imgFade = clamp(s1 / 0.35, 0, 1);
     root.style.setProperty('--s1ImgOpacity', imgFade.toFixed(3));
+
+    // Text waits until the image is ~75% visible, then scrolls to 1 by the end
+    const startTextAt = 0.35 * 0.75;     // when imgFade ≈ 0.75
+    const t = clamp((s1 - startTextAt) / (1 - startTextAt), 0, 1);
+    root.style.setProperty('--s1Text', t.toFixed(3));
   }
 
   async function init(){
