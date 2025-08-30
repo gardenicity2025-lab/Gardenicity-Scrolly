@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → Section 1 (timed overlap + 4:3 canvas)</title>
+<title>Gardenicity — Hero → Section 1 (independent image fade + gated text)</title>
 <style>
   /* ===== Base ===== */
   html,body{
     margin:0; padding:0;
-    background:#e5e4e0; color:#fff; /* match section so no flashes */
+    background:#e5e4e0; color:#fff; /* match section bg to avoid flashes */
     font-family:"Acumin Pro",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
     height:100%;
   }
@@ -22,8 +22,8 @@
 
     /* SECTION 1 progression */
     --s1: 0;                /* 0→1 across the s1 wrapper */
-    --s1ImgOpacity: 0;      /* image fade */
-    --s1Text: 0;            /* left text slide (starts late, after gates) */
+    --s1ImgOpacity: 0;      /* image fade 0→1 (independent of hero) */
+    --s1Y: 0px;             /* absolute text translateY, computed from measurements */
   }
 
   /* ===== HERO (fixed; dissolves away) ===== */
@@ -63,39 +63,36 @@
   /* ===== SECTION 1 (pinned 4:3 canvas) ===== */
   .s1-wrap{
     position:relative;
-    height: 260vh;          /* bigger = slower overall S1 timeline */
+    height: 280vh;          /* bigger = slower overall S1 timeline */
     background:#e5e4e0;
     z-index:1;
   }
 
-  /* Sticky viewport with a 4:3 canvas inside (targets 1920×1440) */
+  /* Sticky viewport; center a 4:3 canvas (target 1920×1440) */
   .s1-sticky{ position:sticky; top:0; height:100vh; display:flex; align-items:center; justify-content:center; }
   .s1-canvas{
-    /* Maintain a 4:3 “viewport” while fitting actual screen */
     aspect-ratio: 4 / 3;
     width: min(100vw, 1920px);
     height: min(100vh, 1440px);
     background:#e5e4e0;
-    /* inner margins match hero: 96/82 */
-    padding:96px 82px;
-    box-sizing:border-box;
+
+    /* hero-matched margins */
+    padding:96px 82px; box-sizing:border-box;
 
     display:grid;
     grid-template-columns: 512px 96px 1fr; /* text, gutter, media */
-    align-items:center;
-    gap:0;
+    align-items:center; gap:0;
   }
 
-  /* Left column — clipped window equals canvas height minus top/bottom margins (already applied via padding) */
+  /* Left column: full-height clip; text is translated with --s1Y */
   .s1-text-clip{ overflow:hidden; height:100%; }
   .s1-text{
-    /* Held out until gates open; then travels upward through the canvas */
-    transform: translateY(calc( (1 - var(--s1Text)) * 60vh - 30vh ));
+    transform: translateY(var(--s1Y)); /* computed in JS so it truly starts below and ends above */
     color:#111; will-change:transform;
   }
   .s1-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
 
-  /* Right media — pinned, centered, fades only */
+  /* Right media — pinned/centered, fades only */
   .s1-media{ display:flex; align-items:center; justify-content:center; }
   .s1-media img{
     width:840px; height:1120px; object-fit:cover;
@@ -133,12 +130,12 @@
   <!-- Hero title/links choreography -->
   <section class="driver" id="driver"></section>
 
-  <!-- ===== SECTION 1 (directly under hero; pinned 4:3 canvas) ===== -->
+  <!-- ===== SECTION 1 (pinned, 4:3 canvas) ===== -->
   <section class="s1-wrap" id="s1-wrap">
     <div class="s1-sticky">
-      <div class="s1-canvas">
+      <div class="s1-canvas" id="s1-canvas">
         <!-- Left column -->
-        <div class="s1-text-clip">
+        <div class="s1-text-clip" id="s1-clip">
           <div class="s1-text" id="s1-text">
             <p><strong>HOURS AFTER MY</strong> mother took her last breath on earth…</p>
             <p>After we opened the windows to let the spirits out…</p>
@@ -164,15 +161,18 @@
 <script>
 /*
   Timings:
-  - Hero title/links baseline animation uses #driver as before.
-  - Hero dissolve is keyed to Section 1 progress with a LONGER span.
-  - Image fade starts when hero dissolve reaches ~75% (overlap).
-  - Text waits until hero is fully gone AND image ≥ 75%, then scrolls.
+  - Hero title/links baseline uses #driver (same as before).
+  - Hero dissolve (unchanged from your preferred feel): LONGER, keyed to S1:
+      starts at s1≈0.05, ends at s1≈0.75 (smoothstepped).
+  - Section 1 IMAGE fade is *independent of hero*:
+      starts at s1=0.35, finishes by s1=0.65.
+  - Section 1 TEXT waits until image ≥ 75% opacity (no hero gating),
+      then scrolls from fully below → fully above, clearing before S1 ends.
 */
 (function(){
   const root  = document.documentElement;
 
-  /* HERO choreography (unchanged) */
+  /* ---------- HERO: title & links choreography (unchanged) ---------- */
   const driver = document.getElementById('driver');
   const media  = document.getElementById('hero-media');
   const col    = document.getElementById('hero-col');
@@ -212,7 +212,24 @@
     return clamp(-r.top / total, 0, 1);
   }
 
-  const s1Wrap = document.getElementById('s1-wrap');
+  /* ---------- SECTION 1 measurements for exact text travel ---------- */
+  const s1Wrap  = document.getElementById('s1-wrap');
+  const s1Clip  = document.getElementById('s1-clip');
+  const s1Text  = document.getElementById('s1-text');
+
+  let startY = 0;   // text starts fully below the clip
+  let endY   = 0;   // text ends fully above (last line cleared)
+
+  function measureS1(){
+    const clipH = s1Clip.clientHeight;       // visible window height (inside canvas)
+    const textH = s1Text.scrollHeight;       // total text height
+    const pad   = 24;                        // small breathing room
+
+    startY = clipH + pad;                    // put top of text below the window
+    endY   = -textH - pad;                   // push text completely out the top
+
+    root.style.setProperty('--s1Y', startY.toFixed(1) + 'px'); // prime below
+  }
 
   function update(){
     /* 1) HERO title/links baseline + slide */
@@ -228,35 +245,36 @@
     const s1 = progressOf(s1Wrap);                 // 0→1 across S1 wrapper
     root.style.setProperty('--s1', s1.toFixed(3));
 
-    /* 3) LONGER hero dissolve keyed to S1:
-          starts near s1≈0.05 and ends near s1≈0.65 (smoothstepped) */
-    const heroStart = 0.05, heroSpan = 0.60;       // ← make longer by increasing span
+    /* 3) Hero dissolve (unchanged feel; longer, keyed to S1) */
+    const heroStart = 0.05, heroSpan = 0.70;       // start s1≈0.05, end s1≈0.75
     const crossRaw  = clamp((s1 - heroStart) / heroSpan, 0, 1);
     const cross     = smooth(crossRaw);
     root.style.setProperty('--heroAlpha', (1 - cross).toFixed(3));
     root.style.setProperty('--heroBlur',  (cross * 0.8).toFixed(3)); // up to ~8px
 
-    /* 4) IMAGE FADE: begins when hero dissolve hits ~75% */
-    const imgGateCross = 0.75;                     // when to start image
-    const imgStartS1   = heroStart + heroSpan * imgGateCross;   // s1 position where hero ~75% dissolved
-    const imgSpan      = 0.30;                     // how much s1 to fade image over
-    const imgFade      = clamp((s1 - imgStartS1) / imgSpan, 0, 1);
+    /* 4) IMAGE FADE — independent of hero:
+          starts at s1 = 0.35, finishes by s1 = 0.65 */
+    const imgStartS1 = 0.35;
+    const imgSpan    = 0.30;
+    const imgFade    = clamp((s1 - imgStartS1) / imgSpan, 0, 1);
     root.style.setProperty('--s1ImgOpacity', imgFade.toFixed(3));
 
-    /* 5) TEXT: waits until (hero 100% gone) AND (image ≥ 75%) */
-    const heroDoneS1   = heroStart + heroSpan;                 // s1 where hero fully gone
-    const img75S1      = imgStartS1 + imgSpan * 0.75;
-    const textStartS1  = Math.max(heroDoneS1, img75S1);        // both conditions satisfied
-    const textPhase    = clamp((s1 - textStartS1) / (1 - textStartS1), 0, 1);
-    root.style.setProperty('--s1Text', textPhase.toFixed(3));
+    /* 5) TEXT — waits until image ≥ 75%, then scrolls startY → endY */
+    const tStart     = imgStartS1 + imgSpan * 0.75;     // when image hits 0.75 opacity
+    const tPhaseRaw  = (s1 - tStart) / (1 - tStart);
+    const tPhase     = clamp(tPhaseRaw, 0, 1);
+    const y          = startY + (endY - startY) * tPhase;
+    root.style.setProperty('--s1Y', y.toFixed(1) + 'px');
   }
 
   async function init(){
     if (document.fonts && document.fonts.ready) { try { await document.fonts.ready; } catch(e){} }
     measureHero();
+    measureS1();
     update();
-    window.addEventListener('load',   ()=>{ measureHero(); update(); });
-    window.addEventListener('resize', ()=>{ measureHero(); update(); });
+
+    window.addEventListener('load',   ()=>{ measureHero(); measureS1(); update(); });
+    window.addEventListener('resize', ()=>{ measureHero(); measureS1(); update(); });
     window.addEventListener('scroll', update, { passive:true });
   }
   init();
