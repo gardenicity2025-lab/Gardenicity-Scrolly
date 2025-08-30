@@ -3,36 +3,36 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → Section 1 handoff (pinned image)</title>
+<title>Gardenicity — Hero → Section 1 (timed overlap + 4:3 canvas)</title>
 <style>
-  /* ============ Base ============ */
+  /* ===== Base ===== */
   html,body{
     margin:0; padding:0;
-    /* Match Section 1 so no black shows behind hero */
-    background:#e5e4e0; color:#fff;
+    background:#e5e4e0; color:#fff; /* match section so no flashes */
     font-family:"Acumin Pro",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    height:100%;
   }
   :root{
-    /* HERO vars (driven by JS) */
+    /* HERO (driven by JS) */
     --shift: 0px;           /* hero column slide */
     --titleOpacity: 0;      /* hero title fade */
     --linksOpacity: 0;      /* hero links fade */
-    --heroAlpha: 1;         /* cross-fade hero opacity (now keyed to Section 1) */
-    --heroBlur: 0;          /* 0→1, used as multiplier for px blur */
+    --heroAlpha: 1;         /* 1→0 as hero dissolves */
+    --heroBlur: 0;          /* 0→1 (scaled to px) */
 
-    /* SECTION 1 vars */
-    --s1: 0;                /* Section 1 progress 0→1 while s1-wrap scrolls */
-    --s1ImgOpacity: 0;      /* right image fades in after hero is gone */
-    --s1Text: 0;            /* left text scroll phase; starts after img ~75% */
+    /* SECTION 1 progression */
+    --s1: 0;                /* 0→1 across the s1 wrapper */
+    --s1ImgOpacity: 0;      /* image fade */
+    --s1Text: 0;            /* left text slide (starts late, after gates) */
   }
 
-  /* ============ HERO ============ */
+  /* ===== HERO (fixed; dissolves away) ===== */
   .hero-fixed{
     position:fixed; inset:0; z-index:3;
     opacity:var(--heroAlpha);
     filter: blur(calc(var(--heroBlur) * 10px));
-    pointer-events:none; /* allow interaction with content underneath as it appears */
-    will-change: opacity, filter;
+    pointer-events:none;
+    will-change:opacity, filter;
   }
   .hero-bg{
     position:absolute; inset:0;
@@ -46,7 +46,7 @@
     display:flex; align-items:flex-end; justify-content:flex-start;
     overflow:hidden; /* clip below baseline */
   }
-  .col{ position:relative; max-width:700px; transform: translateY(var(--shift)); will-change: transform; }
+  .col{ position:relative; max-width:700px; transform:translateY(var(--shift)); will-change:transform; }
   .hero-title{ margin:0 0 24px 0; font-weight:400; font-size:100px; line-height:100px; opacity:var(--titleOpacity); will-change:opacity; }
   .hero-title .line{ display:block; }
   .hero-links{
@@ -55,59 +55,61 @@
     opacity:var(--linksOpacity); transition:opacity .25s linear;
   }
   .hero-links a{ color:#fff; text-decoration:none; transition:color .2s ease; cursor:pointer; }
-  .hero-links a:hover,
-  .hero-links a:focus-visible{ color:#00A86B; text-decoration:none; }
+  .hero-links a:hover,.hero-links a:focus-visible{ color:#00A86B; text-decoration:none; }
 
-  /* Controls the hero baseline/slide duration */
+  /* duration of hero title/links baseline choreography */
   .driver{ height:200vh; }
 
-  /* ============ SECTION 1 (Article) ============ */
-  /* Wrapper taller than viewport so the sticky frame can play the animation */
+  /* ===== SECTION 1 (pinned 4:3 canvas) ===== */
   .s1-wrap{
     position:relative;
-    height: 240vh;            /* bigger = slower Section 1 experience */
+    height: 260vh;          /* bigger = slower overall S1 timeline */
     background:#e5e4e0;
     z-index:1;
   }
-  /* Sticky viewport frame (exactly like hero margins) */
-  .s1-sticky{
-    position:sticky; top:0; height:100vh;
-    display:grid;
+
+  /* Sticky viewport with a 4:3 canvas inside (targets 1920×1440) */
+  .s1-sticky{ position:sticky; top:0; height:100vh; display:flex; align-items:center; justify-content:center; }
+  .s1-canvas{
+    /* Maintain a 4:3 “viewport” while fitting actual screen */
+    aspect-ratio: 4 / 3;
+    width: min(100vw, 1920px);
+    height: min(100vh, 1440px);
+    background:#e5e4e0;
+    /* inner margins match hero: 96/82 */
     padding:96px 82px;
-    grid-template-columns: 512px 96px 1fr; /* left text, gutter, right media */
+    box-sizing:border-box;
+
+    display:grid;
+    grid-template-columns: 512px 96px 1fr; /* text, gutter, media */
     align-items:center;
+    gap:0;
   }
-  /* Left: scrolling text flows through a clipped window (full height minus top/bottom margins) */
-  .s1-text-clip{
-    overflow:hidden; height: calc(100vh - 192px);
-  }
+
+  /* Left column — clipped window equals canvas height minus top/bottom margins (already applied via padding) */
+  .s1-text-clip{ overflow:hidden; height:100%; }
   .s1-text{
-    /* Waits, then travels from below → above.
-       At --s1Text:0 it sits ~+30vh below midpoint; at 1 it reaches ~-30vh above. */
-    transform: translateY(calc((1 - var(--s1Text)) * 60vh - 30vh));
-    color:#111; will-change: transform;
+    /* Held out until gates open; then travels upward through the canvas */
+    transform: translateY(calc( (1 - var(--s1Text)) * 60vh - 30vh ));
+    color:#111; will-change:transform;
   }
   .s1-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
 
-  /* Right: pinned/centered image that ONLY fades in (no movement) */
-  .s1-media{
-    grid-column:3 / 4;
-    display:flex; align-items:center; justify-content:center;
-  }
+  /* Right media — pinned, centered, fades only */
+  .s1-media{ display:flex; align-items:center; justify-content:center; }
   .s1-media img{
     width:840px; height:1120px; object-fit:cover;
     max-width:100%; max-height:100%;
-    opacity: var(--s1ImgOpacity);
+    opacity:var(--s1ImgOpacity);
     transition: opacity .35s linear;
   }
 
-  /* follow-on spacer so you can scroll past Section 1 */
   .after{ min-height:120vh; }
 </style>
 </head>
 <body>
 
-  <!-- ===== HERO (fixed; fades ONLY once Section 1 starts) ===== -->
+  <!-- ===== HERO ===== -->
   <div class="hero-fixed" id="hero">
     <div class="hero-bg" aria-hidden="true"></div>
     <div class="hero-media" id="hero-media">
@@ -131,28 +133,29 @@
   <!-- Hero title/links choreography -->
   <section class="driver" id="driver"></section>
 
-  <!-- ===== SECTION 1 (directly under hero; same margins) ===== -->
+  <!-- ===== SECTION 1 (directly under hero; pinned 4:3 canvas) ===== -->
   <section class="s1-wrap" id="s1-wrap">
     <div class="s1-sticky">
-      <!-- Left column -->
-      <div class="s1-text-clip">
-        <div class="s1-text" id="s1-text">
-          <p><strong>HOURS AFTER MY</strong> mother took her last breath on earth…</p>
-          <p>After we opened the windows to let the spirits out…</p>
-          <p>After we lit incense stick after incense stick…</p>
-          <p>After we watched MMA fighters on TV in the basement…</p>
-          <p>And the smoke kept rising. The chain must not be broken.</p>
+      <div class="s1-canvas">
+        <!-- Left column -->
+        <div class="s1-text-clip">
+          <div class="s1-text" id="s1-text">
+            <p><strong>HOURS AFTER MY</strong> mother took her last breath on earth…</p>
+            <p>After we opened the windows to let the spirits out…</p>
+            <p>After we lit incense stick after incense stick…</p>
+            <p>After we watched MMA fighters on TV in the basement…</p>
+            <p>And the smoke kept rising. The chain must not be broken.</p>
+          </div>
         </div>
+
+        <!-- Gutter -->
+        <div></div>
+
+        <!-- Right media (pinned, fades only) -->
+        <figure class="s1-media">
+          <img id="s1-img" src="assets/section1.jpg" alt="Section 1 visual">
+        </figure>
       </div>
-
-      <!-- Gutter (empty) -->
-      <div></div>
-
-      <!-- Right media (pinned, centered, fades in only) -->
-      <figure class="s1-media">
-        <!-- Upload your image as assets/section1.jpg -->
-        <img id="s1-img" src="assets/section1.jpg" alt="Section 1 visual">
-      </figure>
     </div>
   </section>
 
@@ -160,17 +163,16 @@
 
 <script>
 /*
-  Logic:
-  - Driver controls hero title fade-on-baseline and slide to final links (same as before).
-  - Hero fade/blur NO LONGER uses driver; it keys off Section 1 progress (so it only starts AFTER driver completes and you begin S1).
-  - Section 1:
-      * Right image is pinned and fades in ONLY after hero is fully gone.
-      * Left text waits until image ~75% visible, then scrolls up through the viewport.
+  Timings:
+  - Hero title/links baseline animation uses #driver as before.
+  - Hero dissolve is keyed to Section 1 progress with a LONGER span.
+  - Image fade starts when hero dissolve reaches ~75% (overlap).
+  - Text waits until hero is fully gone AND image ≥ 75%, then scrolls.
 */
 (function(){
   const root  = document.documentElement;
 
-  /* ---------- HERO: title & links choreography (unchanged) ---------- */
+  /* HERO choreography (unchanged) */
   const driver = document.getElementById('driver');
   const media  = document.getElementById('hero-media');
   const col    = document.getElementById('hero-col');
@@ -179,7 +181,7 @@
 
   const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
   const easeInOutCubic = t => t<0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2;
-  const smoothstep = t => t*t*(3 - 2*t);
+  const smooth = t => t*t*(3 - 2*t);
 
   let startShift = 0, endShift = 0;
 
@@ -210,12 +212,11 @@
     return clamp(-r.top / total, 0, 1);
   }
 
-  /* ---------- SECTION 1 progress ---------- */
   const s1Wrap = document.getElementById('s1-wrap');
 
   function update(){
-    /* Hero baseline fade + slide */
-    const p = progressOf(driver);    // 0→1 across driver
+    /* 1) HERO title/links baseline + slide */
+    const p = progressOf(driver);
     const pFade  = easeInOutCubic( clamp(p / 0.60, 0, 1) );
     root.style.setProperty('--titleOpacity', pFade.toFixed(3));
     const pSlide = clamp((p - 0.60) / 0.40, 0, 1);
@@ -223,42 +224,37 @@
     root.style.setProperty('--shift', shift.toFixed(1)+'px');
     root.style.setProperty('--linksOpacity', pSlide.toFixed(3));
 
-    /* Section 1 progress */
-    const s1 = progressOf(s1Wrap);   // 0→1 as you scroll the S1 wrapper
+    /* 2) SECTION 1 progress */
+    const s1 = progressOf(s1Wrap);                 // 0→1 across S1 wrapper
     root.style.setProperty('--s1', s1.toFixed(3));
 
-    /* Hero cross-fade/blur keyed to Section 1 (NOT driver):
-       - Start the dissolve only once S1 actually begins (s1 > 0).
-       - Complete by s1 ≈ 0.35 (tweak to taste). */
-    const cross = smoothstep( clamp((s1 - 0.02) / 0.33, 0, 1) ); // small 2% buffer, ~33% duration
+    /* 3) LONGER hero dissolve keyed to S1:
+          starts near s1≈0.05 and ends near s1≈0.65 (smoothstepped) */
+    const heroStart = 0.05, heroSpan = 0.60;       // ← make longer by increasing span
+    const crossRaw  = clamp((s1 - heroStart) / heroSpan, 0, 1);
+    const cross     = smooth(crossRaw);
     root.style.setProperty('--heroAlpha', (1 - cross).toFixed(3));
-    root.style.setProperty('--heroBlur',  (cross * 0.8).toFixed(3)); // up to ~8px blur
+    root.style.setProperty('--heroBlur',  (cross * 0.8).toFixed(3)); // up to ~8px
 
-    /* Section 1 image fade:
-       - Wait until hero is fully gone (cross == 1).
-       - Then fade image from 0→1 over next ~30% of S1. */
-    let imgOpacity = 0;
-    if (cross >= 1){
-      const imgFade = clamp((s1 - 0.35) / 0.30, 0, 1); // start at 0.35, finish by 0.65
-      imgOpacity = imgFade;
-    }
-    root.style.setProperty('--s1ImgOpacity', imgOpacity.toFixed(3));
+    /* 4) IMAGE FADE: begins when hero dissolve hits ~75% */
+    const imgGateCross = 0.75;                     // when to start image
+    const imgStartS1   = heroStart + heroSpan * imgGateCross;   // s1 position where hero ~75% dissolved
+    const imgSpan      = 0.30;                     // how much s1 to fade image over
+    const imgFade      = clamp((s1 - imgStartS1) / imgSpan, 0, 1);
+    root.style.setProperty('--s1ImgOpacity', imgFade.toFixed(3));
 
-    /* Section 1 text:
-       - Do nothing until image ~75% visible.
-       - Then ramp text 0→1 by the end of S1. */
-    const img75_at = 0.35 + 0.30 * 0.75;            // 0.35 start + 75% of the 0.30 fade span = 0.575
-    const t = clamp((s1 - img75_at) / (1 - img75_at), 0, 1);
-    root.style.setProperty('--s1Text', t.toFixed(3));
+    /* 5) TEXT: waits until (hero 100% gone) AND (image ≥ 75%) */
+    const heroDoneS1   = heroStart + heroSpan;                 // s1 where hero fully gone
+    const img75S1      = imgStartS1 + imgSpan * 0.75;
+    const textStartS1  = Math.max(heroDoneS1, img75S1);        // both conditions satisfied
+    const textPhase    = clamp((s1 - textStartS1) / (1 - textStartS1), 0, 1);
+    root.style.setProperty('--s1Text', textPhase.toFixed(3));
   }
 
   async function init(){
-    if (document.fonts && document.fonts.ready) {
-      try { await document.fonts.ready; } catch(e){}
-    }
+    if (document.fonts && document.fonts.ready) { try { await document.fonts.ready; } catch(e){} }
     measureHero();
     update();
-
     window.addEventListener('load',   ()=>{ measureHero(); update(); });
     window.addEventListener('resize', ()=>{ measureHero(); update(); });
     window.addEventListener('scroll', update, { passive:true });
@@ -268,4 +264,3 @@
 </script>
 </body>
 </html>
-
