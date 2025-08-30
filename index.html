@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Synced hero-out / image-in timing</title>
+<title>Gardenicity — Synced hero-out / image-in (pure scroll-scrub)</title>
 <style>
   /* ===== Base ===== */
   html,body{
@@ -22,7 +22,7 @@
 
     /* SECTION 1 progression */
     --s1: 0;                /* 0→1 across the s1 wrapper */
-    --s1ImgOpacity: 0;      /* image fade now synced with hero dissolve */
+    --s1ImgOpacity: 0;      /* image fade (synced to hero, no CSS transition) */
     --s1Y: 0px;             /* absolute text translateY, computed from measurements */
   }
 
@@ -102,13 +102,14 @@
   }
   .s1-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
 
-  /* Right media — pinned/centered, fades only */
+  /* Right media — pinned/centered, fades by SCROLL only */
   .s1-media{ display:flex; align-items:center; justify-content:center; }
   .s1-media img{
     width:840px; height:1120px; object-fit:cover;
     max-width:100%; max-height:100%;
     opacity:var(--s1ImgOpacity);
-    transition: opacity .35s linear;
+    transition:none;               /* 🔧 remove time-based tweening */
+    will-change:opacity;           /* helpful for smooth scrubbing */
   }
 
   .after{ min-height:120vh; }
@@ -159,7 +160,7 @@
         <!-- Gutter -->
         <div></div>
 
-        <!-- Right media (pinned, fades only) -->
+        <!-- Right media (pinned, fades only via scroll) -->
         <figure class="s1-media">
           <img id="s1-img" src="assets/section1.jpg" alt="Section 1 visual">
         </figure>
@@ -174,7 +175,7 @@
   Sync plan:
   - Hero title/links baseline uses #driver (unchanged).
   - Hero dissolve keyed to Section 1 with longer span (start s1≈0.05 → end s1≈0.75).
-  - Section 1 image opacity is now EXACTLY the hero dissolve progress (same start/span/ease).
+  - Section 1 image opacity = hero dissolve progress (same start/span/ease).
   - Text waits until image ≥ 0.75, then scrolls startY → endY before S1 ends.
 */
 (function(){
@@ -260,7 +261,7 @@
     root.style.setProperty('--heroAlpha', (1 - cross).toFixed(3));
     root.style.setProperty('--heroBlur',  (cross * 0.8).toFixed(3)); // up to ~8px
 
-    /* 4) IMAGE FADE — SYNCHRONIZED with hero dissolve */
+    /* 4) IMAGE FADE — SYNCHRONIZED with hero dissolve (pure scroll) */
     root.style.setProperty('--s1ImgOpacity', cross.toFixed(3));
 
     /* 5) TEXT — waits until image ≥ 75% (== cross ≥ .75), then scrolls startY → endY */
