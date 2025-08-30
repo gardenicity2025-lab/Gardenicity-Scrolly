@@ -49,13 +49,33 @@
   .col{ position:relative; max-width:700px; transform:translateY(var(--shift)); will-change:transform; }
   .hero-title{ margin:0 0 24px 0; font-weight:400; font-size:100px; line-height:100px; opacity:var(--titleOpacity); will-change:opacity; }
   .hero-title .line{ display:block; }
+
+  /* Links block fades in via --linksOpacity */
   .hero-links{
     display:flex; flex-direction:column; gap:10px;
     font-size:24px; line-height:30px;
     opacity:var(--linksOpacity); transition:opacity .25s linear;
   }
-  .hero-links a{ color:#fff; text-decoration:none; transition:color .2s ease; cursor:pointer; }
-  .hero-links a:hover,.hero-links a:focus-visible{ color:#00A86B; text-decoration:none; }
+
+  /* ✅ Robust link styles: white by default, green on hover/focus, never underlined */
+  .hero-links a:link,
+  .hero-links a:visited{
+    color:#fff !important;
+    text-decoration:none !important;
+    transition:color .2s ease;
+    cursor:pointer;
+  }
+  .hero-links a:hover,
+  .hero-links a:focus-visible,
+  .hero-media .hero-links a:hover,
+  .hero-media .hero-links a:focus-visible{
+    color:#00A86B !important;   /* garden green */
+    text-decoration:none !important;
+  }
+  .hero-links a:active{
+    color:#00A86B !important;
+    text-decoration:none !important;
+  }
 
   /* duration of hero title/links baseline choreography */
   .driver{ height:200vh; }
@@ -162,11 +182,11 @@
 /*
   Timings:
   - Hero title/links baseline uses #driver (same as before).
-  - Hero dissolve (unchanged from your preferred feel): LONGER, keyed to S1:
+  - Hero dissolve (unchanged feel): LONGER, keyed to S1:
       starts at s1≈0.05, ends at s1≈0.75 (smoothstepped).
-  - Section 1 IMAGE fade is *independent of hero*:
+  - Section 1 IMAGE fade is independent of hero:
       starts at s1=0.35, finishes by s1=0.65.
-  - Section 1 TEXT waits until image ≥ 75% opacity (no hero gating),
+  - Section 1 TEXT waits until image ≥ 75% opacity,
       then scrolls from fully below → fully above, clearing before S1 ends.
 */
 (function(){
