@@ -44,14 +44,13 @@
     font-size:24px; line-height:30px;
     opacity:var(--linksOpacity); transition:opacity .25s linear; }
 
-  /* ✅ robust link styles */
   .hero-links a:link,
   .hero-links a:visited{
     color:#fff !important;
     text-decoration:none !important;
     transition:color .2s ease;
     cursor:pointer;
-    pointer-events:auto; /* clickable despite parent pointer-events:none */
+    pointer-events:auto;
   }
   .hero-links a:hover,
   .hero-links a:focus-visible{
@@ -89,7 +88,6 @@
         <span class="line">Geddes see?</span>
       </h1>
       <nav class="hero-links" id="hero-links" aria-label="Primary">
-        <!-- TEMP external links for hover test -->
         <a href="https://www.megama.net">Civic Green</a>
         <a href="https://www.megama.net">Growth</a>
         <a href="https://www.megama.net">Sustenance</a>
@@ -174,7 +172,8 @@
     const cross=smooth(crossRaw);
     root.style.setProperty('--heroAlpha',(1-cross).toFixed(3));
     root.style.setProperty('--heroBlur',(cross*0.8).toFixed(3));
-    const imgStartS1=0.35,imgSpan=0.30;
+    /* Slower image fade: 25% longer (span .375 instead of .30) */
+    const imgStartS1=0.35,imgSpan=0.375;
     const imgFade=clamp((s1-imgStartS1)/imgSpan,0,1);
     root.style.setProperty('--s1ImgOpacity',imgFade.toFixed(3));
     const tStart=imgStartS1+imgSpan*0.75;
