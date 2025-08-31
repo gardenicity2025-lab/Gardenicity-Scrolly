@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → Section 1 → Section 2 (mirrored)</title>
+<title>Gardenicity — Hero → Section 1 → Section 2 (mirrored, pinned + scroll fades)</title>
 <style>
   /* ===== Base ===== */
   html,body{
@@ -26,9 +26,9 @@
     --s1Y: 0px;                /* s1 text translateY */
     --s1Out: 0;                /* s1 → s2 cross value (0 none, 1 full) */
 
-    /* SECTION 2 */
-    --s2: 0;                   /* 0→1 across s2 wrapper (independent) */
-    --s2ImgOpacity: 0;         /* s2 image opacity (mirrors s1Out) */
+    /* SECTION 2 (mirrored) */
+    --s2: 0;                   /* 0→1 across s2 wrapper */
+    --s2ImgOpacity: 0;         /* s2 image fade in (by s2 scroll) */
     --s2Y: 0px;                /* s2 text translateY */
   }
 
@@ -101,7 +101,7 @@
   .s2-media{ display:flex; align-items:center; justify-content:center; }
   .s2-media img{
     max-width:100%; max-height:100%;
-    opacity:var(--s2ImgOpacity);
+    opacity:var(--s2ImgOpacity);   /* 🔧 now driven by s2 scroll, not s1 */
     transition:none; will-change:opacity, width, height;
     object-fit:contain; /* landscape should not crop */
   }
@@ -198,6 +198,7 @@
   const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
   const easeInOutCubic = t => t<0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2;
   const smooth = t => t*t*(3 - 2*t);  // smoothstep
+  const easeSlow = t => Math.pow(t, 0.85);
 
   /* ---------- HERO baseline choreography ---------- */
   const driver = document.getElementById('driver');
@@ -302,37 +303,32 @@
     const s1TextStart = heroStart + heroSpan * 0.75;
     const s1PhaseRaw  = (s1 - s1TextStart) / (1 - s1TextStart);
     const s1Phase     = clamp(s1PhaseRaw, 0, 1);
-    const s1Y         = s1StartY + (s1EndY - s1StartY) * Math.pow(s1Phase, 0.85); /* slightly slower feel */
+    const s1Y         = s1StartY + (s1EndY - s1StartY) * easeSlow(s1Phase);
     root.style.setProperty('--s1Y', s1Y.toFixed(1)+'px');
 
-    /* === NEW: trigger when bottom of s1 text hits 50% of viewport ===
-       bottom_of_text (inside clip) = y + s1TextH
-       We want: bottom_of_text <= clipH * 0.5  ⇒ start fading out s1 & fading in s2
-       Solve with the same param (s1Phase): find gate where this condition is met. */
-    const yAtPhase = (phase)=> s1StartY + (s1EndY - s1StartY) * phase;   // linear in phase
-    // compute the linear phase at which bottom crosses 50% of clip
+    /* === S1 → S2 cross trigger (bottom of S1 text reaches 50% of viewport) === */
     const gateLinear =
       ( (s1ClipH*0.5) - s1TextH - s1StartY ) / (s1EndY - s1StartY);
     const gate = clamp(gateLinear, 0, 1);
-
-    const s1Out = clamp((s1Phase - gate) / (1 - gate), 0, 1); // 0 until gate, then 0→1
+    const s1Out = clamp((s1Phase - gate) / (1 - gate), 0, 1);
     root.style.setProperty('--s1Out', s1Out.toFixed(3));
+    /* (we no longer tie s2 image opacity to s1Out; s2 is driven by its own scroll) */
 
-    /* Apply s1Out:
-       - s1 image fades OUT: multiply its opacity by (1 - s1Out)
-       - s2 image fades IN:  equals s1Out (mirrored)
-    */
-    const s1ImgIn = cross;                    // how much s1 has faded in
-    const s1ImgVisible = s1ImgIn * (1 - s1Out);
-    root.style.setProperty('--s1ImgOpacity', s1ImgVisible.toFixed(3));
-    root.style.setProperty('--s2ImgOpacity', s1Out.toFixed(3));
-
-    /* SECTION 2 scroll (for its text timing only) */
+    /* ===== SECTION 2 (independent, mirrored like S1) ===== */
     const s2 = progressOf(s2Wrap);
     root.style.setProperty('--s2', s2.toFixed(3));
-    // Text starts after the s2 image is mostly in (same 75% idea but using s1Out)
-    const s2TextPhase = clamp((s1Out - 0.75) / 0.25, 0, 1);
-    const s2Y = s2StartY + (s2EndY - s2StartY) * Math.pow(s2TextPhase, 0.85);
+
+    /* s2 image fade IN (same rhythm as s1): start ~0.05, span ~0.70 */
+    const s2ImgStart = 0.05, s2ImgSpan = 0.70;
+    const s2ImgRaw   = clamp((s2 - s2ImgStart) / s2ImgSpan, 0, 1);
+    const s2ImgIn    = smooth(s2ImgRaw);
+    root.style.setProperty('--s2ImgOpacity', s2ImgIn.toFixed(3));
+
+    /* s2 text starts when image ≥ 75% (mirror S1) */
+    const s2TextStartAt = 0.75;
+    const s2TextPhaseRaw = (s2ImgIn - s2TextStartAt) / (1 - s2TextStartAt);
+    const s2TextPhase    = clamp(s2TextPhaseRaw, 0, 1);
+    const s2Y            = s2StartY + (s2EndY - s2StartY) * easeSlow(s2TextPhase);
     root.style.setProperty('--s2Y', s2Y.toFixed(1)+'px');
   }
 
