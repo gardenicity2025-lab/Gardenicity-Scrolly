@@ -3,366 +3,314 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → Section 1 → Section 2 (pinned S2 + mirrored scroll) v27</title>
+<title>Gardenicity — Hero → S1 → S2 (mirrored)</title>
 <style>
-  /* ===== Base ===== */
+  /* ================== Base ================== */
   html,body{
     margin:0; padding:0;
-    background:#e5e4e0; color:#fff;     /* match sections to avoid flashes */
+    background:#e5e4e0;          /* matches sections to avoid flashes */
+    color:#fff;
     font-family:"Acumin Pro",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-    height:100%;
   }
+
   :root{
-    /* HERO */
-    --shift: 0px;              /* hero slide */
-    --titleOpacity: 0;         /* hero title fade */
-    --linksOpacity: 0;         /* hero links fade */
-    --heroAlpha: 1;            /* hero dissolve */
+    /* HERO vars */
+    --shift: 0px;
+    --titleOpacity: 0;
+    --linksOpacity: 0;
+    --heroAlpha: 1;
     --heroBlur: 0;
 
-    /* SECTION 1 */
-    --s1: 0;                   /* 0→1 across s1 wrapper */
-    --s1ImgOpacity: 0;         /* s1 image fade in (then modulated by s1Out) */
-    --s1Y: 0px;                /* s1 text translateY */
-    --s1Out: 0;                /* s1 → s2 cross value (0 none, 1 full) */
-
-    /* SECTION 2 (mirrored) */
-    --s2: 0;                   /* 0→1 across s2 wrapper */
-    --s2ImgOpacity: 0;         /* s2 image fade in (max of cross + own scroll) */
-    --s2Y: 0px;                /* s2 text translateY */
+    /* Section vars (progress 0→1) */
+    --s1: 0; --s1ImgOpacity: 0; --s1TextP: 0;
+    --s2: 0; --s2ImgOpacity: 0; --s2TextP: 0;
   }
 
-  /* ===== HERO (fixed; dissolves away) ===== */
+  /* ================== HERO ================== */
   .hero-fixed{
-    position:fixed; inset:0; z-index:3;
+    position:fixed; inset:0;
     opacity:var(--heroAlpha);
     filter: blur(calc(var(--heroBlur) * 10px));
-    pointer-events:auto;                 /* allow links */
-    will-change:opacity, filter;
+    pointer-events:none;
+    will-change: opacity, filter;
   }
+
   .hero-bg{
     position:absolute; inset:0;
     background:url("assets/hero1gc.jpg") center/cover no-repeat;
-    opacity:0; animation:heroIn 1200ms ease-out forwards; /* soft load-in (time-based) */
-    pointer-events:none;
+    opacity:0; animation:heroIn 1000ms ease-out forwards;
   }
   @keyframes heroIn{ from{opacity:0} to{opacity:1} }
 
-  .hero-media{ position:absolute; inset:96px 82px; display:flex; align-items:flex-end; justify-content:flex-start; overflow:hidden; }
+  .hero-media{
+    position:absolute; inset:96px 82px;
+    display:flex; align-items:flex-end; justify-content:flex-start;
+    overflow:hidden;
+  }
   .col{ position:relative; max-width:700px; transform:translateY(var(--shift)); will-change:transform; }
   .hero-title{ margin:0 0 24px 0; font-weight:400; font-size:100px; line-height:100px; opacity:var(--titleOpacity); }
   .hero-title .line{ display:block; }
+
   .hero-links{
     display:flex; flex-direction:column; gap:10px;
-    font-size:24px; line-height:30px; opacity:var(--linksOpacity);
+    font-size:24px; line-height:30px; opacity:var(--linksOpacity); transition:opacity .25s linear;
   }
-  .hero-links a:link,
-  .hero-links a:visited{ color:#fff !important; text-decoration:none !important; cursor:pointer; transition:color .2s ease; }
-  .hero-links a:hover,
-  .hero-links a:focus-visible{ color:#00A86B !important; text-decoration:none !important; }
+  .hero-links a{ color:#fff; text-decoration:none; transition:color .2s ease; cursor:pointer; }
+  .hero-links a:hover, .hero-links a:focus-visible{ color:#00A86B; text-decoration:none; }
 
+  /* Driver controls the hero title/links span */
   .driver{ height:200vh; }
 
-  /* ===== Shared pinned 4:3 canvas ===== */
-  .sticky{ position:sticky; top:0; height:100vh; display:flex; align-items:center; justify-content:center; }
-  .canvas{
-    aspect-ratio: 4 / 3;
-    width: min(100vw, 1920px);
-    height: min(100vh, 1440px);
-    padding:96px 82px; box-sizing:border-box;
-    background:#e5e4e0;
-    display:grid;
+  /* ================== SECTION 1 (image RIGHT) ================== */
+  .s1-wrap{ position:relative; height:220vh; background:#e5e4e0; }
+  .s1-sticky{
+    position:sticky; top:0; height:100vh;
+    display:grid; padding:96px 82px;
+    grid-template-columns: 512px 96px 1fr;   /* text | gutter | media */
+    align-items:center;
   }
 
-  /* ===== Section 1 (text left, media right) ===== */
-  .s1-wrap{ position:relative; height:280vh; background:#e5e4e0; z-index:1; }
-  .s1-canvas{ grid-template-columns: 512px 96px 1fr; align-items:center; gap:0; }
-  .s1-text-clip{ overflow:hidden; height:100%; }
-  .s1-text{ transform:translateY(var(--s1Y)); color:#111; will-change:transform; }
+  .s-clip{ overflow:hidden; height:calc(100vh - 192px); } /* 96+96 margins */
+  .s1-text{
+    color:#111;
+    transform: translateY(calc( (1 - var(--s1TextP)) * 60vh - 30vh ));
+    will-change: transform;
+  }
   .s1-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
-  .s1-media{ display:flex; align-items:center; justify-content:center; }
+
+  .s1-media{ grid-column:3 / 4; display:flex; align-items:center; justify-content:center; }
   .s1-media img{
-    max-width:100%; max-height:100%;
-    opacity:var(--s1ImgOpacity);
-    transition:none; will-change:opacity, width, height;
-    object-fit:cover;
+    width:840px; height:1120px; object-fit:cover; max-width:100%; max-height:100%;
+    opacity:var(--s1ImgOpacity); transition:opacity .3s linear;
   }
 
-  /* ===== Section 2 (media left 1120×840, text right) ===== */
-  .s2-wrap{ position:relative; height:300vh; background:#e5e4e0; z-index:2; }
-  .s2-canvas{ grid-template-columns: 1120px 96px 512px; align-items:center; gap:0; }
-  .s2-media{ display:flex; align-items:center; justify-content:center; } /* centers image */
-  .s2-media img{
-    max-width:100%; max-height:100%;
-    opacity:var(--s2ImgOpacity);
-    transition:none; will-change:opacity, width, height;
-    object-fit:contain; /* landscape preserved */
+  /* ================== SECTION 2 (MIRRORED: image LEFT) ================== */
+  .s2-wrap{ position:relative; height:220vh; background:#e5e4e0; }
+  .s2-sticky{
+    position:sticky; top:0; height:100vh;
+    display:grid; padding:96px 82px;
+    grid-template-columns: 1fr 96px 512px;   /* media | gutter | text */
+    align-items:center;
   }
-  .s2-text-clip{ overflow:hidden; height:100%; }
-  .s2-text{ transform:translateY(var(--s2Y)); color:#111; will-change:transform; }
+
+  .s2-media{ grid-column:1 / 2; display:flex; align-items:center; justify-content:center; }
+  .s2-media img{
+    /* Default landscape 1120×840 centered & pinned */
+    width:1120px; height:840px; object-fit:cover;
+    max-width:100%; max-height:100%;
+    opacity:var(--s2ImgOpacity); transition:opacity .3s linear;
+  }
+
+  .s2-text{
+    grid-column:3 / 4; color:#111;
+    transform: translateY(calc( (1 - var(--s2TextP)) * 60vh - 30vh ));
+    will-change: transform;
+  }
   .s2-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
+
+  /* optional subtle separators */
+  .s1-wrap::before, .s2-wrap::before{
+    content:""; position:absolute; left:0; right:0; top:0; height:1px; background:rgba(0,0,0,.06);
+  }
 
   .after{ min-height:120vh; }
 </style>
 </head>
 <body>
 
-  <!-- ===== HERO ===== -->
-  <div class="hero-fixed" id="hero">
-    <div class="hero-bg" aria-hidden="true"></div>
-    <div class="hero-media" id="hero-media">
-      <div class="col" id="hero-col">
-        <h1 class="hero-title" id="hero-title">
-          <span class="line">Gardenicity</span>
-          <span class="line">What did</span>
-          <span class="line">Geddes see?</span>
-        </h1>
-        <nav class="hero-links" id="hero-links" aria-label="Primary">
-          <a href="https://www.megama.net">Civic Green</a>
-          <a href="https://www.megama.net">Growth</a>
-          <a href="https://www.megama.net">Sustenance</a>
-          <a href="https://www.megama.net">Leafy SDGs</a>
-          <a href="https://www.megama.net">EN/עב</a>
-        </nav>
+<!-- ================== HERO ================== -->
+<div class="hero-fixed" id="hero">
+  <div class="hero-bg" aria-hidden="true"></div>
+
+  <div class="hero-media" id="hero-media">
+    <div class="col" id="hero-col">
+      <h1 class="hero-title" id="hero-title">
+        <span class="line">Gardenicity</span>
+        <span class="line">What did</span>
+        <span class="line">Geddes see?</span>
+      </h1>
+      <nav class="hero-links" id="hero-links" aria-label="Primary">
+        <a href="https://www.megama.net" target="_blank" rel="noopener">Civic Green</a>
+        <a href="https://www.megama.net" target="_blank" rel="noopener">Growth</a>
+        <a href="https://www.megama.net" target="_blank" rel="noopener">Sustenance</a>
+        <a href="https://www.megama.net" target="_blank" rel="noopener">Leafy SDGs</a>
+        <a href="https://www.megama.net" target="_blank" rel="noopener">EN/עב</a>
+      </nav>
+    </div>
+  </div>
+</div>
+
+<section class="driver" id="driver"></section>
+
+<!-- ================== SECTION 1 ================== -->
+<section class="s1-wrap" id="s1-wrap">
+  <div class="s1-sticky">
+    <div class="s-clip">
+      <div class="s1-text" id="s1-text">
+        <p><strong>HOURS AFTER MY</strong> mother took her last breath on earth…</p>
+        <p>After we opened the windows to let the spirits out…</p>
+        <p>After we lit incense stick after incense stick…</p>
+        <p>After we watched MMA fighters on TV in the basement…</p>
+        <p>And the smoke kept rising. The chain must not be broken.</p>
+      </div>
+    </div>
+
+    <div></div>
+
+    <figure class="s1-media">
+      <img id="s1-img" src="assets/section1.jpg" alt="Section 1 image">
+    </figure>
+  </div>
+</section>
+
+<!-- ================== SECTION 2 (mirrored) ================== -->
+<section class="s2-wrap" id="s2-wrap">
+  <div class="s2-sticky">
+    <figure class="s2-media">
+      <img id="s2-img" src="assets/section2.jpg" alt="Section 2 image">
+    </figure>
+
+    <div></div>
+
+    <div class="s-clip">
+      <div class="s2-text" id="s2-text">
+        <p>Row by row, the groves came into view…</p>
+        <p>Tools laid out, hands stained with sap and soil…</p>
+        <p>The routes of water and shade determined everything…</p>
+        <p>Edges, thresholds, and paths stitched the place together…</p>
+        <p>And movement wrote its own quiet map.</p>
       </div>
     </div>
   </div>
+</section>
 
-  <!-- Hero title/links choreography -->
-  <section class="driver" id="driver"></section>
-
-  <!-- ===== SECTION 1 ===== -->
-  <section class="s1-wrap" id="s1-wrap">
-    <div class="sticky">
-      <div class="canvas s1-canvas" id="s1-canvas">
-        <!-- Left text -->
-        <div class="s1-text-clip" id="s1-clip">
-          <div class="s1-text" id="s1-text">
-            <p><strong>HOURS AFTER MY</strong> mother took her last breath on earth…</p>
-            <p>After we opened the windows to let the spirits out…</p>
-            <p>After we lit incense stick after incense stick…</p>
-            <p>After we watched MMA fighters on TV in the basement…</p>
-            <p>And the smoke kept rising. The chain must not be broken.</p>
-          </div>
-        </div>
-        <div></div>
-        <!-- Right media -->
-        <figure class="s1-media" id="s1-media">
-          <img id="s1-img"
-               src="assets/section1.jpg"
-               alt="Section 1 visual"
-               data-img-w="840" data-img-h="1120">
-        </figure>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== SECTION 2 (mirrored) ===== -->
-  <section class="s2-wrap" id="s2-wrap">
-    <div class="sticky">
-      <div class="canvas s2-canvas" id="s2-canvas">
-        <!-- Left media (landscape default 1120×840), pinned & centered -->
-        <figure class="s2-media" id="s2-media">
-          <img id="s2-img"
-               src="assets/section2.jpg"
-               alt="Section 2 visual"
-               data-img-w="1120" data-img-h="840">
-        </figure>
-        <div></div>
-        <!-- Right text (mirrors S1) -->
-        <div class="s2-text-clip" id="s2-clip">
-          <div class="s2-text" id="s2-text">
-            <p><strong>SECTION TWO.</strong> A second movement enters—steadier, broader.</p>
-            <p>The lens shifts. We compare two states of the same place…</p>
-            <p>One emerges as the other recedes, a dialogue of growth and memory.</p>
-            <p>The garden is an argument with time. We take sides, then reconsider.</p>
-            <p>And in that slow crossfade, the city learns how to breathe again.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="after"></section>
+<section class="after"></section>
 
 <script>
+/*
+  HERO: same baseline fade/slide you approved.
+  S1 + S2: identical mechanics, mirrored grid.
+  - progress() returns 0→1 across each wrap's height.
+  - images fade in with the same rhythm as hero fade-out.
+  - text starts only after image reaches ~75% opacity.
+*/
+
 (function(){
   const root  = document.documentElement;
   const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
   const easeInOutCubic = t => t<0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2;
-  const smooth = t => t*t*(3 - 2*t);  // smoothstep
-  const easeSlow = t => Math.pow(t, 0.85);
 
-  /* ---------- Utility ---------- */
-  function progressOf(el){
-    if(!el) return 0;
+  /* -------- HERO baseline choreography -------- */
+  const driver = document.getElementById('driver');
+  const media  = document.getElementById('hero-media');
+  const col    = document.getElementById('hero-col');
+  const title  = document.getElementById('hero-title');
+  const links  = document.getElementById('hero-links');
+
+  let startShift = 0, endShift = 0;
+
+  function measureHero(){
+    const prev = col.style.transform;
+    col.style.transform = 'translateY(0px)';
+
+    const lines = title.querySelectorAll('.line');
+    const third = lines[2] || lines[lines.length-1];
+
+    const thirdRect = third.getBoundingClientRect();
+    const lastLinkRect = (links.lastElementChild || links).getBoundingClientRect();
+    const mediaRect = media.getBoundingClientRect();
+
+    const mediaBaseline = mediaRect.bottom;
+
+    startShift = mediaBaseline - thirdRect.bottom;
+    endShift   = mediaBaseline - lastLinkRect.bottom;
+
+    col.style.transform = prev || '';
+    root.style.setProperty('--shift', startShift.toFixed(1)+'px');
+  }
+
+  function progressFor(el){
     const r  = el.getBoundingClientRect();
     const vh = window.innerHeight || document.documentElement.clientHeight;
     const total = r.height - vh;
     if (total <= 0) return 0;
     return clamp(-r.top / total, 0, 1);
   }
-  function sizeImage(mediaEl, imgEl, defaultW, defaultH){
-    if(!mediaEl || !imgEl) return;
-    const nomW = parseFloat(imgEl.dataset.imgW) || defaultW;
-    const nomH = parseFloat(imgEl.dataset.imgH) || defaultH;
-    const box  = mediaEl.getBoundingClientRect();
-    const scale= Math.min(box.width/nomW, box.height/nomH);
-    imgEl.style.width  = (nomW*scale)+'px';
-    imgEl.style.height = (nomH*scale)+'px';
-  }
 
-  /* ---------- HERO baseline choreography ---------- */
-  const driver = document.getElementById('driver');
-  const media  = document.getElementById('hero-media');
-  const col    = document.getElementById('hero-col');
-  const title  = document.getElementById('hero-title');
-  const links  = document.getElementById('hero-links');
-  let startShift=0,endShift=0;
+  /* -------- Elements for S1/S2 -------- */
+  const s1Wrap = document.getElementById('s1-wrap');
+  const s1Img  = document.getElementById('s1-img');
 
-  function measureHero(){
-    if(!col || !title || !links || !media) return;
-    const prev = col.style.transform;
-    col.style.transform = 'translateY(0px)';
-    const lines = title.querySelectorAll('.line');
-    const third = lines[2] || lines[lines.length-1];
-    const thirdRect = third.getBoundingClientRect();
-    const lastLinkRect = (links.lastElementChild || links).getBoundingClientRect();
-    const mediaRect = media.getBoundingClientRect();
-    const mediaBaseline = mediaRect.bottom;
-    startShift = mediaBaseline - thirdRect.bottom;
-    endShift   = mediaBaseline - lastLinkRect.bottom;
-    col.style.transform = prev || '';
-    root.style.setProperty('--shift', startShift.toFixed(1)+'px');
-  }
+  const s2Wrap = document.getElementById('s2-wrap');
+  const s2Img  = document.getElementById('s2-img');
 
-  /* ---------- Section 1 setup ---------- */
-  const s1Wrap  = document.getElementById('s1-wrap');
-  const s1Clip  = document.getElementById('s1-clip');
-  const s1Text  = document.getElementById('s1-text');
-  const s1ImgEl = document.getElementById('s1-img');
-  const s1Media = document.getElementById('s1-media');
-  let s1StartY=0, s1EndY=0, s1TextH=0, s1ClipH=0;
-
-  function measureS1(){
-    if(!s1Clip || !s1Text) return;
-    s1ClipH = s1Clip.clientHeight;
-    s1TextH = s1Text.scrollHeight;
-    const pad=24;
-    s1StartY = s1ClipH + pad;   // start fully below window
-    s1EndY   = -s1TextH - pad;  // end fully above window
-    root.style.setProperty('--s1Y', s1StartY+'px');
-  }
-
-  /* ---------- Section 2 setup ---------- */
-  const s2Wrap  = document.getElementById('s2-wrap');
-  const s2Clip  = document.getElementById('s2-clip');
-  const s2Text  = document.getElementById('s2-text');
-  const s2ImgEl = document.getElementById('s2-img');
-  const s2Media = document.getElementById('s2-media');
-  let s2StartY=0, s2EndY=0, s2TextH=0, s2ClipH=0;
-
-  function measureS2(){
-    if(!s2Clip || !s2Text) return;
-    s2ClipH = s2Clip.clientHeight;
-    s2TextH = s2Text.scrollHeight;
-    const pad=24;
-    s2StartY = s2ClipH + pad;
-    s2EndY   = -s2TextH - pad;
-    root.style.setProperty('--s2Y', s2StartY+'px');
-  }
-
-  /* ---------- Main update loop ---------- */
   function update(){
-    /* HERO: baseline fade + slide */
-    const p = progressOf(driver);
-    const pFade  = easeInOutCubic( clamp(p / 0.60, 0, 1) );
+    /* HERO title/links */
+    const pDrv = progressFor(driver);
+    const pFade  = easeInOutCubic( clamp(pDrv / 0.60, 0, 1) );
     root.style.setProperty('--titleOpacity', pFade.toFixed(3));
-    const pSlide = clamp((p - 0.60) / 0.40, 0, 1);
+    const pSlide = clamp((pDrv - 0.60) / 0.40, 0, 1);
     const shift  = startShift + (endShift - startShift) * pSlide;
     root.style.setProperty('--shift', shift.toFixed(1)+'px');
     root.style.setProperty('--linksOpacity', pSlide.toFixed(3));
 
-    /* ===== SECTION 1 ===== */
-    const s1 = progressOf(s1Wrap);
+    /* HERO dissolve timing (unchanged) */
+    const cross = clamp((pDrv - 0.85) / 0.15, 0, 1);
+    root.style.setProperty('--heroAlpha', (1 - cross).toFixed(3));
+    root.style.setProperty('--heroBlur',  (cross).toFixed(3));
+
+    /* ---------- SECTION 1 ---------- */
+    const s1 = progressFor(s1Wrap);
     root.style.setProperty('--s1', s1.toFixed(3));
 
-    /* hero dissolves while s1 enters; s1 image fades in with same curve */
-    const heroStart = 0.05, heroSpan = 0.70;
-    const crossRaw  = clamp((s1 - heroStart) / heroSpan, 0, 1);
-    const cross     = smooth(crossRaw);
-    root.style.setProperty('--heroAlpha', (1 - cross).toFixed(3));
-    root.style.setProperty('--heroBlur',  (cross * 0.8).toFixed(3));
+    // image fade: same rhythm as hero dissolve (gentle)
+    const s1ImgOp = clamp((s1 - 0.05) / 0.45, 0, 1);   // enters 5%→50%
+    root.style.setProperty('--s1ImgOpacity', s1ImgOp.toFixed(3));
 
-    /* s1 text motion (begins when s1 image ≥ 75%) */
-    if(s1Clip && s1Text){
-      const s1TextStart = heroStart + heroSpan * 0.75;
-      const s1PhaseRaw  = (s1 - s1TextStart) / (1 - s1TextStart);
-      const s1Phase     = clamp(s1PhaseRaw, 0, 1);
-      const easedPhase  = easeSlow(s1Phase);
-      const yCurrent    = s1StartY + (s1EndY - s1StartY) * easedPhase;
-      root.style.setProperty('--s1Y', yCurrent.toFixed(1)+'px');
+    // text starts only after image ≥ ~75%
+    const s1TextP = clamp((s1ImgOp - 0.75) / 0.25, 0, 1);
+    root.style.setProperty('--s1TextP', s1TextP.toFixed(3));
 
-      /* S1 image opacity: fade in by cross, then fade OUT after gate (bottom hits ~50%) */
-      const clipH = s1ClipH || s1Clip.clientHeight;
-      const textH = s1TextH || s1Text.scrollHeight;
-      const yThreshold = (clipH * 0.5) - textH;
-      const s1Out = clamp( (yThreshold - yCurrent) / (yThreshold - s1EndY), 0, 1 );
-      root.style.setProperty('--s1Out', s1Out.toFixed(3));
-      const s1ImgVisible = cross * (1 - s1Out);
-      root.style.setProperty('--s1ImgOpacity', s1ImgVisible.toFixed(3));
-    }
-
-    /* ===== SECTION 2 (mirrored) ===== */
-    const s2 = progressOf(s2Wrap);
+    /* ---------- SECTION 2 (mirrored) ---------- */
+    const s2 = progressFor(s2Wrap);
     root.style.setProperty('--s2', s2.toFixed(3));
 
-    if(s2Media && s2ImgEl){
-      /* S2 image fade IN: stronger of (hand-off from S1) and (own scroll) */
-      const s1Out = parseFloat(getComputedStyle(root).getPropertyValue('--s1Out')) || 0;
-      const s2OwnStart = 0.05, s2OwnSpan = 0.70;
-      const s2OwnRaw   = clamp((s2 - s2OwnStart) / s2OwnSpan, 0, 1);
-      const s2OwnIn    = smooth(s2OwnRaw);
-      const s2ImgIn    = Math.max(s1Out, s2OwnIn);
-      root.style.setProperty('--s2ImgOpacity', s2ImgIn.toFixed(3));
-    }
+    // image fade same cadence
+    const s2ImgOp = clamp((s2 - 0.05) / 0.45, 0, 1);
+    root.style.setProperty('--s2ImgOpacity', s2ImgOp.toFixed(3));
 
-    if(s2Clip && s2Text){
-      /* S2 text: starts when S2 image ≥ 75% visible (mirrors S1) */
-      const s2ImgIn = parseFloat(getComputedStyle(root).getPropertyValue('--s2ImgOpacity')) || 0;
-      const s2TextPhaseRaw = (s2ImgIn - 0.75) / 0.25;
-      const s2TextPhase    = clamp(s2TextPhaseRaw, 0, 1);
-      const y = s2StartY + (s2EndY - s2StartY) * easeSlow(s2TextPhase);
-      root.style.setProperty('--s2Y', y.toFixed(1)+'px');
-    }
+    // text starts only after image ≥ ~75%
+    const s2TextP = clamp((s2ImgOp - 0.75) / 0.25, 0, 1);
+    root.style.setProperty('--s2TextP', s2TextP.toFixed(3));
   }
 
   async function init(){
-    if (document.fonts && document.fonts.ready) { try { await document.fonts.ready; } catch(e){} }
+    if (document.fonts && document.fonts.ready) {
+      try { await document.fonts.ready; } catch(e){}
+    }
     measureHero();
-    measureS1();
-    measureS2();
-
-    /* exact image sizing to fit media boxes */
-    sizeImage(s1Media, s1ImgEl, 840, 1120);   // portrait default
-    sizeImage(s2Media, s2ImgEl, 1120, 840);   // landscape default
-
     update();
 
-    window.addEventListener('load',   ()=>{ measureHero(); measureS1(); measureS2();
-      sizeImage(s1Media, s1ImgEl, 840, 1120);
-      sizeImage(s2Media, s2ImgEl, 1120, 840);
-      update(); });
-
-    window.addEventListener('resize', ()=>{ measureHero(); measureS1(); measureS2();
-      sizeImage(s1Media, s1ImgEl, 840, 1120);
-      sizeImage(s2Media, s2ImgEl, 1120, 840);
-      update(); });
-
+    window.addEventListener('load',   ()=>{ measureHero(); update(); });
+    window.addEventListener('resize', ()=>{ measureHero(); update(); });
     window.addEventListener('scroll', update, { passive:true });
+
+    /* -------- Optional: per-image sizing overrides --------
+       Add data-img-w / data-img-h to an <img> (pixels). If present,
+       we’ll set its CSS width/height so it scales from that basis. */
+    [s1Img, s2Img].forEach(img=>{
+      const W = parseInt(img.dataset.imgW,10);
+      const H = parseInt(img.dataset.imgH,10);
+      if (W>0 && H>0){
+        img.style.width  = W + 'px';
+        img.style.height = H + 'px';
+      }
+    });
   }
+
   init();
 })();
 </script>
 </body>
 </html>
+
