@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → Section 1 → Section 2 (pinned S2 + mirrored scroll)</title>
+<title>Gardenicity — Hero → Section 1 → Section 2 (pinned S2 + mirrored scroll) v26</title>
 <style>
   /* ===== Base ===== */
   html,body{
@@ -92,17 +92,17 @@
   }
 
   /* ===== Section 2 (media left 1120×840, text right) ===== */
-  .s2-wrap{ position:relative; height:300vh; background:#e5e4e0; z-index:2; } /* above S1 so it can appear on top */
+  .s2-wrap{ position:relative; height:300vh; background:#e5e4e0; z-index:2; } /* above S1 */
   .s2-canvas{
     grid-template-columns: 1120px 96px 512px; /* media | gutter | text */
     align-items:center; gap:0;
   }
-  .s2-media{ display:flex; align-items:center; justify-content:center; } /* centers vertically + horizontally */
+  .s2-media{ display:flex; align-items:center; justify-content:center; } /* centers image */
   .s2-media img{
     max-width:100%; max-height:100%;
     opacity:var(--s2ImgOpacity);
     transition:none; will-change:opacity, width, height;
-    object-fit:contain; /* landscape preserved, no crop */
+    object-fit:contain; /* landscape preserved */
   }
   .s2-text-clip{ overflow:hidden; height:100%; }
   .s2-text{ transform:translateY(var(--s2Y)); color:#111; will-change:transform; }
@@ -305,8 +305,8 @@
     const yCurrent    = s1StartY + (s1EndY - s1StartY) * easedPhase;
     root.style.setProperty('--s1Y', yCurrent.toFixed(1)+'px');
 
-    /* S1 image opacity: fade in by cross, then fade OUT after gate */
-    const yThreshold = (s1ClipH * 0.5) - s1TextH;    // bottom at 50% of clip
+    /* S1 image opacity: fade in by cross, then fade OUT after gate (bottom hits 50%) */
+    const yThreshold = (s1ClipH * 0.5) - s1TextH;
     const s1Out = clamp( (yThreshold - yCurrent) / (yThreshold - s1EndY), 0, 1 );
     root.style.setProperty('--s1Out', s1Out.toFixed(3));
     const s1ImgVisible = cross * (1 - s1Out);
@@ -320,7 +320,7 @@
     const s2OwnStart = 0.05, s2OwnSpan = 0.70;
     const s2OwnRaw   = clamp((s2 - s2OwnStart) / s2OwnSpan, 0, 1);
     const s2OwnIn    = smooth(s2OwnRaw);
-    const s2ImgIn    = Math.max(s1Out, s2OwnIn);      // ensures it’s visible even if user pauses between sections
+    const s2ImgIn    = Math.max(s1Out, s2OwnIn);
     root.style.setProperty('--s2ImgOpacity', s2ImgIn.toFixed(3));
 
     /* S2 text: starts when S2 image ≥ 75% visible (mirrors S1) */
