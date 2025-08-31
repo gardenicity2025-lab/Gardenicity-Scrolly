@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → Section 1 → Section 2 (pinned S2 + mirrored scroll) v26</title>
+<title>Gardenicity — Hero → Section 1 → Section 2 (pinned S2 + mirrored scroll) v27</title>
 <style>
   /* ===== Base ===== */
   html,body{
     margin:0; padding:0;
-    background:#e5e4e0; color:#fff; /* match sections to avoid flashes */
+    background:#e5e4e0; color:#fff;     /* match sections to avoid flashes */
     font-family:"Acumin Pro",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
     height:100%;
   }
@@ -44,7 +44,7 @@
     position:absolute; inset:0;
     background:url("assets/hero1gc.jpg") center/cover no-repeat;
     opacity:0; animation:heroIn 1200ms ease-out forwards; /* soft load-in (time-based) */
-    pointer-events:none;                 /* bg shouldn't capture clicks */
+    pointer-events:none;
   }
   @keyframes heroIn{ from{opacity:0} to{opacity:1} }
 
@@ -76,10 +76,7 @@
 
   /* ===== Section 1 (text left, media right) ===== */
   .s1-wrap{ position:relative; height:280vh; background:#e5e4e0; z-index:1; }
-  .s1-canvas{
-    grid-template-columns: 512px 96px 1fr;  /* text | gutter | media */
-    align-items:center; gap:0;
-  }
+  .s1-canvas{ grid-template-columns: 512px 96px 1fr; align-items:center; gap:0; }
   .s1-text-clip{ overflow:hidden; height:100%; }
   .s1-text{ transform:translateY(var(--s1Y)); color:#111; will-change:transform; }
   .s1-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
@@ -92,11 +89,8 @@
   }
 
   /* ===== Section 2 (media left 1120×840, text right) ===== */
-  .s2-wrap{ position:relative; height:300vh; background:#e5e4e0; z-index:2; } /* above S1 */
-  .s2-canvas{
-    grid-template-columns: 1120px 96px 512px; /* media | gutter | text */
-    align-items:center; gap:0;
-  }
+  .s2-wrap{ position:relative; height:300vh; background:#e5e4e0; z-index:2; }
+  .s2-canvas{ grid-template-columns: 1120px 96px 512px; align-items:center; gap:0; }
   .s2-media{ display:flex; align-items:center; justify-content:center; } /* centers image */
   .s2-media img{
     max-width:100%; max-height:100%;
@@ -199,6 +193,25 @@
   const smooth = t => t*t*(3 - 2*t);  // smoothstep
   const easeSlow = t => Math.pow(t, 0.85);
 
+  /* ---------- Utility ---------- */
+  function progressOf(el){
+    if(!el) return 0;
+    const r  = el.getBoundingClientRect();
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+    const total = r.height - vh;
+    if (total <= 0) return 0;
+    return clamp(-r.top / total, 0, 1);
+  }
+  function sizeImage(mediaEl, imgEl, defaultW, defaultH){
+    if(!mediaEl || !imgEl) return;
+    const nomW = parseFloat(imgEl.dataset.imgW) || defaultW;
+    const nomH = parseFloat(imgEl.dataset.imgH) || defaultH;
+    const box  = mediaEl.getBoundingClientRect();
+    const scale= Math.min(box.width/nomW, box.height/nomH);
+    imgEl.style.width  = (nomW*scale)+'px';
+    imgEl.style.height = (nomH*scale)+'px';
+  }
+
   /* ---------- HERO baseline choreography ---------- */
   const driver = document.getElementById('driver');
   const media  = document.getElementById('hero-media');
@@ -208,6 +221,7 @@
   let startShift=0,endShift=0;
 
   function measureHero(){
+    if(!col || !title || !links || !media) return;
     const prev = col.style.transform;
     col.style.transform = 'translateY(0px)';
     const lines = title.querySelectorAll('.line');
@@ -222,15 +236,7 @@
     root.style.setProperty('--shift', startShift.toFixed(1)+'px');
   }
 
-  function progressOf(el){
-    const r  = el.getBoundingClientRect();
-    const vh = window.innerHeight || document.documentElement.clientHeight;
-    const total = r.height - vh;
-    if (total <= 0) return 0;
-    return clamp(-r.top / total, 0, 1);
-  }
-
-  /* ---------- Section 1: measurements ---------- */
+  /* ---------- Section 1 setup ---------- */
   const s1Wrap  = document.getElementById('s1-wrap');
   const s1Clip  = document.getElementById('s1-clip');
   const s1Text  = document.getElementById('s1-text');
@@ -239,6 +245,7 @@
   let s1StartY=0, s1EndY=0, s1TextH=0, s1ClipH=0;
 
   function measureS1(){
+    if(!s1Clip || !s1Text) return;
     s1ClipH = s1Clip.clientHeight;
     s1TextH = s1Text.scrollHeight;
     const pad=24;
@@ -247,7 +254,7 @@
     root.style.setProperty('--s1Y', s1StartY+'px');
   }
 
-  /* ---------- Section 2: measurements ---------- */
+  /* ---------- Section 2 setup ---------- */
   const s2Wrap  = document.getElementById('s2-wrap');
   const s2Clip  = document.getElementById('s2-clip');
   const s2Text  = document.getElementById('s2-text');
@@ -256,23 +263,13 @@
   let s2StartY=0, s2EndY=0, s2TextH=0, s2ClipH=0;
 
   function measureS2(){
+    if(!s2Clip || !s2Text) return;
     s2ClipH = s2Clip.clientHeight;
     s2TextH = s2Text.scrollHeight;
     const pad=24;
     s2StartY = s2ClipH + pad;
     s2EndY   = -s2TextH - pad;
     root.style.setProperty('--s2Y', s2StartY+'px');
-  }
-
-  /* ---------- Image sizing helpers (programmable) ---------- */
-  function sizeImage(mediaEl, imgEl, defaultW, defaultH){
-    if(!mediaEl || !imgEl) return;
-    const nomW = parseFloat(imgEl.dataset.imgW) || defaultW;
-    const nomH = parseFloat(imgEl.dataset.imgH) || defaultH;
-    const box  = mediaEl.getBoundingClientRect();
-    const scale= Math.min(box.width/nomW, box.height/nomH);
-    imgEl.style.width  = (nomW*scale)+'px';
-    imgEl.style.height = (nomH*scale)+'px';
   }
 
   /* ---------- Main update loop ---------- */
@@ -298,36 +295,46 @@
     root.style.setProperty('--heroBlur',  (cross * 0.8).toFixed(3));
 
     /* s1 text motion (begins when s1 image ≥ 75%) */
-    const s1TextStart = heroStart + heroSpan * 0.75;
-    const s1PhaseRaw  = (s1 - s1TextStart) / (1 - s1TextStart);
-    const s1Phase     = clamp(s1PhaseRaw, 0, 1);
-    const easedPhase  = easeSlow(s1Phase);
-    const yCurrent    = s1StartY + (s1EndY - s1StartY) * easedPhase;
-    root.style.setProperty('--s1Y', yCurrent.toFixed(1)+'px');
+    if(s1Clip && s1Text){
+      const s1TextStart = heroStart + heroSpan * 0.75;
+      const s1PhaseRaw  = (s1 - s1TextStart) / (1 - s1TextStart);
+      const s1Phase     = clamp(s1PhaseRaw, 0, 1);
+      const easedPhase  = easeSlow(s1Phase);
+      const yCurrent    = s1StartY + (s1EndY - s1StartY) * easedPhase;
+      root.style.setProperty('--s1Y', yCurrent.toFixed(1)+'px');
 
-    /* S1 image opacity: fade in by cross, then fade OUT after gate (bottom hits 50%) */
-    const yThreshold = (s1ClipH * 0.5) - s1TextH;
-    const s1Out = clamp( (yThreshold - yCurrent) / (yThreshold - s1EndY), 0, 1 );
-    root.style.setProperty('--s1Out', s1Out.toFixed(3));
-    const s1ImgVisible = cross * (1 - s1Out);
-    root.style.setProperty('--s1ImgOpacity', s1ImgVisible.toFixed(3));
+      /* S1 image opacity: fade in by cross, then fade OUT after gate (bottom hits ~50%) */
+      const clipH = s1ClipH || s1Clip.clientHeight;
+      const textH = s1TextH || s1Text.scrollHeight;
+      const yThreshold = (clipH * 0.5) - textH;
+      const s1Out = clamp( (yThreshold - yCurrent) / (yThreshold - s1EndY), 0, 1 );
+      root.style.setProperty('--s1Out', s1Out.toFixed(3));
+      const s1ImgVisible = cross * (1 - s1Out);
+      root.style.setProperty('--s1ImgOpacity', s1ImgVisible.toFixed(3));
+    }
 
     /* ===== SECTION 2 (mirrored) ===== */
     const s2 = progressOf(s2Wrap);
     root.style.setProperty('--s2', s2.toFixed(3));
 
-    /* S2 image fade IN: take the stronger of (crossfade from S1) and (own scroll) */
-    const s2OwnStart = 0.05, s2OwnSpan = 0.70;
-    const s2OwnRaw   = clamp((s2 - s2OwnStart) / s2OwnSpan, 0, 1);
-    const s2OwnIn    = smooth(s2OwnRaw);
-    const s2ImgIn    = Math.max(s1Out, s2OwnIn);
-    root.style.setProperty('--s2ImgOpacity', s2ImgIn.toFixed(3));
+    if(s2Media && s2ImgEl){
+      /* S2 image fade IN: stronger of (hand-off from S1) and (own scroll) */
+      const s1Out = parseFloat(getComputedStyle(root).getPropertyValue('--s1Out')) || 0;
+      const s2OwnStart = 0.05, s2OwnSpan = 0.70;
+      const s2OwnRaw   = clamp((s2 - s2OwnStart) / s2OwnSpan, 0, 1);
+      const s2OwnIn    = smooth(s2OwnRaw);
+      const s2ImgIn    = Math.max(s1Out, s2OwnIn);
+      root.style.setProperty('--s2ImgOpacity', s2ImgIn.toFixed(3));
+    }
 
-    /* S2 text: starts when S2 image ≥ 75% visible (mirrors S1) */
-    const s2TextPhaseRaw = (s2ImgIn - 0.75) / 0.25;
-    const s2TextPhase    = clamp(s2TextPhaseRaw, 0, 1);
-    const s2Y            = s2StartY + (s2EndY - s2StartY) * easeSlow(s2TextPhase);
-    root.style.setProperty('--s2Y', s2Y.toFixed(1)+'px');
+    if(s2Clip && s2Text){
+      /* S2 text: starts when S2 image ≥ 75% visible (mirrors S1) */
+      const s2ImgIn = parseFloat(getComputedStyle(root).getPropertyValue('--s2ImgOpacity')) || 0;
+      const s2TextPhaseRaw = (s2ImgIn - 0.75) / 0.25;
+      const s2TextPhase    = clamp(s2TextPhaseRaw, 0, 1);
+      const y = s2StartY + (s2EndY - s2StartY) * easeSlow(s2TextPhase);
+      root.style.setProperty('--s2Y', y.toFixed(1)+'px');
+    }
   }
 
   async function init(){
