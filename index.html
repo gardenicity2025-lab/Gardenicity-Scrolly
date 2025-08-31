@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → Section 1 → Section 2 (precise S1 fade-out + centered S2)</title>
+<title>Gardenicity — Hero → Section 1 → Section 2 (pinned S2 + mirrored scroll)</title>
 <style>
   /* ===== Base ===== */
   html,body{
@@ -22,12 +22,13 @@
 
     /* SECTION 1 */
     --s1: 0;                   /* 0→1 across s1 wrapper */
-    --s1ImgOpacity: 0;         /* s1 image fade in */
+    --s1ImgOpacity: 0;         /* s1 image fade in (then modulated by s1Out) */
     --s1Y: 0px;                /* s1 text translateY */
     --s1Out: 0;                /* s1 → s2 cross value (0 none, 1 full) */
 
     /* SECTION 2 (mirrored) */
-    --s2ImgOpacity: 0;         /* s2 image fade in (driven by s1Out crossfade) */
+    --s2: 0;                   /* 0→1 across s2 wrapper */
+    --s2ImgOpacity: 0;         /* s2 image fade in (max of cross + own scroll) */
     --s2Y: 0px;                /* s2 text translateY */
   }
 
@@ -70,11 +71,11 @@
     height: min(100vh, 1440px);
     padding:96px 82px; box-sizing:border-box;
     background:#e5e4e0;
-    display:grid; /* lets us center children vertically in their grid cells */
+    display:grid;
   }
 
   /* ===== Section 1 (text left, media right) ===== */
-  .s1-wrap{ position:relative; height:280vh; background:#e5e4e0; z-index:2; }
+  .s1-wrap{ position:relative; height:280vh; background:#e5e4e0; z-index:1; }
   .s1-canvas{
     grid-template-columns: 512px 96px 1fr;  /* text | gutter | media */
     align-items:center; gap:0;
@@ -91,17 +92,17 @@
   }
 
   /* ===== Section 2 (media left 1120×840, text right) ===== */
-  .s2-wrap{ position:relative; height:300vh; background:#e5e4e0; z-index:1; }
+  .s2-wrap{ position:relative; height:300vh; background:#e5e4e0; z-index:2; } /* above S1 so it can appear on top */
   .s2-canvas{
     grid-template-columns: 1120px 96px 512px; /* media | gutter | text */
     align-items:center; gap:0;
   }
-  .s2-media{ display:flex; align-items:center; justify-content:center; }
+  .s2-media{ display:flex; align-items:center; justify-content:center; } /* centers vertically + horizontally */
   .s2-media img{
     max-width:100%; max-height:100%;
-    opacity:var(--s2ImgOpacity);   /* driven by crossfade from S1 */
+    opacity:var(--s2ImgOpacity);
     transition:none; will-change:opacity, width, height;
-    object-fit:contain; /* landscape should not crop */
+    object-fit:contain; /* landscape preserved, no crop */
   }
   .s2-text-clip{ overflow:hidden; height:100%; }
   .s2-text{ transform:translateY(var(--s2Y)); color:#111; will-change:transform; }
@@ -166,7 +167,7 @@
   <section class="s2-wrap" id="s2-wrap">
     <div class="sticky">
       <div class="canvas s2-canvas" id="s2-canvas">
-        <!-- Left media (landscape default 1120×840), centered vertically & horizontally -->
+        <!-- Left media (landscape default 1120×840), pinned & centered -->
         <figure class="s2-media" id="s2-media">
           <img id="s2-img"
                src="assets/section2.jpg"
@@ -174,7 +175,7 @@
                data-img-w="1120" data-img-h="840">
         </figure>
         <div></div>
-        <!-- Right text (scrolls like S1, starts after S2 image ~75% visible) -->
+        <!-- Right text (mirrors S1) -->
         <div class="s2-text-clip" id="s2-clip">
           <div class="s2-text" id="s2-text">
             <p><strong>SECTION TWO.</strong> A second movement enters—steadier, broader.</p>
@@ -285,18 +286,18 @@
     root.style.setProperty('--shift', shift.toFixed(1)+'px');
     root.style.setProperty('--linksOpacity', pSlide.toFixed(3));
 
-    /* SECTION 1: progress + hero dissolve */
+    /* ===== SECTION 1 ===== */
     const s1 = progressOf(s1Wrap);
     root.style.setProperty('--s1', s1.toFixed(3));
-    /* hero dissolves while s1 enters */
+
+    /* hero dissolves while s1 enters; s1 image fades in with same curve */
     const heroStart = 0.05, heroSpan = 0.70;
     const crossRaw  = clamp((s1 - heroStart) / heroSpan, 0, 1);
-    const cross     = smooth(crossRaw); // S1 image fade-in curve
+    const cross     = smooth(crossRaw);
     root.style.setProperty('--heroAlpha', (1 - cross).toFixed(3));
     root.style.setProperty('--heroBlur',  (cross * 0.8).toFixed(3));
-    root.style.setProperty('--s1ImgOpacity', cross.toFixed(3));
 
-    /* s1 text motion (begins when image ≥ 75%) */
+    /* s1 text motion (begins when s1 image ≥ 75%) */
     const s1TextStart = heroStart + heroSpan * 0.75;
     const s1PhaseRaw  = (s1 - s1TextStart) / (1 - s1TextStart);
     const s1Phase     = clamp(s1PhaseRaw, 0, 1);
@@ -304,19 +305,28 @@
     const yCurrent    = s1StartY + (s1EndY - s1StartY) * easedPhase;
     root.style.setProperty('--s1Y', yCurrent.toFixed(1)+'px');
 
-    /* === Precise S1→S2 crossfade gate (bottom of text hits 50% of clip) === */
-    const yThreshold = (s1ClipH * 0.5) - s1TextH;         // y where bottom hits 50%
+    /* S1 image opacity: fade in by cross, then fade OUT after gate */
+    const yThreshold = (s1ClipH * 0.5) - s1TextH;    // bottom at 50% of clip
     const s1Out = clamp( (yThreshold - yCurrent) / (yThreshold - s1EndY), 0, 1 );
     root.style.setProperty('--s1Out', s1Out.toFixed(3));
-
-    /* Crossfade images: S1 fades out as S2 fades in */
     const s1ImgVisible = cross * (1 - s1Out);
     root.style.setProperty('--s1ImgOpacity', s1ImgVisible.toFixed(3));
-    root.style.setProperty('--s2ImgOpacity', s1Out.toFixed(3));
 
-    /* SECTION 2 text: starts after its image ~75% visible (i.e., s1Out >= .75) */
-    const s2TextPhase = clamp((s1Out - 0.75) / 0.25, 0, 1);
-    const s2Y = s2StartY + (s2EndY - s2StartY) * easeSlow(s2TextPhase);
+    /* ===== SECTION 2 (mirrored) ===== */
+    const s2 = progressOf(s2Wrap);
+    root.style.setProperty('--s2', s2.toFixed(3));
+
+    /* S2 image fade IN: take the stronger of (crossfade from S1) and (own scroll) */
+    const s2OwnStart = 0.05, s2OwnSpan = 0.70;
+    const s2OwnRaw   = clamp((s2 - s2OwnStart) / s2OwnSpan, 0, 1);
+    const s2OwnIn    = smooth(s2OwnRaw);
+    const s2ImgIn    = Math.max(s1Out, s2OwnIn);      // ensures it’s visible even if user pauses between sections
+    root.style.setProperty('--s2ImgOpacity', s2ImgIn.toFixed(3));
+
+    /* S2 text: starts when S2 image ≥ 75% visible (mirrors S1) */
+    const s2TextPhaseRaw = (s2ImgIn - 0.75) / 0.25;
+    const s2TextPhase    = clamp(s2TextPhaseRaw, 0, 1);
+    const s2Y            = s2StartY + (s2EndY - s2StartY) * easeSlow(s2TextPhase);
     root.style.setProperty('--s2Y', s2Y.toFixed(1)+'px');
   }
 
