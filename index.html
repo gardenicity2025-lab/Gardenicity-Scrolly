@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → Section 1 → Section 2 (mirrored, pinned + scroll fades)</title>
+<title>Gardenicity — Hero → Section 1 → Section 2 (precise S1 fade-out + centered S2)</title>
 <style>
   /* ===== Base ===== */
   html,body{
@@ -27,8 +27,7 @@
     --s1Out: 0;                /* s1 → s2 cross value (0 none, 1 full) */
 
     /* SECTION 2 (mirrored) */
-    --s2: 0;                   /* 0→1 across s2 wrapper */
-    --s2ImgOpacity: 0;         /* s2 image fade in (by s2 scroll) */
+    --s2ImgOpacity: 0;         /* s2 image fade in (driven by s1Out crossfade) */
     --s2Y: 0px;                /* s2 text translateY */
   }
 
@@ -71,12 +70,12 @@
     height: min(100vh, 1440px);
     padding:96px 82px; box-sizing:border-box;
     background:#e5e4e0;
+    display:grid; /* lets us center children vertically in their grid cells */
   }
 
   /* ===== Section 1 (text left, media right) ===== */
   .s1-wrap{ position:relative; height:280vh; background:#e5e4e0; z-index:2; }
   .s1-canvas{
-    display:grid;
     grid-template-columns: 512px 96px 1fr;  /* text | gutter | media */
     align-items:center; gap:0;
   }
@@ -94,14 +93,13 @@
   /* ===== Section 2 (media left 1120×840, text right) ===== */
   .s2-wrap{ position:relative; height:300vh; background:#e5e4e0; z-index:1; }
   .s2-canvas{
-    display:grid;
     grid-template-columns: 1120px 96px 512px; /* media | gutter | text */
     align-items:center; gap:0;
   }
   .s2-media{ display:flex; align-items:center; justify-content:center; }
   .s2-media img{
     max-width:100%; max-height:100%;
-    opacity:var(--s2ImgOpacity);   /* 🔧 now driven by s2 scroll, not s1 */
+    opacity:var(--s2ImgOpacity);   /* driven by crossfade from S1 */
     transition:none; will-change:opacity, width, height;
     object-fit:contain; /* landscape should not crop */
   }
@@ -168,7 +166,7 @@
   <section class="s2-wrap" id="s2-wrap">
     <div class="sticky">
       <div class="canvas s2-canvas" id="s2-canvas">
-        <!-- Left media (landscape default 1120×840) -->
+        <!-- Left media (landscape default 1120×840), centered vertically & horizontally -->
         <figure class="s2-media" id="s2-media">
           <img id="s2-img"
                src="assets/section2.jpg"
@@ -176,7 +174,7 @@
                data-img-w="1120" data-img-h="840">
         </figure>
         <div></div>
-        <!-- Right text -->
+        <!-- Right text (scrolls like S1, starts after S2 image ~75% visible) -->
         <div class="s2-text-clip" id="s2-clip">
           <div class="s2-text" id="s2-text">
             <p><strong>SECTION TWO.</strong> A second movement enters—steadier, broader.</p>
@@ -293,42 +291,32 @@
     /* hero dissolves while s1 enters */
     const heroStart = 0.05, heroSpan = 0.70;
     const crossRaw  = clamp((s1 - heroStart) / heroSpan, 0, 1);
-    const cross     = smooth(crossRaw);
+    const cross     = smooth(crossRaw); // S1 image fade-in curve
     root.style.setProperty('--heroAlpha', (1 - cross).toFixed(3));
     root.style.setProperty('--heroBlur',  (cross * 0.8).toFixed(3));
-    /* s1 image fades IN with cross */
     root.style.setProperty('--s1ImgOpacity', cross.toFixed(3));
 
     /* s1 text motion (begins when image ≥ 75%) */
     const s1TextStart = heroStart + heroSpan * 0.75;
     const s1PhaseRaw  = (s1 - s1TextStart) / (1 - s1TextStart);
     const s1Phase     = clamp(s1PhaseRaw, 0, 1);
-    const s1Y         = s1StartY + (s1EndY - s1StartY) * easeSlow(s1Phase);
-    root.style.setProperty('--s1Y', s1Y.toFixed(1)+'px');
+    const easedPhase  = easeSlow(s1Phase);
+    const yCurrent    = s1StartY + (s1EndY - s1StartY) * easedPhase;
+    root.style.setProperty('--s1Y', yCurrent.toFixed(1)+'px');
 
-    /* === S1 → S2 cross trigger (bottom of S1 text reaches 50% of viewport) === */
-    const gateLinear =
-      ( (s1ClipH*0.5) - s1TextH - s1StartY ) / (s1EndY - s1StartY);
-    const gate = clamp(gateLinear, 0, 1);
-    const s1Out = clamp((s1Phase - gate) / (1 - gate), 0, 1);
+    /* === Precise S1→S2 crossfade gate (bottom of text hits 50% of clip) === */
+    const yThreshold = (s1ClipH * 0.5) - s1TextH;         // y where bottom hits 50%
+    const s1Out = clamp( (yThreshold - yCurrent) / (yThreshold - s1EndY), 0, 1 );
     root.style.setProperty('--s1Out', s1Out.toFixed(3));
-    /* (we no longer tie s2 image opacity to s1Out; s2 is driven by its own scroll) */
 
-    /* ===== SECTION 2 (independent, mirrored like S1) ===== */
-    const s2 = progressOf(s2Wrap);
-    root.style.setProperty('--s2', s2.toFixed(3));
+    /* Crossfade images: S1 fades out as S2 fades in */
+    const s1ImgVisible = cross * (1 - s1Out);
+    root.style.setProperty('--s1ImgOpacity', s1ImgVisible.toFixed(3));
+    root.style.setProperty('--s2ImgOpacity', s1Out.toFixed(3));
 
-    /* s2 image fade IN (same rhythm as s1): start ~0.05, span ~0.70 */
-    const s2ImgStart = 0.05, s2ImgSpan = 0.70;
-    const s2ImgRaw   = clamp((s2 - s2ImgStart) / s2ImgSpan, 0, 1);
-    const s2ImgIn    = smooth(s2ImgRaw);
-    root.style.setProperty('--s2ImgOpacity', s2ImgIn.toFixed(3));
-
-    /* s2 text starts when image ≥ 75% (mirror S1) */
-    const s2TextStartAt = 0.75;
-    const s2TextPhaseRaw = (s2ImgIn - s2TextStartAt) / (1 - s2TextStartAt);
-    const s2TextPhase    = clamp(s2TextPhaseRaw, 0, 1);
-    const s2Y            = s2StartY + (s2EndY - s2StartY) * easeSlow(s2TextPhase);
+    /* SECTION 2 text: starts after its image ~75% visible (i.e., s1Out >= .75) */
+    const s2TextPhase = clamp((s1Out - 0.75) / 0.25, 0, 1);
+    const s2Y = s2StartY + (s2EndY - s2StartY) * easeSlow(s2TextPhase);
     root.style.setProperty('--s2Y', s2Y.toFixed(1)+'px');
   }
 
