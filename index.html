@@ -3,54 +3,55 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → S1 (pinned) → S2 (mirrored, pinned)</title>
+<title>Gardenicity — Hero → Section 1 (pinned) → Section 2 (mirrored, pinned)</title>
 <style>
-  /* ============ Base ============ */
+  /* ===== Base ===== */
   html,body{
     margin:0; padding:0;
-    background:#e5e4e0;   /* same as sections to avoid flashes */
+    background:#e5e4e0; /* same as sections to avoid flashes */
     color:#fff;
     font-family:"Acumin Pro",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
   }
 
   :root{
-    /* HERO choreography */
+    /* HERO */
     --shift: 0px;           /* hero title/links vertical slide */
     --titleOpacity: 0;      /* hero title fade */
     --linksOpacity: 0;      /* hero links fade */
-    --heroAlpha: 1;         /* whole hero opacity (crossfade) */
+    --heroAlpha: 1;         /* whole hero opacity during crossfade */
     --heroBlur: 0;          /* 0→1, scaled in px */
 
-    /* Section 1 */
-    --s1: 0;                /* 0→1 progress across S1 */
-    --s1ImgOpacity: 0;      /* fade in right image */
-    --s1TextY: 0vh;         /* translateY for S1 text */
+    /* Section 1 (text L, image R) */
+    --s1: 0;
+    --s1ImgOpacity: 0;
+    --s1TextY: 0vh;
 
-    /* Section 2 */
-    --s2: 0;                /* 0→1 progress across S2 */
-    --s2ImgOpacity: 0;      /* fade in left image */
-    --s2TextY: 0vh;         /* translateY for S2 text */
+    /* Section 2 (image L, text R) */
+    --s2: 0;
+    --s2ImgOpacity: 0;
+    --s2TextY: 0vh;
   }
 
-  /* ============ HERO (fixed) ============ */
+  /* ===== HERO (fixed on top, then dissolves) ===== */
   .hero-fixed{
     position:fixed; inset:0;
+    z-index:5;                 /* <<< keeps hero above sections until it fades */
     opacity:var(--heroAlpha);
     filter: blur(calc(var(--heroBlur) * 10px));
-    will-change: opacity, filter;
-    pointer-events:none; /* allow interaction with sections as they appear */
+    pointer-events:none;
+    will-change:opacity,filter;
   }
   .hero-bg{
     position:absolute; inset:0;
     background:url("assets/hero1gc.jpg") center/cover no-repeat;
-    opacity:0; animation:heroIn 1200ms ease-out forwards;  /* load fade */
+    opacity:0; animation:heroIn 1200ms ease-out forwards; /* on-load fade only */
   }
   @keyframes heroIn{ from{opacity:0} to{opacity:1} }
 
   .hero-media{
     position:absolute; inset:96px 82px;
     display:flex; align-items:flex-end; justify-content:flex-start;
-    overflow:hidden; /* clip below baseline */
+    overflow:hidden;
   }
   .col{ position:relative; max-width:700px; transform: translateY(var(--shift)); will-change: transform; }
   .hero-title{
@@ -68,14 +69,15 @@
   .hero-links a:hover,
   .hero-links a:focus-visible{ color:#00A86B; text-decoration:none; }
 
-  /* Driver controls hero title/links (unchanged behavior you liked) */
+  /* Drives hero title/links baseline motion (unchanged) */
   .driver{ height:200vh; }
 
-  /* ============ SECTION SHARED ============ */
+  /* ===== Shared section scaffolding ===== */
   .section-wrap{
     position:relative;
-    height: 220vh;            /* longer = slower overall experience */
+    height: 220vh;            /* longer = slower scroll experience */
     background:#e5e4e0;
+    z-index:0;                /* under the hero until heroAlpha→0 */
   }
   .sticky-frame{
     position:sticky; top:0; height:100vh;
@@ -88,55 +90,42 @@
     height: calc(100vh - 192px); /* viewport minus top/bottom margins */
   }
   .text-body{
-    color:#111;
-    font-size:20px; line-height:28px;
+    color:#111; font-size:20px; line-height:28px;
   }
   .text-body p{ margin:0 0 14px 0; }
 
-  /* ============ SECTION 1 (text left, image right) ============ */
-  .s1 .sticky-frame{
-    grid-template-columns: 512px 96px 1fr;
-  }
+  /* ===== Section 1 (text left, image right) ===== */
+  .s1 .sticky-frame{ grid-template-columns: 512px 96px 1fr; }
   .s1 .text-clip{ grid-column:1/2; }
   .s1 .text-body{ transform: translateY(var(--s1TextY)); will-change: transform; }
   .s1 .media{ grid-column:3/4; display:flex; align-items:center; justify-content:center; }
   .s1 .media img{
     display:block;
-    /* Default vertical size 840×1120 (portrait) */
     width:840px; height:1120px; object-fit:cover; max-width:100%; max-height:100%;
     opacity:var(--s1ImgOpacity); transition:opacity .25s linear;
   }
 
-  /* ============ SECTION 2 (mirrored: image left, text right) ============ */
-  .s2 .sticky-frame{
-    grid-template-columns: 1fr 96px 512px;  /* image left, text right */
-  }
+  /* ===== Section 2 (mirrored: image left, text right) ===== */
+  .s2 .sticky-frame{ grid-template-columns: 1fr 96px 512px; }
   .s2 .media{ grid-column:1/2; display:flex; align-items:center; justify-content:center; }
   .s2 .media img{
     display:block;
-    /* Default landscape size 1120×840 */
     width:1120px; height:840px; object-fit:cover; max-width:100%; max-height:100%;
     opacity:var(--s2ImgOpacity); transition:opacity .25s linear;
   }
   .s2 .text-clip{ grid-column:3/4; }
   .s2 .text-body{ transform: translateY(var(--s2TextY)); will-change: transform; }
 
-  /* scaler hooks if you ever pass data-* sizes (kept here for future use) */
-  .size-portrait img{ width: var(--w,840px); height: var(--h,1120px); }
-  .size-landscape img{ width: var(--w,1120px); height: var(--h,840px); }
-
-  /* subtle top divider */
   .section-wrap::before{
     content:""; position:absolute; left:0; right:0; top:0; height:1px;
     background:rgba(0,0,0,.06);
   }
-
   .after{ min-height:120vh; }
 </style>
 </head>
 <body>
 
-<!-- ================= HERO (fixed; cross-fades away) ================= -->
+<!-- ===== HERO ===== -->
 <div class="hero-fixed" id="hero">
   <div class="hero-bg" aria-hidden="true"></div>
   <div class="hero-media" id="hero-media">
@@ -157,10 +146,10 @@
   </div>
 </div>
 
-<!-- Hero’s internal driver (baseline fade → slide) -->
+<!-- Drives hero baseline fade→slide (unchanged) -->
 <section class="driver" id="driver"></section>
 
-<!-- ================= SECTION 1 ================= -->
+<!-- ===== SECTION 1 (pinned image right, text left) ===== -->
 <section class="section-wrap s1" id="s1-wrap">
   <div class="sticky-frame">
     <div class="text-clip">
@@ -173,17 +162,17 @@
       </div>
     </div>
     <div></div>
-    <figure class="media size-portrait">
-      <img id="s1-img" src="assets/section1.jpg" alt="Section 1 visual">
+    <figure class="media">
+      <img id="s1-img" src="assets/section1.jpg" alt="Section 1 image">
     </figure>
   </div>
 </section>
 
-<!-- ================= SECTION 2 (mirrored) ================= -->
+<!-- ===== SECTION 2 (mirrored: pinned image left, text right) ===== -->
 <section class="section-wrap s2" id="s2-wrap">
   <div class="sticky-frame">
-    <figure class="media size-landscape">
-      <img id="s2-img" src="assets/section2.jpg" alt="Section 2 visual">
+    <figure class="media">
+      <img id="s2-img" src="assets/section2.jpg" alt="Section 2 image">
     </figure>
     <div></div>
     <div class="text-clip">
@@ -201,20 +190,13 @@
 <section class="after"></section>
 
 <script>
-/*
-  Timing map (all scroll-driven):
-  - HERO title/links: p (driver) → fade on baseline (0..0.60) then slide (0.60..1)
-  - HERO cross-fade/blur: tied to early S1 progress (first 25% of S1)
-  - S1 image fade: starts after HERO ~75% gone (s1 ≥ 0.25), spans 35% (to 0.60)
-  - S1 text move: starts when image ~75% visible (s1 ≥ 0.25 + 0.35*0.75), ends near 0.95
-  - S2 mirrors S1 (image left, text right) with same timing spans
-*/
+/* ===== Scroll choreography (restores S1; mirrors S2) ===== */
 (function(){
   const root  = document.documentElement;
   const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
   const easeInOutCubic = t => t<0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2;
 
-  /* ---------- HERO title & links (same as before) ---------- */
+  /* ---------- HERO title & links (unchanged) ---------- */
   const driver = document.getElementById('driver');
   const media  = document.getElementById('hero-media');
   const col    = document.getElementById('hero-col');
@@ -249,7 +231,7 @@
     return clamp(-r.top / total, 0, 1);
   }
 
-  /* ---------- Generic section progress helper ---------- */
+  /* ---------- Generic section progress ---------- */
   function sectionProgress(el){
     const r  = el.getBoundingClientRect();
     const vh = window.innerHeight || document.documentElement.clientHeight;
@@ -262,12 +244,12 @@
   const s1Wrap = document.getElementById('s1-wrap');
   const s2Wrap = document.getElementById('s2-wrap');
 
-  /* ---------- Tunable timings ---------- */
-  const HERO_FADE_SPAN = 0.25;     // first 25% of S1
-  const IMG_FADE_START = 0.25;     // when hero 75% dissolved
-  const IMG_FADE_SPAN  = 0.35;     // length of image fade
-  const TXT_START      = IMG_FADE_START + IMG_FADE_SPAN * 0.75; // after image ~75% visible
-  const TXT_END        = 0.95;
+  /* ---------- Tunable timings (same for S1 & S2) ---------- */
+  const HERO_FADE_SPAN = 0.25;     // hero dissolves over first 25% of S1
+  const IMG_FADE_START = 0.25;     // start image fade when hero ≈75% gone
+  const IMG_FADE_SPAN  = 0.35;     // image fade duration
+  const TXT_START      = IMG_FADE_START + IMG_FADE_SPAN * 0.75; // after img ~75% visible
+  const TXT_END        = 0.95;     // finish text travel
 
   function update(){
     /* HERO baseline choreo */
@@ -279,11 +261,11 @@
     root.style.setProperty('--shift', shift.toFixed(1)+'px');
     root.style.setProperty('--linksOpacity', pSlide.toFixed(3));
 
-    /* SECTION 1 progress */
+    /* SECTION 1 */
     const s1 = sectionProgress(s1Wrap);
     root.style.setProperty('--s1', s1.toFixed(3));
 
-    // HERO cross-fade/blur with early S1
+    // Crossfade hero away with early S1 (keeps hero on top until dissolved)
     const heroCross = clamp(s1 / HERO_FADE_SPAN, 0, 1);
     root.style.setProperty('--heroAlpha', (1 - heroCross).toFixed(3));
     root.style.setProperty('--heroBlur',  (heroCross).toFixed(3));
@@ -294,11 +276,10 @@
 
     // S1 text travel (bottom→top, only after image ~75% visible)
     const s1Txt = clamp((s1 - TXT_START) / (TXT_END - TXT_START), 0, 1);
-    // interpolate: +60vh (below) → -30vh (above)
-    const s1Y = (1 - s1Txt) * 60 - s1Txt * 30;  // in vh
+    const s1Y = (1 - s1Txt) * 60 - s1Txt * 30;  // +60vh → -30vh
     root.style.setProperty('--s1TextY', s1Y.toFixed(2) + 'vh');
 
-    /* SECTION 2 mirrors S1 */
+    /* SECTION 2 (mirrors S1) */
     const s2 = sectionProgress(s2Wrap);
     root.style.setProperty('--s2', s2.toFixed(3));
 
@@ -316,7 +297,6 @@
     }
     measureHero();
     update();
-
     window.addEventListener('load',   ()=>{ measureHero(); update(); });
     window.addEventListener('resize', ()=>{ measureHero(); update(); });
     window.addEventListener('scroll', update, { passive:true });
