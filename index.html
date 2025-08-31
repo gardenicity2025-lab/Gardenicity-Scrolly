@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → Section 1 (image fades only after text is gone)</title>
+<title>Gardenicity — Hero → Section 1 (pinned, fade at 75%)</title>
 <style>
   /* ===== Base ===== */
   html,body{
@@ -18,12 +18,13 @@
     --linksOpacity: 0;      /* hero links fade */
     --heroAlpha: 1;         /* hero dissolve */
     --heroBlur: 0;
+
     --s1: 0;                /* Section 1 progress */
-    --s1ImgOpacity: 0;      /* S1 image opacity (in and out) */
+    --s1ImgOpacity: 0;      /* final computed opacity (in × out) */
     --s1Y: 0px;             /* S1 text translateY */
   }
 
-  /* ===== HERO (fixed) ===== */
+  /* ===== HERO ===== */
   .hero-fixed{
     position:fixed; inset:0; z-index:3;
     opacity:var(--heroAlpha);
@@ -62,30 +63,28 @@
     text-decoration:none !important;
   }
 
-  .driver{ height:200vh; } /* controls hero title/links timeline */
+  .driver{ height:200vh; }
 
   /* ===== Section 1 (pinned under hero) ===== */
   .s1-wrap{ position:relative; height:280vh; background:#e5e4e0; }
   .s1-sticky{
     position:sticky; top:0; height:100vh;
-    display:grid; padding:96px 82px;      /* same margins as hero */
-    grid-template-columns:512px 96px 1fr; /* text 512, gutter 96, media fills */
+    display:grid; padding:96px 82px;                /* same margins as hero */
+    grid-template-columns:512px 96px 1fr;           /* text / gutter / media */
     align-items:center;
   }
-
-  /* Text column */
   .s1-text-clip{ overflow:hidden; height:100%; }
   .s1-text{ transform:translateY(var(--s1Y)); color:#111; will-change:transform; }
   .s1-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
 
-  /* Media column — fully pinned & centered, never moves */
+  /* Media: pinned & centered */
   .s1-media{ grid-column:3 / 4; height:100%; display:flex; align-items:center; justify-content:center; }
   .s1-media img{
     display:block;
     object-fit:cover;
     max-width:100%; max-height:100%;
     opacity:var(--s1ImgOpacity);
-    transition:none;                    /* scrubbed by scroll only */
+    transition:none; /* scroll-scrubbed */
     will-change:opacity, width, height;
   }
 
@@ -105,7 +104,6 @@
         <span class="line">Geddes see?</span>
       </h1>
       <nav class="hero-links" id="hero-links" aria-label="Primary">
-        <!-- live placeholders to keep hover working -->
         <a href="https://www.megama.net">Civic Green</a>
         <a href="https://www.megama.net">Growth</a>
         <a href="https://www.megama.net">Sustenance</a>
@@ -153,9 +151,9 @@
   const root=document.documentElement;
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
   const easeInOutCubic=t=>t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
-  const easeSlower=t=>Math.pow(t,0.8); // slower feel for text scroll
+  const easeSlower=t=>Math.pow(t,0.8); // slightly slower start for text
 
-  /* ---------- HERO choreography ---------- */
+  /* ---------- HERO choreography (unchanged) ---------- */
   const driver=document.getElementById('driver');
   const media=document.getElementById('hero-media');
   const col=document.getElementById('hero-col');
@@ -177,7 +175,6 @@
     col.style.transform=prev||'';
     root.style.setProperty('--shift',startShift.toFixed(1)+'px');
   }
-
   function progressOf(el){
     const r=el.getBoundingClientRect();
     const vh=window.innerHeight||document.documentElement.clientHeight;
@@ -186,28 +183,18 @@
     return clamp(-r.top/total,0,1);
   }
 
-  /* ---------- Section 1 setup ---------- */
-  const s1Wrap   = document.getElementById('s1-wrap');
-  const s1Sticky = document.getElementById('s1-sticky');
-  const s1Clip   = document.getElementById('s1-clip');
-  const s1Text   = document.getElementById('s1-text');
-  const s1Media  = document.getElementById('s1-media');
-  const s1Img    = document.getElementById('s1-img');
+  /* ---------- Section 1 metrics ---------- */
+  const s1Wrap  = document.getElementById('s1-wrap');
+  const s1Sticky= document.getElementById('s1-sticky');
+  const s1Clip  = document.getElementById('s1-clip');
+  const s1Text  = document.getElementById('s1-text');
+  const s1Media = document.getElementById('s1-media');
+  const s1Img   = document.getElementById('s1-img');
 
-  let s1StartY=0,s1EndY=0;
+  let s1StartY=0,s1EndY=0,s1TextH=0,s1ClipH=0;
 
-  function measureS1(){
-    // text enter/exit distances inside the clipped window
-    const clipH=s1Clip.clientHeight;
-    const textH=s1Text.scrollHeight;
-    const pad=24;
-    s1StartY=clipH+pad;      // start fully below window
-    s1EndY=-textH-pad;       // end fully above window
-    root.style.setProperty('--s1Y',s1StartY+'px');
-  }
-
-  // Programmatic sizing (keeps image centered/pinned)
   function sizeS1Image(){
+    // Keep the image perfectly pinned & sized (no drift)
     const nomW=parseFloat(s1Img.dataset.imgW)||840;
     const nomH=parseFloat(s1Img.dataset.imgH)||1120;
     const box=s1Media.getBoundingClientRect();
@@ -216,22 +203,18 @@
     s1Img.style.height=(nomH*scale)+'px';
   }
 
-  /* ---------- Fade after text fully exits ---------- */
-  function fadeOutAfterTextGone(){
-    // When the bottom of the text goes ABOVE the top of the sticky frame,
-    // start fading over ~0.5 * viewport of extra scroll.
-    const tr = s1Text.getBoundingClientRect();
-    const fr = s1Sticky.getBoundingClientRect();
-
-    if (tr.bottom > fr.top) return 0;  // text still visible → no fade-out yet
-
-    const span = fr.height * 0.5;      // fade window (~half a viewport)
-    const dist = Math.min(span, Math.max(0, fr.top - tr.bottom)); // 0..span
-    return clamp(dist / span, 0, 1);   // 0→1 as we travel that window
+  function measureS1(){
+    s1ClipH=s1Clip.clientHeight;
+    s1TextH=s1Text.scrollHeight;
+    const pad=24;
+    s1StartY=s1ClipH+pad;      // start fully below window
+    s1EndY  =-s1TextH-pad;     // end fully above window
+    root.style.setProperty('--s1Y',s1StartY+'px');
+    sizeS1Image();
   }
 
   function update(){
-    /* HERO title/links scrub */
+    /* HERO baseline choreography */
     const p=progressOf(driver);
     const pFade=easeInOutCubic(clamp(p/0.60,0,1));
     root.style.setProperty('--titleOpacity',pFade.toFixed(3));
@@ -240,38 +223,44 @@
     root.style.setProperty('--shift',shift.toFixed(1)+'px');
     root.style.setProperty('--linksOpacity',pSlide.toFixed(3));
 
-    /* Section 1 progress + hero dissolve */
+    /* SECTION 1 progress + hero dissolve */
     const s1=progressOf(s1Wrap);
     root.style.setProperty('--s1',s1.toFixed(3));
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
-    /* S1 image opacity:
-       - Fade IN during first ~35% of S1 (scrubbed)
-       - Stay fully visible while text is anywhere in frame
-       - Fade OUT only after text bottom is above the frame’s top edge */
-    const imgIn = clamp(s1/0.35, 0, 1);         // 0→1
-    const outAfter = fadeOutAfterTextGone();    // 0 (no) → 1 (fully faded)
-    const imgOpacity = imgIn * (1 - outAfter);  // hold until text is gone
-    root.style.setProperty('--s1ImgOpacity', imgOpacity.toFixed(3));
+    /* S1 image fade IN over first ~35% */
+    const s1ImgIn = clamp(s1 / 0.35, 0, 1);  // 0→1 quickly, then hold
 
-    /* Text: starts only after ~75% of S1, and scrolls a bit slower */
+    /* Text movement (starts at 75% of S1, slightly eased) */
     const s1TextStart=0.75;
     const raw=clamp((s1-s1TextStart)/(1-s1TextStart),0,1);
     const slowed=easeSlower(raw);
     const y=s1StartY+(s1EndY-s1StartY)*slowed;
     root.style.setProperty('--s1Y',y+'px');
+
+    /* Image fade OUT trigger at 75% of viewport (clip) height */
+    const textBottom = y + s1TextH;       // bottom of moving text within clip
+    const trigger    = s1ClipH * 0.75;    // 75% viewport height
+    let s1Out = 0;
+    if (textBottom <= trigger){
+      // Fade from trigger → fully out (top), over another 75% window for smoothness
+      const span = Math.max(trigger, 1);
+      s1Out = clamp((trigger - textBottom) / span, 0, 1);
+    }
+
+    const finalOpacity = s1ImgIn * (1 - s1Out);
+    root.style.setProperty('--s1ImgOpacity', finalOpacity.toFixed(3));
   }
 
   async function init(){
     if(document.fonts&&document.fonts.ready){ try{await document.fonts.ready;}catch(e){} }
     measureHero();
     measureS1();
-    sizeS1Image();
     update();
 
-    window.addEventListener('load',  ()=>{ measureHero(); measureS1(); sizeS1Image(); update(); });
-    window.addEventListener('resize',()=>{ measureHero(); measureS1(); sizeS1Image(); update(); });
+    window.addEventListener('load',  ()=>{ measureHero(); measureS1(); update(); });
+    window.addEventListener('resize',()=>{ measureHero(); measureS1(); update(); });
     window.addEventListener('scroll',update,{passive:true});
   }
   init();
