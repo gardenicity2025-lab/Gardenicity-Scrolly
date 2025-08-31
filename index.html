@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → Section 1 (2/3 fade-out trigger)</title>
+<title>Gardenicity — Hero → Section 1 (image fades only after text is gone)</title>
 <style>
   /* ===== Base ===== */
   html,body{
@@ -19,11 +19,11 @@
     --heroAlpha: 1;         /* hero dissolve */
     --heroBlur: 0;
     --s1: 0;                /* Section 1 progress */
-    --s1ImgOpacity: 0;
-    --s1Y: 0px;
+    --s1ImgOpacity: 0;      /* S1 image opacity (in and out) */
+    --s1Y: 0px;             /* S1 text translateY */
   }
 
-  /* ===== HERO (fixed, stays interactive) ===== */
+  /* ===== HERO (fixed) ===== */
   .hero-fixed{
     position:fixed; inset:0; z-index:3;
     opacity:var(--heroAlpha);
@@ -49,7 +49,6 @@
     font-size:24px; line-height:30px;
     opacity:var(--linksOpacity);
   }
-  /* clickable, green hover */
   .hero-links a:link,
   .hero-links a:visited{
     color:#fff !important;
@@ -63,8 +62,7 @@
     text-decoration:none !important;
   }
 
-  /* drives the hero title/links baseline animation span */
-  .driver{ height:200vh; }
+  .driver{ height:200vh; } /* controls hero title/links timeline */
 
   /* ===== Section 1 (pinned under hero) ===== */
   .s1-wrap{ position:relative; height:280vh; background:#e5e4e0; }
@@ -80,14 +78,14 @@
   .s1-text{ transform:translateY(var(--s1Y)); color:#111; will-change:transform; }
   .s1-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
 
-  /* Media column — fully pinned & centered */
+  /* Media column — fully pinned & centered, never moves */
   .s1-media{ grid-column:3 / 4; height:100%; display:flex; align-items:center; justify-content:center; }
   .s1-media img{
     display:block;
     object-fit:cover;
     max-width:100%; max-height:100%;
-    opacity:var(--s1ImgOpacity);        /* combined fade-in / fade-out */
-    transition:none;                     /* scrubbed by scroll only */
+    opacity:var(--s1ImgOpacity);
+    transition:none;                    /* scrubbed by scroll only */
     will-change:opacity, width, height;
   }
 
@@ -107,6 +105,7 @@
         <span class="line">Geddes see?</span>
       </h1>
       <nav class="hero-links" id="hero-links" aria-label="Primary">
+        <!-- live placeholders to keep hover working -->
         <a href="https://www.megama.net">Civic Green</a>
         <a href="https://www.megama.net">Growth</a>
         <a href="https://www.megama.net">Sustenance</a>
@@ -217,17 +216,18 @@
     s1Img.style.height=(nomH*scale)+'px';
   }
 
-  /* ---------- Frame-relative helpers ---------- */
-  function getS1FadeOutProgress(){
-    // Fade-out begins when the BOTTOM of the text hits the 2/3 line *inside the sticky frame*,
-    // and finishes when that bottom crosses the top of the frame.
+  /* ---------- Fade after text fully exits ---------- */
+  function fadeOutAfterTextGone(){
+    // When the bottom of the text goes ABOVE the top of the sticky frame,
+    // start fading over ~0.5 * viewport of extra scroll.
     const tr = s1Text.getBoundingClientRect();
-    const fr = s1Sticky.getBoundingClientRect();           // whole sticky viewport (100vh)
-    const startY = fr.top + fr.height * (2/3);             // 2/3 line
-    const endY   = fr.top + 0;                              // top edge
-    const span   = Math.max(10, startY - endY);            // guard against 0
-    const raw    = (startY - tr.bottom) / span;            // 0 → 1
-    return clamp(raw, 0, 1);
+    const fr = s1Sticky.getBoundingClientRect();
+
+    if (tr.bottom > fr.top) return 0;  // text still visible → no fade-out yet
+
+    const span = fr.height * 0.5;      // fade window (~half a viewport)
+    const dist = Math.min(span, Math.max(0, fr.top - tr.bottom)); // 0..span
+    return clamp(dist / span, 0, 1);   // 0→1 as we travel that window
   }
 
   function update(){
@@ -246,13 +246,16 @@
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
-    /* S1 image opacity = fade-in early, then fade-out tied to text bottom crossing 2/3 line */
-    const imgIn = clamp(s1/0.35, 0, 1);            // appear during first ~35% of S1
-    const fadeOut = getS1FadeOutProgress();        // 0→1 based on text position
-    const imgOpacity = Math.min(imgIn, 1 - fadeOut);
+    /* S1 image opacity:
+       - Fade IN during first ~35% of S1 (scrubbed)
+       - Stay fully visible while text is anywhere in frame
+       - Fade OUT only after text bottom is above the frame’s top edge */
+    const imgIn = clamp(s1/0.35, 0, 1);         // 0→1
+    const outAfter = fadeOutAfterTextGone();    // 0 (no) → 1 (fully faded)
+    const imgOpacity = imgIn * (1 - outAfter);  // hold until text is gone
     root.style.setProperty('--s1ImgOpacity', imgOpacity.toFixed(3));
 
-    /* Text starts only after ~75% of S1, and scrolls a bit slower */
+    /* Text: starts only after ~75% of S1, and scrolls a bit slower */
     const s1TextStart=0.75;
     const raw=clamp((s1-s1TextStart)/(1-s1TextStart),0,1);
     const slowed=easeSlower(raw);
