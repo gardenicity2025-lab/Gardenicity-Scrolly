@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → Section 1 (pinned, fade at 75%)</title>
+<title>Gardenicity — Hero → Section 1 (trigger @ 75%, scroll-driven fade)</title>
 <style>
   /* ===== Base ===== */
   html,body{
@@ -20,11 +20,11 @@
     --heroBlur: 0;
 
     --s1: 0;                /* Section 1 progress */
-    --s1ImgOpacity: 0;      /* final computed opacity (in × out) */
-    --s1Y: 0px;             /* S1 text translateY */
+    --s1ImgOpacity: 0;      /* image opacity (in × out) */
+    --s1Y: 0px;             /* text translateY */
   }
 
-  /* ===== HERO ===== */
+  /* ===== HERO (fixed) ===== */
   .hero-fixed{
     position:fixed; inset:0; z-index:3;
     opacity:var(--heroAlpha);
@@ -65,7 +65,7 @@
 
   .driver{ height:200vh; }
 
-  /* ===== Section 1 (pinned under hero) ===== */
+  /* ===== Section 1 ===== */
   .s1-wrap{ position:relative; height:280vh; background:#e5e4e0; }
   .s1-sticky{
     position:sticky; top:0; height:100vh;
@@ -78,13 +78,15 @@
   .s1-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
 
   /* Media: pinned & centered */
-  .s1-media{ grid-column:3 / 4; height:100%; display:flex; align-items:center; justify-content:center; }
+  .s1-media{ grid-column:3 / 4; height:100%; position:relative; }
   .s1-media img{
+    position:absolute; top:50%; left:50%;
+    transform:translate(-50%,-50%);  /* lock to center */
     display:block;
     object-fit:cover;
     max-width:100%; max-height:100%;
     opacity:var(--s1ImgOpacity);
-    transition:none; /* scroll-scrubbed */
+    transition:none;                 /* scroll-scrubbed */
     will-change:opacity, width, height;
   }
 
@@ -151,9 +153,9 @@
   const root=document.documentElement;
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
   const easeInOutCubic=t=>t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
-  const easeSlower=t=>Math.pow(t,0.8); // slightly slower start for text
+  const easeSlower=t=>Math.pow(t,0.8); // slower feel for text
 
-  /* ---------- HERO choreography (unchanged) ---------- */
+  /* ---------- HERO choreography ---------- */
   const driver=document.getElementById('driver');
   const media=document.getElementById('hero-media');
   const col=document.getElementById('hero-col');
@@ -194,7 +196,6 @@
   let s1StartY=0,s1EndY=0,s1TextH=0,s1ClipH=0;
 
   function sizeS1Image(){
-    // Keep the image perfectly pinned & sized (no drift)
     const nomW=parseFloat(s1Img.dataset.imgW)||840;
     const nomH=parseFloat(s1Img.dataset.imgH)||1120;
     const box=s1Media.getBoundingClientRect();
@@ -207,14 +208,18 @@
     s1ClipH=s1Clip.clientHeight;
     s1TextH=s1Text.scrollHeight;
     const pad=24;
-    s1StartY=s1ClipH+pad;      // start fully below window
-    s1EndY  =-s1TextH-pad;     // end fully above window
+    s1StartY=s1ClipH+pad;   // start fully below window
+    s1EndY  =-s1TextH-pad;  // end fully above window
     root.style.setProperty('--s1Y',s1StartY+'px');
     sizeS1Image();
   }
 
+  /* Latch: when text-bottom first crosses 75% line, remember s1 progress */
+  let s1TriggerProg = null;           // becomes a number after trigger
+  const FADE_SPAN   = 0.35;           // fraction of section to complete fade once triggered
+
   function update(){
-    /* HERO baseline choreography */
+    /* HERO title/links scrub */
     const p=progressOf(driver);
     const pFade=easeInOutCubic(clamp(p/0.60,0,1));
     root.style.setProperty('--titleOpacity',pFade.toFixed(3));
@@ -223,33 +228,41 @@
     root.style.setProperty('--shift',shift.toFixed(1)+'px');
     root.style.setProperty('--linksOpacity',pSlide.toFixed(3));
 
-    /* SECTION 1 progress + hero dissolve */
+    /* Section progress + hero dissolve */
     const s1=progressOf(s1Wrap);
     root.style.setProperty('--s1',s1.toFixed(3));
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
-    /* S1 image fade IN over first ~35% */
-    const s1ImgIn = clamp(s1 / 0.35, 0, 1);  // 0→1 quickly, then hold
+    /* Image fade IN (first ~35% of S1) */
+    const imgIn = clamp(s1 / 0.35, 0, 1);
 
-    /* Text movement (starts at 75% of S1, slightly eased) */
+    /* Text motion (starts at 75% of S1) */
     const s1TextStart=0.75;
     const raw=clamp((s1-s1TextStart)/(1-s1TextStart),0,1);
     const slowed=easeSlower(raw);
     const y=s1StartY+(s1EndY-s1StartY)*slowed;
     root.style.setProperty('--s1Y',y+'px');
 
-    /* Image fade OUT trigger at 75% of viewport (clip) height */
-    const textBottom = y + s1TextH;       // bottom of moving text within clip
-    const trigger    = s1ClipH * 0.75;    // 75% viewport height
-    let s1Out = 0;
-    if (textBottom <= trigger){
-      // Fade from trigger → fully out (top), over another 75% window for smoothness
-      const span = Math.max(trigger, 1);
-      s1Out = clamp((trigger - textBottom) / span, 0, 1);
+    /* Trigger detection (text bottom crosses 75% of clip height) */
+    const textBottom = y + s1TextH;       // bottom of moving text inside clip
+    const triggerY   = s1ClipH * 0.75;    // 75% line inside sticky frame
+
+    if (textBottom > triggerY){
+      // Not yet reached → ensure latch is clear so scrolling back up cancels fade-out
+      s1TriggerProg = null;
+    } else if (s1TriggerProg === null) {
+      // First time we cross → latch the current section progress
+      s1TriggerProg = s1;
     }
 
-    const finalOpacity = s1ImgIn * (1 - s1Out);
+    /* Scroll-driven fade OUT after trigger */
+    let out = 0;
+    if (s1TriggerProg !== null){
+      out = clamp( (s1 - s1TriggerProg) / FADE_SPAN, 0, 1 );  // 0→1 over FADE_SPAN of scroll
+    }
+
+    const finalOpacity = imgIn * (1 - out);
     root.style.setProperty('--s1ImgOpacity', finalOpacity.toFixed(3));
   }
 
