@@ -5,184 +5,214 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Gardenicity — pinned cross-fades (Hero → S1 → S2)</title>
 <style>
-  /* ===== Base ===== */
+  /* ========= Base / Variables ========= */
   html,body{
-    margin:0; padding:0;
+    margin:0; padding:0; height:100%;
     background:#e5e4e0; color:#fff;
     font-family:"Acumin Pro",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-    height:100%;
   }
   :root{
-    /* Hero */
+    /* virtual frame (DESIGN space) scale */
+    --scale: 1;
+
+    /* hero choreography */
     --shift: 0px;
     --titleOpacity: 0;
     --linksOpacity: 0;
     --heroAlpha: 1;
     --heroBlur: 0;
 
-    /* S1 */
-    --s1: 0;
-    --s1TextY: 0px;
-    --s1ImgOpacity: 0;
-    --s1CrossOut: 0;
+    /* section alphas for cross-fade */
+    --s1Alpha: 1;
+    --s2Alpha: 0;
 
-    /* S2 */
-    --s2: 0;
-    --s2TextY: 0px;
-    --s2ImgOpacity: 0;
+    /* text motion in sections (scroll-scrubbed) */
+    --s1Y: 0px;
+    --s2Y: 0px;
+
+    /* image opacities for “arrive” feel (quick fade in) */
+    --s1ImgIn: 0;
+    --s2ImgIn: 0;
   }
 
-  /* ===== HERO (fixed) ===== */
-  .hero-fixed{
-    position:fixed; inset:0; z-index:3;
+  /* ========= The pinned stage ========= */
+  .stage{
+    position:relative;
+    height:100vh;           /* the scrolly window */
+    overflow:clip;
+  }
+
+  /* Sticky viewport holder for each timeline span */
+  .stick{
+    position:sticky; top:0; height:100vh;
+    pointer-events:none;    /* content below is clickable only when exposed */
+  }
+
+  /* Single, consistent 1920×1440 “virtual viewport” centered & scaled */
+  .frame{
+    position:absolute; left:50%; top:50%;
+    width:1920px; height:1440px;          /* DESIGN space */
+    transform:translate(-50%,-50%) scale(var(--scale));
+    transform-origin:center;
+    background:#e5e4e0;                    /* same as page */
+  }
+
+  /* ===== HERO ===== */
+  .hero{
     opacity:var(--heroAlpha);
     filter: blur(calc(var(--heroBlur) * 10px));
-    pointer-events:auto;
     will-change:opacity, filter;
   }
   .hero-bg{
     position:absolute; inset:0;
     background:url("assets/hero1gc.jpg") center/cover no-repeat;
     opacity:0; animation:heroIn 1000ms ease-out forwards;
-    pointer-events:none;
   }
   @keyframes heroIn{ from{opacity:0} to{opacity:1} }
 
-  .hero-media{
-    position:absolute; inset:96px 82px;
-    display:flex; align-items:flex-end; justify-content:flex-start;
-    overflow:hidden;
+  /* inner margins in DESIGN space */
+  .hero-media,
+  .s1-mediaGrid,
+  .s2-mediaGrid{
+    position:absolute; inset:96px 82px;  /* top/bot 96, sides 82 */
   }
-  .col{ position:relative; max-width:700px; transform:translateY(var(--shift)); will-change:transform; }
+
+  /* column system (DESIGN space): 512 text, 96 gutter, rest media */
+  .grid{
+    display:grid; grid-template-columns:512px 96px 1fr; height:100%;
+    align-items:center;
+  }
+
+  .col-text{ color:#111; }
+  .clip{ overflow:hidden; height:100%; }
+  .flow{ transform:translateY(var(--s1Y)); will-change:transform; }
+  .flowR{ transform:translateY(var(--s2Y)); will-change:transform; }
+  .flow p, .flowR p{ margin:0 0 14px 0; font-size:20px; line-height:28px; color:#111; }
+
+  /* hero title + links (left, baseline parked) */
+  .col-hero{ max-width:700px; transform:translateY(var(--shift)); will-change:transform; }
   .hero-title{ margin:0 0 24px 0; font-weight:400; font-size:100px; line-height:100px; opacity:var(--titleOpacity); }
   .hero-title .line{ display:block; }
+
   .hero-links{
     display:flex; flex-direction:column; gap:10px;
     font-size:24px; line-height:30px;
     opacity:var(--linksOpacity);
   }
-  .hero-links a:link,
-  .hero-links a:visited{
-    color:#fff !important;
-    text-decoration:none !important;
-    cursor:pointer;
-    transition:color .2s ease;
+  .hero-links a:link, .hero-links a:visited{
+    color:#fff !important; text-decoration:none !important; cursor:pointer; transition:color .2s ease;
+    pointer-events:auto;   /* clickable while hero visible */
   }
-  .hero-links a:hover,
-  .hero-links a:focus-visible{
-    color:#00A86B !important;
-    text-decoration:none !important;
-  }
+  .hero-links a:hover, .hero-links a:focus-visible{ color:#00A86B !important; text-decoration:none !important; }
 
-  .driver{ height:200vh; }
-
-  /* ===== Shared section frame ===== */
-  .panel-wrap{
-    position:relative;
-    height:260vh;           /* longer = slower experience per section */
-    background:#e5e4e0;
-  }
-  .panel-sticky{
-    position:sticky; top:0; height:100vh;
-    padding:96px 82px;              /* match hero insets */
-    display:grid; align-items:center;
-    /* 512 text col, 96 gutter, flexible media col */
-    grid-template-columns:512px 96px 1fr;
-  }
-  .panel-sticky.reverse{
-    /* S2: mirror grid (media on the left, text on the right) */
-    grid-template-columns:1fr 96px 512px;
-  }
-
-  /* Text column clips & scrolls inside the sticky frame */
-  .text-clip{ overflow:hidden; height:calc(100vh - 192px); } /* account for 96px top/bottom paddings */
-  .text{
-    color:#111;
-    will-change:transform;
-  }
-  .text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
-
-  /* Media column: image is centered and never moves */
+  /* Media (right column) – image centered and sticky by design */
   .media{
-    display:flex; align-items:center; justify-content:center;
-    height:calc(100vh - 192px);      /* inner viewport height (respect margins) */
+    display:flex; align-items:center; justify-content:center; height:100%;
   }
   .media img{
-    display:block;
-    max-width:100%;
-    max-height:100%;
-    object-fit:contain;               /* keep full image visible */
-    opacity:var(--s1ImgOpacity);      /* S1 by default; S2 overrides inline var */
-    will-change:opacity;
+    display:block; max-width:100%; max-height:100%;
+    opacity: var(--s1ImgIn);       /* or --s2ImgIn per section via inline style */
+    transition:none;               /* pure scroll scrub */
+    will-change:width,height,opacity;
   }
 
-  /* Layering: hero on top, S1 below, S2 under S1 */
-  .s1-sticky{ z-index:2; }
-  .s2-sticky{ z-index:1; }
+  /* ===== Cross-fade alphas applied to whole frames ===== */
+  .s1{ opacity:var(--s1Alpha); }
+  .s2{ opacity:var(--s2Alpha); }
 
+  /* ===== Scroll spans (taller = slower) ===== */
+  .span-hero{ height:200vh; }    /* hero choreography window */
+  .span-s1  { height:240vh; }    /* S1 experience */
+  .span-s2  { height:240vh; }    /* S2 experience */
+
+  /* A little spacer to see the end */
   .after{ min-height:120vh; }
 </style>
 </head>
 <body>
 
-<!-- ===== HERO ===== -->
-<div class="hero-fixed" id="hero">
-  <div class="hero-bg" aria-hidden="true"></div>
-  <div class="hero-media" id="hero-media">
-    <div class="col" id="hero-col">
-      <h1 class="hero-title" id="hero-title">
-        <span class="line">Gardenicity</span>
-        <span class="line">What did</span>
-        <span class="line">Geddes see?</span>
-      </h1>
-      <nav class="hero-links" id="hero-links" aria-label="Primary">
-        <a href="https://www.megama.net">Civic Green</a>
-        <a href="https://www.megama.net">Growth</a>
-        <a href="https://www.megama.net">Sustenance</a>
-        <a href="https://www.megama.net">Leafy SDGs</a>
-        <a href="https://www.megama.net">EN/עב</a>
-      </nav>
-    </div>
-  </div>
-</div>
-
-<section class="driver" id="driver"></section>
-
-<!-- ===== SECTION 1 (text left, media right) ===== -->
-<section class="panel-wrap" id="s1-wrap">
-  <div class="panel-sticky s1-sticky" id="s1-sticky">
-    <div class="text-clip">
-      <div class="text" id="s1-text">
-        <p><strong>HOURS AFTER MY</strong> mother took her last breath on earth…</p>
-        <p>After we opened the windows to let the spirits out…</p>
-        <p>After we lit incense stick after incense stick…</p>
-        <p>After we watched MMA fighters on TV in the basement…</p>
-        <p>And the smoke kept rising. The chain must not be broken.</p>
+<!-- ===== HERO SPAN ===== -->
+<section class="stage span-hero" id="span-hero">
+  <div class="stick">
+    <div class="frame hero" id="hero-frame">
+      <div class="hero-bg" aria-hidden="true"></div>
+      <div class="hero-media">
+        <div class="col-hero" id="hero-col">
+          <h1 class="hero-title" id="hero-title">
+            <span class="line">Gardenicity</span>
+            <span class="line">What did</span>
+            <span class="line">Geddes see?</span>
+          </h1>
+          <nav class="hero-links" id="hero-links" aria-label="Primary">
+            <a href="https://www.megama.net">Civic Green</a>
+            <a href="https://www.megama.net">Growth</a>
+            <a href="https://www.megama.net">Sustenance</a>
+            <a href="https://www.megama.net">Leafy SDGs</a>
+            <a href="https://www.megama.net">EN/עב</a>
+          </nav>
+        </div>
       </div>
     </div>
-    <div></div>
-    <figure class="media">
-      <img id="s1-img" src="assets/section1.jpg" alt="Section 1 visual"
-           style="opacity:var(--s1ImgOpacity)">
-    </figure>
   </div>
 </section>
 
-<!-- ===== SECTION 2 (mirrored: media left, text right) ===== -->
-<section class="panel-wrap" id="s2-wrap">
-  <div class="panel-sticky reverse s2-sticky" id="s2-sticky">
-    <figure class="media">
-      <img id="s2-img" src="assets/section2.jpg" alt="Section 2 visual"
-           style="opacity:var(--s2ImgOpacity)">
-    </figure>
-    <div></div>
-    <div class="text-clip">
-      <div class="text" id="s2-text">
-        <p><strong>SECTION TWO</strong> opens as the orchard gives way…</p>
-        <p>Workers turn to the next grove, baskets emptying in cadence…</p>
-        <p>The paths widen; the grid tightens; a city edge comes into view…</p>
-        <p>Stone, sun, and lime; air thick with talk and trade…</p>
-        <p>The light hardens; shadows stack; the day leans forward.</p>
+<!-- ===== SECTION 1 SPAN ===== -->
+<section class="stage span-s1" id="span-s1">
+  <div class="stick">
+    <div class="frame s1" id="s1-frame">
+      <div class="s1-mediaGrid grid">
+        <!-- Left text (scrolls after hero handoff) -->
+        <div class="col-text">
+          <div class="clip" id="s1-clip">
+            <div class="flow" id="s1-text">
+              <p><strong>HOURS AFTER MY</strong> mother took her last breath on earth…</p>
+              <p>After we opened the windows to let the spirits out…</p>
+              <p>After we lit incense stick after incense stick…</p>
+              <p>After we watched MMA fighters on TV in the basement…</p>
+              <p>And the smoke kept rising. The chain must not be broken.</p>
+            </div>
+          </div>
+        </div>
+        <div></div>
+        <!-- Right media (sticky/centered) -->
+        <div class="media" id="s1-media">
+          <img id="s1-img"
+               src="assets/section1.jpg"
+               alt="Section 1"
+               data-img-w="840" data-img-h="1120"
+               style="opacity:var(--s1ImgIn)">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 2 SPAN ===== -->
+<section class="stage span-s2" id="span-s2">
+  <div class="stick">
+    <div class="frame s2" id="s2-frame">
+      <div class="s2-mediaGrid grid">
+        <!-- Left media (landscape), pinned/centered -->
+        <div class="media" id="s2-media" style="grid-column:1 / 2;">
+          <img id="s2-img"
+               src="assets/section2.jpg"
+               alt="Section 2"
+               data-img-w="1120" data-img-h="840"
+               style="opacity:var(--s2ImgIn)">
+        </div>
+        <div></div>
+        <!-- Right text (mirrors S1 timing/feel) -->
+        <div class="col-text" style="grid-column:3 / 4;">
+          <div class="clip" id="s2-clip">
+            <div class="flowR" id="s2-text">
+              <p><strong>SECTION TWO</strong> opens as the orchard gives way…</p>
+              <p>Workers turn to the next grove, baskets emptying in cadence…</p>
+              <p>The paths widen; a city edge comes into view…</p>
+              <p>Streets harden, shadows shorten; dust rises and settles…</p>
+              <p>And the scene changes, line by line.</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -193,137 +223,166 @@
 <script>
 (function(){
   const root = document.documentElement;
+
+  /* ---------- DESIGN frame scaling (1920×1440) ---------- */
+  const VW = 1920, VH = 1440;
+  function rescale(){
+    const s = Math.min(window.innerWidth / VW, window.innerHeight / VH);
+    root.style.setProperty('--scale', s.toFixed(5));
+  }
+
+  /* ---------- helpers ---------- */
   const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
   const easeInOutCubic = t => t<0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2;
 
-  /* ---------- HERO choreography (unchanged) ---------- */
-  const driver=document.getElementById('driver');
-  const media=document.getElementById('hero-media');
-  const col=document.getElementById('hero-col');
-  const title=document.getElementById('hero-title');
-  const links=document.getElementById('hero-links');
-  let startShift=0,endShift=0;
-
-  function measureHero(){
-    const prev=col.style.transform;
-    col.style.transform='translateY(0px)';
-    const lines=title.querySelectorAll('.line');
-    const third=lines[2]||lines[lines.length-1];
-    const thirdRect=third.getBoundingClientRect();
-    const lastLinkRect=(links.lastElementChild||links).getBoundingClientRect();
-    const mediaRect=media.getBoundingClientRect();
-    const mediaBaseline=mediaRect.bottom;
-    startShift=mediaBaseline-thirdRect.bottom;
-    endShift=mediaBaseline-lastLinkRect.bottom;
-    col.style.transform=prev||'';
-    root.style.setProperty('--shift',startShift.toFixed(1)+'px');
-  }
-  function progressOf(el){
-    const r=el.getBoundingClientRect();
-    const vh=window.innerHeight||document.documentElement.clientHeight;
-    const total=r.height-vh;
-    if(total<=0)return 0;
-    return clamp(-r.top/total,0,1);
+  function spanProgress(section){
+    // 0..1 over its scroll span (height - vh)
+    const r = section.getBoundingClientRect();
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+    const total = r.height - vh;
+    if (total <= 0) return 1;
+    return clamp(-r.top / total, 0, 1);
   }
 
-  /* ---------- Sections ---------- */
-  const s1Wrap = document.getElementById('s1-wrap');
-  const s2Wrap = document.getElementById('s2-wrap');
+  /* ---------- DOM ---------- */
+  const spanHero = document.getElementById('span-hero');
+  const spanS1   = document.getElementById('span-s1');
+  const spanS2   = document.getElementById('span-s2');
+
+  const heroFrame = document.getElementById('hero-frame');
+  const heroCol   = document.getElementById('hero-col');
+  const heroTitle = document.getElementById('hero-title');
+  const heroLinks = document.getElementById('hero-links');
+
+  const s1Clip = document.getElementById('s1-clip');
   const s1Text = document.getElementById('s1-text');
+  const s1Media= document.getElementById('s1-media');
+  const s1Img  = document.getElementById('s1-img');
+
+  const s2Clip = document.getElementById('s2-clip');
   const s2Text = document.getElementById('s2-text');
+  const s2Media= document.getElementById('s2-media');
+  const s2Img  = document.getElementById('s2-img');
 
-  // text translate ranges
+  /* ---------- Hero baseline choreography (within spanHero) ---------- */
+  let startShift=0, endShift=0;
+  function measureHero(){
+    // Measure baseline inside DESIGN frame
+    const prev = heroCol.style.transform; heroCol.style.transform='translateY(0px)';
+    const lines = heroTitle.querySelectorAll('.line');
+    const third = lines[2] || lines[lines.length-1];
+
+    const frameRect    = heroFrame.getBoundingClientRect(); // scaled
+    const mediaRect    = heroFrame.querySelector('.hero-media').getBoundingClientRect();
+    const thirdRect    = third.getBoundingClientRect();
+    const lastLinkRect = (heroLinks.lastElementChild || heroLinks).getBoundingClientRect();
+
+    const mediaBaseline = mediaRect.bottom;
+
+    startShift = mediaBaseline - thirdRect.bottom;
+    endShift   = mediaBaseline - lastLinkRect.bottom;
+
+    heroCol.style.transform = prev || '';
+    root.style.setProperty('--shift', startShift.toFixed(1) + 'px');
+  }
+
+  /* ---------- Section image sizing inside the DESIGN media box ---------- */
+  function fitImage(imgEl, mediaEl){
+    const nomW = parseFloat(imgEl.dataset.imgW) || 1000;
+    const nomH = parseFloat(imgEl.dataset.imgH) || 1000;
+    const box  = mediaEl.getBoundingClientRect();  // scaled size
+    // reverse the scale so we size in DESIGN space then rely on CSS scale
+    const scale = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--scale')) || 1;
+    const designW = box.width  / scale;
+    const designH = box.height / scale;
+    const s = Math.min(designW/nomW, designH/nomH);
+    imgEl.style.width  = (nomW*s) + 'px';
+    imgEl.style.height = (nomH*s) + 'px';
+  }
+
+  /* ---------- Section text motion metrics ---------- */
   let s1StartY=0, s1EndY=0, s2StartY=0, s2EndY=0;
-
   function measureText(){
-    // inner frame height equals (100vh - 192px) due to padding
-    const innerH = (window.innerHeight || document.documentElement.clientHeight) - 192;
     const pad=24;
-
+    // S1
+    const s1ClipH = s1Clip.clientHeight;
     const s1TextH = s1Text.scrollHeight;
-    s1StartY = innerH + pad;       // enter from below
-    s1EndY   = -s1TextH - pad;     // exit above
+    s1StartY = s1ClipH + pad;
+    s1EndY   = -s1TextH - pad;
+    root.style.setProperty('--s1Y', s1StartY+'px');
 
+    // S2
+    const s2ClipH = s2Clip.clientHeight;
     const s2TextH = s2Text.scrollHeight;
-    s2StartY = innerH + pad;
+    s2StartY = s2ClipH + pad;
     s2EndY   = -s2TextH - pad;
-
-    // initialize positions
-    root.style.setProperty('--s1TextY', s1StartY + 'px');
-    root.style.setProperty('--s2TextY', s2StartY + 'px');
+    root.style.setProperty('--s2Y', s2StartY+'px');
   }
 
-  // helper: 0→1 as a section's top moves from bottom→top of viewport
-  function enterProgress(sectionWrap){
-    const top = sectionWrap.getBoundingClientRect().top;
-    const vh  = window.innerHeight || document.documentElement.clientHeight;
-    // When top == vh (just touching bottom) → 0
-    // When top == 0 (just at top) → 1
-    return clamp(1 - (top / vh), 0, 1);
-    // stays clamped; above 1 while sticky, then we cap
-  }
-
+  /* ---------- Main update (scroll) ---------- */
   function update(){
-    /* HERO title/links baseline choreography */
-    const p = progressOf(driver);
-    const pFade  = easeInOutCubic( clamp(p / 0.60, 0, 1) );
+    /* 1) Hero choreography inside its span */
+    const ph = spanProgress(spanHero);
+    const pFade = easeInOutCubic( clamp(ph/0.60, 0, 1) );
     root.style.setProperty('--titleOpacity', pFade.toFixed(3));
-    const pSlide = clamp((p - 0.60) / 0.40, 0, 1);
+    const pSlide = clamp((ph - 0.60)/0.40, 0, 1);
     const shift  = startShift + (endShift - startShift) * pSlide;
-    root.style.setProperty('--shift', shift.toFixed(1)+'px');
+    root.style.setProperty('--shift', shift.toFixed(1) + 'px');
     root.style.setProperty('--linksOpacity', pSlide.toFixed(3));
 
-    /* S1 progress (for image fade-in + text start) */
-    const s1 = progressOf(s1Wrap);
-    root.style.setProperty('--s1', s1.toFixed(3));
+    /* 2) Hero → S1 cross-fade paced by S1 entering */
+    // When S1's top crosses the bottom of the viewport, start a 35% fade.
+    const rS1  = spanS1.getBoundingClientRect();
+    const vh   = window.innerHeight || document.documentElement.clientHeight;
+    const enterS1 = clamp( (vh - rS1.top) / (vh*0.35), 0, 1 );
+    root.style.setProperty('--heroAlpha', (1 - enterS1).toFixed(3));
+    root.style.setProperty('--heroBlur',  enterS1.toFixed(3));
 
-    // Hero dissolves by how much S1 occupies (same rhythm as earlier)
-    root.style.setProperty('--heroAlpha', (1 - s1).toFixed(3));
-    root.style.setProperty('--heroBlur',  (s1*0.8).toFixed(3));
+    // While S1 is arriving, let its image come up quickly (feels like load)
+    root.style.setProperty('--s1ImgIn', enterS1.toFixed(3));
 
-    // S1 image fade-in during the first ~35% of the section
-    const s1ImgIn = clamp(s1 / 0.35, 0, 1);
-    root.style.setProperty('--s1ImgOpacity', s1ImgIn.toFixed(3));
+    /* 3) S1 local progress drives text after hero handoff */
+    const p1 = spanProgress(spanS1);
+    const textStart1 = 0.20; // wait until S1 is ~in
+    const t1 = clamp((p1 - textStart1) / (1 - textStart1), 0, 1);
+    const y1 = s1StartY + (s1EndY - s1StartY) * Math.pow(t1, 0.85);
+    root.style.setProperty('--s1Y', y1 + 'px');
 
-    // S1 text starts after 0.75
-    const s1TextStart=0.75;
-    const s1TextRaw = clamp((s1 - s1TextStart) / (1 - s1TextStart), 0, 1);
-    const s1Y = s1StartY + (s1EndY - s1StartY) * Math.pow(s1TextRaw, 0.8);
-    root.style.setProperty('--s1TextY', s1Y + 'px');
+    /* 4) S1 → S2 cross-fade paced by S2 entering */
+    const rS2 = spanS2.getBoundingClientRect();
+    const enterS2 = clamp( (vh - rS2.top) / (vh*0.35), 0, 1 );  // same rhythm
+    root.style.setProperty('--s1Alpha', (1 - enterS2).toFixed(3));
+    root.style.setProperty('--s2Alpha', enterS2.toFixed(3));
+    root.style.setProperty('--s2ImgIn', enterS2.toFixed(3));
 
-    // ----- Cross-fade S1 → S2 driven by S2 entering -----
-    const s2Enter = enterProgress(s2Wrap);   // 0 when touching bottom, 1 when reached top
-    const CROSS_SPAN = 0.35;                 // match hero rhythm
-    const cross = clamp(s2Enter / CROSS_SPAN, 0, 1);
-
-    // S1 fades out as S2 enters; S2 fades in symmetrically
-    const s1Out = cross;                     // 0→1
-    const s2In  = cross;
-
-    // combine with S1's existing "in" opacity (so it doesn’t start from 0)
-    const s1Final = (s1ImgIn) * (1 - s1Out);
-    root.style.setProperty('--s1ImgOpacity', s1Final.toFixed(3));
-    root.style.setProperty('--s2ImgOpacity', s2In.toFixed(3));
-
-    // S2 text starts once the image is mostly in (same 0.75 idea but on enter)
-    const s2TextStart = 0.75;
-    const s2TextRaw   = clamp((s2In - s2TextStart) / (1 - s2TextStart), 0, 1);
-    const s2Y = s2StartY + (s2EndY - s2StartY) * Math.pow(s2TextRaw, 0.8);
-    root.style.setProperty('--s2TextY', s2Y + 'px');
-
-    // apply transforms
-    s1Text.style.transform = `translateY(var(--s1TextY))`;
-    s2Text.style.transform = `translateY(var(--s2TextY))`;
+    /* 5) S2 local progress (mirrors S1) */
+    const p2 = spanProgress(spanS2);
+    const textStart2 = 0.20;
+    const t2 = clamp((p2 - textStart2) / (1 - textStart2), 0, 1);
+    const y2 = s2StartY + (s2EndY - s2StartY) * Math.pow(t2, 0.85);
+    root.style.setProperty('--s2Y', y2 + 'px');
   }
 
+  /* ---------- Init / listeners ---------- */
   async function init(){
-    if(document.fonts && document.fonts.ready){ try{ await document.fonts.ready; } catch(e){} }
+    if (document.fonts && document.fonts.ready) { try{ await document.fonts.ready; }catch(e){} }
+    rescale();
     measureHero();
     measureText();
+    fitImage(s1Img, s1Media);
+    fitImage(s2Img, s2Media);
     update();
-    window.addEventListener('load',   ()=>{ measureHero(); measureText(); update(); });
-    window.addEventListener('resize', ()=>{ measureHero(); measureText(); update(); });
-    window.addEventListener('scroll', update, { passive:true });
+
+    window.addEventListener('resize', ()=>{
+      rescale();
+      measureHero();
+      measureText();
+      fitImage(s1Img, s1Media);
+      fitImage(s2Img, s2Media);
+      update();
+    }, {passive:true});
+
+    window.addEventListener('scroll', update, {passive:true});
   }
   init();
 })();
