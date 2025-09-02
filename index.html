@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → Section 1 (trigger test)</title>
+<title>Gardenicity — Hero → Section 1 (fade trigger @ 90%)</title>
 <style>
   /* ===== Base ===== */
   html,body{
@@ -22,8 +22,6 @@
     --s1: 0;                /* Section 1 progress */
     --s1ImgOpacity: 0;      /* final computed opacity (in × out) */
     --s1Y: 0px;             /* S1 text translateY */
-
-    --triggerY: 0px;        /* debug guide position inside sticky area */
   }
 
   /* ===== HERO ===== */
@@ -31,7 +29,7 @@
     position:fixed; inset:0; z-index:3;
     opacity:var(--heroAlpha);
     filter: blur(calc(var(--heroBlur) * 10px));
-    pointer-events:auto;
+    pointer-events:auto; /* links usable */
     will-change:opacity, filter;
   }
   .hero-bg{
@@ -71,21 +69,12 @@
     display:grid; padding:96px 82px;
     grid-template-columns:512px 96px 1fr; align-items:center;
   }
-  /* debug: show the trigger line inside the sticky frame */
-  .s1-sticky::after{
-    content:""; position:absolute; left:82px; right:82px;
-    top:calc(96px + var(--triggerY));
-    border-top:1px dashed rgba(0,0,0,.15);
-    pointer-events:none;
-  }
-
   .s1-text-clip{ overflow:hidden; height:100%; }
   .s1-text{ transform:translateY(var(--s1Y)); color:#111; will-change:transform; }
   .s1-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
 
   .s1-media{
-    display:flex; align-items:center; justify-content:center;
-    /* image stays pinned/centered in this cell */
+    display:flex; align-items:center; justify-content:center; /* pinned & centered */
   }
   .s1-media img{
     object-fit:cover;
@@ -149,12 +138,12 @@
 <section class="after"></section>
 
 <script>
-/* ===== Version tag so you know it loaded ===== */
-console.log("%cGardenicity v28","color:#00A86B");
+/* ===== Version tag ===== */
+console.log("%cGardenicity v29","color:#00A86B");
 
-/* ===== Tunables ===== */
-const TRIGGER_FRACTION = 1.00;  // 1.00 = bottom of sticky window; set 0.75 for 75%
-const FADE_SPAN        = 0.35;  // how much of the remaining scroll the fade-out consumes
+/* Tunables */
+const TRIGGER_FRACTION = 0.90; // fade-out START when text bottom reaches 90% of sticky viewport
+const FADE_SPAN        = 0.35; // how much section progress to consume for fade-out after trigger
 
 (function(){
   const root=document.documentElement;
@@ -198,7 +187,6 @@ const FADE_SPAN        = 0.35;  // how much of the remaining scroll the fade-out
   const s1Text   = document.getElementById('s1-text');
   const s1Media  = document.getElementById('s1-media');
   const s1Img    = document.getElementById('s1-img');
-  const s1Sticky = document.getElementById('s1-sticky');
 
   let s1StartY=0,s1EndY=0,s1TextH=0,s1ClipH=0;
 
@@ -215,16 +203,15 @@ const FADE_SPAN        = 0.35;  // how much of the remaining scroll the fade-out
     s1ClipH=s1Clip.clientHeight;
     s1TextH=s1Text.scrollHeight;
     const pad=24;
-    s1StartY=s1ClipH+pad;      // start below
-    s1EndY=-s1TextH-pad;       // end above
+    s1StartY=s1ClipH+pad;      // start below window
+    s1EndY=-s1TextH-pad;       // end above window
     root.style.setProperty('--s1Y',s1StartY+'px');
-
-    // debug line position
-    const usableH = s1Sticky.clientHeight - 192; // minus 96 top/bottom padding
-    root.style.setProperty('--triggerY', (usableH * TRIGGER_FRACTION) + "px");
-
     sizeS1Image();
   }
+
+  /* Store the section progress at the instant the trigger fires,
+     so fade-out is scroll-based from that exact moment (not tied to text exit). */
+  let s1TriggerProg = null;
 
   function update(){
     /* HERO baseline choreography */
@@ -242,28 +229,32 @@ const FADE_SPAN        = 0.35;  // how much of the remaining scroll the fade-out
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
-    /* S1 image fade IN — scroll-scrubbed across first ~35% */
+    /* S1 image fade IN — scroll-scrubbed early */
     const imgIn = clamp(s1/0.35, 0, 1);
 
-    /* S1 text: starts at 0.75 of the section, moves through window */
+    /* S1 text movement — starts at 0.75 of the section */
     const s1TextStart=0.75;
     const raw=clamp((s1-s1TextStart)/(1-s1TextStart),0,1);
     const slowed=easeSlower(raw);
     const y=s1StartY+(s1EndY-s1StartY)*slowed;
     root.style.setProperty('--s1Y',y+'px');
 
-    /* S1 image fade OUT — starts when text bottom hits trigger fraction.
-       Progress afterwards is purely scroll-based (like hero fade). */
-    const clipH = s1ClipH;
-    const triggerPx = clipH * TRIGGER_FRACTION;      // 1.00 = bottom, 0.75 = 75%
-    const textBottomPx = y + s1TextH;                // text bottom relative to clip top
+    /* ---- Fade OUT trigger @ 90% of sticky viewport, AFTER text has begun moving ---- */
+    const textHasStarted = raw > 0;               // ensure text is in motion
+    const textBottomPx   = y + s1TextH;           // text bottom relative to clip top
+    const triggerPx      = s1ClipH * TRIGGER_FRACTION;
+
+    if (textHasStarted && textBottomPx <= triggerPx){
+      if (s1TriggerProg === null) s1TriggerProg = s1; // latch first crossing
+    } else {
+      // if we scroll back above threshold, reset so it re-triggers cleanly
+      if (s1 < (s1TriggerProg ?? 1)) s1TriggerProg = null;
+    }
 
     let out = 0;
-    if (textBottomPx <= triggerPx){
-      // normalize 0→1 from trigger to end of section scroll
-      // use the section progress tail (same rhythm as hero)
-      const tail = clamp((s1 - s1TextStart) / (1 - s1TextStart), 0, 1);
-      out = clamp(tail / FADE_SPAN, 0, 1);
+    if (s1TriggerProg !== null){
+      // pure scroll-based fade from the trigger onward
+      out = clamp((s1 - s1TriggerProg) / FADE_SPAN, 0, 1);
     }
 
     const finalOpacity = imgIn * (1 - out);
