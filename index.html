@@ -3,8 +3,9 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → Section 1 (text overlay spans full viewport)</title>
+<title>Gardenicity — Hero → Section 1 (pinned image, full-height text sweep)</title>
 <style>
+  /* ===== Base ===== */
   html,body{
     margin:0; padding:0;
     background:#e5e4e0; color:#fff;
@@ -12,51 +13,100 @@
     height:100%;
   }
   :root{
-    --shift: 0px; --titleOpacity: 0; --linksOpacity: 0; --heroAlpha: 1; --heroBlur: 0;
-    --s1: 0; --s1ImgOpacity: 0; --s1Y: 0px;
+    /* HERO vars */
+    --shift: 0px;
+    --titleOpacity: 0;
+    --linksOpacity: 0;
+    --heroAlpha: 1;
+    --heroBlur: 0;
+
+    /* Section 1 vars */
+    --s1: 0;
+    --s1ImgOpacity: 0;
+    --s1Y: 0px;
   }
 
   /* ===== HERO ===== */
-  .hero-fixed{ position:fixed; inset:0; z-index:3;
-    opacity:var(--heroAlpha); filter:blur(calc(var(--heroBlur)*10px)); }
-  .hero-bg{ position:absolute; inset:0; background:url("assets/hero1gc.jpg") center/cover no-repeat;
-    opacity:0; animation:heroIn 1000ms ease-out forwards; pointer-events:none; }
+  .hero-fixed{
+    position:fixed; inset:0; z-index:3;
+    opacity:var(--heroAlpha);
+    filter: blur(calc(var(--heroBlur) * 10px));
+    pointer-events:auto;
+    will-change:opacity, filter;
+  }
+  .hero-bg{
+    position:absolute; inset:0;
+    background:url("assets/hero1gc.jpg") center/cover no-repeat;
+    opacity:0; animation:heroIn 1000ms ease-out forwards;
+    pointer-events:none;
+  }
   @keyframes heroIn{ from{opacity:0} to{opacity:1} }
-  .hero-media{ position:absolute; inset:96px 82px; display:flex; align-items:flex-end; justify-content:flex-start; overflow:hidden; }
-  .col{ position:relative; max-width:700px; transform:translateY(var(--shift)); }
+
+  .hero-media{
+    position:absolute; inset:96px 82px;
+    display:flex; align-items:flex-end; justify-content:flex-start;
+    overflow:hidden;
+  }
+  .col{ position:relative; max-width:700px; transform:translateY(var(--shift)); will-change:transform; }
   .hero-title{ margin:0 0 24px 0; font-weight:400; font-size:100px; line-height:100px; opacity:var(--titleOpacity); }
   .hero-title .line{ display:block; }
-  .hero-links{ display:flex; flex-direction:column; gap:10px; font-size:24px; line-height:30px; opacity:var(--linksOpacity); }
-  .hero-links a{ color:#fff; text-decoration:none; transition:color .2s; }
-  .hero-links a:hover{ color:#00A86B; }
 
+  .hero-links{
+    display:flex; flex-direction:column; gap:10px;
+    font-size:24px; line-height:30px;
+    opacity:var(--linksOpacity);
+  }
+  .hero-links a:link,
+  .hero-links a:visited{
+    color:#fff !important; text-decoration:none !important; cursor:pointer; transition:color .2s ease;
+  }
+  .hero-links a:hover,
+  .hero-links a:focus-visible{ color:#00A86B !important; text-decoration:none !important; }
+
+  /* Hero scroll driver */
   .driver{ height:200vh; }
 
-  /* ===== SECTION 1 (sticky) ===== */
+  /* ===== Section 1 ===== */
   .s1-wrap{ position:relative; height:280vh; background:#e5e4e0; }
+
+  /* Sticky viewport (same paddings as hero media) */
   .s1-sticky{
-    position:sticky; top:0; height:100vh; box-sizing:border-box;
-    /* Base grid for intrinsic layout & media box */
-    display:grid; padding:96px 82px; grid-template-columns:512px 96px 1fr; align-items:center;
+    position:sticky; top:0; height:100vh;
+    display:grid; padding:96px 82px;
+    grid-template-columns:512px 96px 1fr;
+    align-items:center;
+    box-sizing:border-box;
   }
 
-  /* Right column media: pinned, no drift, contained */
-  .s1-media{ width:100%; height:100%; display:flex; align-items:center; justify-content:center; overflow:hidden; z-index:1; }
-  .s1-media img{ height:100%; width:auto; max-width:100%; max-height:100%; object-fit:contain; opacity:var(--s1ImgOpacity); }
-
-  /* Text overlay layer: sits ABOVE everything, spans FULL viewport height */
-  .s1-overlay{
-    position:absolute; inset:0; z-index:2; /* above media */
-    pointer-events:none; /* text is static; if you need links, remove this */
-  }
-  /* Inside overlay, create a clip box that matches the left column's x-position,
-     but uses FULL viewport height (no vertical padding) */
+  /* Left column: text scroller (fills the clip entirely) */
   .s1-text-clip{
-    position:absolute; top:0; left:82px; /* same left padding as layout */
-    width:512px; height:100vh; overflow:hidden;
+    position:relative;
+    height:100%;
+    overflow:hidden;   /* hard clip — no top/bottom padding inside */
   }
-  .s1-text{ transform:translateY(var(--s1Y)); color:#111; will-change:transform; }
+  .s1-text{
+    position:relative;
+    transform:translateY(var(--s1Y));
+    color:#111;
+    will-change:transform;
+  }
   .s1-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
+
+  /* Right column: media area (image is centered, contained, no drift) */
+  .s1-media{
+    width:100%; height:100%;
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden;         /* prevent accidental overflow */
+  }
+  .s1-media img{
+    height:100%;             /* contain by height within the viewport box */
+    width:auto;              /* preserve aspect ratio */
+    max-width:100%; max-height:100%;
+    object-fit:contain;      /* belt & suspenders */
+    opacity:var(--s1ImgOpacity);
+    transition:none;
+    will-change:opacity;
+  }
 
   .after{ min-height:120vh; }
 </style>
@@ -88,24 +138,17 @@
 
 <!-- SECTION 1 -->
 <section class="s1-wrap" id="s1-wrap">
-  <div class="s1-sticky" id="s1-sticky">
-    <!-- Overlay that spans full 100vh; text scrolls within this, not inside the padded grid cell -->
-    <div class="s1-overlay" aria-hidden="true">
-      <div class="s1-text-clip" id="s1-clip">
-        <div class="s1-text" id="s1-text">
-          <p><strong>HOURS AFTER MY</strong> mother took her last breath on earth…</p>
-          <p>After we opened the windows to let the spirits out…</p>
-          <p>After we lit incense stick after incense stick…</p>
-          <p>After we watched MMA fighters on TV in the basement…</p>
-          <p>And the smoke kept rising. The chain must not be broken.</p>
-        </div>
+  <div class="s1-sticky">
+    <div class="s1-text-clip" id="s1-clip">
+      <div class="s1-text" id="s1-text">
+        <p><strong>HOURS AFTER MY</strong> mother took her last breath on earth…</p>
+        <p>After we opened the windows to let the spirits out…</p>
+        <p>After we lit incense stick after incense stick…</p>
+        <p>After we watched MMA fighters on TV in the basement…</p>
+        <p>And the smoke kept rising. The chain must not be broken.</p>
       </div>
     </div>
-
-    <!-- spacer column from the grid -->
     <div></div>
-
-    <!-- Media stays in the right column, pinned/contained -->
     <figure class="s1-media" id="s1-media">
       <img id="s1-img" src="assets/section1.jpg" alt="Section 1 visual">
     </figure>
@@ -119,8 +162,9 @@
   const root=document.documentElement;
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
   const easeInOutCubic=t=>t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+  const easeSlower=t=>Math.pow(t,0.8);
 
-  /* ===== HERO ===== */
+  /* ---------- HERO choreography ---------- */
   const driver=document.getElementById('driver');
   const media=document.getElementById('hero-media');
   const col=document.getElementById('hero-col');
@@ -129,15 +173,16 @@
   let startShift=0,endShift=0;
 
   function measureHero(){
-    const prev=col.style.transform; col.style.transform='translateY(0px)';
+    const prev=col.style.transform;
+    col.style.transform='translateY(0px)';
     const lines=title.querySelectorAll('.line');
     const third=lines[2]||lines[lines.length-1];
     const thirdRect=third.getBoundingClientRect();
     const lastLinkRect=(links.lastElementChild||links).getBoundingClientRect();
     const mediaRect=media.getBoundingClientRect();
-    const baseline=mediaRect.bottom;
-    startShift=baseline-thirdRect.bottom;
-    endShift=baseline-lastLinkRect.bottom;
+    const mediaBaseline=mediaRect.bottom;
+    startShift=mediaBaseline-thirdRect.bottom;
+    endShift=mediaBaseline-lastLinkRect.bottom;
     col.style.transform=prev||'';
     root.style.setProperty('--shift',startShift.toFixed(1)+'px');
   }
@@ -146,29 +191,30 @@
     const r=el.getBoundingClientRect();
     const vh=window.innerHeight||document.documentElement.clientHeight;
     const total=r.height-vh;
-    if(total<=0) return 0;
+    if(total<=0)return 0;
     return clamp(-r.top/total,0,1);
   }
 
-  /* ===== SECTION 1 ===== */
-  const s1Wrap = document.getElementById('s1-wrap');
-  const s1Text = document.getElementById('s1-text');
+  /* ---------- Section 1 metrics ---------- */
+  const s1Wrap=document.getElementById('s1-wrap');
+  const s1Clip=document.getElementById('s1-clip');
+  const s1Text=document.getElementById('s1-text');
 
-  let s1StartY=0, s1EndY=0, s1TextH=0, vh=0;
+  let s1StartY=0,s1EndY=0;
 
   function measureS1(){
-    vh = window.innerHeight || document.documentElement.clientHeight;
-    s1TextH = s1Text.scrollHeight;
+    const clipH=s1Clip.clientHeight;    // viewport content height (100vh - paddings)
+    const textH=s1Text.scrollHeight;
 
-    // Sweep across the FULL viewport height (overlay spans 100vh)
-    s1StartY = vh;          // starts fully below the viewport
-    s1EndY   = -s1TextH;    // ends fully above the viewport
-
-    root.style.setProperty('--s1Y', s1StartY+'px');
+    // No extra pad: start completely below, end completely above
+    const PAD=0;
+    s1StartY=clipH+PAD;
+    s1EndY=-textH-PAD;
+    root.style.setProperty('--s1Y',s1StartY+'px');
   }
 
   function update(){
-    /* HERO choreography */
+    /* HERO */
     const p=progressOf(driver);
     const pFade=easeInOutCubic(clamp(p/0.60,0,1));
     root.style.setProperty('--titleOpacity',pFade.toFixed(3));
@@ -177,29 +223,32 @@
     root.style.setProperty('--shift',shift.toFixed(1)+'px');
     root.style.setProperty('--linksOpacity',pSlide.toFixed(3));
 
-    /* Section progress + hero dissolve */
+    /* S1 progress & hero dissolve */
     const s1=progressOf(s1Wrap);
     root.style.setProperty('--s1',s1.toFixed(3));
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
-    /* Image fade-in — scrub 0 → 35% like hero */
+    /* Image fade-in, scrubbed like the hero pace (0 → 35% section) */
     const imgFadeIn = clamp(s1/0.35,0,1);
-    root.style.setProperty('--s1ImgOpacity', imgFadeIn.toFixed(3));
+    root.style.setProperty('--s1ImgOpacity',imgFadeIn.toFixed(3));
 
-    /* Text sweep over full viewport */
-    const y = s1StartY + (s1EndY - s1StartY) * s1; // linear 0→1 across the section
-    root.style.setProperty('--s1Y', y+'px');
+    /* Text movement — same good feel as before */
+    const TEXT_START = 0.70;            // when the sweep begins inside S1
+    const raw=clamp((s1-TEXT_START)/(1-TEXT_START),0,1);
+    const slowed=easeSlower(raw);
+    const y=s1StartY+(s1EndY-s1StartY)*slowed;
+    root.style.setProperty('--s1Y',y+'px');
   }
 
-  function rerun(){ measureHero(); measureS1(); update(); }
-
   async function init(){
-    if(document.fonts && document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
-    rerun();
-    window.addEventListener('load', rerun);
-    window.addEventListener('resize', rerun);
-    window.addEventListener('scroll', update, {passive:true});
+    if(document.fonts&&document.fonts.ready){ try{await document.fonts.ready;}catch(e){} }
+    measureHero();
+    measureS1();
+    update();
+    window.addEventListener('load',()=>{measureHero();measureS1();update();});
+    window.addEventListener('resize',()=>{measureHero();measureS1();update();});
+    window.addEventListener('scroll',update,{passive:true});
   }
   init();
 })();
