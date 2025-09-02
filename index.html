@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → Section 1 (image pinned; trigger @75%; scroll-driven fade)</title>
+<title>Gardenicity — Hero → Section 1 (trigger @ 100%)</title>
 <style>
   /* ===== Base ===== */
   html,body{
@@ -204,7 +204,7 @@
 
   let s1StartY=0,s1EndY=0,s1TextH=0,s1ClipH=0;
 
-  /* Size image once per frame so it stays centered and not drifting */
+  /* Size image so it stays centered and not drifting */
   function sizeS1Image(){
     const nomW=parseFloat(s1Img.dataset.imgW)||840;
     const nomH=parseFloat(s1Img.dataset.imgH)||1120;
@@ -224,9 +224,9 @@
     sizeS1Image();
   }
 
-  /* Latch for fade-out trigger when text bottom crosses 75% line */
+  /* Latch for fade-out trigger when text bottom crosses trigger line */
   let s1TriggerProg = null;
-  const TRIGGER_FRACTION = 0.75;      // 75% of sticky viewport
+  const TRIGGER_FRACTION = 1.0;       // ← start fade-out only when text bottom hits viewport bottom
   const FADE_SPAN        = HERO_FADE_SPAN;  // match hero “feel” (0.35)
 
   function update(){
@@ -262,7 +262,7 @@
     const y=s1StartY+(s1EndY-s1StartY)*slowed;
     root.style.setProperty('--s1Y',y+'px');
 
-    /* Fade-out trigger at 75% viewport (inside sticky frame) */
+    /* Fade-out trigger at 100% viewport height (inside sticky frame) */
     const textBottom = y + s1TextH;
     const triggerY   = s1ClipH * TRIGGER_FRACTION;
 
@@ -270,7 +270,7 @@
       // Not yet reached → clear latch (so scrubbing back up cancels the fade)
       s1TriggerProg = null;
     } else if (s1TriggerProg === null) {
-      // First time crossing the 75% line → latch the current S1 progress
+      // First time crossing the trigger line → latch the current S1 progress
       s1TriggerProg = s1;
     }
 
