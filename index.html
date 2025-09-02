@@ -3,9 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → Section 1 (pinned, no-drift, tight text sweep)</title>
+<title>Gardenicity — Hero → Section 1 (full-height text sweep)</title>
 <style>
-  /* ===== Base ===== */
   html,body{
     margin:0; padding:0;
     background:#e5e4e0; color:#fff;
@@ -13,91 +12,47 @@
     height:100%;
   }
   :root{
-    /* HERO vars */
     --shift: 0px;
     --titleOpacity: 0;
     --linksOpacity: 0;
     --heroAlpha: 1;
     --heroBlur: 0;
 
-    /* Section 1 vars */
     --s1: 0;
     --s1ImgOpacity: 0;
     --s1Y: 0px;
   }
 
-  /* ===== HERO ===== */
-  .hero-fixed{
-    position:fixed; inset:0; z-index:3;
-    opacity:var(--heroAlpha);
-    filter: blur(calc(var(--heroBlur) * 10px));
-    pointer-events:auto;
-    will-change:opacity, filter;
-  }
-  .hero-bg{
-    position:absolute; inset:0;
-    background:url("assets/hero1gc.jpg") center/cover no-repeat;
-    opacity:0; animation:heroIn 1000ms ease-out forwards;
-    pointer-events:none;
-  }
+  /* HERO */
+  .hero-fixed{ position:fixed; inset:0; z-index:3; opacity:var(--heroAlpha); filter: blur(calc(var(--heroBlur) * 10px)); pointer-events:auto; }
+  .hero-bg{ position:absolute; inset:0; background:url("assets/hero1gc.jpg") center/cover no-repeat; opacity:0; animation:heroIn 1000ms ease-out forwards; pointer-events:none; }
   @keyframes heroIn{ from{opacity:0} to{opacity:1} }
-
-  .hero-media{
-    position:absolute; inset:96px 82px;
-    display:flex; align-items:flex-end; justify-content:flex-start;
-    overflow:hidden;
-  }
-  .col{ position:relative; max-width:700px; transform:translateY(var(--shift)); will-change:transform; }
+  .hero-media{ position:absolute; inset:96px 82px; display:flex; align-items:flex-end; justify-content:flex-start; overflow:hidden; }
+  .col{ position:relative; max-width:700px; transform:translateY(var(--shift)); }
   .hero-title{ margin:0 0 24px 0; font-weight:400; font-size:100px; line-height:100px; opacity:var(--titleOpacity); }
   .hero-title .line{ display:block; }
+  .hero-links{ display:flex; flex-direction:column; gap:10px; font-size:24px; line-height:30px; opacity:var(--linksOpacity); }
+  .hero-links a{ color:#fff; text-decoration:none; transition:color .2s ease; }
+  .hero-links a:hover{ color:#00A86B; }
 
-  .hero-links{
-    display:flex; flex-direction:column; gap:10px;
-    font-size:24px; line-height:30px;
-    opacity:var(--linksOpacity);
-  }
-  .hero-links a:link,
-  .hero-links a:visited{
-    color:#fff !important; text-decoration:none !important; cursor:pointer; transition:color .2s ease;
-  }
-  .hero-links a:hover,
-  .hero-links a:focus-visible{ color:#00A86B !important; text-decoration:none !important; }
-
-  /* spacer that lets us scroll the hero */
   .driver{ height:200vh; }
 
-  /* ===== Section 1 ===== */
+  /* SECTION 1 */
   .s1-wrap{ position:relative; height:280vh; background:#e5e4e0; }
-
-  /* Sticky viewport */
   .s1-sticky{
     position:sticky; top:0; height:100vh;
     display:grid; padding:96px 82px;
     grid-template-columns:512px 96px 1fr;
-    align-items:center;
-    box-sizing:border-box;
+    align-items:center; box-sizing:border-box;
   }
-
-  /* Left column: text scroller */
   .s1-text-clip{ overflow:hidden; height:100%; }
-  .s1-text{ transform:translateY(var(--s1Y)); color:#111; will-change:transform; }
+  .s1-text{ transform:translateY(var(--s1Y)); color:#111; }
   .s1-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
 
-  /* Right column: media area */
-  .s1-media{
-    width:100%; height:100%;
-    display:flex; align-items:center; justify-content:center;
-    overflow:hidden;
-  }
+  .s1-media{ width:100%; height:100%; display:flex; align-items:center; justify-content:center; overflow:hidden; }
   .s1-media img{
-    /* Pin behavior: centered & contained inside the sticky viewport */
-    height:100%;
-    width:auto;
-    max-width:100%; max-height:100%;
-    object-fit:contain;
-    opacity:var(--s1ImgOpacity);
-    transition:none;
-    will-change:opacity;
+    height:100%; width:auto; max-width:100%; max-height:100%;
+    object-fit:contain; opacity:var(--s1ImgOpacity); transition:none;
   }
 
   .after{ min-height:120vh; }
@@ -154,9 +109,8 @@
   const root=document.documentElement;
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
   const easeInOutCubic=t=>t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
-  const easeSlower=t=>Math.pow(t,0.8);
 
-  /* ---------- HERO choreography (unchanged) ---------- */
+  /* HERO */
   const driver=document.getElementById('driver');
   const media=document.getElementById('hero-media');
   const col=document.getElementById('hero-col');
@@ -184,10 +138,10 @@
     const vh=window.innerHeight||document.documentElement.clientHeight;
     const total=r.height-vh;
     if(total<=0)return 0;
-    return clamp(-r.top/total,0,1);
+    return Math.max(0, Math.min(1, -r.top/total));
   }
 
-  /* ---------- Section 1 metrics ---------- */
+  /* SECTION 1 */
   const s1Wrap=document.getElementById('s1-wrap');
   const s1Clip=document.getElementById('s1-clip');
   const s1Text=document.getElementById('s1-text');
@@ -195,52 +149,54 @@
   let s1StartY=0,s1EndY=0,s1TextH=0,s1ClipH=0;
 
   function measureS1(){
-    s1ClipH=s1Clip.clientHeight;
-    s1TextH=s1Text.scrollHeight;
+    s1ClipH = s1Clip.clientHeight;     // viewport height inside sticky frame
+    s1TextH = s1Text.scrollHeight;     // full text stack height
 
-    // Start exactly one full clip-height below; end exactly one full text-height above.
-    s1StartY = s1ClipH;
+    // Start exactly 1 viewport below; end exactly 1 text-height above (no padding).
+    s1StartY =  s1ClipH;
     s1EndY   = -s1TextH;
 
-    root.style.setProperty('--s1Y',s1StartY+'px');
+    root.style.setProperty('--s1Y', s1StartY + 'px');
   }
 
   function update(){
     /* HERO */
     const p=progressOf(driver);
-    const pFade=easeInOutCubic(clamp(p/0.60,0,1));
+    const pFade=easeInOutCubic(Math.max(0, Math.min(1, p/0.60)));
     root.style.setProperty('--titleOpacity',pFade.toFixed(3));
-    const pSlide=clamp((p-0.60)/0.40,0,1);
+    const pSlide=Math.max(0, Math.min(1, (p-0.60)/0.40));
     const shift=startShift+(endShift-startShift)*pSlide;
     root.style.setProperty('--shift',shift.toFixed(1)+'px');
     root.style.setProperty('--linksOpacity',pSlide.toFixed(3));
 
-    /* S1 progress & hero dissolve */
+    /* S1 + hero dissolve */
     const s1=progressOf(s1Wrap);
     root.style.setProperty('--s1',s1.toFixed(3));
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
-    /* Image fade-in, scrubbed like the hero pace (0 → 35% section) */
-    const imgFadeIn = clamp(s1/0.35,0,1);
-    root.style.setProperty('--s1ImgOpacity',imgFadeIn.toFixed(3));
+    /* Image fade-in, same pace as hero (0 → 35% of the section) */
+    const imgFadeIn = Math.max(0, Math.min(1, s1/0.35));
+    root.style.setProperty('--s1ImgOpacity', imgFadeIn.toFixed(3));
 
-    /* Text movement (starts at 75% through S1), sweeping fully through the clip */
-    const textStart=0.75;
-    const raw=clamp((s1-textStart)/(1-textStart),0,1);
-    const slowed=easeSlower(raw);
-    const y=s1StartY+(s1EndY-s1StartY)*slowed;
-    root.style.setProperty('--s1Y',y+'px');
+    /* TEXT SWEEP — start at 0, traverse full viewport */
+    const raw = Math.max(0, Math.min(1, s1));  // start immediately at S1 begin
+    const y = s1StartY + (s1EndY - s1StartY) * raw;  // linear to ensure full travel
+    root.style.setProperty('--s1Y', y + 'px');
   }
 
-  async function init(){
-    if(document.fonts&&document.fonts.ready){ try{await document.fonts.ready;}catch(e){} }
+  function onResize(){
     measureHero();
     measureS1();
     update();
-    window.addEventListener('load',()=>{measureHero();measureS1();update();});
-    window.addEventListener('resize',()=>{measureHero();measureS1();update();});
-    window.addEventListener('scroll',update,{passive:true});
+  }
+
+  async function init(){
+    if(document.fonts && document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
+    onResize();
+    window.addEventListener('load', onResize);
+    window.addEventListener('resize', onResize);
+    window.addEventListener('scroll', update, {passive:true});
   }
   init();
 })();
