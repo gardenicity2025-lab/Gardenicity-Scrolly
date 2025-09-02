@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → Section 1 (overlay text, pinned image)</title>
+<title>Gardenicity — Hero → Section 1 (overlay text, pinned media)</title>
 <style>
   /* ===== Base ===== */
   html,body{
@@ -13,10 +13,6 @@
     height:100%;
   }
   :root{
-    /* paddings used by hero + section grid */
-    --padX: 82px;
-    --padY: 96px;
-
     /* HERO vars */
     --shift: 0px;
     --titleOpacity: 0;
@@ -30,7 +26,7 @@
     --s1Y: 0px;
   }
 
-  /* ===== HERO (unchanged) ===== */
+  /* ===== HERO ===== */
   .hero-fixed{
     position:fixed; inset:0; z-index:3;
     opacity:var(--heroAlpha);
@@ -47,7 +43,7 @@
   @keyframes heroIn{ from{opacity:0} to{opacity:1} }
 
   .hero-media{
-    position:absolute; inset:var(--padY) var(--padX);
+    position:absolute; inset:96px 82px;
     display:flex; align-items:flex-end; justify-content:flex-start;
     overflow:hidden;
   }
@@ -61,65 +57,62 @@
     opacity:var(--linksOpacity);
   }
   .hero-links a:link,
-  .hero-links a:visited{ color:#fff !important; text-decoration:none !important; cursor:pointer; transition:color .2s ease; }
+  .hero-links a:visited{
+    color:#fff !important; text-decoration:none !important; cursor:pointer; transition:color .2s ease;
+  }
   .hero-links a:hover,
   .hero-links a:focus-visible{ color:#00A86B !important; text-decoration:none !important; }
 
+  /* Spacer that lets us scroll the hero */
   .driver{ height:200vh; }
 
   /* ===== Section 1 ===== */
   .s1-wrap{ position:relative; height:280vh; background:#e5e4e0; }
 
-  /* The pinned/sticky viewport area with the 3-column grid. */
+  /* Sticky viewport; relative so the overlay can absolutely position inside it */
   .s1-sticky{
-    position:sticky; top:0; height:100vh;
-    display:grid; padding:var(--padY) var(--padX);
+    position:sticky; top:0; height:100vh; z-index:1;
+    display:grid; padding:96px 82px; /* standard paddings around the media column */
     grid-template-columns:512px 96px 1fr;
     align-items:center;
     box-sizing:border-box;
-    z-index:1; /* keeps it above page bg but below the overlay text (z=2) */
+    position:sticky;
   }
+  .s1-sticky{ position:sticky; top:0; }
+  .s1-sticky{ position:sticky; top:0; } /* (harmless dupe, keeps stickiness explicit) */
+  .s1-sticky{ position:relative; }      /* contain the overlay absolutely */
 
-  /* Right column: media (image pinned & contained). */
+  /* ---- TEXT OVERLAY (full-viewport rail) ---- */
+  .s1-overlay{
+    position:absolute; inset:0;          /* full viewport area of the sticky frame */
+    z-index:2; pointer-events:none;      /* overlay over media; text isn’t interactive */
+  }
+  .s1-text-rail{
+    position:absolute; top:0; bottom:0;  /* full viewport height (no extra top/bottom) */
+    left:96px;                            /* keep the same left gutter */
+    width:512px;                          /* requested column width */
+    overflow:hidden;                      /* acts as the clip window */
+  }
+  .s1-text{
+    transform:translateY(var(--s1Y));
+    color:#111; will-change:transform;
+  }
+  .s1-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
+
+  /* ---- MEDIA (right column) ---- */
   .s1-media{
-    width:100%; height:100%;
+    grid-column:3; width:100%; height:100%;
     display:flex; align-items:center; justify-content:center;
-    overflow:hidden;
+    overflow:hidden;                     /* hard contain; no drift */
+    z-index:1;
   }
   .s1-media img{
-    height:100%;
-    width:auto;
+    height:100%; width:auto;
     max-width:100%; max-height:100%;
     object-fit:contain;
     opacity:var(--s1ImgOpacity);
     transition:none;
     will-change:opacity;
-  }
-
-  /* ===== Text overlay (independent of the grid) ===== */
-  .s1-overlay{
-    position:absolute; inset:0; z-index:2;       /* sits on top of the sticky grid */
-    pointer-events:none;                          /* text is decorative; links not needed here */
-  }
-  .s1-overlay-clip{
-    position:absolute; inset:0; height:100vh;    /* full viewport clip */
-    overflow:hidden;
-  }
-  .s1-overlay-inner{
-    position:absolute;
-    /* align to the same left column as the grid */
-    left:var(--padX);
-    width:512px;
-  }
-  .s1-text{
-    transform:translateY(var(--s1Y));
-    color:#111;
-    will-change:transform;
-    pointer-events:auto; /* allow selection if needed */
-  }
-  .s1-text p{
-    margin:0 0 14px 0;
-    font-size:20px; line-height:28px;
   }
 
   .after{ min-height:120vh; }
@@ -153,16 +146,9 @@
 <!-- SECTION 1 -->
 <section class="s1-wrap" id="s1-wrap">
   <div class="s1-sticky" id="s1-sticky">
-    <!-- grid’s left & right columns live here (image stays perfect) -->
-    <div class="s1-media" id="s1-media" style="grid-column:3">
-      <img id="s1-img" src="assets/section1.jpg" alt="Section 1 visual">
-    </div>
-  </div>
-
-  <!-- TEXT OVERLAY (independent of grid paddings for sweep math) -->
-  <div class="s1-overlay" aria-hidden="false">
-    <div class="s1-overlay-clip" id="s1-clip">
-      <div class="s1-overlay-inner">
+    <!-- TEXT OVERLAY -->
+    <div class="s1-overlay">
+      <div class="s1-text-rail" id="s1-rail">
         <div class="s1-text" id="s1-text">
           <p><strong>HOURS AFTER MY</strong> mother took her last breath on earth…</p>
           <p>After we opened the windows to let the spirits out…</p>
@@ -172,6 +158,14 @@
         </div>
       </div>
     </div>
+
+    <!-- spacer col -->
+    <div></div>
+
+    <!-- MEDIA (pinned, contained, no drift) -->
+    <figure class="s1-media" id="s1-media">
+      <img id="s1-img" src="assets/section1.jpg" alt="Section 1 visual">
+    </figure>
   </div>
 </section>
 
@@ -211,30 +205,27 @@
     const r=el.getBoundingClientRect();
     const vh=window.innerHeight||document.documentElement.clientHeight;
     const total=r.height-vh;
-    if(total<=0) return 0;
+    if(total<=0)return 0;
     return clamp(-r.top/total,0,1);
   }
 
   /* ---------- Section 1 metrics ---------- */
-  const s1Wrap = document.getElementById('s1-wrap');
-  const s1Clip = document.getElementById('s1-clip');
-  const s1Text = document.getElementById('s1-text');
+  const s1Wrap=document.getElementById('s1-wrap');
+  const s1Rail=document.getElementById('s1-rail');
+  const s1Text=document.getElementById('s1-text');
 
-  let s1StartY=0, s1EndY=0;
+  let s1StartY=0,s1EndY=0;
 
   function measureS1(){
-    const vh = window.innerHeight || document.documentElement.clientHeight;
-    const textH = s1Text.scrollHeight;
-
-    /* Full-viewport sweep: below bottom → above top */
-    s1StartY = vh;           // start completely below viewport
-    s1EndY   = -textH;       // end completely above viewport
-
-    root.style.setProperty('--s1Y', s1StartY + 'px');
+    const clipH=s1Rail.clientHeight;      // full viewport height (no top/bottom padding)
+    const textH=s1Text.scrollHeight;
+    s1StartY=clipH;                        // start fully below viewport
+    s1EndY=-textH;                         // end fully above viewport
+    root.style.setProperty('--s1Y',s1StartY+'px');
   }
 
   function update(){
-    /* HERO */
+    /* HERO progress */
     const p=progressOf(driver);
     const pFade=easeInOutCubic(clamp(p/0.60,0,1));
     root.style.setProperty('--titleOpacity',pFade.toFixed(3));
@@ -243,26 +234,26 @@
     root.style.setProperty('--shift',shift.toFixed(1)+'px');
     root.style.setProperty('--linksOpacity',pSlide.toFixed(3));
 
-    /* Section progress & hero dissolve */
+    /* S1 progress & hero dissolve */
     const s1=progressOf(s1Wrap);
     root.style.setProperty('--s1',s1.toFixed(3));
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
-    /* Image fade-in pace (0 → 35% of the section) */
+    /* Image fade-in, scrubbed like the hero pace (0 → 35% section) */
     const imgFadeIn = clamp(s1/0.35,0,1);
     root.style.setProperty('--s1ImgOpacity',imgFadeIn.toFixed(3));
 
-    /* Text sweep (late start for pacing, but spans full viewport) */
-    const textStart=0.75; /* when to begin the sweep */
-    const raw = clamp((s1 - textStart)/(1 - textStart), 0, 1);
-    const slowed = easeSlower(raw);
-    const y = s1StartY + (s1EndY - s1StartY) * slowed;
-    root.style.setProperty('--s1Y', y + 'px');
+    /* Text sweep — begins late in the section for your pacing */
+    const textStart=0.75;
+    const raw=clamp((s1-textStart)/(1-textStart),0,1);
+    const slowed=easeSlower(raw);
+    const y=s1StartY+(s1EndY-s1StartY)*slowed;
+    root.style.setProperty('--s1Y',y+'px');
   }
 
   async function init(){
-    if(document.fonts && document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
+    if(document.fonts&&document.fonts.ready){ try{await document.fonts.ready;}catch(e){} }
     measureHero();
     measureS1();
     update();
