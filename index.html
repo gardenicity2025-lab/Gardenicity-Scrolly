@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → Section 1 (pinned, no-drift, full-viewport text sweep)</title>
+<title>Gardenicity — Hero → Section 1 (overlay text, pinned image)</title>
 <style>
   /* ===== Base ===== */
   html,body{
@@ -13,6 +13,10 @@
     height:100%;
   }
   :root{
+    /* paddings used by hero + section grid */
+    --padX: 82px;
+    --padY: 96px;
+
     /* HERO vars */
     --shift: 0px;
     --titleOpacity: 0;
@@ -26,7 +30,7 @@
     --s1Y: 0px;
   }
 
-  /* ===== HERO ===== */
+  /* ===== HERO (unchanged) ===== */
   .hero-fixed{
     position:fixed; inset:0; z-index:3;
     opacity:var(--heroAlpha);
@@ -43,7 +47,7 @@
   @keyframes heroIn{ from{opacity:0} to{opacity:1} }
 
   .hero-media{
-    position:absolute; inset:96px 82px;
+    position:absolute; inset:var(--padY) var(--padX);
     display:flex; align-items:flex-end; justify-content:flex-start;
     overflow:hidden;
   }
@@ -57,40 +61,26 @@
     opacity:var(--linksOpacity);
   }
   .hero-links a:link,
-  .hero-links a:visited{
-    color:#fff !important; text-decoration:none !important; cursor:pointer; transition:color .2s ease;
-  }
+  .hero-links a:visited{ color:#fff !important; text-decoration:none !important; cursor:pointer; transition:color .2s ease; }
   .hero-links a:hover,
   .hero-links a:focus-visible{ color:#00A86B !important; text-decoration:none !important; }
 
-  /* spacer that lets us scroll the hero */
   .driver{ height:200vh; }
 
   /* ===== Section 1 ===== */
   .s1-wrap{ position:relative; height:280vh; background:#e5e4e0; }
 
-  /* Sticky viewport (no debug outline) */
+  /* The pinned/sticky viewport area with the 3-column grid. */
   .s1-sticky{
     position:sticky; top:0; height:100vh;
-    display:grid; padding:96px 82px;        /* standard paddings */
+    display:grid; padding:var(--padY) var(--padX);
     grid-template-columns:512px 96px 1fr;
     align-items:center;
     box-sizing:border-box;
-    z-index:1;
+    z-index:1; /* keeps it above page bg but below the overlay text (z=2) */
   }
 
-  /* Left column: text scroller */
-  .s1-text-clip{ overflow:hidden; height:100%; }
-  .s1-text{
-    transform:translateY(var(--s1Y));
-    color:#111; will-change:transform;
-  }
-  .s1-text p{
-    margin:0 0 14px 0;
-    font-size:20px; line-height:28px;
-  }
-
-  /* Right column: media area (image pinned & contained) */
+  /* Right column: media (image pinned & contained). */
   .s1-media{
     width:100%; height:100%;
     display:flex; align-items:center; justify-content:center;
@@ -104,6 +94,32 @@
     opacity:var(--s1ImgOpacity);
     transition:none;
     will-change:opacity;
+  }
+
+  /* ===== Text overlay (independent of the grid) ===== */
+  .s1-overlay{
+    position:absolute; inset:0; z-index:2;       /* sits on top of the sticky grid */
+    pointer-events:none;                          /* text is decorative; links not needed here */
+  }
+  .s1-overlay-clip{
+    position:absolute; inset:0; height:100vh;    /* full viewport clip */
+    overflow:hidden;
+  }
+  .s1-overlay-inner{
+    position:absolute;
+    /* align to the same left column as the grid */
+    left:var(--padX);
+    width:512px;
+  }
+  .s1-text{
+    transform:translateY(var(--s1Y));
+    color:#111;
+    will-change:transform;
+    pointer-events:auto; /* allow selection if needed */
+  }
+  .s1-text p{
+    margin:0 0 14px 0;
+    font-size:20px; line-height:28px;
   }
 
   .after{ min-height:120vh; }
@@ -137,19 +153,25 @@
 <!-- SECTION 1 -->
 <section class="s1-wrap" id="s1-wrap">
   <div class="s1-sticky" id="s1-sticky">
-    <div class="s1-text-clip" id="s1-clip">
-      <div class="s1-text" id="s1-text">
-        <p><strong>HOURS AFTER MY</strong> mother took her last breath on earth…</p>
-        <p>After we opened the windows to let the spirits out…</p>
-        <p>After we lit incense stick after incense stick…</p>
-        <p>After we watched MMA fighters on TV in the basement…</p>
-        <p>And the smoke kept rising. The chain must not be broken.</p>
+    <!-- grid’s left & right columns live here (image stays perfect) -->
+    <div class="s1-media" id="s1-media" style="grid-column:3">
+      <img id="s1-img" src="assets/section1.jpg" alt="Section 1 visual">
+    </div>
+  </div>
+
+  <!-- TEXT OVERLAY (independent of grid paddings for sweep math) -->
+  <div class="s1-overlay" aria-hidden="false">
+    <div class="s1-overlay-clip" id="s1-clip">
+      <div class="s1-overlay-inner">
+        <div class="s1-text" id="s1-text">
+          <p><strong>HOURS AFTER MY</strong> mother took her last breath on earth…</p>
+          <p>After we opened the windows to let the spirits out…</p>
+          <p>After we lit incense stick after incense stick…</p>
+          <p>After we watched MMA fighters on TV in the basement…</p>
+          <p>And the smoke kept rising. The chain must not be broken.</p>
+        </div>
       </div>
     </div>
-    <div></div>
-    <figure class="s1-media" id="s1-media">
-      <img id="s1-img" src="assets/section1.jpg" alt="Section 1 visual">
-    </figure>
   </div>
 </section>
 
@@ -194,24 +216,19 @@
   }
 
   /* ---------- Section 1 metrics ---------- */
-  const s1Wrap   = document.getElementById('s1-wrap');
-  const s1Sticky = document.getElementById('s1-sticky');
-  const s1Clip   = document.getElementById('s1-clip');
-  const s1Text   = document.getElementById('s1-text');
+  const s1Wrap = document.getElementById('s1-wrap');
+  const s1Clip = document.getElementById('s1-clip');
+  const s1Text = document.getElementById('s1-text');
 
   let s1StartY=0, s1EndY=0;
 
   function measureS1(){
-    const clipH = s1Clip.clientHeight;              // inner grid area (vh - paddings)
-    const cs = getComputedStyle(s1Sticky);
-    const padTop = parseFloat(cs.paddingTop)  || 0;
-    const padBot = parseFloat(cs.paddingBottom) || 0;
+    const vh = window.innerHeight || document.documentElement.clientHeight;
     const textH = s1Text.scrollHeight;
 
-    /* Start JUST BELOW the viewport bottom edge (not just below the clip),
-       and end JUST ABOVE the viewport top edge. */
-    s1StartY = clipH + padBot;
-    s1EndY   = -textH - padTop;
+    /* Full-viewport sweep: below bottom → above top */
+    s1StartY = vh;           // start completely below viewport
+    s1EndY   = -textH;       // end completely above viewport
 
     root.style.setProperty('--s1Y', s1StartY + 'px');
   }
@@ -226,26 +243,26 @@
     root.style.setProperty('--shift',shift.toFixed(1)+'px');
     root.style.setProperty('--linksOpacity',pSlide.toFixed(3));
 
-    /* S1 progress & hero dissolve */
+    /* Section progress & hero dissolve */
     const s1=progressOf(s1Wrap);
     root.style.setProperty('--s1',s1.toFixed(3));
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
-    /* Image fade-in (0 → 35% of section), pace matched to hero */
+    /* Image fade-in pace (0 → 35% of the section) */
     const imgFadeIn = clamp(s1/0.35,0,1);
     root.style.setProperty('--s1ImgOpacity',imgFadeIn.toFixed(3));
 
-    /* Text movement: start late for pacing, but sweep full viewport */
-    const textStart=0.75;
-    const raw=clamp((s1-textStart)/(1-textStart),0,1);
-    const slowed=easeSlower(raw);
-    const y=s1StartY+(s1EndY-s1StartY)*slowed;
-    root.style.setProperty('--s1Y',y+'px');
+    /* Text sweep (late start for pacing, but spans full viewport) */
+    const textStart=0.75; /* when to begin the sweep */
+    const raw = clamp((s1 - textStart)/(1 - textStart), 0, 1);
+    const slowed = easeSlower(raw);
+    const y = s1StartY + (s1EndY - s1StartY) * slowed;
+    root.style.setProperty('--s1Y', y + 'px');
   }
 
   async function init(){
-    if(document.fonts&&document.fonts.ready){ try{await document.fonts.ready;}catch(e){} }
+    if(document.fonts && document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
     measureHero();
     measureS1();
     update();
