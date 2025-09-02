@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → Section 1 (pinned image, no drift)</title>
+<title>Gardenicity — Hero → Section 1 (pinned, no-drift, exact text span)</title>
 <style>
   /* ===== Base ===== */
   html,body{
@@ -13,15 +13,17 @@
     height:100%;
   }
   :root{
-    --shift: 0px;           /* hero slide */
-    --titleOpacity: 0;      /* hero title fade */
-    --linksOpacity: 0;      /* hero links fade */
-    --heroAlpha: 1;         /* hero dissolve */
+    /* HERO vars */
+    --shift: 0px;
+    --titleOpacity: 0;
+    --linksOpacity: 0;
+    --heroAlpha: 1;
     --heroBlur: 0;
 
-    --s1: 0;                /* Section 1 progress */
-    --s1ImgOpacity: 0;      /* image fade-in (no fade-out yet) */
-    --s1Y: 0px;             /* S1 text translateY */
+    /* Section 1 vars */
+    --s1: 0;
+    --s1ImgOpacity: 0;
+    --s1Y: 0px;
   }
 
   /* ===== HERO ===== */
@@ -40,7 +42,11 @@
   }
   @keyframes heroIn{ from{opacity:0} to{opacity:1} }
 
-  .hero-media{ position:absolute; inset:96px 82px; display:flex; align-items:flex-end; justify-content:flex-start; overflow:hidden; }
+  .hero-media{
+    position:absolute; inset:96px 82px;
+    display:flex; align-items:flex-end; justify-content:flex-start;
+    overflow:hidden;
+  }
   .col{ position:relative; max-width:700px; transform:translateY(var(--shift)); will-change:transform; }
   .hero-title{ margin:0 0 24px 0; font-weight:400; font-size:100px; line-height:100px; opacity:var(--titleOpacity); }
   .hero-title .line{ display:block; }
@@ -52,45 +58,42 @@
   }
   .hero-links a:link,
   .hero-links a:visited{
-    color:#fff !important;
-    text-decoration:none !important;
-    cursor:pointer;
-    transition:color .2s ease;
+    color:#fff !important; text-decoration:none !important; cursor:pointer; transition:color .2s ease;
   }
   .hero-links a:hover,
-  .hero-links a:focus-visible{
-    color:#00A86B !important;
-    text-decoration:none !important;
-  }
+  .hero-links a:focus-visible{ color:#00A86B !important; text-decoration:none !important; }
 
+  /* spacer that lets us scroll the hero */
   .driver{ height:200vh; }
 
   /* ===== Section 1 ===== */
   .s1-wrap{ position:relative; height:280vh; background:#e5e4e0; }
+
+  /* Sticky viewport */
   .s1-sticky{
     position:sticky; top:0; height:100vh;
     display:grid; padding:96px 82px;
-    /* FIX: right media column is a fixed 1120px; matches spec */
-    grid-template-columns:512px 96px 1120px;
+    grid-template-columns:512px 96px 1fr;
     align-items:center;
+    box-sizing:border-box;
   }
 
+  /* Left column: text scroller */
   .s1-text-clip{ overflow:hidden; height:100%; }
   .s1-text{ transform:translateY(var(--s1Y)); color:#111; will-change:transform; }
   .s1-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
+  .s1-text p:last-child{ margin-bottom:0; } /* exact end, no extra space */
 
-  /* Right media: exactly the viewport (minus paddings), centered; no drift */
+  /* Right column: media area (pinned, no drift) */
   .s1-media{
-    height: calc(100vh - 192px); /* 96 top + 96 bottom padding */
-    width: 1120px;               /* fixed media column width */
+    width:100%; height:100%;
     display:flex; align-items:center; justify-content:center;
-    overflow:hidden;             /* contain any rounding overflow */
+    overflow:hidden;
   }
   .s1-media img{
-    /* The image stays centered and never “drifts” */
     height:100%;
     width:auto;
-    max-width:100%;
+    max-width:100%; max-height:100%;
     object-fit:contain;
     opacity:var(--s1ImgOpacity);
     transition:none;
@@ -139,11 +142,7 @@
     </div>
     <div></div>
     <figure class="s1-media" id="s1-media">
-      <img id="s1-img"
-           src="assets/section1.jpg"
-           alt="Section 1 visual (vertical)"
-           data-img-w="840"
-           data-img-h="1120">
+      <img id="s1-img" src="assets/section1.jpg" alt="Section 1 visual">
     </figure>
   </div>
 </section>
@@ -198,14 +197,14 @@
   function measureS1(){
     const clipH=s1Clip.clientHeight;
     const textH=s1Text.scrollHeight;
-    const pad=24;
-    s1StartY=clipH+pad;      // start fully below the sticky frame
-    s1EndY=-textH-pad;       // end fully above the sticky frame
+    const pad=0;                // ← no extra padding: exact start/end
+    s1StartY=clipH+pad;         // start fully below
+    s1EndY=-textH-pad;          // end fully above
     root.style.setProperty('--s1Y',s1StartY+'px');
   }
 
   function update(){
-    /* HERO baseline choreography */
+    /* HERO */
     const p=progressOf(driver);
     const pFade=easeInOutCubic(clamp(p/0.60,0,1));
     root.style.setProperty('--titleOpacity',pFade.toFixed(3));
@@ -214,17 +213,17 @@
     root.style.setProperty('--shift',shift.toFixed(1)+'px');
     root.style.setProperty('--linksOpacity',pSlide.toFixed(3));
 
-    /* SECTION 1 progress + hero dissolve */
+    /* S1 progress & hero dissolve */
     const s1=progressOf(s1Wrap);
     root.style.setProperty('--s1',s1.toFixed(3));
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
-    /* Image fade-in only (scroll-scrubbed) */
+    /* Image fade-in, scrubbed like the hero pace (0 → 35% section) */
     const imgFadeIn = clamp(s1/0.35,0,1);
     root.style.setProperty('--s1ImgOpacity',imgFadeIn.toFixed(3));
 
-    /* Text movement (starts at 0.75 of the section) */
+    /* Text movement (starts at 75% through S1) */
     const textStart=0.75;
     const raw=clamp((s1-textStart)/(1-textStart),0,1);
     const slowed=easeSlower(raw);
