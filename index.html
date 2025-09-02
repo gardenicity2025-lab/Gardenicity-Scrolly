@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → Section 1 (fade-out starts after text clears)</title>
+<title>Gardenicity — Hero → Section 1 (decoupled fade-out)</title>
 <style>
   /* ===== Base ===== */
   html,body{
@@ -20,8 +20,9 @@
     --heroBlur: 0;
 
     --s1: 0;                /* Section 1 progress */
-    --s1ImgOpacity: 0;      /* Section 1 image opacity (in × out) */
-    --s1Y: 0px;             /* Section 1 text translateY */
+    --s1ImgOpacity: 0;      /* S1 image opacity (in × out) */
+    --s1FrameAlpha: 1;      /* optional: fade entire frame like hero */
+    --s1Y: 0px;             /* S1 text translateY */
   }
 
   /* ===== HERO ===== */
@@ -71,6 +72,8 @@
     position:sticky; top:0; height:100vh;
     display:grid; padding:96px 82px;
     grid-template-columns:512px 96px 1fr; align-items:center;
+    opacity: var(--s1FrameAlpha); /* used if you choose to fade the whole frame */
+    will-change: opacity;
   }
   .s1-text-clip{ overflow:hidden; height:100%; }
   .s1-text{ transform:translateY(var(--s1Y)); color:#111; will-change:transform; }
@@ -80,8 +83,8 @@
   .s1-media img{
     object-fit:cover;
     max-width:100%; max-height:100%;
-    opacity:var(--s1ImgOpacity);
-    transition:none; /* fully scroll-scrubbed */
+    opacity:var(--s1ImgOpacity);   /* only the image fades in/out */
+    transition:none;               /* fully scroll-scrubbed */
     will-change:opacity, width, height;
   }
 
@@ -101,7 +104,6 @@
         <span class="line">Geddes see?</span>
       </h1>
       <nav class="hero-links" id="hero-links" aria-label="Primary">
-        <!-- live placeholders -->
         <a href="https://www.megama.net">Civic Green</a>
         <a href="https://www.megama.net">Growth</a>
         <a href="https://www.megama.net">Sustenance</a>
@@ -116,7 +118,7 @@
 
 <!-- SECTION 1 -->
 <section class="s1-wrap" id="s1-wrap">
-  <div class="s1-sticky">
+  <div class="s1-sticky" id="s1-sticky">
     <div class="s1-text-clip" id="s1-clip">
       <div class="s1-text" id="s1-text">
         <p><strong>HOURS AFTER MY</strong> mother took her last breath on earth…</p>
@@ -144,8 +146,17 @@
   const root=document.documentElement;
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
   const easeInOutCubic=t=>t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
-  const easeSlower=t=>Math.pow(t,0.8);     // text easing (same as before)
-  const easeSlowerInv=p=>Math.pow(p,1/0.8); // inverse of that easing
+  const easeSlower=t=>Math.pow(t,0.8);     // text easing (unchanged)
+  const easeSlowerInv=p=>Math.pow(p,1/0.8);
+
+  /* ===== Config =====
+     MODE: "image"  -> fade only the right image
+           "frame"  -> fade the entire sticky frame (like hero)
+  */
+  const MODE = "image";
+  const FADE_IN_FRAC  = 0.35;  // image fade-in span (0→1 over 35% of section)
+  const FADE_OUT_FRAC = 0.35;  // fade-out span (hero-like pace)
+  const OUT_DELAY_FRAC = 0.05; // start a little AFTER text clears, for safety
 
   /* ---------- HERO choreography ---------- */
   const driver=document.getElementById('driver');
@@ -169,7 +180,6 @@
     col.style.transform=prev||'';
     root.style.setProperty('--shift',startShift.toFixed(1)+'px');
   }
-
   function progressOf(el){
     const r=el.getBoundingClientRect();
     const vh=window.innerHeight||document.documentElement.clientHeight;
@@ -196,7 +206,7 @@
     s1EndY=-s1TextH-pad;    // end fully above
     root.style.setProperty('--s1Y',s1StartY+'px');
 
-    // Fit image to media box using nominal size
+    // Fit image to its media box using nominal size (keeps proportions)
     const nomW=parseFloat(s1Img.dataset.imgW)||840;
     const nomH=parseFloat(s1Img.dataset.imgH)||1120;
     const box=s1Media.getBoundingClientRect();
@@ -204,15 +214,12 @@
     s1Img.style.width =(nomW*scale)+'px';
     s1Img.style.height=(nomH*scale)+'px';
 
-    // Precompute the section progress WHEN the text fully clears the viewport.
-    // y(s1) = s1StartY + (s1EndY - s1StartY) * slowed
-    // slowed = raw^0.8, raw = ((s1 - textStart)/(1 - textStart)) clamped to 0..1
-    // We want y + s1TextH = 0  =>  slowed_target = ( -s1TextH - s1StartY ) / (s1EndY - s1StartY)
-    const textStart = 0.75;
-    const delta = (s1EndY - s1StartY); // negative
-    let slowed_target = ( -s1TextH - s1StartY ) / delta;
+    // Solve the exact section-progress when text bottom leaves the viewport.
+    const textStart = 0.75;                // when text starts moving
+    const delta = (s1EndY - s1StartY);     // negative
+    let slowed_target = ( -s1TextH - s1StartY ) / delta; // y + textH = 0
     slowed_target = clamp(slowed_target, 0, 1);
-    const raw_target = easeSlowerInv(slowed_target); // undo the ^0.8
+    const raw_target = easeSlowerInv(slowed_target);
     s1AtExit = textStart + raw_target * (1 - textStart);
   }
 
@@ -233,22 +240,30 @@
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
     /* Image fade IN: 0→1 over first ~35% of the section */
-    const imgIn = clamp(s1/0.35,0,1);
+    const imgIn = clamp(s1/FADE_IN_FRAC,0,1);
 
-    /* Text motion: starts at 0.75 of the section */
+    /* Text motion: starts at 0.75 of the section (unchanged) */
     const textStart=0.75;
     const raw=clamp((s1-textStart)/(1-textStart),0,1);
     const slowed=easeSlower(raw);
     const y=s1StartY+(s1EndY-s1StartY)*slowed;
     root.style.setProperty('--s1Y',y+'px');
 
-    /* Image fade OUT: begin only AFTER text has fully cleared (s1 >= s1AtExit),
-       then scrub for ~35% of the section for a hero-like pace. */
-    const FADE_OUT_FRAC = 0.35; // feel like hero dissolve
-    const out = clamp((s1 - s1AtExit) / FADE_OUT_FRAC, 0, 1);
+    /* Decoupled fade OUT:
+       Start AFTER the text fully clears, plus a tiny delay,
+       then scrub for ~35% of the section (hero-like pace).
+    */
+    const outStart = s1AtExit + OUT_DELAY_FRAC;
+    const out = clamp((s1 - outStart) / FADE_OUT_FRAC, 0, 1);
 
-    const finalOpacity = imgIn * (1 - out);
-    root.style.setProperty('--s1ImgOpacity', finalOpacity.toFixed(3));
+    if (MODE === "image") {
+      const finalOpacity = imgIn * (1 - out);
+      root.style.setProperty('--s1ImgOpacity', finalOpacity.toFixed(3));
+      root.style.setProperty('--s1FrameAlpha', '1');
+    } else { // MODE === "frame"  (fade the whole viewport like hero)
+      root.style.setProperty('--s1ImgOpacity', imgIn.toFixed(3));
+      root.style.setProperty('--s1FrameAlpha', (1 - out).toFixed(3));
+    }
   }
 
   async function init(){
