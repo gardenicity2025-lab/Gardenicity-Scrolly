@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → Section 1 (pinned image, full-height text sweep — fixed)</title>
+<title>Gardenicity — Hero → Section 1 (pinned image + full-height text sweep)</title>
 <style>
   /* ===== Base ===== */
   html,body{
@@ -13,12 +13,14 @@
     height:100%;
   }
   :root{
+    /* HERO */
     --shift: 0px;
     --titleOpacity: 0;
     --linksOpacity: 0;
     --heroAlpha: 1;
     --heroBlur: 0;
 
+    /* Section 1 */
     --s1: 0;
     --s1ImgOpacity: 0;
     --s1Y: 0px;
@@ -48,56 +50,50 @@
   .col{ position:relative; max-width:700px; transform:translateY(var(--shift)); will-change:transform; }
   .hero-title{ margin:0 0 24px 0; font-weight:400; font-size:100px; line-height:100px; opacity:var(--titleOpacity); }
   .hero-title .line{ display:block; }
-
   .hero-links{
     display:flex; flex-direction:column; gap:10px;
-    font-size:24px; line-height:30px;
-    opacity:var(--linksOpacity);
+    font-size:24px; line-height:30px; opacity:var(--linksOpacity);
   }
-  .hero-links a:link,
-  .hero-links a:visited{
+  .hero-links a:link, .hero-links a:visited{
     color:#fff !important; text-decoration:none !important; cursor:pointer; transition:color .2s ease;
   }
-  .hero-links a:hover,
-  .hero-links a:focus-visible{ color:#00A86B !important; text-decoration:none !important; }
+  .hero-links a:hover, .hero-links a:focus-visible{ color:#00A86B !important; }
 
   .driver{ height:200vh; }
 
   /* ===== Section 1 ===== */
   .s1-wrap{ position:relative; height:280vh; background:#e5e4e0; }
 
-  /* FIX: stretch children to fill the sticky viewport’s inner box */
   .s1-sticky{
     position:sticky; top:0; height:100vh;
     display:grid; padding:96px 82px;
     grid-template-columns:512px 96px 1fr;
-    align-items:stretch;                 /* <- was center; now full height */
+    align-items:stretch;           /* fill the inner viewport height */
     box-sizing:border-box;
   }
 
-  /* Left column: full-height clip, hard edges (no extra top/bottom padding) */
+  /* Left: text scroller fills the clip height exactly */
   .s1-text-clip{
     height:100%;
-    overflow:hidden;
+    overflow:hidden;               /* hard top/bottom edges */
   }
   .s1-text{
     transform:translateY(var(--s1Y));
-    color:#111;
-    will-change:transform;
+    color:#111; will-change:transform;
   }
   .s1-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
 
-  /* Right column: pinned, centered, no-drift image */
+  /* Right: pinned, centered, no-drift image */
   .s1-media{
     width:100%; height:100%;
     display:flex; align-items:center; justify-content:center;
     overflow:hidden;
   }
   .s1-media img{
-    height:100%;
-    width:auto;
+    height:100%;                /* contain by height */
+    width:auto;                 /* preserve aspect */
     max-width:100%; max-height:100%;
-    object-fit:contain;
+    object-fit:contain;         /* belt + suspenders */
     opacity:var(--s1ImgOpacity);
     transition:none;
     will-change:opacity;
@@ -186,7 +182,7 @@
     const r=el.getBoundingClientRect();
     const vh=window.innerHeight||document.documentElement.clientHeight;
     const total=r.height-vh;
-    if(total<=0)return 0;
+    if(total<=0) return 0;
     return clamp(-r.top/total,0,1);
   }
 
@@ -198,16 +194,16 @@
   let s1StartY=0,s1EndY=0;
 
   function measureS1(){
+    // FULL sweep: from completely below to completely above — no extra padding
     const clipH=s1Clip.clientHeight;
     const textH=s1Text.scrollHeight;
-    const PAD=0;                 // no extra internal pad
-    s1StartY=clipH+PAD;          // start fully below the clip
-    s1EndY=-textH-PAD;           // end fully above the clip
+    s1StartY=clipH;      // start just below the visible clip
+    s1EndY=-textH;       // end just above the visible clip
     root.style.setProperty('--s1Y',s1StartY+'px');
   }
 
   function update(){
-    /* HERO choreography */
+    /* HERO choreo */
     const p=progressOf(driver);
     const pFade=easeInOutCubic(clamp(p/0.60,0,1));
     root.style.setProperty('--titleOpacity',pFade.toFixed(3));
@@ -222,11 +218,11 @@
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
-    /* Image fade-in (0 → 35% of the section), like hero pace */
+    /* Image fade-in (0 → 35% of section) */
     const imgFadeIn = clamp(s1/0.35,0,1);
     root.style.setProperty('--s1ImgOpacity',imgFadeIn.toFixed(3));
 
-    /* Text sweep */
+    /* Text sweep timing */
     const TEXT_START = 0.70;
     const raw=clamp((s1-TEXT_START)/(1-TEXT_START),0,1);
     const slowed=easeSlower(raw);
