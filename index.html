@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → Section 1 (fade trigger @ 90%)</title>
+<title>Gardenicity — Hero → Section 1 (fade trigger @ 95%)</title>
 <style>
   /* ===== Base ===== */
   html,body{
@@ -13,15 +13,15 @@
     height:100%;
   }
   :root{
-    --shift: 0px;           /* hero slide */
-    --titleOpacity: 0;      /* hero title fade */
-    --linksOpacity: 0;      /* hero links fade */
-    --heroAlpha: 1;         /* hero dissolve */
+    --shift: 0px;
+    --titleOpacity: 0;
+    --linksOpacity: 0;
+    --heroAlpha: 1;
     --heroBlur: 0;
 
-    --s1: 0;                /* Section 1 progress */
-    --s1ImgOpacity: 0;      /* final computed opacity (in × out) */
-    --s1Y: 0px;             /* S1 text translateY */
+    --s1: 0;
+    --s1ImgOpacity: 0;
+    --s1Y: 0px;
   }
 
   /* ===== HERO ===== */
@@ -29,7 +29,7 @@
     position:fixed; inset:0; z-index:3;
     opacity:var(--heroAlpha);
     filter: blur(calc(var(--heroBlur) * 10px));
-    pointer-events:auto; /* links usable */
+    pointer-events:auto;
     will-change:opacity, filter;
   }
   .hero-bg{
@@ -73,14 +73,12 @@
   .s1-text{ transform:translateY(var(--s1Y)); color:#111; will-change:transform; }
   .s1-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
 
-  .s1-media{
-    display:flex; align-items:center; justify-content:center; /* pinned & centered */
-  }
+  .s1-media{ display:flex; align-items:center; justify-content:center; }
   .s1-media img{
     object-fit:cover;
     max-width:100%; max-height:100%;
     opacity:var(--s1ImgOpacity);
-    transition:none; /* scroll-scrubbed */
+    transition:none;
     will-change:opacity, width, height;
   }
 
@@ -138,12 +136,11 @@
 <section class="after"></section>
 
 <script>
-/* ===== Version tag ===== */
-console.log("%cGardenicity v29","color:#00A86B");
+console.log("%cGardenicity v30","color:#00A86B");
 
 /* Tunables */
-const TRIGGER_FRACTION = 0.90; // fade-out START when text bottom reaches 90% of sticky viewport
-const FADE_SPAN        = 0.35; // how much section progress to consume for fade-out after trigger
+const TRIGGER_FRACTION = 0.95; // fade-out starts when text bottom hits 95% of viewport
+const FADE_SPAN        = 0.35; // span same as hero fade
 
 (function(){
   const root=document.documentElement;
@@ -151,7 +148,7 @@ const FADE_SPAN        = 0.35; // how much section progress to consume for fade-
   const easeInOutCubic=t=>t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
   const easeSlower=t=>Math.pow(t,0.8);
 
-  /* ---------- HERO choreography ---------- */
+  /* HERO choreography */
   const driver=document.getElementById('driver');
   const media=document.getElementById('hero-media');
   const col=document.getElementById('hero-col');
@@ -181,14 +178,15 @@ const FADE_SPAN        = 0.35; // how much section progress to consume for fade-
     return clamp(-r.top/total,0,1);
   }
 
-  /* ---------- Section 1 metrics ---------- */
-  const s1Wrap   = document.getElementById('s1-wrap');
-  const s1Clip   = document.getElementById('s1-clip');
-  const s1Text   = document.getElementById('s1-text');
-  const s1Media  = document.getElementById('s1-media');
-  const s1Img    = document.getElementById('s1-img');
+  /* Section 1 metrics */
+  const s1Wrap=document.getElementById('s1-wrap');
+  const s1Clip=document.getElementById('s1-clip');
+  const s1Text=document.getElementById('s1-text');
+  const s1Media=document.getElementById('s1-media');
+  const s1Img=document.getElementById('s1-img');
 
   let s1StartY=0,s1EndY=0,s1TextH=0,s1ClipH=0;
+  let s1TriggerProg=null;
 
   function sizeS1Image(){
     const nomW=parseFloat(s1Img.dataset.imgW)||840;
@@ -203,18 +201,14 @@ const FADE_SPAN        = 0.35; // how much section progress to consume for fade-
     s1ClipH=s1Clip.clientHeight;
     s1TextH=s1Text.scrollHeight;
     const pad=24;
-    s1StartY=s1ClipH+pad;      // start below window
-    s1EndY=-s1TextH-pad;       // end above window
+    s1StartY=s1ClipH+pad;
+    s1EndY=-s1TextH-pad;
     root.style.setProperty('--s1Y',s1StartY+'px');
     sizeS1Image();
   }
 
-  /* Store the section progress at the instant the trigger fires,
-     so fade-out is scroll-based from that exact moment (not tied to text exit). */
-  let s1TriggerProg = null;
-
   function update(){
-    /* HERO baseline choreography */
+    /* HERO */
     const p=progressOf(driver);
     const pFade=easeInOutCubic(clamp(p/0.60,0,1));
     root.style.setProperty('--titleOpacity',pFade.toFixed(3));
@@ -223,42 +217,40 @@ const FADE_SPAN        = 0.35; // how much section progress to consume for fade-
     root.style.setProperty('--shift',shift.toFixed(1)+'px');
     root.style.setProperty('--linksOpacity',pSlide.toFixed(3));
 
-    /* SECTION 1 progress + hero dissolve */
+    /* SECTION 1 */
     const s1=progressOf(s1Wrap);
     root.style.setProperty('--s1',s1.toFixed(3));
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
-    /* S1 image fade IN — scroll-scrubbed early */
-    const imgIn = clamp(s1/0.35, 0, 1);
+    /* fade IN */
+    const imgIn=clamp(s1/0.35,0,1);
 
-    /* S1 text movement — starts at 0.75 of the section */
+    /* text scroll */
     const s1TextStart=0.75;
     const raw=clamp((s1-s1TextStart)/(1-s1TextStart),0,1);
     const slowed=easeSlower(raw);
     const y=s1StartY+(s1EndY-s1StartY)*slowed;
     root.style.setProperty('--s1Y',y+'px');
 
-    /* ---- Fade OUT trigger @ 90% of sticky viewport, AFTER text has begun moving ---- */
-    const textHasStarted = raw > 0;               // ensure text is in motion
-    const textBottomPx   = y + s1TextH;           // text bottom relative to clip top
-    const triggerPx      = s1ClipH * TRIGGER_FRACTION;
+    /* fade OUT trigger at 95% */
+    const textHasStarted=raw>0;
+    const textBottomPx=y+s1TextH;
+    const triggerPx=s1ClipH*TRIGGER_FRACTION;
 
-    if (textHasStarted && textBottomPx <= triggerPx){
-      if (s1TriggerProg === null) s1TriggerProg = s1; // latch first crossing
+    if(textHasStarted && textBottomPx<=triggerPx){
+      if(s1TriggerProg===null) s1TriggerProg=s1;
     } else {
-      // if we scroll back above threshold, reset so it re-triggers cleanly
-      if (s1 < (s1TriggerProg ?? 1)) s1TriggerProg = null;
+      if(s1<(s1TriggerProg??1)) s1TriggerProg=null;
     }
 
-    let out = 0;
-    if (s1TriggerProg !== null){
-      // pure scroll-based fade from the trigger onward
-      out = clamp((s1 - s1TriggerProg) / FADE_SPAN, 0, 1);
+    let out=0;
+    if(s1TriggerProg!==null){
+      out=clamp((s1-s1TriggerProg)/FADE_SPAN,0,1);
     }
 
-    const finalOpacity = imgIn * (1 - out);
-    root.style.setProperty('--s1ImgOpacity', finalOpacity.toFixed(3));
+    const finalOpacity=imgIn*(1-out);
+    root.style.setProperty('--s1ImgOpacity',finalOpacity.toFixed(3));
   }
 
   async function init(){
