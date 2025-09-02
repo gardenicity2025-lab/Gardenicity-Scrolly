@@ -22,18 +22,18 @@
 
     /* Section 1 */
     --s1: 0;
-    --s1ImgOpacity: 0; /* image fade in */
-    --s1Y: 0px;        /* text translateY */
-    --s1Alpha: 1;      /* whole S1 viewport opacity in S1↔S2 crossfade */
+    --s1ImgOpacity: 0;  /* fade-in for S1 image */
+    --s1Y: 0px;         /* S1 text translate */
+    --s1Alpha: 1;       /* S1 viewport alpha during cross-fade */
 
     /* Section 2 */
     --s2: 0;
-    --s2ImgOpacity: 0;
-    --s2Y: 0px;
-    --s2Alpha: 0;      /* whole S2 viewport opacity */
+    --s2ImgOpacity: 0;  /* fade-in for S2 image */
+    --s2Y: 0px;         /* S2 text translate */
+    --s2Alpha: 0;       /* S2 viewport alpha during cross-fade */
   }
 
-  /* ===== HERO (unchanged from the good version) ===== */
+  /* ===== HERO (as before) ===== */
   .hero-fixed{
     position:fixed; inset:0; z-index:3;
     opacity:var(--heroAlpha);
@@ -65,59 +65,52 @@
 
   .driver{ height:200vh; }
 
-  /* ===== Section 1 (RIGHT media, LEFT text, sticky) ===== */
-  .s1-wrap{ position:relative; height:280vh; background:#e5e4e0; }
-  .s1-sticky{
+  /* ===== Shared section layout helpers ===== */
+  .section-sticky{
     position:sticky; top:0; height:100vh;
-    display:grid; padding:96px 82px;
-    grid-template-columns:512px 96px 1fr; align-items:center;
-    z-index:2;                         /* sits above S2 until we fade it */
-    opacity:var(--s1Alpha);
-    transition:opacity 0s;             /* scrubbed, not timed */
+    padding:96px 82px;              /* same as hero inset */
+    display:grid; align-items:center;
   }
-  .s1-text-clip{ overflow:hidden; height:100%; }
-  .s1-text{ transform:translateY(var(--s1Y)); color:#111; will-change:transform; }
-  .s1-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
-
-  .s1-media{ display:flex; align-items:center; justify-content:center; }
-  /* ✅ No cropping, no truncation: the image fits inside the box */
-  .s1-media img{
-    height:100%;
-    width:auto;
-    max-width:100%;
-    object-fit:contain;                 /* never crop */
-    opacity:var(--s1ImgOpacity);
-    transition:none;                    /* scroll-scrubbed */
-    will-change:opacity;
+  /* The inner “media box” must have a fixed height equal to the inner viewport.
+     That ensures height:100% on the <img> really equals the visible window. */
+  .media-box{
+    height: calc(100vh - 192px);    /* full viewport minus top/bottom padding */
+    display:flex; align-items:center; justify-content:center;
+    min-width:0; min-height:0;      /* avoid grid min-size surprises */
   }
-
-  /* ===== Section 2 (MIRRORED: LEFT media, RIGHT text, sticky) ===== */
-  .s2-wrap{ position:relative; height:280vh; background:#e5e4e0; }
-  .s2-sticky{
-    position:sticky; top:0; height:100vh;
-    display:grid; padding:96px 82px;
-    /* media left, 96 gutter, text right */
-    grid-template-columns:1fr 96px 512px; align-items:center;
-    z-index:1;                         /* under S1 initially */
-    opacity:var(--s2Alpha);
-    transition:opacity 0s;             /* scrubbed */
-  }
-
-  .s2-media{ display:flex; align-items:center; justify-content:center; }
-  /* Landscape: still use contain so we never crop. Height drives fit, width clamps. */
-  .s2-media img{
+  /* Never crop. Fit image by height; keep full frame visible. */
+  .media-box img{
     height:100%;
     width:auto;
     max-width:100%;
     object-fit:contain;
-    opacity:var(--s2ImgOpacity);
-    transition:none;
-    will-change:opacity;
+    display:block;
+    transition:none;                /* scroll-scrubbed */
   }
 
-  .s2-text-clip{ overflow:hidden; height:100%; }
+  /* ===== Section 1 (RIGHT media, LEFT text) ===== */
+  .s1-wrap{ position:relative; height:280vh; background:#e5e4e0; }
+  .s1-sticky{
+    z-index:2;
+    grid-template-columns:512px 96px 1fr;
+    opacity:var(--s1Alpha);
+  }
+  .s1-text-clip{ overflow:hidden; height: calc(100vh - 192px); }
+  .s1-text{ transform:translateY(var(--s1Y)); color:#111; will-change:transform; }
+  .s1-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
+  .s1-media img{ opacity:var(--s1ImgOpacity); will-change:opacity; }
+
+  /* ===== Section 2 (MIRRORED: LEFT media, RIGHT text) ===== */
+  .s2-wrap{ position:relative; height:280vh; background:#e5e4e0; }
+  .s2-sticky{
+    z-index:1;
+    grid-template-columns:1fr 96px 512px;
+    opacity:var(--s2Alpha);
+  }
+  .s2-text-clip{ overflow:hidden; height: calc(100vh - 192px); }
   .s2-text{ transform:translateY(var(--s2Y)); color:#111; will-change:transform; }
   .s2-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
+  .s2-media img{ opacity:var(--s2ImgOpacity); will-change:opacity; }
 
   .after{ min-height:120vh; }
 </style>
@@ -149,7 +142,7 @@
 
 <!-- ===== SECTION 1 ===== -->
 <section class="s1-wrap" id="s1-wrap">
-  <div class="s1-sticky" id="s1-sticky">
+  <div class="section-sticky s1-sticky" id="s1-sticky">
     <div class="s1-text-clip" id="s1-clip">
       <div class="s1-text" id="s1-text">
         <p><strong>HOURS AFTER MY</strong> mother took her last breath on earth…</p>
@@ -160,17 +153,17 @@
       </div>
     </div>
     <div></div>
-    <figure class="s1-media">
-      <img id="s1-img" src="assets/section1.jpg" alt="Section 1 visual">
+    <figure class="media-box s1-media">
+      <img id="s1-img" src="assets/section1.jpg?v=pinfix" alt="Section 1 visual">
     </figure>
   </div>
 </section>
 
 <!-- ===== SECTION 2 (mirrored) ===== -->
 <section class="s2-wrap" id="s2-wrap">
-  <div class="s2-sticky" id="s2-sticky">
-    <figure class="s2-media">
-      <img id="s2-img" src="assets/section2.jpg" alt="Section 2 visual">
+  <div class="section-sticky s2-sticky" id="s2-sticky">
+    <figure class="media-box s2-media">
+      <img id="s2-img" src="assets/section2.jpg?v=pinfix" alt="Section 2 visual">
     </figure>
     <div></div>
     <div class="s2-text-clip" id="s2-clip">
@@ -235,8 +228,8 @@
     const clipH=s1Clip.clientHeight;
     const textH=s1Text.scrollHeight;
     const pad=24;
-    s1StartY=clipH+pad;        // start fully below
-    s1EndY=-textH-pad;         // end fully above
+    s1StartY=clipH+pad;         /* start below */
+    s1EndY=-textH-pad;          /* end above */
     root.style.setProperty('--s1Y',s1StartY+'px');
   }
 
@@ -255,13 +248,11 @@
     root.style.setProperty('--s2Y',s2StartY+'px');
   }
 
-  /* Cross-fade helper: how much of a section is entering from bottom to top of the viewport */
+  /* Cross-fade driver: how far a section has risen from bottom→top of viewport */
   function appearFromBottomProgress(wrap){
     const vh=window.innerHeight||document.documentElement.clientHeight;
     const top=wrap.getBoundingClientRect().top;
-    // 0 when wrap top is at bottom of viewport (top = vh)
-    // 1 when wrap top reaches the top of viewport (top = 0)
-    return clamp(1 - top / vh, 0, 1);
+    return clamp(1 - top / vh, 0, 1);  /* 0 at bottom edge, 1 at top edge */
   }
 
   function update(){
@@ -274,7 +265,7 @@
     root.style.setProperty('--shift',shift.toFixed(1)+'px');
     root.style.setProperty('--linksOpacity',pSlide.toFixed(3));
 
-    /* SECTION 1 progress + hero dissolve (as before) */
+    /* SECTION 1 progress + hero dissolve (unchanged) */
     const s1=progressOf(s1Wrap);
     root.style.setProperty('--s1',s1.toFixed(3));
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
@@ -290,12 +281,10 @@
     const s1Y = s1StartY + (s1EndY - s1StartY) * easeSlower(s1Raw);
     root.style.setProperty('--s1Y',s1Y+'px');
 
-    /* ===== S1 ↔ S2 cross-fade driven by S2 entering from the bottom ===== */
-    const s2Enter = appearFromBottomProgress(s2Wrap);   // 0→1 over one viewport as S2 moves in
-    const s2Alpha = s2Enter;                            // fade S2 in
-    const s1Alpha = 1 - s2Enter;                        // fade S1 out
-    root.style.setProperty('--s2Alpha', s2Alpha.toFixed(3));
-    root.style.setProperty('--s1Alpha', s1Alpha.toFixed(3));
+    /* ===== S1 ↔ S2 cross-fade driven by S2 entering from bottom ===== */
+    const s2Enter = appearFromBottomProgress(s2Wrap);  /* 0→1 over one viewport */
+    root.style.setProperty('--s2Alpha', s2Enter.toFixed(3));       /* S2 fades IN */
+    root.style.setProperty('--s1Alpha', (1 - s2Enter).toFixed(3)); /* S1 fades OUT */
 
     /* SECTION 2 progress (for its own text/image choreography) */
     const s2=progressOf(s2Wrap);
@@ -305,7 +294,7 @@
     const s2ImgIn = clamp(s2/0.35,0,1);
     root.style.setProperty('--s2ImgOpacity',s2ImgIn.toFixed(3));
 
-    /* S2 text (mirrored) starts at 0.75 of S2 */
+    /* S2 text starts at 0.75 of S2 (mirrored timing) */
     const s2TextStart=0.75;
     const s2Raw=clamp((s2-s2TextStart)/(1-s2TextStart),0,1);
     const s2Y = s2StartY + (s2EndY - s2StartY) * easeSlower(s2Raw);
