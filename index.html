@@ -3,19 +3,17 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → Section 1 (overlay rail, pinned image)</title>
+<title>Gardenicity — Hero → Section 1 (debug rail)</title>
 <style>
   /* ===== Base ===== */
   html,body{ margin:0; padding:0; background:#e5e4e0; color:#fff;
     font-family:"Acumin Pro",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; height:100%; }
   :root{
-    /* hero */
     --shift:0px; --titleOpacity:0; --linksOpacity:0; --heroAlpha:1; --heroBlur:0;
-    /* s1 */
     --s1:0; --s1ImgOpacity:0; --s1Y:0px;
   }
 
-  /* ===== HERO (unchanged) ===== */
+  /* ===== HERO ===== */
   .hero-fixed{ position:fixed; inset:0; z-index:3; opacity:var(--heroAlpha);
     filter:blur(calc(var(--heroBlur)*10px)); pointer-events:auto; will-change:opacity,filter; }
   .hero-bg{ position:absolute; inset:0; background:url("assets/hero1gc.jpg") center/cover no-repeat;
@@ -33,29 +31,27 @@
   /* ===== SECTION 1 ===== */
   .s1-wrap{ position:relative; height:280vh; background:#e5e4e0; }
 
-  /* Sticky viewport — keeps the layout columns and the pinned media */
   .s1-sticky{
     position:sticky; top:0; height:100vh; z-index:2;
     display:grid; padding:96px 82px;
     grid-template-columns:512px 96px 1fr; align-items:center; box-sizing:border-box;
   }
 
-  /* ---- Text overlay rail (aligned to the grid) ---- */
+  /* Text overlay rail */
   .s1-overlay{ position:absolute; inset:0; z-index:2; pointer-events:none; }
   .s1-text-rail{
-    position:absolute; top:0; bottom:0;           /* span full viewport */
-    left:96px;                                     /* 96px grid inset */
-    width:512px;                                   /* exact column width */
-    overflow:hidden; box-sizing:border-box;
+    position:absolute; top:0; bottom:0;
+    left:96px; width:512px; overflow:hidden;
+    box-sizing:border-box; margin:0; padding:0;
+    outline:1px solid red; /* DEBUG line at left edge */
   }
   .s1-text{ transform:translateY(var(--s1Y)); color:#111; will-change:transform; }
   .s1-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
 
-  /* ---- Pinned media (right column) ---- */
+  /* Media pinned */
   .s1-media{
     grid-column:3; width:100%; height:100%;
-    display:flex; align-items:center; justify-content:center;
-    overflow:hidden; z-index:1;
+    display:flex; align-items:center; justify-content:center; overflow:hidden; z-index:1;
   }
   .s1-media img{
     height:100%; width:auto; max-width:100%; max-height:100%;
@@ -78,11 +74,11 @@
         <span class="line">Geddes see?</span>
       </h1>
       <nav class="hero-links" id="hero-links" aria-label="Primary">
-        <a href="https://www.megama.net">Civic Green</a>
-        <a href="https://www.megama.net">Growth</a>
-        <a href="https://www.megama.net">Sustenance</a>
-        <a href="https://www.megama.net">Leafy SDGs</a>
-        <a href="https://www.megama.net">EN/עב</a>
+        <a href="#">Civic Green</a>
+        <a href="#">Growth</a>
+        <a href="#">Sustenance</a>
+        <a href="#">Leafy SDGs</a>
+        <a href="#">EN/עב</a>
       </nav>
     </div>
   </div>
@@ -105,9 +101,7 @@
         </div>
       </div>
     </div>
-
     <div></div>
-
     <!-- pinned media -->
     <figure class="s1-media" id="s1-media">
       <img id="s1-img" src="assets/section1.jpg" alt="Section 1 visual">
@@ -133,7 +127,8 @@
   let startShift=0,endShift=0;
 
   function measureHero(){
-    const prev=col.style.transform; col.style.transform='translateY(0)';
+    const prev=col.style.transform;
+    col.style.transform='translateY(0)';
     const lines=title.querySelectorAll('.line');
     const third=lines[2]||lines[lines.length-1];
     const thirdRect=third.getBoundingClientRect();
@@ -151,53 +146,50 @@
     const vh=window.innerHeight||document.documentElement.clientHeight;
     const total=r.height-vh;
     if(total<=0) return 0;
-    return clamp(-r.top/total,0,1);
+    return Math.max(0, Math.min(1, -r.top/total));
   }
 
-  /* SECTION 1 text sweep */
+  /* SECTION 1 */
   const s1Wrap=document.getElementById('s1-wrap');
   const s1Rail=document.getElementById('s1-rail');
   const s1Text=document.getElementById('s1-text');
+
   let s1StartY=0,s1EndY=0;
 
   function measureS1(){
-    const clipH=s1Rail.clientHeight;     /* full viewport */
+    const clipH=window.innerHeight;
     const textH=s1Text.scrollHeight;
-    s1StartY=clipH;                      /* start fully below */
-    s1EndY=-textH;                       /* end fully above */
+    s1StartY=clipH; s1EndY=-textH;
     root.style.setProperty('--s1Y', s1StartY+'px');
   }
 
   function update(){
-    /* hero anims */
     const p=progressOf(driver);
-    const pFade=clamp(p/0.60,0,1);
-    root.style.setProperty('--titleOpacity', easeInOutCubic(pFade).toFixed(3));
-    const pSlide=clamp((p-0.60)/0.40,0,1);
+    const pFade=easeInOutCubic(Math.max(0, Math.min(1, p/0.60)));
+    root.style.setProperty('--titleOpacity',pFade.toFixed(3));
+    const pSlide=Math.max(0, Math.min(1, (p-0.60)/0.40));
     const shift=startShift+(endShift-startShift)*pSlide;
     root.style.setProperty('--shift',shift.toFixed(1)+'px');
     root.style.setProperty('--linksOpacity',pSlide.toFixed(3));
 
-    /* s1 progress */
     const s1=progressOf(s1Wrap);
     root.style.setProperty('--s1',s1.toFixed(3));
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
-    /* image fade-in pace like hero */
-    root.style.setProperty('--s1ImgOpacity', clamp(s1/0.35,0,1).toFixed(3));
+    const imgFadeIn=Math.max(0, Math.min(1, s1/0.35));
+    root.style.setProperty('--s1ImgOpacity',imgFadeIn.toFixed(3));
 
-    /* text sweep (no top/bottom padding) */
-    const textStart=0.75;                                 /* when motion begins */
-    const raw=clamp((s1-textStart)/(1-textStart),0,1);
+    const textStart=0.75;
+    const raw=Math.max(0, Math.min(1, (s1-textStart)/(1-textStart)));
     const slowed=easeSlower(raw);
     const y=s1StartY+(s1EndY-s1StartY)*slowed;
     root.style.setProperty('--s1Y', y+'px');
   }
 
-  function init(){
-    if(document.fonts && document.fonts.ready){ document.fonts.ready.finally(()=>{ measureHero(); measureS1(); update(); }); }
-    else { measureHero(); measureS1(); update(); }
+  async function init(){
+    if(document.fonts && document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
+    measureHero(); measureS1(); update();
     addEventListener('load', ()=>{ measureHero(); measureS1(); update(); });
     addEventListener('resize', ()=>{ measureHero(); measureS1(); update(); });
     addEventListener('scroll', update, {passive:true});
