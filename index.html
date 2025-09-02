@@ -3,116 +3,57 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → Section 1 (overlay text, pinned media)</title>
+<title>Gardenicity — Hero → Section 1 (fixed)</title>
 <style>
   /* ===== Base ===== */
-  html,body{
-    margin:0; padding:0;
-    background:#e5e4e0; color:#fff;
-    font-family:"Acumin Pro",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-    height:100%;
-  }
+  html,body{ margin:0; padding:0; background:#e5e4e0; color:#fff;
+    font-family:"Acumin Pro",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; height:100%; }
   :root{
-    /* HERO vars */
-    --shift: 0px;
-    --titleOpacity: 0;
-    --linksOpacity: 0;
-    --heroAlpha: 1;
-    --heroBlur: 0;
-
-    /* Section 1 vars */
-    --s1: 0;
-    --s1ImgOpacity: 0;
-    --s1Y: 0px;
+    --shift:0px; --titleOpacity:0; --linksOpacity:0; --heroAlpha:1; --heroBlur:0;
+    --s1:0; --s1ImgOpacity:0; --s1Y:0px;
   }
 
-  /* ===== HERO ===== */
-  .hero-fixed{
-    position:fixed; inset:0; z-index:3;
-    opacity:var(--heroAlpha);
-    filter: blur(calc(var(--heroBlur) * 10px));
-    pointer-events:auto;
-    will-change:opacity, filter;
-  }
-  .hero-bg{
-    position:absolute; inset:0;
-    background:url("assets/hero1gc.jpg") center/cover no-repeat;
-    opacity:0; animation:heroIn 1000ms ease-out forwards;
-    pointer-events:none;
-  }
+  /* ===== HERO (unchanged) ===== */
+  .hero-fixed{ position:fixed; inset:0; z-index:3; opacity:var(--heroAlpha);
+    filter:blur(calc(var(--heroBlur)*10px)); pointer-events:auto; will-change:opacity,filter; }
+  .hero-bg{ position:absolute; inset:0; background:url("assets/hero1gc.jpg") center/cover no-repeat;
+    opacity:0; animation:heroIn 1000ms ease-out forwards; pointer-events:none; }
   @keyframes heroIn{ from{opacity:0} to{opacity:1} }
-
-  .hero-media{
-    position:absolute; inset:96px 82px;
-    display:flex; align-items:flex-end; justify-content:flex-start;
-    overflow:hidden;
-  }
+  .hero-media{ position:absolute; inset:96px 82px; display:flex; align-items:flex-end; justify-content:flex-start; overflow:hidden; }
   .col{ position:relative; max-width:700px; transform:translateY(var(--shift)); will-change:transform; }
   .hero-title{ margin:0 0 24px 0; font-weight:400; font-size:100px; line-height:100px; opacity:var(--titleOpacity); }
   .hero-title .line{ display:block; }
-
-  .hero-links{
-    display:flex; flex-direction:column; gap:10px;
-    font-size:24px; line-height:30px;
-    opacity:var(--linksOpacity);
-  }
-  .hero-links a:link,
-  .hero-links a:visited{
-    color:#fff !important; text-decoration:none !important; cursor:pointer; transition:color .2s ease;
-  }
-  .hero-links a:hover,
-  .hero-links a:focus-visible{ color:#00A86B !important; text-decoration:none !important; }
-
-  /* Spacer that lets us scroll the hero */
+  .hero-links{ display:flex; flex-direction:column; gap:10px; font-size:24px; line-height:30px; opacity:var(--linksOpacity); }
+  .hero-links a{ color:#fff; text-decoration:none; transition:color .2s ease; }
+  .hero-links a:hover,.hero-links a:focus-visible{ color:#00A86B; }
   .driver{ height:200vh; }
 
-  /* ===== Section 1 ===== */
+  /* ===== SECTION 1 ===== */
   .s1-wrap{ position:relative; height:280vh; background:#e5e4e0; }
 
-  /* Sticky viewport; relative so the overlay can absolutely position inside it */
+  /* Sticky viewport (MUST stay sticky; do NOT override with relative) */
   .s1-sticky{
-    position:sticky; top:0; height:100vh; z-index:1;
-    display:grid; padding:96px 82px; /* standard paddings around the media column */
-    grid-template-columns:512px 96px 1fr;
-    align-items:center;
-    box-sizing:border-box;
-    position:sticky;
+    position:sticky; top:0; height:100vh; z-index:2; /* above page bg, below hero (z:3) */
+    display:grid; padding:96px 82px;
+    grid-template-columns:512px 96px 1fr; align-items:center; box-sizing:border-box;
   }
-  .s1-sticky{ position:sticky; top:0; }
-  .s1-sticky{ position:sticky; top:0; } /* (harmless dupe, keeps stickiness explicit) */
-  .s1-sticky{ position:relative; }      /* contain the overlay absolutely */
 
-  /* ---- TEXT OVERLAY (full-viewport rail) ---- */
-  .s1-overlay{
-    position:absolute; inset:0;          /* full viewport area of the sticky frame */
-    z-index:2; pointer-events:none;      /* overlay over media; text isn’t interactive */
-  }
+  /* TEXT OVERLAY rail that spans the full sticky viewport */
+  .s1-overlay{ position:absolute; inset:0; z-index:2; pointer-events:none; }
   .s1-text-rail{
-    position:absolute; top:0; bottom:0;  /* full viewport height (no extra top/bottom) */
-    left:96px;                            /* keep the same left gutter */
-    width:512px;                          /* requested column width */
-    overflow:hidden;                      /* acts as the clip window */
+    position:absolute; top:0; bottom:0; left:96px; width:512px; overflow:hidden;
   }
-  .s1-text{
-    transform:translateY(var(--s1Y));
-    color:#111; will-change:transform;
-  }
+  .s1-text{ transform:translateY(var(--s1Y)); color:#111; will-change:transform; }
   .s1-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
 
-  /* ---- MEDIA (right column) ---- */
+  /* MEDIA in the right column — pinned & contained, no drift */
   .s1-media{
     grid-column:3; width:100%; height:100%;
-    display:flex; align-items:center; justify-content:center;
-    overflow:hidden;                     /* hard contain; no drift */
-    z-index:1;
+    display:flex; align-items:center; justify-content:center; overflow:hidden; z-index:1;
   }
   .s1-media img{
-    height:100%; width:auto;
-    max-width:100%; max-height:100%;
-    object-fit:contain;
-    opacity:var(--s1ImgOpacity);
-    transition:none;
-    will-change:opacity;
+    height:100%; width:auto; max-width:100%; max-height:100%;
+    object-fit:contain; opacity:var(--s1ImgOpacity); transition:none; will-change:opacity;
   }
 
   .after{ min-height:120vh; }
@@ -146,7 +87,7 @@
 <!-- SECTION 1 -->
 <section class="s1-wrap" id="s1-wrap">
   <div class="s1-sticky" id="s1-sticky">
-    <!-- TEXT OVERLAY -->
+    <!-- overlay text rail -->
     <div class="s1-overlay">
       <div class="s1-text-rail" id="s1-rail">
         <div class="s1-text" id="s1-text">
@@ -159,10 +100,9 @@
       </div>
     </div>
 
-    <!-- spacer col -->
     <div></div>
 
-    <!-- MEDIA (pinned, contained, no drift) -->
+    <!-- pinned media -->
     <figure class="s1-media" id="s1-media">
       <img id="s1-img" src="assets/section1.jpg" alt="Section 1 visual">
     </figure>
@@ -178,7 +118,7 @@
   const easeInOutCubic=t=>t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
   const easeSlower=t=>Math.pow(t,0.8);
 
-  /* ---------- HERO choreography (unchanged) ---------- */
+  /* HERO */
   const driver=document.getElementById('driver');
   const media=document.getElementById('hero-media');
   const col=document.getElementById('hero-col');
@@ -188,7 +128,7 @@
 
   function measureHero(){
     const prev=col.style.transform;
-    col.style.transform='translateY(0px)';
+    col.style.transform='translateY(0)';
     const lines=title.querySelectorAll('.line');
     const third=lines[2]||lines[lines.length-1];
     const thirdRect=third.getBoundingClientRect();
@@ -205,11 +145,11 @@
     const r=el.getBoundingClientRect();
     const vh=window.innerHeight||document.documentElement.clientHeight;
     const total=r.height-vh;
-    if(total<=0)return 0;
-    return clamp(-r.top/total,0,1);
+    if(total<=0) return 0;
+    return Math.max(0, Math.min(1, -r.top/total));
   }
 
-  /* ---------- Section 1 metrics ---------- */
+  /* SECTION 1 */
   const s1Wrap=document.getElementById('s1-wrap');
   const s1Rail=document.getElementById('s1-rail');
   const s1Text=document.getElementById('s1-text');
@@ -217,49 +157,43 @@
   let s1StartY=0,s1EndY=0;
 
   function measureS1(){
-    const clipH=s1Rail.clientHeight;      // full viewport height (no top/bottom padding)
+    const clipH=s1Rail.clientHeight;       // full viewport height
     const textH=s1Text.scrollHeight;
-    s1StartY=clipH;                        // start fully below viewport
-    s1EndY=-textH;                         // end fully above viewport
-    root.style.setProperty('--s1Y',s1StartY+'px');
+    s1StartY=clipH;                         // start fully below
+    s1EndY=-textH;                          // end fully above
+    root.style.setProperty('--s1Y', s1StartY+'px');
   }
 
   function update(){
-    /* HERO progress */
     const p=progressOf(driver);
-    const pFade=easeInOutCubic(clamp(p/0.60,0,1));
+    const pFade=easeInOutCubic(Math.max(0, Math.min(1, p/0.60)));
     root.style.setProperty('--titleOpacity',pFade.toFixed(3));
-    const pSlide=clamp((p-0.60)/0.40,0,1);
+    const pSlide=Math.max(0, Math.min(1, (p-0.60)/0.40));
     const shift=startShift+(endShift-startShift)*pSlide;
     root.style.setProperty('--shift',shift.toFixed(1)+'px');
     root.style.setProperty('--linksOpacity',pSlide.toFixed(3));
 
-    /* S1 progress & hero dissolve */
     const s1=progressOf(s1Wrap);
     root.style.setProperty('--s1',s1.toFixed(3));
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
-    /* Image fade-in, scrubbed like the hero pace (0 → 35% section) */
-    const imgFadeIn = clamp(s1/0.35,0,1);
+    const imgFadeIn=Math.max(0, Math.min(1, s1/0.35));
     root.style.setProperty('--s1ImgOpacity',imgFadeIn.toFixed(3));
 
-    /* Text sweep — begins late in the section for your pacing */
     const textStart=0.75;
-    const raw=clamp((s1-textStart)/(1-textStart),0,1);
+    const raw=Math.max(0, Math.min(1, (s1-textStart)/(1-textStart)));
     const slowed=easeSlower(raw);
     const y=s1StartY+(s1EndY-s1StartY)*slowed;
-    root.style.setProperty('--s1Y',y+'px');
+    root.style.setProperty('--s1Y', y+'px');
   }
 
   async function init(){
-    if(document.fonts&&document.fonts.ready){ try{await document.fonts.ready;}catch(e){} }
-    measureHero();
-    measureS1();
-    update();
-    window.addEventListener('load',()=>{measureHero();measureS1();update();});
-    window.addEventListener('resize',()=>{measureHero();measureS1();update();});
-    window.addEventListener('scroll',update,{passive:true});
+    if(document.fonts && document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
+    measureHero(); measureS1(); update();
+    addEventListener('load', ()=>{ measureHero(); measureS1(); update(); });
+    addEventListener('resize', ()=>{ measureHero(); measureS1(); update(); });
+    addEventListener('scroll', update, {passive:true});
   }
   init();
 })();
