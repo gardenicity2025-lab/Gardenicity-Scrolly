@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → Section 1 (trigger @ 100%)</title>
+<title>Gardenicity — Hero → Section 1 (trigger test)</title>
 <style>
   /* ===== Base ===== */
   html,body{
@@ -16,15 +16,17 @@
     --shift: 0px;           /* hero slide */
     --titleOpacity: 0;      /* hero title fade */
     --linksOpacity: 0;      /* hero links fade */
-    --heroAlpha: 1;         /* hero dissolve (1=opaque, 0=gone) */
+    --heroAlpha: 1;         /* hero dissolve */
     --heroBlur: 0;
 
-    --s1: 0;                /* Section 1 progress 0→1 */
-    --s1ImgOpacity: 0;      /* image opacity (in × out) */
-    --s1Y: 0px;             /* text translateY */
+    --s1: 0;                /* Section 1 progress */
+    --s1ImgOpacity: 0;      /* final computed opacity (in × out) */
+    --s1Y: 0px;             /* S1 text translateY */
+
+    --triggerY: 0px;        /* debug guide position inside sticky area */
   }
 
-  /* ===== HERO (fixed) ===== */
+  /* ===== HERO ===== */
   .hero-fixed{
     position:fixed; inset:0; z-index:3;
     opacity:var(--heroAlpha);
@@ -35,7 +37,7 @@
   .hero-bg{
     position:absolute; inset:0;
     background:url("assets/hero1gc.jpg") center/cover no-repeat;
-    opacity:0; animation:heroIn 1000ms ease-out forwards; /* load fade */
+    opacity:0; animation:heroIn 1000ms ease-out forwards;
     pointer-events:none;
   }
   @keyframes heroIn{ from{opacity:0} to{opacity:1} }
@@ -52,41 +54,44 @@
   }
   .hero-links a:link,
   .hero-links a:visited{
-    color:#fff !important;
-    text-decoration:none !important;
-    cursor:pointer;
-    transition:color .2s ease;
+    color:#fff !important; text-decoration:none !important;
+    cursor:pointer; transition:color .2s ease;
   }
   .hero-links a:hover,
   .hero-links a:focus-visible{
-    color:#00A86B !important;
-    text-decoration:none !important;
+    color:#00A86B !important; text-decoration:none !important;
   }
 
-  .driver{ height:200vh; } /* controls hero title/links baseline choreo */
+  .driver{ height:200vh; }
 
-  /* ===== Section 1 (pinned under hero) ===== */
+  /* ===== Section 1 ===== */
   .s1-wrap{ position:relative; height:280vh; background:#e5e4e0; }
   .s1-sticky{
     position:sticky; top:0; height:100vh;
-    display:grid; padding:96px 82px;                /* same margins as hero */
-    grid-template-columns:512px 96px 1fr;           /* text / gutter / media */
-    align-items:center;
+    display:grid; padding:96px 82px;
+    grid-template-columns:512px 96px 1fr; align-items:center;
   }
+  /* debug: show the trigger line inside the sticky frame */
+  .s1-sticky::after{
+    content:""; position:absolute; left:82px; right:82px;
+    top:calc(96px + var(--triggerY));
+    border-top:1px dashed rgba(0,0,0,.15);
+    pointer-events:none;
+  }
+
   .s1-text-clip{ overflow:hidden; height:100%; }
   .s1-text{ transform:translateY(var(--s1Y)); color:#111; will-change:transform; }
   .s1-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
 
-  /* Media: truly pinned & centered (no drift) */
-  .s1-media{ grid-column:3 / 4; height:100%; position:relative; }
+  .s1-media{
+    display:flex; align-items:center; justify-content:center;
+    /* image stays pinned/centered in this cell */
+  }
   .s1-media img{
-    position:absolute; top:50%; left:50%;
-    transform:translate(-50%,-50%);     /* lock to center */
-    display:block;
     object-fit:cover;
     max-width:100%; max-height:100%;
     opacity:var(--s1ImgOpacity);
-    transition:none;                    /* scroll-scrubbed */
+    transition:none; /* scroll-scrubbed */
     will-change:opacity, width, height;
   }
 
@@ -121,7 +126,6 @@
 <!-- SECTION 1 -->
 <section class="s1-wrap" id="s1-wrap">
   <div class="s1-sticky" id="s1-sticky">
-    <!-- Left text -->
     <div class="s1-text-clip" id="s1-clip">
       <div class="s1-text" id="s1-text">
         <p><strong>HOURS AFTER MY</strong> mother took her last breath on earth…</p>
@@ -131,11 +135,7 @@
         <p>And the smoke kept rising. The chain must not be broken.</p>
       </div>
     </div>
-
-    <!-- Gutter -->
     <div></div>
-
-    <!-- Right media (pinned & centered) -->
     <figure class="s1-media" id="s1-media">
       <img id="s1-img"
            src="assets/section1.jpg"
@@ -149,21 +149,20 @@
 <section class="after"></section>
 
 <script>
+/* ===== Version tag so you know it loaded ===== */
+console.log("%cGardenicity v28","color:#00A86B");
+
+/* ===== Tunables ===== */
+const TRIGGER_FRACTION = 1.00;  // 1.00 = bottom of sticky window; set 0.75 for 75%
+const FADE_SPAN        = 0.35;  // how much of the remaining scroll the fade-out consumes
+
 (function(){
   const root=document.documentElement;
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
   const easeInOutCubic=t=>t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
-  const easeSlower=t=>Math.pow(t,0.8); // slower feel for text
+  const easeSlower=t=>Math.pow(t,0.8);
 
-  /* ---------- Tuning (kept to hero’s feel) ---------- */
-  const HERO_FADE_START = 0.25;  // hero begins dissolving at 25% of S1
-  const HERO_FADE_END   = 0.60;  // hero fully gone by 60% of S1
-  const HERO_FADE_SPAN  = HERO_FADE_END - HERO_FADE_START;  // 0.35
-
-  const IMG_IN_END      = 0.35;  // image fully in by 35% of S1
-  const TEXT_START_AT   = Math.max(IMG_IN_END, HERO_FADE_END); // 0.60
-
-  /* ---------- HERO baseline choreography ---------- */
+  /* ---------- HERO choreography ---------- */
   const driver=document.getElementById('driver');
   const media=document.getElementById('hero-media');
   const col=document.getElementById('hero-col');
@@ -185,7 +184,6 @@
     col.style.transform=prev||'';
     root.style.setProperty('--shift',startShift.toFixed(1)+'px');
   }
-
   function progressOf(el){
     const r=el.getBoundingClientRect();
     const vh=window.innerHeight||document.documentElement.clientHeight;
@@ -194,22 +192,21 @@
     return clamp(-r.top/total,0,1);
   }
 
-  /* ---------- Section 1 elements ---------- */
-  const s1Wrap  = document.getElementById('s1-wrap');
-  const s1Sticky= document.getElementById('s1-sticky');
-  const s1Clip  = document.getElementById('s1-clip');
-  const s1Text  = document.getElementById('s1-text');
-  const s1Media = document.getElementById('s1-media');
-  const s1Img   = document.getElementById('s1-img');
+  /* ---------- Section 1 metrics ---------- */
+  const s1Wrap   = document.getElementById('s1-wrap');
+  const s1Clip   = document.getElementById('s1-clip');
+  const s1Text   = document.getElementById('s1-text');
+  const s1Media  = document.getElementById('s1-media');
+  const s1Img    = document.getElementById('s1-img');
+  const s1Sticky = document.getElementById('s1-sticky');
 
   let s1StartY=0,s1EndY=0,s1TextH=0,s1ClipH=0;
 
-  /* Size image so it stays centered and not drifting */
   function sizeS1Image(){
     const nomW=parseFloat(s1Img.dataset.imgW)||840;
     const nomH=parseFloat(s1Img.dataset.imgH)||1120;
     const box=s1Media.getBoundingClientRect();
-    const scale=Math.min(box.width/nomW, box.height/nomH);
+    const scale=Math.min(box.width/nomW,box.height/nomH);
     s1Img.style.width =(nomW*scale)+'px';
     s1Img.style.height=(nomH*scale)+'px';
   }
@@ -218,19 +215,19 @@
     s1ClipH=s1Clip.clientHeight;
     s1TextH=s1Text.scrollHeight;
     const pad=24;
-    s1StartY=s1ClipH+pad;   // start fully below window
-    s1EndY  =-s1TextH-pad;  // end fully above window
+    s1StartY=s1ClipH+pad;      // start below
+    s1EndY=-s1TextH-pad;       // end above
     root.style.setProperty('--s1Y',s1StartY+'px');
+
+    // debug line position
+    const usableH = s1Sticky.clientHeight - 192; // minus 96 top/bottom padding
+    root.style.setProperty('--triggerY', (usableH * TRIGGER_FRACTION) + "px");
+
     sizeS1Image();
   }
 
-  /* Latch for fade-out trigger when text bottom crosses trigger line */
-  let s1TriggerProg = null;
-  const TRIGGER_FRACTION = 1.0;       // ← start fade-out only when text bottom hits viewport bottom
-  const FADE_SPAN        = HERO_FADE_SPAN;  // match hero “feel” (0.35)
-
   function update(){
-    /* HERO title/links choreo (unchanged) */
+    /* HERO baseline choreography */
     const p=progressOf(driver);
     const pFade=easeInOutCubic(clamp(p/0.60,0,1));
     root.style.setProperty('--titleOpacity',pFade.toFixed(3));
@@ -239,45 +236,34 @@
     root.style.setProperty('--shift',shift.toFixed(1)+'px');
     root.style.setProperty('--linksOpacity',pSlide.toFixed(3));
 
-    /* Section progress */
+    /* SECTION 1 progress + hero dissolve */
     const s1=progressOf(s1Wrap);
     root.style.setProperty('--s1',s1.toFixed(3));
+    root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
+    root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
-    /* HERO dissolve with your preferred feel (25%→60%) */
-    let heroOut = 0;
-    if (s1 <= HERO_FADE_START) heroOut = 0;
-    else if (s1 >= HERO_FADE_END) heroOut = 1;
-    else heroOut = (s1 - HERO_FADE_START) / HERO_FADE_SPAN;
+    /* S1 image fade IN — scroll-scrubbed across first ~35% */
+    const imgIn = clamp(s1/0.35, 0, 1);
 
-    root.style.setProperty('--heroAlpha', (1 - heroOut).toFixed(3));
-    root.style.setProperty('--heroBlur',  (heroOut * 0.8).toFixed(3));
-
-    /* S1 image fade IN: complete by 35% of S1 */
-    const imgIn = clamp(s1 / IMG_IN_END, 0, 1);
-
-    /* Text movement starts only once hero is gone AND image is fully in */
-    const textStart = TEXT_START_AT; // 0.60
-    const raw=clamp((s1 - textStart) / (1 - textStart), 0, 1);
+    /* S1 text: starts at 0.75 of the section, moves through window */
+    const s1TextStart=0.75;
+    const raw=clamp((s1-s1TextStart)/(1-s1TextStart),0,1);
     const slowed=easeSlower(raw);
     const y=s1StartY+(s1EndY-s1StartY)*slowed;
     root.style.setProperty('--s1Y',y+'px');
 
-    /* Fade-out trigger at 100% viewport height (inside sticky frame) */
-    const textBottom = y + s1TextH;
-    const triggerY   = s1ClipH * TRIGGER_FRACTION;
+    /* S1 image fade OUT — starts when text bottom hits trigger fraction.
+       Progress afterwards is purely scroll-based (like hero fade). */
+    const clipH = s1ClipH;
+    const triggerPx = clipH * TRIGGER_FRACTION;      // 1.00 = bottom, 0.75 = 75%
+    const textBottomPx = y + s1TextH;                // text bottom relative to clip top
 
-    if (textBottom > triggerY){
-      // Not yet reached → clear latch (so scrubbing back up cancels the fade)
-      s1TriggerProg = null;
-    } else if (s1TriggerProg === null) {
-      // First time crossing the trigger line → latch the current S1 progress
-      s1TriggerProg = s1;
-    }
-
-    /* Scroll-driven fade OUT once triggered, over FADE_SPAN */
     let out = 0;
-    if (s1TriggerProg !== null){
-      out = clamp((s1 - s1TriggerProg) / FADE_SPAN, 0, 1);
+    if (textBottomPx <= triggerPx){
+      // normalize 0→1 from trigger to end of section scroll
+      // use the section progress tail (same rhythm as hero)
+      const tail = clamp((s1 - s1TextStart) / (1 - s1TextStart), 0, 1);
+      out = clamp(tail / FADE_SPAN, 0, 1);
     }
 
     const finalOpacity = imgIn * (1 - out);
@@ -289,9 +275,8 @@
     measureHero();
     measureS1();
     update();
-
-    window.addEventListener('load',  ()=>{ measureHero(); measureS1(); update(); });
-    window.addEventListener('resize',()=>{ measureHero(); measureS1(); update(); });
+    window.addEventListener('load',()=>{measureHero();measureS1();update();});
+    window.addEventListener('resize',()=>{measureHero();measureS1();update();});
     window.addEventListener('scroll',update,{passive:true});
   }
   init();
