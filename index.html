@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → S1 (pinned) → S2 (pinned, mirrored, cross-fade)</title>
+<title>Gardenicity — Pinned cross-fades (Hero → S1 → S2)</title>
 <style>
   /* ===== Base ===== */
   html,body{
@@ -14,32 +14,20 @@
   }
   :root{
     /* Hero */
-    --shift: 0px;
-    --titleOpacity: 0;
-    --linksOpacity: 0;
-    --heroAlpha: 1;
-    --heroBlur: 0;
-
-    /* Section 1 */
-    --s1: 0;
-    --s1ImgOpacity: 0;  /* fade-in for S1 image */
-    --s1Y: 0px;         /* S1 text translate */
-    --s1Alpha: 1;       /* S1 viewport alpha during cross-fade */
-
-    /* Section 2 */
-    --s2: 0;
-    --s2ImgOpacity: 0;  /* fade-in for S2 image */
-    --s2Y: 0px;         /* S2 text translate */
-    --s2Alpha: 0;       /* S2 viewport alpha during cross-fade */
+    --shift: 0px; --titleOpacity: 0; --linksOpacity: 0;
+    --heroAlpha: 1; --heroBlur: 0;
+    /* S1 */
+    --s1: 0; --s1Alpha: 1; --s1ImgOpacity: 0; --s1Y: 0px;
+    /* S2 */
+    --s2: 0; --s2Alpha: 0; --s2ImgOpacity: 0; --s2Y: 0px;
   }
 
-  /* ===== HERO (as before) ===== */
+  /* ===== HERO (unchanged) ===== */
   .hero-fixed{
     position:fixed; inset:0; z-index:3;
     opacity:var(--heroAlpha);
     filter: blur(calc(var(--heroBlur) * 10px));
     pointer-events:auto;
-    will-change:opacity, filter;
   }
   .hero-bg{
     position:absolute; inset:0;
@@ -50,74 +38,62 @@
   @keyframes heroIn{ from{opacity:0} to{opacity:1} }
 
   .hero-media{ position:absolute; inset:96px 82px; display:flex; align-items:flex-end; justify-content:flex-start; overflow:hidden; }
-  .col{ position:relative; max-width:700px; transform:translateY(var(--shift)); will-change:transform; }
+  .col{ position:relative; max-width:700px; transform:translateY(var(--shift)); }
   .hero-title{ margin:0 0 24px 0; font-weight:400; font-size:100px; line-height:100px; opacity:var(--titleOpacity); }
   .hero-title .line{ display:block; }
+  .hero-links{ display:flex; flex-direction:column; gap:10px; font-size:24px; line-height:30px; opacity:var(--linksOpacity); }
+  .hero-links a:link,.hero-links a:visited{ color:#fff!important; text-decoration:none!important; transition:color .2s ease; cursor:pointer; }
+  .hero-links a:hover,.hero-links a:focus-visible{ color:#00A86B!important; text-decoration:none!important; }
 
-  .hero-links{
-    display:flex; flex-direction:column; gap:10px;
-    font-size:24px; line-height:30px; opacity:var(--linksOpacity);
-  }
-  .hero-links a:link, .hero-links a:visited{
-    color:#fff !important; text-decoration:none !important; cursor:pointer; transition:color .2s ease;
-  }
-  .hero-links a:hover, .hero-links a:focus-visible{ color:#00A86B !important; text-decoration:none !important; }
+  .driver{ height:200vh; } /* hero’s play range */
 
-  .driver{ height:200vh; }
-
-  /* ===== Shared section layout helpers ===== */
-  .section-sticky{
-    position:sticky; top:0; height:100vh;
-    padding:96px 82px;              /* same as hero inset */
+  /* ===== Shared “pinned section” layout ===== */
+  .section-wrap{ position:relative; height:280vh; } /* tall => time to animate */
+  .section-frame{
+    position:sticky; top:0; height:100vh;   /* PINNED viewport */
+    padding:96px 82px;
     display:grid; align-items:center;
   }
-  /* The inner “media box” must have a fixed height equal to the inner viewport.
-     That ensures height:100% on the <img> really equals the visible window. */
+  /* Inner media window: exact visible height (no crop); center content */
   .media-box{
-    height: calc(100vh - 192px);    /* full viewport minus top/bottom padding */
+    height: calc(100vh - 192px);
     display:flex; align-items:center; justify-content:center;
-    min-width:0; min-height:0;      /* avoid grid min-size surprises */
+    min-width:0; min-height:0;
   }
-  /* Never crop. Fit image by height; keep full frame visible. */
   .media-box img{
-    height:100%;
-    width:auto;
+    height:100%; width:auto;            /* fit by height */
     max-width:100%;
     object-fit:contain;
     display:block;
-    transition:none;                /* scroll-scrubbed */
   }
+  .text-clip{ overflow:hidden; height: calc(100vh - 192px); }
+  .text-col { color:#111; }
+  .text-col p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
 
-  /* ===== Section 1 (RIGHT media, LEFT text) ===== */
-  .s1-wrap{ position:relative; height:280vh; background:#e5e4e0; }
-  .s1-sticky{
-    z-index:2;
+  /* Section 1: text LEFT (512) / gutter (96) / media RIGHT */
+  .s1-frame{
+    z-index:2;                           /* sits above S2; fades out */
     grid-template-columns:512px 96px 1fr;
     opacity:var(--s1Alpha);
   }
-  .s1-text-clip{ overflow:hidden; height: calc(100vh - 192px); }
-  .s1-text{ transform:translateY(var(--s1Y)); color:#111; will-change:transform; }
-  .s1-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
-  .s1-media img{ opacity:var(--s1ImgOpacity); will-change:opacity; }
+  #s1-img{ opacity:var(--s1ImgOpacity); }
+  #s1-text{ transform:translateY(var(--s1Y)); }
 
-  /* ===== Section 2 (MIRRORED: LEFT media, RIGHT text) ===== */
-  .s2-wrap{ position:relative; height:280vh; background:#e5e4e0; }
-  .s2-sticky{
-    z-index:1;
+  /* Section 2: media LEFT / gutter / text RIGHT (mirrored) */
+  .s2-frame{
+    z-index:1;                           /* under S1; fades in */
     grid-template-columns:1fr 96px 512px;
     opacity:var(--s2Alpha);
   }
-  .s2-text-clip{ overflow:hidden; height: calc(100vh - 192px); }
-  .s2-text{ transform:translateY(var(--s2Y)); color:#111; will-change:transform; }
-  .s2-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
-  .s2-media img{ opacity:var(--s2ImgOpacity); will-change:opacity; }
+  #s2-img{ opacity:var(--s2ImgOpacity); }
+  #s2-text{ transform:translateY(var(--s2Y)); }
 
   .after{ min-height:120vh; }
 </style>
 </head>
 <body>
 
-<!-- HERO -->
+<!-- ===== HERO ===== -->
 <div class="hero-fixed" id="hero">
   <div class="hero-bg" aria-hidden="true"></div>
   <div class="hero-media" id="hero-media">
@@ -140,41 +116,33 @@
 
 <section class="driver" id="driver"></section>
 
-<!-- ===== SECTION 1 ===== -->
-<section class="s1-wrap" id="s1-wrap">
-  <div class="section-sticky s1-sticky" id="s1-sticky">
-    <div class="s1-text-clip" id="s1-clip">
-      <div class="s1-text" id="s1-text">
-        <p><strong>HOURS AFTER MY</strong> mother took her last breath on earth…</p>
-        <p>After we opened the windows to let the spirits out…</p>
-        <p>After we lit incense stick after incense stick…</p>
-        <p>After we watched MMA fighters on TV in the basement…</p>
-        <p>And the smoke kept rising. The chain must not be broken.</p>
-      </div>
-    </div>
+<!-- ===== SECTION 1 (pinned) ===== -->
+<section class="section-wrap" id="s1-wrap">
+  <div class="section-frame s1-frame" id="s1-frame">
+    <div class="text-clip"><div class="text-col" id="s1-text">
+      <p><strong>HOURS AFTER MY</strong> mother took her last breath on earth…</p>
+      <p>After we opened the windows to let the spirits out…</p>
+      <p>After we lit incense stick after incense stick…</p>
+      <p>After we watched MMA fighters on TV in the basement…</p>
+      <p>And the smoke kept rising. The chain must not be broken.</p>
+    </div></div>
     <div></div>
-    <figure class="media-box s1-media">
-      <img id="s1-img" src="assets/section1.jpg?v=pinfix" alt="Section 1 visual">
-    </figure>
+    <figure class="media-box"><img id="s1-img" src="assets/section1.jpg?v=pinned" alt="Section 1 visual"></figure>
   </div>
 </section>
 
-<!-- ===== SECTION 2 (mirrored) ===== -->
-<section class="s2-wrap" id="s2-wrap">
-  <div class="section-sticky s2-sticky" id="s2-sticky">
-    <figure class="media-box s2-media">
-      <img id="s2-img" src="assets/section2.jpg?v=pinfix" alt="Section 2 visual">
-    </figure>
+<!-- ===== SECTION 2 (pinned, mirrored) ===== -->
+<section class="section-wrap" id="s2-wrap">
+  <div class="section-frame s2-frame" id="s2-frame">
+    <figure class="media-box"><img id="s2-img" src="assets/section2.jpg?v=pinned" alt="Section 2 visual"></figure>
     <div></div>
-    <div class="s2-text-clip" id="s2-clip">
-      <div class="s2-text" id="s2-text">
-        <p><strong>SECTION TWO</strong> opens as the orchard gives way…</p>
-        <p>Workers turn; baskets empty in cadence…</p>
-        <p>Paths widen; a city edge comes into view…</p>
-        <p>Streets knit the grove into grid…</p>
-        <p>And the rhythm shifts to a new register.</p>
-      </div>
-    </div>
+    <div class="text-clip"><div class="text-col" id="s2-text">
+      <p><strong>SECTION TWO</strong> opens as the orchard gives way…</p>
+      <p>Workers turn; baskets empty in cadence…</p>
+      <p>Paths widen; a city edge comes into view…</p>
+      <p>Streets knit the grove into grid…</p>
+      <p>And the rhythm shifts to a new register.</p>
+    </div></div>
   </div>
 </section>
 
@@ -209,7 +177,6 @@
     col.style.transform=prev||'';
     root.style.setProperty('--shift',startShift.toFixed(1)+'px');
   }
-
   function progressOf(el){
     const r=el.getBoundingClientRect();
     const vh=window.innerHeight||document.documentElement.clientHeight;
@@ -218,37 +185,29 @@
     return clamp(-r.top/total,0,1);
   }
 
-  /* ---------- SECTION 1 metrics ---------- */
+  /* ---------- Text flow metrics ---------- */
   const s1Wrap=document.getElementById('s1-wrap');
-  const s1Clip=document.getElementById('s1-clip');
   const s1Text=document.getElementById('s1-text');
-
+  const s1ClipH=()=>document.getElementById('s1-frame').clientHeight-192;
   let s1StartY=0,s1EndY=0;
-  function measureS1(){
-    const clipH=s1Clip.clientHeight;
-    const textH=s1Text.scrollHeight;
-    const pad=24;
-    s1StartY=clipH+pad;         /* start below */
-    s1EndY=-textH-pad;          /* end above */
-    root.style.setProperty('--s1Y',s1StartY+'px');
-  }
 
-  /* ---------- SECTION 2 metrics ---------- */
   const s2Wrap=document.getElementById('s2-wrap');
-  const s2Clip=document.getElementById('s2-clip');
   const s2Text=document.getElementById('s2-text');
-
+  const s2ClipH=()=>document.getElementById('s2-frame').clientHeight-192;
   let s2StartY=0,s2EndY=0;
-  function measureS2(){
-    const clipH=s2Clip.clientHeight;
-    const textH=s2Text.scrollHeight;
+
+  function measureText(){
     const pad=24;
-    s2StartY=clipH+pad;
-    s2EndY=-textH-pad;
+    const s1h=s1ClipH(), s1th=s1Text.scrollHeight;
+    s1StartY=s1h+pad; s1EndY=-s1th-pad;
+    root.style.setProperty('--s1Y',s1StartY+'px');
+
+    const s2h=s2ClipH(), s2th=s2Text.scrollHeight;
+    s2StartY=s2h+pad; s2EndY=-s2th-pad;
     root.style.setProperty('--s2Y',s2StartY+'px');
   }
 
-  /* Cross-fade driver: how far a section has risen from bottom→top of viewport */
+  /* Cross-fade driver: how far a wrap has risen from bottom to top of viewport */
   function appearFromBottomProgress(wrap){
     const vh=window.innerHeight||document.documentElement.clientHeight;
     const top=wrap.getBoundingClientRect().top;
@@ -265,51 +224,45 @@
     root.style.setProperty('--shift',shift.toFixed(1)+'px');
     root.style.setProperty('--linksOpacity',pSlide.toFixed(3));
 
-    /* SECTION 1 progress + hero dissolve (unchanged) */
+    /* S1 progress + hero dissolve */
     const s1=progressOf(s1Wrap);
     root.style.setProperty('--s1',s1.toFixed(3));
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
-    /* S1 image fade IN (first ~35% of S1) */
-    const s1ImgIn = clamp(s1/0.35,0,1);
-    root.style.setProperty('--s1ImgOpacity',s1ImgIn.toFixed(3));
+    /* S1 image fade-in (first ~35% of S1) */
+    root.style.setProperty('--s1ImgOpacity', clamp(s1/0.35,0,1).toFixed(3));
 
     /* S1 text starts at 0.75 of S1 */
     const s1TextStart=0.75;
     const s1Raw=clamp((s1-s1TextStart)/(1-s1TextStart),0,1);
-    const s1Y = s1StartY + (s1EndY - s1StartY) * easeSlower(s1Raw);
-    root.style.setProperty('--s1Y',s1Y+'px');
+    const s1Y=s1StartY+(s1EndY-s1StartY)*easeSlower(s1Raw);
+    root.style.setProperty('--s1Y', s1Y+'px');
 
-    /* ===== S1 ↔ S2 cross-fade driven by S2 entering from bottom ===== */
-    const s2Enter = appearFromBottomProgress(s2Wrap);  /* 0→1 over one viewport */
-    root.style.setProperty('--s2Alpha', s2Enter.toFixed(3));       /* S2 fades IN */
-    root.style.setProperty('--s1Alpha', (1 - s2Enter).toFixed(3)); /* S1 fades OUT */
+    /* ===== S1 ↔ S2 cross-fade (both frames are pinned) ===== */
+    const s2Enter=appearFromBottomProgress(s2Wrap);  /* 0→1 across one viewport */
+    root.style.setProperty('--s2Alpha', s2Enter.toFixed(3));        /* S2 fades in */
+    root.style.setProperty('--s1Alpha', (1 - s2Enter).toFixed(3));  /* S1 fades out */
 
-    /* SECTION 2 progress (for its own text/image choreography) */
+    /* S2 progress for its own text/img timings */
     const s2=progressOf(s2Wrap);
-    root.style.setProperty('--s2',s2.toFixed(3));
+    root.style.setProperty('--s2', s2.toFixed(3));
+    root.style.setProperty('--s2ImgOpacity', clamp(s2/0.35,0,1).toFixed(3));
 
-    /* S2 image fade IN (first ~35% of S2) */
-    const s2ImgIn = clamp(s2/0.35,0,1);
-    root.style.setProperty('--s2ImgOpacity',s2ImgIn.toFixed(3));
-
-    /* S2 text starts at 0.75 of S2 (mirrored timing) */
     const s2TextStart=0.75;
     const s2Raw=clamp((s2-s2TextStart)/(1-s2TextStart),0,1);
-    const s2Y = s2StartY + (s2EndY - s2StartY) * easeSlower(s2Raw);
-    root.style.setProperty('--s2Y',s2Y+'px');
+    const s2Y=s2StartY+(s2EndY-s2StartY)*easeSlower(s2Raw);
+    root.style.setProperty('--s2Y', s2Y+'px');
   }
 
   async function init(){
     if(document.fonts&&document.fonts.ready){ try{await document.fonts.ready;}catch(e){} }
     measureHero();
-    measureS1();
-    measureS2();
+    measureText();
     update();
-    window.addEventListener('load',()=>{measureHero();measureS1();measureS2();update();});
-    window.addEventListener('resize',()=>{measureHero();measureS1();measureS2();update();});
-    window.addEventListener('scroll',update,{passive:true});
+    window.addEventListener('load',   ()=>{measureHero();measureText();update();});
+    window.addEventListener('resize', ()=>{measureHero();measureText();update();});
+    window.addEventListener('scroll', update, {passive:true});
   }
   init();
 })();
