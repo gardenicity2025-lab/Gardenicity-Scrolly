@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → Section 1 (fade trigger @ 95%)</title>
+<title>Gardenicity — Hero → Section 1 (fade-out starts at 95%)</title>
 <style>
   /* ===== Base ===== */
   html,body{
@@ -13,15 +13,15 @@
     height:100%;
   }
   :root{
-    --shift: 0px;
-    --titleOpacity: 0;
-    --linksOpacity: 0;
-    --heroAlpha: 1;
+    --shift: 0px;           /* hero slide */
+    --titleOpacity: 0;      /* hero title fade */
+    --linksOpacity: 0;      /* hero links fade */
+    --heroAlpha: 1;         /* hero dissolve */
     --heroBlur: 0;
 
-    --s1: 0;
-    --s1ImgOpacity: 0;
-    --s1Y: 0px;
+    --s1: 0;                /* Section 1 progress */
+    --s1ImgOpacity: 0;      /* final computed opacity (in × out) */
+    --s1Y: 0px;             /* S1 text translateY */
   }
 
   /* ===== HERO ===== */
@@ -29,7 +29,7 @@
     position:fixed; inset:0; z-index:3;
     opacity:var(--heroAlpha);
     filter: blur(calc(var(--heroBlur) * 10px));
-    pointer-events:auto;
+    pointer-events:auto;           /* links remain clickable */
     will-change:opacity, filter;
   }
   .hero-bg{
@@ -50,19 +50,23 @@
     font-size:24px; line-height:30px;
     opacity:var(--linksOpacity);
   }
+  /* Robust, clickable, green hover */
   .hero-links a:link,
   .hero-links a:visited{
-    color:#fff !important; text-decoration:none !important;
-    cursor:pointer; transition:color .2s ease;
+    color:#fff !important;
+    text-decoration:none !important;
+    cursor:pointer;
+    transition:color .2s ease;
   }
   .hero-links a:hover,
   .hero-links a:focus-visible{
-    color:#00A86B !important; text-decoration:none !important;
+    color:#00A86B !important;
+    text-decoration:none !important;
   }
 
   .driver{ height:200vh; }
 
-  /* ===== Section 1 ===== */
+  /* ===== Section 1 (pinned under hero) ===== */
   .s1-wrap{ position:relative; height:280vh; background:#e5e4e0; }
   .s1-sticky{
     position:sticky; top:0; height:100vh;
@@ -77,8 +81,8 @@
   .s1-media img{
     object-fit:cover;
     max-width:100%; max-height:100%;
-    opacity:var(--s1ImgOpacity);
-    transition:none;
+    opacity:var(--s1ImgOpacity);   /* final opacity after in×out */
+    transition:none;                /* scroll-scrubbed */
     will-change:opacity, width, height;
   }
 
@@ -98,6 +102,7 @@
         <span class="line">Geddes see?</span>
       </h1>
       <nav class="hero-links" id="hero-links" aria-label="Primary">
+        <!-- live placeholders -->
         <a href="https://www.megama.net">Civic Green</a>
         <a href="https://www.megama.net">Growth</a>
         <a href="https://www.megama.net">Sustenance</a>
@@ -112,7 +117,7 @@
 
 <!-- SECTION 1 -->
 <section class="s1-wrap" id="s1-wrap">
-  <div class="s1-sticky" id="s1-sticky">
+  <div class="s1-sticky">
     <div class="s1-text-clip" id="s1-clip">
       <div class="s1-text" id="s1-text">
         <p><strong>HOURS AFTER MY</strong> mother took her last breath on earth…</p>
@@ -136,19 +141,16 @@
 <section class="after"></section>
 
 <script>
-console.log("%cGardenicity v30","color:#00A86B");
-
-/* Tunables */
-const TRIGGER_FRACTION = 0.95; // fade-out starts when text bottom hits 95% of viewport
-const FADE_SPAN        = 0.35; // span same as hero fade
-
 (function(){
   const root=document.documentElement;
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
   const easeInOutCubic=t=>t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
-  const easeSlower=t=>Math.pow(t,0.8);
 
-  /* HERO choreography */
+  /* easing for text travel (slightly slow at start) and its inverse */
+  const easeSlower = t => Math.pow(t, 0.8);
+  const invEaseSlower = e => Math.pow(clamp(e,0,1), 1/0.8);  // inverse of t^0.8
+
+  /* ---------- HERO choreography ---------- */
   const driver=document.getElementById('driver');
   const media=document.getElementById('hero-media');
   const col=document.getElementById('hero-col');
@@ -178,7 +180,7 @@ const FADE_SPAN        = 0.35; // span same as hero fade
     return clamp(-r.top/total,0,1);
   }
 
-  /* Section 1 metrics */
+  /* ---------- Section 1 metrics ---------- */
   const s1Wrap=document.getElementById('s1-wrap');
   const s1Clip=document.getElementById('s1-clip');
   const s1Text=document.getElementById('s1-text');
@@ -186,9 +188,16 @@ const FADE_SPAN        = 0.35; // span same as hero fade
   const s1Img=document.getElementById('s1-img');
 
   let s1StartY=0,s1EndY=0,s1TextH=0,s1ClipH=0;
-  let s1TriggerProg=null;
 
-  function sizeS1Image(){
+  function measureS1(){
+    s1ClipH=s1Clip.clientHeight;
+    s1TextH=s1Text.scrollHeight;
+    const pad=24;
+    s1StartY=s1ClipH+pad;      // start fully below window
+    s1EndY=-s1TextH-pad;       // end fully above window
+    root.style.setProperty('--s1Y',s1StartY+'px');
+
+    // size image to fit its media box based on nominal size
     const nomW=parseFloat(s1Img.dataset.imgW)||840;
     const nomH=parseFloat(s1Img.dataset.imgH)||1120;
     const box=s1Media.getBoundingClientRect();
@@ -197,18 +206,14 @@ const FADE_SPAN        = 0.35; // span same as hero fade
     s1Img.style.height=(nomH*scale)+'px';
   }
 
-  function measureS1(){
-    s1ClipH=s1Clip.clientHeight;
-    s1TextH=s1Text.scrollHeight;
-    const pad=24;
-    s1StartY=s1ClipH+pad;
-    s1EndY=-s1TextH-pad;
-    root.style.setProperty('--s1Y',s1StartY+'px');
-    sizeS1Image();
-  }
+  /* constants */
+  const S1_IMG_IN_SPAN = 0.35;      // image reaches 1.0 opacity by ~35% of section
+  const TEXT_START_AT  = 0.75;      // text begins moving when s1 >= 0.75
+  const TRIGGER_FRAC   = 0.95;      // bottom-of-text position to start fade-out
+  const FADE_OUT_SPAN  = 0.35;      // scroll span to fade out once triggered
 
   function update(){
-    /* HERO */
+    /* HERO baseline choreography */
     const p=progressOf(driver);
     const pFade=easeInOutCubic(clamp(p/0.60,0,1));
     root.style.setProperty('--titleOpacity',pFade.toFixed(3));
@@ -217,40 +222,33 @@ const FADE_SPAN        = 0.35; // span same as hero fade
     root.style.setProperty('--shift',shift.toFixed(1)+'px');
     root.style.setProperty('--linksOpacity',pSlide.toFixed(3));
 
-    /* SECTION 1 */
+    /* SECTION 1 progress + hero dissolve */
     const s1=progressOf(s1Wrap);
     root.style.setProperty('--s1',s1.toFixed(3));
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
-    /* fade IN */
-    const imgIn=clamp(s1/0.35,0,1);
+    /* S1 image fade IN — reaches 1.0 by early part of section */
+    const s1ImgIn = clamp(s1 / S1_IMG_IN_SPAN, 0, 1);
 
-    /* text scroll */
-    const s1TextStart=0.75;
-    const raw=clamp((s1-s1TextStart)/(1-s1TextStart),0,1);
-    const slowed=easeSlower(raw);
-    const y=s1StartY+(s1EndY-s1StartY)*slowed;
-    root.style.setProperty('--s1Y',y+'px');
+    /* S1 text position (starts at 0.75 of the section) */
+    const raw   = clamp((s1 - TEXT_START_AT) / (1 - TEXT_START_AT), 0, 1);
+    const eased = easeSlower(raw);
+    const y     = s1StartY + (s1EndY - s1StartY) * eased;
+    root.style.setProperty('--s1Y', y + 'px');
 
-    /* fade OUT trigger at 95% */
-    const textHasStarted=raw>0;
-    const textBottomPx=y+s1TextH;
-    const triggerPx=s1ClipH*TRIGGER_FRACTION;
+    /* ---- Fade OUT only after text bottom hits 95% of sticky viewport ---- */
+    // Compute the s1 progress at which this happens (invert the mapping once):
+    const slowedTarget =
+      (s1ClipH * TRIGGER_FRAC - s1StartY - s1TextH) / (s1EndY - s1StartY);
+    const rawTarget   = clamp(invEaseSlower(slowedTarget), 0, 1);
+    const s1AtTrigger = TEXT_START_AT + rawTarget * (1 - TEXT_START_AT);
 
-    if(textHasStarted && textBottomPx<=triggerPx){
-      if(s1TriggerProg===null) s1TriggerProg=s1;
-    } else {
-      if(s1<(s1TriggerProg??1)) s1TriggerProg=null;
-    }
+    const fadeOut = clamp((s1 - s1AtTrigger) / FADE_OUT_SPAN, 0, 1);
 
-    let out=0;
-    if(s1TriggerProg!==null){
-      out=clamp((s1-s1TriggerProg)/FADE_SPAN,0,1);
-    }
-
-    const finalOpacity=imgIn*(1-out);
-    root.style.setProperty('--s1ImgOpacity',finalOpacity.toFixed(3));
+    // Final opacity: fully opaque until trigger, then scroll-scrubbed fade
+    const finalOpacity = s1ImgIn * (1 - fadeOut);
+    root.style.setProperty('--s1ImgOpacity', finalOpacity.toFixed(3));
   }
 
   async function init(){
