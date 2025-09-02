@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → Section 1 (pinned, exact text sweep)</title>
+<title>Gardenicity — Hero → Section 1 (pinned, no-drift, tight text sweep)</title>
 <style>
   /* ===== Base ===== */
   html,body{
@@ -23,7 +23,7 @@
     /* Section 1 vars */
     --s1: 0;
     --s1ImgOpacity: 0;
-    --s1Y: 120vh; /* push text safely below until JS measures */
+    --s1Y: 0px;
   }
 
   /* ===== HERO ===== */
@@ -57,7 +57,9 @@
     opacity:var(--linksOpacity);
   }
   .hero-links a:link,
-  .hero-links a:visited{ color:#fff !important; text-decoration:none !important; cursor:pointer; transition:color .2s ease; }
+  .hero-links a:visited{
+    color:#fff !important; text-decoration:none !important; cursor:pointer; transition:color .2s ease;
+  }
   .hero-links a:hover,
   .hero-links a:focus-visible{ color:#00A86B !important; text-decoration:none !important; }
 
@@ -72,7 +74,7 @@
     position:sticky; top:0; height:100vh;
     display:grid; padding:96px 82px;
     grid-template-columns:512px 96px 1fr;
-    align-items:stretch;            /* <-- fill full height (no vertical centering) */
+    align-items:center;
     box-sizing:border-box;
   }
 
@@ -80,17 +82,17 @@
   .s1-text-clip{ overflow:hidden; height:100%; }
   .s1-text{ transform:translateY(var(--s1Y)); color:#111; will-change:transform; }
   .s1-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
-  .s1-text p:first-child{ margin-top:0; }
-  .s1-text p:last-child{ margin-bottom:0; } /* exact end, no extra space */
 
-  /* Right column: media area (pinned, no drift) */
+  /* Right column: media area */
   .s1-media{
     width:100%; height:100%;
     display:flex; align-items:center; justify-content:center;
-    overflow:hidden; position:relative;
+    overflow:hidden;
   }
   .s1-media img{
-    height:100%; width:auto;        /* contain by height, preserve aspect */
+    /* Pin behavior: centered & contained inside the sticky viewport */
+    height:100%;
+    width:auto;
     max-width:100%; max-height:100%;
     object-fit:contain;
     opacity:var(--s1ImgOpacity);
@@ -190,13 +192,16 @@
   const s1Clip=document.getElementById('s1-clip');
   const s1Text=document.getElementById('s1-text');
 
-  let s1StartY=0,s1EndY=0;
+  let s1StartY=0,s1EndY=0,s1TextH=0,s1ClipH=0;
 
   function measureS1(){
-    const clipH=s1Clip.clientHeight;     // exact visible region (inside sticky paddings)
-    const textH=s1Text.scrollHeight;     // full text block height
-    s1StartY=clipH;                      // start fully below the clip
-    s1EndY=-textH;                       // end fully above the clip
+    s1ClipH=s1Clip.clientHeight;
+    s1TextH=s1Text.scrollHeight;
+
+    // Start exactly one full clip-height below; end exactly one full text-height above.
+    s1StartY = s1ClipH;
+    s1EndY   = -s1TextH;
+
     root.style.setProperty('--s1Y',s1StartY+'px');
   }
 
@@ -220,16 +225,16 @@
     const imgFadeIn = clamp(s1/0.35,0,1);
     root.style.setProperty('--s1ImgOpacity',imgFadeIn.toFixed(3));
 
-    /* Text movement (starts at 0.75 of section progress) */
+    /* Text movement (starts at 75% through S1), sweeping fully through the clip */
     const textStart=0.75;
     const raw=clamp((s1-textStart)/(1-textStart),0,1);
-    const slowed=easeSlower(raw);              // smooth feel, still reaches 1
-    const y=s1StartY + (s1EndY - s1StartY) * slowed;
+    const slowed=easeSlower(raw);
+    const y=s1StartY+(s1EndY-s1StartY)*slowed;
     root.style.setProperty('--s1Y',y+'px');
   }
 
   async function init(){
-    if(document.fonts && document.fonts.ready){ try{await document.fonts.ready;}catch(e){} }
+    if(document.fonts&&document.fonts.ready){ try{await document.fonts.ready;}catch(e){} }
     measureHero();
     measureS1();
     update();
