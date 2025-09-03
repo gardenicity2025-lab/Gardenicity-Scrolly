@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → S1 → S2 (no-drift, column-pinned frames)</title>
+<title>Gardenicity — Hero → S1 → S2 (no-drift, aligned, gated crossfades)</title>
 <style>
   /* ===== Base ===== */
   html,body{
@@ -20,7 +20,7 @@
     --s2:0; --s2Overlay:0; --s2Y:0px; --s2ImgOpacity:0;
   }
 
-  /* ===== HERO (unchanged) ===== */
+  /* ===== HERO (aligned to 96px left margin) ===== */
   .hero-fixed{
     position:fixed; inset:0; z-index:3;
     opacity:var(--heroAlpha);
@@ -35,7 +35,7 @@
   @keyframes heroIn{ from{opacity:0} to{opacity:1} }
 
   .hero-media{
-    position:absolute; inset:96px 82px;
+    position:absolute; top:96px; bottom:96px; left:96px; right:82px; /* ← aligned */
     display:flex; align-items:flex-end; justify-content:flex-start; overflow:hidden;
   }
   .col{ position:relative; max-width:700px; transform:translateY(var(--shift)); will-change:transform; }
@@ -47,38 +47,33 @@
 
   .driver{ height:200vh; } /* scroll space to leave hero */
 
-  /* ===== FIXED, COLUMN-PINNED IMAGE FRAMES (NO DRIFT) =====
-     Layout constants: left/right page padding = 82px; top/bottom = 96px;
-     Text column = 512px; gutter = 96px.
-     S1 media is RIGHT column (after 512 + 96).
-     S2 media is LEFT column (before 96 + 512).
-  */
+  /* ===== FIXED, PINNED IMAGE FRAMES (NO DRIFT) ===== */
   .frame{
     position:fixed; z-index:1; pointer-events:none;
-    top:96px; bottom:96px; /* vertical page margin */
+    top:96px; bottom:96px;
     display:flex; align-items:center; justify-content:center; overflow:hidden;
   }
-  /* S1 frame: right media column area */
+  /* S1 image on the RIGHT media column: left = 96 + 512 + 96, right = 82 */
   .s1-frame{
-    left: calc(82px + 512px + 96px);  /* 690px */
+    left: calc(96px + 512px + 96px);
     right: 82px;
     opacity: var(--s1ImgOpacity);
   }
-  /* S2 frame: left media column area (mirror) */
+  /* S2 image on the LEFT media column: left = 96, right = 82 + 96 + 512 */
   .s2-frame{
-    left: 82px;
-    right: calc(82px + 96px + 512px); /* 690px */
+    left: 96px;
+    right: calc(82px + 96px + 512px);
     opacity: var(--s2ImgOpacity);
   }
   .frame img{
     width:100%; height:100%;
-    object-fit:contain; display:block; /* auto-scale, centered, no drift */
+    object-fit:contain; display:block; /* auto-scale, no crop, stay centered */
   }
 
-  /* ===== SECTION DRIVERS (produce scroll progress) ===== */
+  /* ===== SECTION DRIVERS (tall wrappers to produce progress) ===== */
   .s1-wrap, .s2-wrap{ position:relative; height:280vh; background:#e5e4e0; }
 
-  /* ===== FIXED TEXT OVERLAYS (sweep full viewport) ===== */
+  /* ===== FIXED TEXT OVERLAYS (sweep the full viewport) ===== */
   .s1-overlay, .s2-overlay{
     position:fixed; inset:0; z-index:2; pointer-events:none;
   }
@@ -129,11 +124,11 @@
 
 <section class="driver" id="driver"></section>
 
-<!-- ===== FIXED, PINNED IMAGE FRAMES (column-aligned) ===== -->
+<!-- FIXED, PINNED FRAMES (no drift) -->
 <figure class="frame s1-frame" aria-hidden="true"><img id="s1-img" src="assets/section1.jpg" alt=""></figure>
 <figure class="frame s2-frame" aria-hidden="true"><img id="s2-img" src="assets/section2.jpg" alt=""></figure>
 
-<!-- ===== SECTION 1 (driver + overlay rail) ===== -->
+<!-- ===== SECTION 1 (driver + overlay rail LEFT) ===== -->
 <section class="s1-wrap" id="s1-wrap">
   <div class="s1-overlay">
     <div class="s1-rail">
@@ -148,7 +143,7 @@
   </div>
 </section>
 
-<!-- ===== SECTION 2 (driver + mirrored overlay rail) ===== -->
+<!-- ===== SECTION 2 (driver + overlay rail RIGHT) ===== -->
 <section class="s2-wrap" id="s2-wrap">
   <div class="s2-overlay">
     <div class="s2-rail">
@@ -202,7 +197,7 @@
     return clamp(-r.top/total,0,1);
   }
 
-  /* ---------- Sections ---------- */
+  /* ---------- SECTIONS ---------- */
   const s1Wrap=document.getElementById('s1-wrap');
   const s2Wrap=document.getElementById('s2-wrap');
   const s1Text=document.getElementById('s1-text');
@@ -242,7 +237,7 @@
     root.style.setProperty('--s1',s1.toFixed(3));
     root.style.setProperty('--s2',s2.toFixed(3));
 
-    /* Overlay visibility */
+    /* Overlay visibility (only while their section is active) */
     root.style.setProperty('--s1Overlay',(s1>0 && s1<1)?1:0);
     root.style.setProperty('--s2Overlay',(s2>0 && s2<1)?1:0);
 
@@ -250,31 +245,36 @@
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
-    /* Text sweeps (viewport-wide rails) */
-    const s1TextStart=0.75;
+    /* Text sweeps (full-viewport rails) */
+    const s1TextStart=0.75;  // S1 text waits for image presence
     const s1Raw=clamp((s1-s1TextStart)/(1-s1TextStart),0,1);
     const s1Y=s1StartY+(s1EndY-s1StartY)*easePow(s1Raw,0.8);
     root.style.setProperty('--s1Y', s1Y+'px');
 
-    const s2TextStart=0.25; /* tune later */
+    const s2TextStart=0.25;  // S2 text enters as S2 fades in
     const s2Raw=clamp((s2-s2TextStart)/(1-s2TextStart),0,1);
     const s2Y=s2StartY+(s2EndY-s2StartY)*easePow(s2Raw,0.8);
     root.style.setProperty('--s2Y', s2Y+'px');
 
-    /* ===== Image Opacities (gated crossfade, no drift) ===== */
-    const s1In = clamp(s1/0.35, 0, 1);     // hero→S1 same pace
-    const textBottom = s1Y + s1Text.scrollHeight;
+    /* ===== Image Opacities (pinned frames, no drift) ===== */
+    /* S1 fade-in pace matches hero→S1 */
+    const s1In = clamp(s1/0.35, 0, 1);
 
+    /* Hold S1 at 1.0 until S1 text fully clears the viewport */
+    const textBottom = s1Y + s1Text.scrollHeight;
     let s1Alpha;
     if (textBottom > 0) {
-      s1Alpha = 1;                          // S1 holds 100% until text clears
+      s1Alpha = 1;  // fully visible while text is present
     } else {
-      const x = clamp(s2/0.35, 0, 1);       // then crossfade with S2 over 35%
+      // Only once text cleared, crossfade against S2 over the same 0.35 window
+      const x = clamp(s2/0.35, 0, 1);
       s1Alpha = 1 - x;
     }
-    s1Alpha = Math.min(s1Alpha, s1In);      // respect initial fade-in cap
+    // Ensure initial fade-in cap (until s1In reaches 1)
+    s1Alpha = Math.min(s1Alpha, s1In);
     root.style.setProperty('--s1ImgOpacity', s1Alpha.toFixed(3));
 
+    // S2 starts fading in only after S1 text cleared (same 0.35 window)
     const gateClear = (textBottom <= 0) ? 1 : 0;
     const s2Alpha = gateClear * clamp(s2/0.35, 0, 1);
     root.style.setProperty('--s2ImgOpacity', s2Alpha.toFixed(3));
