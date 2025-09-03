@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → Section 1 → Section 2 (cross-fade)</title>
+<title>Gardenicity — Pinned cross-fade: Hero → S1 → S2</title>
 <style>
   /* ===== Base ===== */
   html,body{
@@ -35,7 +35,7 @@
     --s2Overlay: 0;
   }
 
-  /* ===== HERO ===== */
+  /* ===== HERO (unchanged) ===== */
   .hero-fixed{
     position:fixed; inset:0; z-index:3;
     opacity:var(--heroAlpha);
@@ -51,7 +51,7 @@
   }
   @keyframes heroIn{ from{opacity:0} to{opacity:1} }
 
-  /* align hero content to the 96px left grid (and 82px right) */
+  /* Align hero content to grid: 96px left / 82px right, 96px top/bottom */
   .hero-media{
     position:absolute;
     top:96px; bottom:96px; left:96px; right:82px;
@@ -61,113 +61,98 @@
   .col{ position:relative; max-width:700px; transform:translateY(var(--shift)); will-change:transform; }
   .hero-title{ margin:0 0 24px 0; font-weight:400; font-size:100px; line-height:100px; opacity:var(--titleOpacity); }
   .hero-title .line{ display:block; }
-
-  .hero-links{
-    display:flex; flex-direction:column; gap:10px;
-    font-size:24px; line-height:30px;
-    opacity:var(--linksOpacity);
-  }
+  .hero-links{ display:flex; flex-direction:column; gap:10px; font-size:24px; line-height:30px; opacity:var(--linksOpacity); }
   .hero-links a{ color:#fff; text-decoration:none; transition:color .2s ease; }
   .hero-links a:hover,.hero-links a:focus-visible{ color:#00A86B; }
 
-  /* spacer to scroll the hero */
+  /* Spacer to scrub the hero */
   .driver{ height:200vh; }
 
   /* ===== SECTION 1 ===== */
   .s1-wrap{ position:relative; height:280vh; background:#e5e4e0; }
 
-  /* Sticky viewport for media (right column) */
+  /* Sticky media viewport (RIGHT column), pinned and stacked */
   .s1-sticky{
-    position:sticky; top:0; height:100vh; z-index:1;  /* below overlays */
+    position:sticky; top:0; height:100vh; z-index:1;
     display:grid; padding:96px 82px;
-    grid-template-columns:512px 96px 1fr;        /* text col, gutter, media */
-    align-items:stretch;                          /* media cell fills full height */
-    box-sizing:border-box;
+    grid-template-columns:512px 96px 1fr;   /* text, gutter, media */
+    align-items:stretch; box-sizing:border-box;
+    /* pinned viewport cross-faded by opacity */
     opacity:var(--s1Alpha);
     will-change:opacity;
   }
+  .s1-media{
+    grid-column:3;
+    width:100%; height:100%;
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden; z-index:1;
+  }
+  .s1-media img{
+    width:100%; height:100%;
+    object-fit:contain;          /* no drift; fully contained */
+    display:block;
+    opacity:var(--s1ImgOpacity); /* image’s own fade in */
+    transition:none; will-change:opacity;
+  }
 
-  /* Overlay text rail — fixed to viewport grid (left) */
+  /* Fixed overlay text rail (LEFT) aligned to global grid */
   .s1-overlay{
-    position:fixed; inset:0; z-index:2;          /* above sticky media, below hero */
-    pointer-events:none;
-    opacity:var(--s1Overlay);
-    transition:opacity .12s linear;
+    position:fixed; inset:0; z-index:2; pointer-events:none;
+    opacity:var(--s1Overlay); transition:opacity .12s linear;
   }
   .s1-text-rail{
     position:absolute; top:0; bottom:0;
     left:96px; width:512px;
     overflow:hidden; margin:0; padding:0; border:0;
   }
-  .s1-text{
-    transform:translateY(var(--s1Y)); color:#111;
-    will-change:transform; margin:0; padding:0; border:0;
-  }
+  .s1-text{ transform:translateY(var(--s1Y)); color:#111; margin:0; padding:0; border:0; will-change:transform; }
   .s1-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
 
-  /* Pinned media (right) — no drift, fully contained */
-  .s1-media{
-    grid-column:3; width:100%; height:100%;
-    display:flex; align-items:center; justify-content:center;
-    overflow:hidden; z-index:1;
-  }
-  .s1-media img{
-    width:100%; height:100%;
-    object-fit:contain;
-    opacity:var(--s1ImgOpacity);
-    transition:none; will-change:opacity;
-    display:block;
-  }
-
-  /* ===== SECTION 2 (mirrored layout) ===== */
+  /* ===== SECTION 2 (mirrored) ===== */
   .s2-wrap{ position:relative; height:280vh; background:#e5e4e0; }
 
+  /* Sticky media viewport (LEFT column), pinned and stacked on top of S1 when cross-fading */
   .s2-sticky{
     position:sticky; top:0; height:100vh; z-index:1;
     display:grid; padding:96px 82px;
-    grid-template-columns:1fr 96px 512px;        /* media, gutter, text col */
-    align-items:stretch;
-    box-sizing:border-box;
+    grid-template-columns:1fr 96px 512px;   /* media, gutter, text */
+    align-items:stretch; box-sizing:border-box;
     opacity:var(--s2Alpha);
     will-change:opacity;
   }
-
-  /* Right overlay rail for S2 (mirrors S1 to the right) */
-  .s2-overlay{
-    position:fixed; inset:0; z-index:2; pointer-events:none;
-    opacity:var(--s2Overlay);
-    transition:opacity .12s linear;
-  }
-  .s2-text-rail{
-    position:absolute; top:0; bottom:0;
-    right:82px; width:512px;                     /* right margin 82px */
-    overflow:hidden; margin:0; padding:0; border:0;
-  }
-  .s2-text{
-    transform:translateY(var(--s2Y)); color:#111;
-    will-change:transform; margin:0; padding:0; border:0;
-  }
-  .s2-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
-
   .s2-media{
-    grid-column:1; width:100%; height:100%;
+    grid-column:1;
+    width:100%; height:100%;
     display:flex; align-items:center; justify-content:center;
     overflow:hidden; z-index:1;
   }
   .s2-media img{
     width:100%; height:100%;
     object-fit:contain;
+    display:block;
     opacity:var(--s2ImgOpacity);
     transition:none; will-change:opacity;
-    display:block;
   }
+
+  /* Fixed overlay text rail (RIGHT) aligned to global grid */
+  .s2-overlay{
+    position:fixed; inset:0; z-index:2; pointer-events:none;
+    opacity:var(--s2Overlay); transition:opacity .12s linear;
+  }
+  .s2-text-rail{
+    position:absolute; top:0; bottom:0;
+    right:82px; width:512px;
+    overflow:hidden; margin:0; padding:0; border:0;
+  }
+  .s2-text{ transform:translateY(var(--s2Y)); color:#111; margin:0; padding:0; border:0; will-change:transform; }
+  .s2-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
 
   .after{ min-height:120vh; }
 </style>
 </head>
 <body>
 
-<!-- HERO -->
+<!-- HERO (pinned) -->
 <div class="hero-fixed" id="hero">
   <div class="hero-bg" aria-hidden="true"></div>
   <div class="hero-media" id="hero-media">
@@ -188,11 +173,12 @@
   </div>
 </div>
 
+<!-- Scrubber for hero motion -->
 <section class="driver" id="driver"></section>
 
-<!-- SECTION 1 -->
+<!-- SECTION 1 (pinned media on RIGHT, overlay text on LEFT) -->
 <section class="s1-wrap" id="s1-wrap">
-  <!-- fixed overlay that aligns to the viewport grid (left) -->
+  <!-- Fixed overlay text (left rail) -->
   <div class="s1-overlay">
     <div class="s1-text-rail" id="s1-rail">
       <div class="s1-text" id="s1-text">
@@ -205,7 +191,7 @@
     </div>
   </div>
 
-  <!-- sticky media grid (right) -->
+  <!-- Sticky media viewport (right) -->
   <div class="s1-sticky" id="s1-sticky">
     <div></div><div></div>
     <figure class="s1-media" id="s1-media">
@@ -214,9 +200,9 @@
   </div>
 </section>
 
-<!-- SECTION 2 -->
+<!-- SECTION 2 (pinned media on LEFT, overlay text on RIGHT) -->
 <section class="s2-wrap" id="s2-wrap">
-  <!-- fixed overlay (right) -->
+  <!-- Fixed overlay text (right rail) -->
   <div class="s2-overlay">
     <div class="s2-text-rail" id="s2-rail">
       <div class="s2-text" id="s2-text">
@@ -229,7 +215,7 @@
     </div>
   </div>
 
-  <!-- sticky media grid (left) -->
+  <!-- Sticky media viewport (left) -->
   <div class="s2-sticky" id="s2-sticky">
     <figure class="s2-media" id="s2-media">
       <img id="s2-img" src="assets/section2.jpg" alt="Section 2 visual (landscape)">
@@ -284,7 +270,7 @@
   let s1StartY=0,s1EndY=0;
 
   function measureS1(){
-    const clipH = window.innerHeight;      // overlay spans full viewport
+    const clipH = window.innerHeight;      // overlay rail spans full viewport
     const textH = s1Text.scrollHeight;
     s1StartY = clipH;                      // start fully below viewport
     s1EndY   = -textH;                     // end fully above viewport
@@ -322,33 +308,31 @@
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
-    /* S1 image fade-in (0 → 35% of S1) */
+    /* S1 image fades in over the first ~35% of S1 */
     const s1ImgIn = clamp(s1/0.35,0,1);
+    root.style.setProperty('--s1ImgOpacity', s1ImgIn.toFixed(3));
 
     /* SECTION 2 progress */
     const s2=progressOf(s2Wrap);
     root.style.setProperty('--s2',s2.toFixed(3));
 
-    /* Cross-fade between S1 and S2, paced like hero (≈35% of S2) */
-    const FADE_FRAC = 0.35;
+    /* ----- Pinned cross-fade between S1 and S2 (no movement, only opacity) ----- */
+    const FADE_FRAC = 0.35;               // same rhythm as hero
     const cross = clamp(s2/FADE_FRAC, 0, 1);
 
-    /* Apply section opacities */
+    // section opacities (stacked sticky viewports)
     root.style.setProperty('--s1Alpha', (1 - cross).toFixed(3));
     root.style.setProperty('--s2Alpha', (cross).toFixed(3));
 
-    /* Overlays: fade S1 text out while S2 text fades in */
+    // text overlays visibility (so you don't see two rails fully at once)
     root.style.setProperty('--s1Overlay', (1 - cross > 0 ? 1 - cross : 0).toFixed(3));
     root.style.setProperty('--s2Overlay', (cross > 0 ? cross : 0).toFixed(3));
 
-    /* Final per-image opacities are gated by section alpha (so the composite looks right) */
-    root.style.setProperty('--s1ImgOpacity', (s1ImgIn * (1 - cross)).toFixed(3));
-
-    /* S2 image fade-in (also over ~35% of S2), then rides section alpha */
+    // S2 image fades in over its own first ~35%, then is modulated by section alpha
     const s2ImgIn = clamp(s2/0.35, 0, 1);
-    root.style.setProperty('--s2ImgOpacity', (s2ImgIn * cross).toFixed(3));
+    root.style.setProperty('--s2ImgOpacity', (s2ImgIn).toFixed(3));
 
-    /* Text sweeps: start at 75% of each section’s span */
+    /* Text sweeps start late (75% progress of each section) */
     const textStart=0.75;
 
     const s1Raw=clamp((s1-textStart)/(1-textStart),0,1);
