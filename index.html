@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → S1 → S2 (text-gated, consistent crossfades)</title>
+<title>Gardenicity — Hero → S1 → S2 (no-drift crossfades)</title>
 <style>
   /* ===== Base ===== */
   html,body{
@@ -62,11 +62,14 @@
   }
   .s1-media{
     grid-column:3; width:100%; height:100%;
-    display:flex; align-items:center; justify-content:center; overflow:hidden;
+    position:relative; overflow:hidden; /* no-drift container */
   }
   .s1-media img{
-    height:100%; width:auto; max-width:100%; max-height:100%;
-    object-fit:contain; display:block;
+    position:absolute; top:50%; left:50%;
+    transform:translate(-50%, -50%);     /* hard center */
+    max-width:100%; max-height:100%;     /* contain inside box */
+    width:auto; height:auto; object-fit:contain;
+    display:block;
     opacity:var(--s1ImgOpacity); transition:none; will-change:opacity;
   }
 
@@ -85,11 +88,14 @@
   }
   .s2-media{
     grid-column:1; width:100%; height:100%;
-    display:flex; align-items:center; justify-content:center; overflow:hidden;
+    position:relative; overflow:hidden; /* no-drift container */
   }
   .s2-media img{
-    height:100%; width:auto; max-width:100%; max-height:100%;
-    object-fit:contain; display:block;
+    position:absolute; top:50%; left:50%;
+    transform:translate(-50%, -50%);     /* hard center */
+    max-width:100%; max-height:100%;
+    width:auto; height:auto; object-fit:contain;
+    display:block;
     opacity:var(--s2ImgOpacity); transition:none; will-change:opacity;
   }
 
@@ -255,24 +261,18 @@
     const s1Y=s1StartY+(s1EndY-s1StartY)*easePow(s1Raw,0.8);
     root.style.setProperty('--s1Y', s1Y+'px');
 
-    const s2TextStart=0.25; /* copy shows while S2 fades in */
+    const s2TextStart=0.25;
     const s2Raw=clamp((s2-s2TextStart)/(1-s2TextStart),0,1);
     const s2Y=s2StartY+(s2EndY-s2StartY)*easePow(s2Raw,0.8);
     root.style.setProperty('--s2Y', s2Y+'px');
 
-    /* ===== Image Opacities =====
-       S1 fades IN like hero->S1 over first 35% of S1 progress.
-       S1 now stays FULLY OPAQUE until its text is completely above the viewport.
-       Only then S1 fades OUT while S2 fades IN, using the SAME 0.35 timing window,
-       keyed off S2's progress (for a consistent viewport handoff).
-    */
+    /* ===== Image Opacities (no drift) ===== */
     const s1In = clamp(s1/0.35, 0, 1);    // hero→S1 pace for S1 fade-in
 
-    const vh = window.innerHeight;
+    // Gate S1 fade-out until its text has fully cleared the viewport
     const textH = s1Text.scrollHeight;
     const textBottom = s1Y + textH;       // bottom of S1 text relative to viewport
 
-    // Keep S1 fully visible until text has cleared (textBottom <= 0)
     let s1Alpha;
     if (textBottom > 0) {
       s1Alpha = 1;                        // 100% until rail clears
@@ -281,11 +281,10 @@
       const x = clamp(s2/0.35, 0, 1);
       s1Alpha = 1 - x;
     }
-    // Combine with S1's initial fade-in (so it doesn't pop-in)
-    s1Alpha = Math.min(s1Alpha, s1In);
+    s1Alpha = Math.min(s1Alpha, s1In);    // keep initial fade-in cap
     root.style.setProperty('--s1ImgOpacity', s1Alpha.toFixed(3));
 
-    // S2 only starts once S1 text has cleared; same 0.35 timing
+    // S2 image fades in only after S1 text has cleared
     const gateClear = (textBottom <= 0) ? 1 : 0;
     const s2Alpha = gateClear * clamp(s2/0.35, 0, 1);
     root.style.setProperty('--s2ImgOpacity', s2Alpha.toFixed(3));
