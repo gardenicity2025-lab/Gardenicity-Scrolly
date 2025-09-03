@@ -3,87 +3,95 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → Section 1 → Section 2 (corrected layout)</title>
+<title>Gardenicity — Hero → S1 → S2 (text-gated, consistent crossfades)</title>
 <style>
-  html,body{ margin:0; padding:0; height:100%;
+  /* ===== Base ===== */
+  html,body{
+    margin:0; padding:0; height:100%;
     background:#e5e4e0; color:#fff;
     font-family:"Acumin Pro",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
   }
   :root{
+    /* HERO */
     --shift:0px; --titleOpacity:0; --linksOpacity:0; --heroAlpha:1; --heroBlur:0;
+    /* S1 */
     --s1:0; --s1Overlay:0; --s1Y:0px; --s1ImgOpacity:0;
+    /* S2 */
     --s2:0; --s2Overlay:0; --s2Y:0px; --s2ImgOpacity:0;
   }
 
-  /* ===== HERO (unchanged, aligned to grid) ===== */
+  /* ===== HERO ===== */
   .hero-fixed{
     position:fixed; inset:0; z-index:3;
     opacity:var(--heroAlpha);
     filter:blur(calc(var(--heroBlur)*10px));
     pointer-events:auto; will-change:opacity,filter;
   }
-  .hero-bg{ position:absolute; inset:0;
+  .hero-bg{
+    position:absolute; inset:0;
     background:url("assets/hero1gc.jpg") center/cover no-repeat;
     opacity:0; animation:heroIn 900ms ease-out forwards; pointer-events:none;
   }
   @keyframes heroIn{ from{opacity:0} to{opacity:1} }
-  .hero-media{ position:absolute; inset:96px 82px;
+
+  .hero-media{
+    position:absolute; inset:96px 82px;
     display:flex; align-items:flex-end; justify-content:flex-start; overflow:hidden;
   }
-  .col{ position:relative; max-width:700px;
-    transform:translateY(var(--shift)); will-change:transform;
-  }
-  .hero-title{ margin:0 0 24px 96px; /* ← align to 96px grid */
-    font-weight:400; font-size:100px; line-height:100px;
-    opacity:var(--titleOpacity);
-  }
+  .col{ position:relative; max-width:700px; transform:translateY(var(--shift)); will-change:transform; }
+  .hero-title{ margin:0 0 24px 0; font-weight:400; font-size:100px; line-height:100px; opacity:var(--titleOpacity); }
   .hero-title .line{ display:block; }
-  .hero-links{ margin-left:96px; display:flex; flex-direction:column; gap:10px;
-    font-size:24px; line-height:30px; opacity:var(--linksOpacity);
-  }
+  .hero-links{ display:flex; flex-direction:column; gap:10px; font-size:24px; line-height:30px; opacity:var(--linksOpacity); }
   .hero-links a{ color:#fff; text-decoration:none; transition:color .2s ease; }
   .hero-links a:hover,.hero-links a:focus-visible{ color:#00A86B; }
-  .driver{ height:200vh; }
 
-  /* ===== SECTION WRAPS ===== */
-  .s1-wrap,.s2-wrap{ position:relative; height:280vh; background:#e5e4e0; }
+  .driver{ height:200vh; } /* scroll space to leave hero */
 
-  /* ===== STICKY MEDIA AREAS (no drift) ===== */
-  .s1-sticky,.s2-sticky{
+  /* ===== SECTION 1 (image RIGHT, text LEFT overlay) ===== */
+  .s1-wrap{ position:relative; height:280vh; background:#e5e4e0; }
+
+  .s1-overlay{ position:fixed; inset:0; z-index:2; pointer-events:none; opacity:var(--s1Overlay); }
+  .s1-rail{ position:absolute; top:0; bottom:0; left:96px; width:512px; overflow:hidden; margin:0; padding:0; }
+  .s1-text{ transform:translateY(var(--s1Y)); color:#111; margin:0; padding:0; will-change:transform; }
+  .s1-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
+
+  .s1-sticky{
     position:sticky; top:0; height:100vh; z-index:1;
     display:grid; padding:96px 82px; box-sizing:border-box;
-    align-items:center;
+    grid-template-columns:512px 96px 1fr; align-items:center;
   }
-  .s1-sticky{ grid-template-columns:512px 96px 1fr; }
-  .s2-sticky{ grid-template-columns:1fr 96px 512px; }
-
-  .s1-media,.s2-media{
-    width:100%; height:100%; display:flex;
-    align-items:center; justify-content:center; overflow:hidden;
+  .s1-media{
+    grid-column:3; width:100%; height:100%;
+    display:flex; align-items:center; justify-content:center; overflow:hidden;
   }
-  .s1-media img,.s2-media img{
-    width:100%; height:100%;
-    object-fit:contain;
-    opacity:var(--s1ImgOpacity);
-    transition:none; will-change:opacity;
+  .s1-media img{
+    height:100%; width:auto; max-width:100%; max-height:100%;
+    object-fit:contain; display:block;
+    opacity:var(--s1ImgOpacity); transition:none; will-change:opacity;
   }
-  .s2-media img{ opacity:var(--s2ImgOpacity); }
 
-  /* ===== TEXT OVERLAYS ===== */
-  .s1-overlay,.s2-overlay{
-    position:fixed; inset:0; z-index:2; pointer-events:none;
+  /* ===== SECTION 2 (MIRROR: image LEFT, text RIGHT overlay) ===== */
+  .s2-wrap{ position:relative; height:280vh; background:#e5e4e0; }
+
+  .s2-overlay{ position:fixed; inset:0; z-index:2; pointer-events:none; opacity:var(--s2Overlay); }
+  .s2-rail{ position:absolute; top:0; bottom:0; right:96px; width:512px; overflow:hidden; margin:0; padding:0; }
+  .s2-text{ transform:translateY(var(--s2Y)); color:#111; text-align:left; }
+  .s2-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
+
+  .s2-sticky{
+    position:sticky; top:0; height:100vh; z-index:1;
+    display:grid; padding:96px 82px; box-sizing:border-box;
+    grid-template-columns:1fr 96px 512px; align-items:center; /* image LEFT */
   }
-  .s1-overlay{ opacity:var(--s1Overlay); }
-  .s2-overlay{ opacity:var(--s2Overlay); }
-
-  .s1-rail{ position:absolute; top:0; bottom:0; left:96px; width:512px; overflow:hidden; }
-  .s2-rail{ position:absolute; top:0; bottom:0; right:96px; width:512px; overflow:hidden; }
-
-  .s1-text,.s2-text{ will-change:transform; color:#111; }
-  .s1-text{ transform:translateY(var(--s1Y)); }
-  .s2-text{ transform:translateY(var(--s2Y)); text-align:left; }
-
-  .s1-text p,.s2-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
+  .s2-media{
+    grid-column:1; width:100%; height:100%;
+    display:flex; align-items:center; justify-content:center; overflow:hidden;
+  }
+  .s2-media img{
+    height:100%; width:auto; max-width:100%; max-height:100%;
+    object-fit:contain; display:block;
+    opacity:var(--s2ImgOpacity); transition:none; will-change:opacity;
+  }
 
   .after{ min-height:120vh; }
 </style>
@@ -101,11 +109,11 @@
         <span class="line">Geddes see?</span>
       </h1>
       <nav class="hero-links" id="hero-links" aria-label="Primary">
-        <a href="#">Civic Green</a>
-        <a href="#">Growth</a>
-        <a href="#">Sustenance</a>
-        <a href="#">Leafy SDGs</a>
-        <a href="#">EN/עב</a>
+        <a href="https://www.megama.net">Civic Green</a>
+        <a href="https://www.megama.net">Growth</a>
+        <a href="https://www.megama.net">Sustenance</a>
+        <a href="https://www.megama.net">Leafy SDGs</a>
+        <a href="https://www.megama.net">EN/עב</a>
       </nav>
     </div>
   </div>
@@ -113,35 +121,43 @@
 
 <section class="driver" id="driver"></section>
 
-<!-- SECTION 1 -->
+<!-- ===== S1 ===== -->
 <section class="s1-wrap" id="s1-wrap">
   <div class="s1-overlay">
-    <div class="s1-rail"><div class="s1-text" id="s1-text">
-      <p><strong>HOURS AFTER MY</strong> mother took her last breath on earth…</p>
-      <p>After we opened the windows to let the spirits out…</p>
-      <p>After we lit incense stick after incense stick…</p>
-      <p>After we watched MMA fighters on TV in the basement…</p>
-      <p>And the smoke kept rising. The chain must not be broken.</p>
-    </div></div>
+    <div class="s1-rail" id="s1-rail">
+      <div class="s1-text" id="s1-text">
+        <p><strong>HOURS AFTER MY</strong> mother took her last breath on earth…</p>
+        <p>After we opened the windows to let the spirits out…</p>
+        <p>After we lit incense stick after incense stick…</p>
+        <p>After we watched MMA fighters on TV in the basement…</p>
+        <p>And the smoke kept rising. The chain must not be broken.</p>
+      </div>
+    </div>
   </div>
-  <div class="s1-sticky"><div></div><div></div>
-    <figure class="s1-media"><img src="assets/section1.jpg" alt=""></figure>
+
+  <div class="s1-sticky">
+    <div></div><div></div>
+    <figure class="s1-media"><img id="s1-img" src="assets/section1.jpg" alt="Section 1 visual"></figure>
   </div>
 </section>
 
-<!-- SECTION 2 -->
+<!-- ===== S2 (mirrored) ===== -->
 <section class="s2-wrap" id="s2-wrap">
   <div class="s2-overlay">
-    <div class="s2-rail"><div class="s2-text" id="s2-text">
-      <p><strong>SECTION TWO</strong> opens as the previous memory fades…</p>
-      <p>Now the perspective widens to a new frame…</p>
-      <p>The city’s edge meets the garden…</p>
-      <p>We follow the lines of growth and care…</p>
-      <p>And learn how places hold time.</p>
-    </div></div>
+    <div class="s2-rail" id="s2-rail">
+      <div class="s2-text" id="s2-text">
+        <p><strong>SECTION TWO</strong> opens as the previous memory fades…</p>
+        <p>Now the perspective widens to a new frame…</p>
+        <p>The city’s edge meets the garden…</p>
+        <p>We follow the lines of growth and care…</p>
+        <p>And learn how places hold time.</p>
+      </div>
+    </div>
   </div>
-  <div class="s2-sticky"><div></div><div></div>
-    <figure class="s2-media"><img src="assets/section2.jpg" alt=""></figure>
+
+  <div class="s2-sticky">
+    <figure class="s2-media"><img id="s2-img" src="assets/section2.jpg" alt="Section 2 visual"></figure>
+    <div></div><div></div>
   </div>
 </section>
 
@@ -154,13 +170,14 @@
   const easeInOutCubic=t=>t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
   const easePow=(t,p)=>Math.pow(t,p);
 
-  /* HERO */
+  /* ---------- HERO ---------- */
   const driver=document.getElementById('driver');
   const heroMedia=document.getElementById('hero-media');
   const heroCol=document.getElementById('hero-col');
   const heroTitle=document.getElementById('hero-title');
   const heroLinks=document.getElementById('hero-links');
   let startShift=0,endShift=0;
+
   function measureHero(){
     const prev=heroCol.style.transform;
     heroCol.style.transform='translateY(0px)';
@@ -178,20 +195,38 @@
   function progressOf(el){
     const r=el.getBoundingClientRect();
     const vh=window.innerHeight||document.documentElement.clientHeight;
-    const total=r.height-vh; if(total<=0)return 0;
+    const total=r.height-vh;
+    if(total<=0) return 0;
     return clamp(-r.top/total,0,1);
   }
 
-  /* SECTIONS */
+  /* ---------- S1 / S2 ---------- */
   const s1Wrap=document.getElementById('s1-wrap');
-  const s2Wrap=document.getElementById('s2-wrap');
   const s1Text=document.getElementById('s1-text');
+
+  const s2Wrap=document.getElementById('s2-wrap');
   const s2Text=document.getElementById('s2-text');
-  let s1StartY=0,s1EndY=0,s2StartY=0,s2EndY=0;
-  function measureS1(){ const vh=innerHeight, h=s1Text.scrollHeight; s1StartY=vh; s1EndY=-h; root.style.setProperty('--s1Y',s1StartY+'px'); }
-  function measureS2(){ const vh=innerHeight, h=s2Text.scrollHeight; s2StartY=vh; s2EndY=-h; root.style.setProperty('--s2Y',s2StartY+'px'); }
+
+  let s1StartY=0, s1EndY=0;
+  let s2StartY=0, s2EndY=0;
+
+  function measureS1(){
+    const vh=window.innerHeight;
+    const textH=s1Text.scrollHeight;
+    s1StartY=vh;          // start off-screen below
+    s1EndY=-textH;        // finish off-screen above
+    root.style.setProperty('--s1Y', s1StartY+'px');
+  }
+  function measureS2(){
+    const vh=window.innerHeight;
+    const textH=s2Text.scrollHeight;
+    s2StartY=vh;
+    s2EndY=-textH;
+    root.style.setProperty('--s2Y', s2StartY+'px');
+  }
 
   function update(){
+    /* HERO choreography */
     const p=progressOf(driver);
     const pFade=easeInOutCubic(clamp(p/0.60,0,1));
     root.style.setProperty('--titleOpacity',pFade.toFixed(3));
@@ -200,36 +235,70 @@
     root.style.setProperty('--shift',shift.toFixed(1)+'px');
     root.style.setProperty('--linksOpacity',pSlide.toFixed(3));
 
-    const s1=progressOf(s1Wrap), s2=progressOf(s2Wrap);
+    /* Section progress */
+    const s1=progressOf(s1Wrap);
+    const s2=progressOf(s2Wrap);
     root.style.setProperty('--s1',s1.toFixed(3));
     root.style.setProperty('--s2',s2.toFixed(3));
-    root.style.setProperty('--s1Overlay',(s1>0&&s1<1)?1:0);
-    root.style.setProperty('--s2Overlay',(s2>0&&s2<1)?1:0);
+
+    /* Overlay visibility */
+    root.style.setProperty('--s1Overlay',(s1>0 && s1<1)?1:0);
+    root.style.setProperty('--s2Overlay',(s1>=1 && s2>0 && s2<1)?1:0);
+
+    /* Dissolve hero */
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
+    /* Text sweeps */
     const s1TextStart=0.75;
     const s1Raw=clamp((s1-s1TextStart)/(1-s1TextStart),0,1);
     const s1Y=s1StartY+(s1EndY-s1StartY)*easePow(s1Raw,0.8);
-    root.style.setProperty('--s1Y',s1Y+'px');
-    const s2TextStart=0.25;
+    root.style.setProperty('--s1Y', s1Y+'px');
+
+    const s2TextStart=0.25; /* copy shows while S2 fades in */
     const s2Raw=clamp((s2-s2TextStart)/(1-s2TextStart),0,1);
     const s2Y=s2StartY+(s2EndY-s2StartY)*easePow(s2Raw,0.8);
-    root.style.setProperty('--s2Y',s2Y+'px');
+    root.style.setProperty('--s2Y', s2Y+'px');
 
-    /* Opacity crossfade */
-    const s1In=clamp(s1/0.35,0,1);
-    const textBottom=s1Y+s1Text.scrollHeight;
-    let s1Alpha=(textBottom>0)?1:(1-clamp(s2/0.35,0,1));
-    s1Alpha=Math.min(s1Alpha,s1In);
-    root.style.setProperty('--s1ImgOpacity',s1Alpha.toFixed(3));
-    const s2Alpha=(textBottom<=0)?clamp(s2/0.35,0,1):0;
-    root.style.setProperty('--s2ImgOpacity',s2Alpha.toFixed(3));
+    /* ===== Image Opacities =====
+       S1 fades IN like hero->S1 over first 35% of S1 progress.
+       S1 now stays FULLY OPAQUE until its text is completely above the viewport.
+       Only then S1 fades OUT while S2 fades IN, using the SAME 0.35 timing window,
+       keyed off S2's progress (for a consistent viewport handoff).
+    */
+    const s1In = clamp(s1/0.35, 0, 1);    // hero→S1 pace for S1 fade-in
+
+    const vh = window.innerHeight;
+    const textH = s1Text.scrollHeight;
+    const textBottom = s1Y + textH;       // bottom of S1 text relative to viewport
+
+    // Keep S1 fully visible until text has cleared (textBottom <= 0)
+    let s1Alpha;
+    if (textBottom > 0) {
+      s1Alpha = 1;                        // 100% until rail clears
+    } else {
+      // Crossfade uses S2 progress over a 0.35 window (same as hero→S1)
+      const x = clamp(s2/0.35, 0, 1);
+      s1Alpha = 1 - x;
+    }
+    // Combine with S1's initial fade-in (so it doesn't pop-in)
+    s1Alpha = Math.min(s1Alpha, s1In);
+    root.style.setProperty('--s1ImgOpacity', s1Alpha.toFixed(3));
+
+    // S2 only starts once S1 text has cleared; same 0.35 timing
+    const gateClear = (textBottom <= 0) ? 1 : 0;
+    const s2Alpha = gateClear * clamp(s2/0.35, 0, 1);
+    root.style.setProperty('--s2ImgOpacity', s2Alpha.toFixed(3));
   }
 
-  addEventListener('load',()=>{measureHero();measureS1();measureS2();update();});
-  addEventListener('resize',()=>{measureHero();measureS1();measureS2();update();});
-  addEventListener('scroll',update,{passive:true});
+  async function init(){
+    if(document.fonts && document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
+    measureHero(); measureS1(); measureS2(); update();
+    addEventListener('load', ()=>{ measureHero(); measureS1(); measureS2(); update(); });
+    addEventListener('resize', ()=>{ measureHero(); measureS1(); measureS2(); update(); });
+    addEventListener('scroll', update, {passive:true});
+  }
+  init();
 })();
 </script>
 </body>
