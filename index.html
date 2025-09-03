@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → S1 → S2 (text-gated, consistent crossfades)</title>
+<title>Gardenicity — Hero → S1 → S2 (layouts corrected)</title>
 <style>
   /* ===== Base ===== */
   html,body{
@@ -20,7 +20,7 @@
     --s2:0; --s2Overlay:0; --s2Y:0px; --s2ImgOpacity:0;
   }
 
-  /* ===== HERO ===== */
+  /* ===== HERO (unchanged) ===== */
   .hero-fixed{
     position:fixed; inset:0; z-index:3;
     opacity:var(--heroAlpha);
@@ -47,23 +47,24 @@
 
   .driver{ height:200vh; } /* scroll space to leave hero */
 
-  /* ===== SECTION 1 (image RIGHT, text LEFT overlay) ===== */
+  /* ===== SECTION 1 — media RIGHT, text LEFT overlay ===== */
   .s1-wrap{ position:relative; height:280vh; background:#e5e4e0; }
 
+  /* Overlay rail (fixed to viewport) */
   .s1-overlay{ position:fixed; inset:0; z-index:2; pointer-events:none; opacity:var(--s1Overlay); }
   .s1-rail{ position:absolute; top:0; bottom:0; left:96px; width:512px; overflow:hidden; margin:0; padding:0; }
   .s1-text{ transform:translateY(var(--s1Y)); color:#111; margin:0; padding:0; will-change:transform; }
   .s1-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
 
+  /* Sticky media grid (pinned) */
   .s1-sticky{
     position:sticky; top:0; height:100vh; z-index:1;
     display:grid; padding:96px 82px; box-sizing:border-box;
-    grid-template-columns:512px 96px 1fr; align-items:center;
+    grid-template-columns:512px 96px 1fr; align-items:center; /* media on the RIGHT */
   }
   .s1-media{
     grid-column:3; width:100%; height:100%;
-    position:relative; /* for absolute-centering image */
-    display:flex; align-items:center; justify-content:center; overflow:hidden;
+    position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center;
   }
   .s1-media img{
     position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
@@ -72,23 +73,22 @@
     opacity:var(--s1ImgOpacity); transition:none; will-change:opacity;
   }
 
-  /* ===== SECTION 2 (MIRROR: image LEFT, text RIGHT overlay) ===== */
+  /* ===== SECTION 2 — media LEFT, text RIGHT overlay (mirror) ===== */
   .s2-wrap{ position:relative; height:280vh; background:#e5e4e0; }
 
   .s2-overlay{ position:fixed; inset:0; z-index:2; pointer-events:none; opacity:var(--s2Overlay); }
   .s2-rail{ position:absolute; top:0; bottom:0; right:96px; width:512px; overflow:hidden; margin:0; padding:0; }
-  .s2-text{ transform:translateY(var(--s2Y)); color:#111; text-align:left; }
+  .s2-text{ transform:translateY(var(--s2Y)); color:#111; margin:0; padding:0; will-change:transform; }
   .s2-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
 
   .s2-sticky{
     position:sticky; top:0; height:100vh; z-index:1;
     display:grid; padding:96px 82px; box-sizing:border-box;
-    grid-template-columns:1fr 96px 512px; align-items:center; /* image LEFT */
+    grid-template-columns:1fr 96px 512px; align-items:center; /* media on the LEFT */
   }
   .s2-media{
     grid-column:1; width:100%; height:100%;
-    position:relative; /* for absolute-centering image */
-    display:flex; align-items:center; justify-content:center; overflow:hidden;
+    position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center;
   }
   .s2-media img{
     position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
@@ -174,7 +174,7 @@
   const easeInOutCubic=t=>t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
   const easePow=(t,p)=>Math.pow(t,p);
 
-  /* ---------- HERO ---------- */
+  /* ---------- HERO (unchanged) ---------- */
   const driver=document.getElementById('driver');
   const heroMedia=document.getElementById('hero-media');
   const heroCol=document.getElementById('hero-col');
@@ -204,11 +204,10 @@
     return clamp(-r.top/total,0,1);
   }
 
-  /* ---------- S1 / S2 ---------- */
+  /* ---------- S1 / S2 text rails ---------- */
   const s1Wrap=document.getElementById('s1-wrap');
-  const s1Text=document.getElementById('s1-text');
-
   const s2Wrap=document.getElementById('s2-wrap');
+  const s1Text=document.getElementById('s1-text');
   const s2Text=document.getElementById('s2-text');
 
   let s1StartY=0, s1EndY=0;
@@ -247,35 +246,35 @@
 
     /* Overlay visibility */
     root.style.setProperty('--s1Overlay',(s1>0 && s1<1)?1:0);
-    root.style.setProperty('--s2Overlay',(s1>=1 && s2>0 && s2<1)?1:0);
+    root.style.setProperty('--s2Overlay',(s2>0 && s2<1)?1:0);
 
-    /* Dissolve hero */
+    /* Dissolve hero while S1 comes in */
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
-    /* Text sweeps */
+    /* Text sweeps (viewport-wide rails) */
     const s1TextStart=0.75;
     const s1Raw=clamp((s1-s1TextStart)/(1-s1TextStart),0,1);
     const s1Y=s1StartY+(s1EndY-s1StartY)*easePow(s1Raw,0.8);
     root.style.setProperty('--s1Y', s1Y+'px');
 
-    const s2TextStart=0.25;
+    const s2TextStart=0.25; /* tune later */
     const s2Raw=clamp((s2-s2TextStart)/(1-s2TextStart),0,1);
     const s2Y=s2StartY+(s2EndY-s2StartY)*easePow(s2Raw,0.8);
     root.style.setProperty('--s2Y', s2Y+'px');
 
-    /* Image opacities (same gating you had) */
-    const s1In = clamp(s1/0.35, 0, 1); // hero→S1 pace
+    /* Image opacities (kept as in your last working logic) */
+    const s1In = clamp(s1/0.35, 0, 1);
     const textBottom = s1Y + s1Text.scrollHeight;
 
     let s1Alpha;
     if (textBottom > 0) {
-      s1Alpha = 1; // 100% until rail clears
+      s1Alpha = 1;                                  // S1 fully visible until text clears
     } else {
-      const x = clamp(s2/0.35, 0, 1);
+      const x = clamp(s2/0.35, 0, 1);               // then crossfade with S2
       s1Alpha = 1 - x;
     }
-    s1Alpha = Math.min(s1Alpha, s1In);
+    s1Alpha = Math.min(s1Alpha, s1In);              // respect initial fade-in cap
     root.style.setProperty('--s1ImgOpacity', s1Alpha.toFixed(3));
 
     const gateClear = (textBottom <= 0) ? 1 : 0;
