@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → S1 → S2 (layouts corrected)</title>
+<title>Gardenicity — Hero → S1 → S2 (no-drift, column-pinned frames)</title>
 <style>
   /* ===== Base ===== */
   html,body{
@@ -47,55 +47,59 @@
 
   .driver{ height:200vh; } /* scroll space to leave hero */
 
-  /* ===== SECTION 1 — media RIGHT, text LEFT overlay ===== */
-  .s1-wrap{ position:relative; height:280vh; background:#e5e4e0; }
+  /* ===== FIXED, COLUMN-PINNED IMAGE FRAMES (NO DRIFT) =====
+     Layout constants: left/right page padding = 82px; top/bottom = 96px;
+     Text column = 512px; gutter = 96px.
+     S1 media is RIGHT column (after 512 + 96).
+     S2 media is LEFT column (before 96 + 512).
+  */
+  .frame{
+    position:fixed; z-index:1; pointer-events:none;
+    top:96px; bottom:96px; /* vertical page margin */
+    display:flex; align-items:center; justify-content:center; overflow:hidden;
+  }
+  /* S1 frame: right media column area */
+  .s1-frame{
+    left: calc(82px + 512px + 96px);  /* 690px */
+    right: 82px;
+    opacity: var(--s1ImgOpacity);
+  }
+  /* S2 frame: left media column area (mirror) */
+  .s2-frame{
+    left: 82px;
+    right: calc(82px + 96px + 512px); /* 690px */
+    opacity: var(--s2ImgOpacity);
+  }
+  .frame img{
+    width:100%; height:100%;
+    object-fit:contain; display:block; /* auto-scale, centered, no drift */
+  }
 
-  /* Overlay rail (fixed to viewport) */
-  .s1-overlay{ position:fixed; inset:0; z-index:2; pointer-events:none; opacity:var(--s1Overlay); }
-  .s1-rail{ position:absolute; top:0; bottom:0; left:96px; width:512px; overflow:hidden; margin:0; padding:0; }
+  /* ===== SECTION DRIVERS (produce scroll progress) ===== */
+  .s1-wrap, .s2-wrap{ position:relative; height:280vh; background:#e5e4e0; }
+
+  /* ===== FIXED TEXT OVERLAYS (sweep full viewport) ===== */
+  .s1-overlay, .s2-overlay{
+    position:fixed; inset:0; z-index:2; pointer-events:none;
+  }
+  .s1-overlay{ opacity:var(--s1Overlay); }
+  .s2-overlay{ opacity:var(--s2Overlay); }
+
+  /* S1 rail: LEFT 96px, width 512px */
+  .s1-rail{
+    position:absolute; top:0; bottom:0; left:96px; width:512px;
+    overflow:hidden; margin:0; padding:0;
+  }
   .s1-text{ transform:translateY(var(--s1Y)); color:#111; margin:0; padding:0; will-change:transform; }
   .s1-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
 
-  /* Sticky media grid (pinned) */
-  .s1-sticky{
-    position:sticky; top:0; height:100vh; z-index:1;
-    display:grid; padding:96px 82px; box-sizing:border-box;
-    grid-template-columns:512px 96px 1fr; align-items:center; /* media on the RIGHT */
+  /* S2 rail: RIGHT 96px, width 512px (mirror of S1) */
+  .s2-rail{
+    position:absolute; top:0; bottom:0; right:96px; width:512px;
+    overflow:hidden; margin:0; padding:0;
   }
-  .s1-media{
-    grid-column:3; width:100%; height:100%;
-    position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center;
-  }
-  .s1-media img{
-    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-    max-width:100%; max-height:100%; width:auto; height:auto;
-    object-fit:contain; display:block;
-    opacity:var(--s1ImgOpacity); transition:none; will-change:opacity;
-  }
-
-  /* ===== SECTION 2 — media LEFT, text RIGHT overlay (mirror) ===== */
-  .s2-wrap{ position:relative; height:280vh; background:#e5e4e0; }
-
-  .s2-overlay{ position:fixed; inset:0; z-index:2; pointer-events:none; opacity:var(--s2Overlay); }
-  .s2-rail{ position:absolute; top:0; bottom:0; right:96px; width:512px; overflow:hidden; margin:0; padding:0; }
-  .s2-text{ transform:translateY(var(--s2Y)); color:#111; margin:0; padding:0; will-change:transform; }
+  .s2-text{ transform:translateY(var(--s2Y)); color:#111; margin:0; padding:0; will-change:transform; text-align:left; }
   .s2-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
-
-  .s2-sticky{
-    position:sticky; top:0; height:100vh; z-index:1;
-    display:grid; padding:96px 82px; box-sizing:border-box;
-    grid-template-columns:1fr 96px 512px; align-items:center; /* media on the LEFT */
-  }
-  .s2-media{
-    grid-column:1; width:100%; height:100%;
-    position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center;
-  }
-  .s2-media img{
-    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-    max-width:100%; max-height:100%; width:auto; height:auto;
-    object-fit:contain; display:block;
-    opacity:var(--s2ImgOpacity); transition:none; will-change:opacity;
-  }
 
   .after{ min-height:120vh; }
 </style>
@@ -125,10 +129,14 @@
 
 <section class="driver" id="driver"></section>
 
-<!-- ===== S1 ===== -->
+<!-- ===== FIXED, PINNED IMAGE FRAMES (column-aligned) ===== -->
+<figure class="frame s1-frame" aria-hidden="true"><img id="s1-img" src="assets/section1.jpg" alt=""></figure>
+<figure class="frame s2-frame" aria-hidden="true"><img id="s2-img" src="assets/section2.jpg" alt=""></figure>
+
+<!-- ===== SECTION 1 (driver + overlay rail) ===== -->
 <section class="s1-wrap" id="s1-wrap">
   <div class="s1-overlay">
-    <div class="s1-rail" id="s1-rail">
+    <div class="s1-rail">
       <div class="s1-text" id="s1-text">
         <p><strong>HOURS AFTER MY</strong> mother took her last breath on earth…</p>
         <p>After we opened the windows to let the spirits out…</p>
@@ -138,17 +146,12 @@
       </div>
     </div>
   </div>
-
-  <div class="s1-sticky">
-    <div></div><div></div>
-    <figure class="s1-media"><img id="s1-img" src="assets/section1.jpg" alt="Section 1 visual"></figure>
-  </div>
 </section>
 
-<!-- ===== S2 (mirrored) ===== -->
+<!-- ===== SECTION 2 (driver + mirrored overlay rail) ===== -->
 <section class="s2-wrap" id="s2-wrap">
   <div class="s2-overlay">
-    <div class="s2-rail" id="s2-rail">
+    <div class="s2-rail">
       <div class="s2-text" id="s2-text">
         <p><strong>SECTION TWO</strong> opens as the previous memory fades…</p>
         <p>Now the perspective widens to a new frame…</p>
@@ -157,11 +160,6 @@
         <p>And learn how places hold time.</p>
       </div>
     </div>
-  </div>
-
-  <div class="s2-sticky">
-    <figure class="s2-media"><img id="s2-img" src="assets/section2.jpg" alt="Section 2 visual"></figure>
-    <div></div><div></div>
   </div>
 </section>
 
@@ -174,7 +172,7 @@
   const easeInOutCubic=t=>t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
   const easePow=(t,p)=>Math.pow(t,p);
 
-  /* ---------- HERO (unchanged) ---------- */
+  /* ---------- HERO ---------- */
   const driver=document.getElementById('driver');
   const heroMedia=document.getElementById('hero-media');
   const heroCol=document.getElementById('hero-col');
@@ -204,7 +202,7 @@
     return clamp(-r.top/total,0,1);
   }
 
-  /* ---------- S1 / S2 text rails ---------- */
+  /* ---------- Sections ---------- */
   const s1Wrap=document.getElementById('s1-wrap');
   const s2Wrap=document.getElementById('s2-wrap');
   const s1Text=document.getElementById('s1-text');
@@ -263,18 +261,18 @@
     const s2Y=s2StartY+(s2EndY-s2StartY)*easePow(s2Raw,0.8);
     root.style.setProperty('--s2Y', s2Y+'px');
 
-    /* Image opacities (kept as in your last working logic) */
-    const s1In = clamp(s1/0.35, 0, 1);
+    /* ===== Image Opacities (gated crossfade, no drift) ===== */
+    const s1In = clamp(s1/0.35, 0, 1);     // hero→S1 same pace
     const textBottom = s1Y + s1Text.scrollHeight;
 
     let s1Alpha;
     if (textBottom > 0) {
-      s1Alpha = 1;                                  // S1 fully visible until text clears
+      s1Alpha = 1;                          // S1 holds 100% until text clears
     } else {
-      const x = clamp(s2/0.35, 0, 1);               // then crossfade with S2
+      const x = clamp(s2/0.35, 0, 1);       // then crossfade with S2 over 35%
       s1Alpha = 1 - x;
     }
-    s1Alpha = Math.min(s1Alpha, s1In);              // respect initial fade-in cap
+    s1Alpha = Math.min(s1Alpha, s1In);      // respect initial fade-in cap
     root.style.setProperty('--s1ImgOpacity', s1Alpha.toFixed(3));
 
     const gateClear = (textBottom <= 0) ? 1 : 0;
