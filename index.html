@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → S1 → S2 (mirrored, pinned, text-gated fades)</title>
+<title>Gardenicity — Hero → S1 → S2 (text-gated, consistent crossfades)</title>
 <style>
   /* ===== Base ===== */
   html,body{
@@ -260,25 +260,34 @@
     const s2Y=s2StartY+(s2EndY-s2StartY)*easePow(s2Raw,0.8);
     root.style.setProperty('--s2Y', s2Y+'px');
 
-    /* Image fade logic (text-gated) */
-    const s1In=clamp(s1/0.35,0,1);
+    /* ===== Image Opacities =====
+       S1 fades IN like hero->S1 over first 35% of S1 progress.
+       S1 now stays FULLY OPAQUE until its text is completely above the viewport.
+       Only then S1 fades OUT while S2 fades IN, using the SAME 0.35 timing window,
+       keyed off S2's progress (for a consistent viewport handoff).
+    */
+    const s1In = clamp(s1/0.35, 0, 1);    // hero→S1 pace for S1 fade-in
 
-    const vh=window.innerHeight;
-    const textH=s1Text.scrollHeight;
-    const textBottom=s1Y + textH;            // px position of S1 text bottom
-    const thresh=0.75*vh;                    // begin fade when bottom hits 75% vh
+    const vh = window.innerHeight;
+    const textH = s1Text.scrollHeight;
+    const textBottom = s1Y + textH;       // bottom of S1 text relative to viewport
 
-    let s1Out=0;
-    if(textBottom<=thresh){
-      const span=Math.max(thresh,1);
-      s1Out=clamp((thresh - Math.max(textBottom,0))/span,0,1);
+    // Keep S1 fully visible until text has cleared (textBottom <= 0)
+    let s1Alpha;
+    if (textBottom > 0) {
+      s1Alpha = 1;                        // 100% until rail clears
+    } else {
+      // Crossfade uses S2 progress over a 0.35 window (same as hero→S1)
+      const x = clamp(s2/0.35, 0, 1);
+      s1Alpha = 1 - x;
     }
-    const s1Alpha=s1In*(1 - s1Out);
+    // Combine with S1's initial fade-in (so it doesn't pop-in)
+    s1Alpha = Math.min(s1Alpha, s1In);
     root.style.setProperty('--s1ImgOpacity', s1Alpha.toFixed(3));
 
-    const gate=(s1Alpha<=0.001)?1:0;
-    const s2In=clamp(s2/0.25,0,1);
-    const s2Alpha=gate*s2In;
+    // S2 only starts once S1 text has cleared; same 0.35 timing
+    const gateClear = (textBottom <= 0) ? 1 : 0;
+    const s2Alpha = gateClear * clamp(s2/0.35, 0, 1);
     root.style.setProperty('--s2ImgOpacity', s2Alpha.toFixed(3));
   }
 
