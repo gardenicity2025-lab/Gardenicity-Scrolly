@@ -3,70 +3,119 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Debug Rails (hero aligned to 96px)</title>
+<title>Gardenicity — Hero → Section 1 (pinned, no-drift)</title>
 <style>
-  html,body{ margin:0; padding:0; background:#e5e4e0; color:#fff;
-    font-family:"Acumin Pro",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; height:100%; }
-
+  /* ===== Base ===== */
+  html,body{
+    margin:0; padding:0;
+    background:#e5e4e0; color:#fff;
+    font-family:"Acumin Pro",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    height:100%;
+  }
   :root{
-    --shift:0px; --titleOpacity:0; --linksOpacity:0; --heroAlpha:1; --heroBlur:0;
-    --s1:0; --s1ImgOpacity:0; --s1Y:0px;
+    /* HERO vars */
+    --shift: 0px;
+    --titleOpacity: 0;
+    --linksOpacity: 0;
+    --heroAlpha: 1;
+    --heroBlur: 0;
+
+    /* Section 1 vars */
+    --s1: 0;
+    --s1ImgOpacity: 0;
+    --s1Y: 0px;
   }
 
-  /* Debug guides */
-  .debug-hero-line{ position:fixed; top:0; bottom:0; left:96px; width:2px; background:red; z-index:1000; }
-  .debug-s1-line{ position:fixed; top:0; bottom:0; left:96px; width:1px; background:blue; z-index:999; }
-  .debug-grid-line{ position:fixed; top:0; bottom:0; left:96px; width:1px; background:lime; z-index:998; }
-
-  /* HERO */
-  .hero-fixed{ position:fixed; inset:0; z-index:3; opacity:var(--heroAlpha);
-    filter:blur(calc(var(--heroBlur)*10px)); pointer-events:auto; }
-  .hero-bg{ position:absolute; inset:0; background:url("assets/hero1gc.jpg") center/cover no-repeat;
-    opacity:0; animation:heroIn 1000ms ease-out forwards; }
+  /* ===== HERO ===== */
+  .hero-fixed{
+    position:fixed; inset:0; z-index:3;
+    opacity:var(--heroAlpha);
+    filter: blur(calc(var(--heroBlur) * 10px));
+    pointer-events:auto;
+    will-change:opacity, filter;
+  }
+  .hero-bg{
+    position:absolute; inset:0;
+    background:url("assets/hero1gc.jpg") center/cover no-repeat;
+    opacity:0; animation:heroIn 1000ms ease-out forwards;
+    pointer-events:none;
+  }
   @keyframes heroIn{ from{opacity:0} to{opacity:1} }
 
-  /* ⬇️ changed: was inset:96px 82px; now exactly 96px on all sides */
+  /* Align hero media to 96px left margin */
   .hero-media{
-    position:absolute; inset:96px 96px;
-    display:flex; align-items:flex-end; justify-content:flex-start; overflow:hidden;
+    position:absolute; top:96px; bottom:96px; left:96px; right:82px;
+    display:flex; align-items:flex-end; justify-content:flex-start;
+    overflow:hidden;
   }
-
-  .col{ position:relative; max-width:700px; transform:translateY(var(--shift)); }
+  .col{ position:relative; max-width:700px; transform:translateY(var(--shift)); will-change:transform; }
   .hero-title{ margin:0 0 24px 0; font-weight:400; font-size:100px; line-height:100px; opacity:var(--titleOpacity); }
   .hero-title .line{ display:block; }
-  .hero-links{ display:flex; flex-direction:column; gap:10px; font-size:24px; line-height:30px; opacity:var(--linksOpacity); }
+
+  .hero-links{
+    display:flex; flex-direction:column; gap:10px;
+    font-size:24px; line-height:30px;
+    opacity:var(--linksOpacity);
+  }
   .hero-links a{ color:#fff; text-decoration:none; transition:color .2s ease; }
   .hero-links a:hover,.hero-links a:focus-visible{ color:#00A86B; }
+
+  /* spacer that lets us scroll the hero */
   .driver{ height:200vh; }
 
-  /* SECTION 1 */
+  /* ===== Section 1 ===== */
   .s1-wrap{ position:relative; height:280vh; background:#e5e4e0; }
-  .s1-sticky{ position:sticky; top:0; height:100vh; display:grid;
-    grid-template-columns:512px 96px 1fr; align-items:center; }
 
-  /* Text overlay rail aligned to grid left:96px, width:512px */
-  .s1-overlay{ position:absolute; inset:0; z-index:2; }
-  .s1-text-rail{ position:absolute; top:0; bottom:0; left:96px; width:512px; overflow:hidden; }
-  .s1-text{ transform:translateY(var(--s1Y)); color:#111; }
+  /* Sticky viewport: matches layout margins */
+  .s1-sticky{
+    position:sticky; top:0; height:100vh; z-index:2;
+    padding:96px 82px 96px 96px;     /* 96 left/top/bottom, 82 right */
+    display:grid;
+    grid-template-columns:512px 96px 1fr;
+    align-items:stretch;             /* <-- stretch rows to fill full viewport */
+    box-sizing:border-box;
+  }
+
+  /* TEXT OVERLAY rail — spans the full sticky viewport (inside the frame) */
+  .s1-overlay{
+    position:absolute; inset:0;
+    pointer-events:none; z-index:2;
+  }
+  .s1-text-rail{
+    position:absolute;
+    top:96px; bottom:96px; left:96px; /* align to frame */
+    width:512px;
+    overflow:hidden;
+  }
+  .s1-text{ transform:translateY(var(--s1Y)); color:#111; will-change:transform; }
   .s1-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
 
-  /* Pinned media on the right */
-  .s1-media{ grid-column:3; width:100%; height:100%; display:flex; align-items:center; justify-content:center; overflow:hidden; z-index:1; }
-  .s1-media img{ height:100%; width:auto; max-width:100%; max-height:100%; object-fit:contain; opacity:var(--s1ImgOpacity); }
+  /* MEDIA in the right column — pinned & contained, no drift */
+  .s1-media{
+    grid-column:3;
+    width:100%; height:100%;
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden; z-index:1;
+  }
+  .s1-media img{
+    height:100%;                /* scale by height to fill visible area */
+    width:auto;
+    max-width:100%;
+    max-height:100%;
+    object-fit:contain;
+    opacity:var(--s1ImgOpacity);
+    transition:none;
+    will-change:opacity;
+  }
 
   .after{ min-height:120vh; }
 </style>
 </head>
 <body>
 
-<!-- Debug lines -->
-<div class="debug-hero-line"></div> <!-- red -->
-<div class="debug-s1-line"></div>   <!-- blue -->
-<div class="debug-grid-line"></div> <!-- green -->
-
 <!-- HERO -->
 <div class="hero-fixed" id="hero">
-  <div class="hero-bg"></div>
+  <div class="hero-bg" aria-hidden="true"></div>
   <div class="hero-media" id="hero-media">
     <div class="col" id="hero-col">
       <h1 class="hero-title" id="hero-title">
@@ -74,7 +123,7 @@
         <span class="line">What did</span>
         <span class="line">Geddes see?</span>
       </h1>
-      <nav class="hero-links" id="hero-links">
+      <nav class="hero-links" id="hero-links" aria-label="Primary">
         <a href="https://www.megama.net">Civic Green</a>
         <a href="https://www.megama.net">Growth</a>
         <a href="https://www.megama.net">Sustenance</a>
@@ -90,6 +139,7 @@
 <!-- SECTION 1 -->
 <section class="s1-wrap" id="s1-wrap">
   <div class="s1-sticky" id="s1-sticky">
+    <!-- overlay text rail -->
     <div class="s1-overlay">
       <div class="s1-text-rail" id="s1-rail">
         <div class="s1-text" id="s1-text">
@@ -101,6 +151,11 @@
         </div>
       </div>
     </div>
+
+    <!-- gap column -->
+    <div></div>
+
+    <!-- pinned media -->
     <figure class="s1-media" id="s1-media">
       <img id="s1-img" src="assets/section1.jpg" alt="Section 1 visual">
     </figure>
@@ -116,12 +171,12 @@
   const easeInOutCubic=t=>t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
   const easeSlower=t=>Math.pow(t,0.8);
 
+  /* ---------- HERO choreography ---------- */
   const driver=document.getElementById('driver');
   const media=document.getElementById('hero-media');
   const col=document.getElementById('hero-col');
   const title=document.getElementById('hero-title');
   const links=document.getElementById('hero-links');
-
   let startShift=0,endShift=0;
 
   function measureHero(){
@@ -133,8 +188,10 @@
     const lastLinkRect=(links.lastElementChild||links).getBoundingClientRect();
     const mediaRect=media.getBoundingClientRect();
     const mediaBaseline=mediaRect.bottom;
+
     startShift=mediaBaseline-thirdRect.bottom;
     endShift=mediaBaseline-lastLinkRect.bottom;
+
     col.style.transform=prev||'';
     root.style.setProperty('--shift',startShift.toFixed(1)+'px');
   }
@@ -147,21 +204,24 @@
     return clamp(-r.top/total,0,1);
   }
 
+  /* ---------- Section 1 metrics ---------- */
   const s1Wrap=document.getElementById('s1-wrap');
   const s1Rail=document.getElementById('s1-rail');
   const s1Text=document.getElementById('s1-text');
+
   let s1StartY=0,s1EndY=0;
 
   function measureS1(){
+    // Rail height is the visible sticky viewport (inside top/bottom 96px)
     const clipH=s1Rail.clientHeight;
     const textH=s1Text.scrollHeight;
-    s1StartY=clipH;    // start fully below the viewport
-    s1EndY=-textH;     // end fully above the viewport
+    s1StartY=clipH;       // start fully below the viewport
+    s1EndY=-textH;        // end fully above the viewport
     root.style.setProperty('--s1Y', s1StartY+'px');
   }
 
   function update(){
-    // HERO choreography
+    /* HERO baseline motion & link reveal */
     const p=progressOf(driver);
     const pFade=easeInOutCubic(clamp(p/0.60,0,1));
     root.style.setProperty('--titleOpacity',pFade.toFixed(3));
@@ -170,17 +230,17 @@
     root.style.setProperty('--shift',shift.toFixed(1)+'px');
     root.style.setProperty('--linksOpacity',pSlide.toFixed(3));
 
-    // Section 1 progress + hero dissolve
+    /* Section 1 progress + hero dissolve */
     const s1=progressOf(s1Wrap);
     root.style.setProperty('--s1',s1.toFixed(3));
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
-    // Section 1 image fade-in (scroll-scrubbed)
-    const imgFadeIn=clamp(s1/0.35,0,1);
+    /* Image fade-in by scroll (first ~35% of section) */
+    const imgFadeIn = clamp(s1/0.35,0,1);
     root.style.setProperty('--s1ImgOpacity',imgFadeIn.toFixed(3));
 
-    // Text movement (starts at 75% of S1)
+    /* Text sweep: starts at 75% through S1, runs bottom→top across the rail */
     const textStart=0.75;
     const raw=clamp((s1-textStart)/(1-textStart),0,1);
     const slowed=easeSlower(raw);
@@ -188,8 +248,10 @@
     root.style.setProperty('--s1Y', y+'px');
   }
 
-  function init(){
+  async function init(){
+    if(document.fonts && document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
     measureHero(); measureS1(); update();
+    addEventListener('load', ()=>{ measureHero(); measureS1(); update(); });
     addEventListener('resize', ()=>{ measureHero(); measureS1(); update(); });
     addEventListener('scroll', update, {passive:true});
   }
