@@ -47,58 +47,50 @@
   .hero-links a{ color:#fff; text-decoration:none; transition:color .2s ease; }
   .hero-links a:hover,.hero-links a:focus-visible{ color:#00A86B; }
 
-  .driver{ height:200vh; } /* space to play hero choreography */
+  .driver{ height:200vh; }
 
-  /* ===== FIXED, PINNED IMAGE FRAMES (no drift) ===== */
+  /* ===== PINNED, NO-DRIFT IMAGE FRAMES ===== */
   .frame{
     position:fixed; z-index:1; pointer-events:none;
-    top:96px; bottom:96px;
-    display:flex; align-items:center; justify-content:center; overflow:hidden;
+    top:96px; bottom:96px; display:flex; align-items:center; justify-content:center; overflow:hidden;
   }
+  .frame img{ width:100%; height:100%; object-fit:contain; display:block; }
+
   /* S1 image RIGHT (512 text + 96 gutter on left) */
   .s1-frame{
     left: calc(96px + 512px + 96px);
     right: 82px;
     opacity: var(--s1ImgOpacity);
   }
-  /* S2 image LEFT (mirror of S1) */
+  /* S2 image LEFT (mirror) */
   .s2-frame{
     left: 96px;
     right: calc(82px + 96px + 512px);
     opacity: var(--s2ImgOpacity);
   }
-  /* S3 image FULL hero-style viewport (inset same as hero) */
+  /* S3 image FULL hero-style viewport; TEMP background helps confirm sizing */
   .s3-frame{
     left: 96px; right: 82px;
     opacity: var(--s3ImgOpacity);
-  }
-  .frame img{
-    width:100%; height:100%;
-    object-fit:contain; display:block;
+    background: rgba(0,0,0,.03); /* TEMP: remove after you confirm */
   }
 
   /* ===== SECTION DRIVERS ===== */
   .s1-wrap, .s2-wrap, .s3-wrap{ position:relative; height:280vh; background:#e5e4e0; }
 
-  /* ===== FIXED TEXT OVERLAYS (rails) ===== */
+  /* ===== TEXT OVERLAYS (rails) ===== */
   .s1-overlay, .s2-overlay{
     position:fixed; inset:0; z-index:2; pointer-events:none;
   }
   .s1-overlay{ opacity:var(--s1Overlay); }
   .s2-overlay{ opacity:var(--s2Overlay); }
 
-  .s1-rail{
-    position:absolute; top:0; bottom:0; left:96px; width:512px;
-    overflow:hidden; margin:0; padding:0;
-  }
-  .s1-text{ transform:translateY(var(--s1Y)); color:#111; margin:0; padding:0; will-change:transform; }
+  .s1-rail{ position:absolute; top:0; bottom:0; left:96px; width:512px; overflow:hidden; }
+  .s1-text{ transform:translateY(var(--s1Y)); color:#111; }
   .s1-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
 
-  .s2-rail{
-    position:absolute; top:0; bottom:0; right:96px; width:512px;
-    overflow:hidden; margin:0; padding:0;
-  }
-  .s2-text{ transform:translateY(var(--s2Y)); color:#111; margin:0; padding:0; will-change:transform; text-align:left; }
+  .s2-rail{ position:absolute; top:0; bottom:0; right:96px; width:512px; overflow:hidden; }
+  .s2-text{ transform:translateY(var(--s2Y)); color:#111; text-align:left; }
   .s2-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
 
   .after{ min-height:120vh; }
@@ -129,12 +121,12 @@
 
 <section class="driver" id="driver"></section>
 
-<!-- PINNED, NO-DRIFT FRAMES -->
+<!-- PINNED FRAMES -->
 <figure class="frame s1-frame" aria-hidden="true"><img id="s1-img" src="assets/section1.jpg" alt=""></figure>
 <figure class="frame s2-frame" aria-hidden="true"><img id="s2-img" src="assets/section2.jpg" alt=""></figure>
 <figure class="frame s3-frame" aria-hidden="true"><img id="s3-img" src="assets/section3.jpg" alt=""></figure>
 
-<!-- ===== S1 (LEFT rail) ===== -->
+<!-- S1 -->
 <section class="s1-wrap" id="s1-wrap">
   <div class="s1-overlay">
     <div class="s1-rail">
@@ -149,7 +141,7 @@
   </div>
 </section>
 
-<!-- ===== S2 (RIGHT rail, mirrored image LEFT) ===== -->
+<!-- S2 -->
 <section class="s2-wrap" id="s2-wrap">
   <div class="s2-overlay">
     <div class="s2-rail">
@@ -164,7 +156,7 @@
   </div>
 </section>
 
-<!-- ===== S3 (full-viewport media like hero; no text rail requested) ===== -->
+<!-- S3 driver only (full-viewport image lives in the fixed frame above) -->
 <section class="s3-wrap" id="s3-wrap"></section>
 
 <section class="after"></section>
@@ -220,15 +212,13 @@
   function measureS1(){
     const vh=window.innerHeight;
     const textH=s1Text.scrollHeight;
-    s1StartY=vh;          // start off-screen below
-    s1EndY=-textH;        // finish off-screen above
+    s1StartY=vh; s1EndY=-textH;
     root.style.setProperty('--s1Y', s1StartY+'px');
   }
   function measureS2(){
     const vh=window.innerHeight;
     const textH=s2Text.scrollHeight;
-    s2StartY=vh;
-    s2EndY=-textH;
+    s2StartY=vh; s2EndY=-textH;
     root.style.setProperty('--s2Y', s2StartY+'px');
   }
 
@@ -250,7 +240,7 @@
     root.style.setProperty('--s2',s2.toFixed(3));
     root.style.setProperty('--s3',s3.toFixed(3));
 
-    /* Overlay visibility (only while their section is active) */
+    /* Overlay visibility */
     root.style.setProperty('--s1Overlay',(s1>0 && s1<1)?1:0);
     root.style.setProperty('--s2Overlay',(s2>0 && s2<1)?1:0);
 
@@ -258,49 +248,37 @@
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
-    /* Text sweeps (full-viewport rails) */
+    /* Text sweeps */
     const s1TextStart=0.75;
     const s1Raw=clamp((s1-s1TextStart)/(1-s1TextStart),0,1);
     const s1Y=s1StartY+(s1EndY-s1StartY)*easePow(s1Raw,0.8);
     root.style.setProperty('--s1Y', s1Y+'px');
 
-    const s2TextStart=0.25;  /* shows while S2 fades in */
+    const s2TextStart=0.25;
     const s2Raw=clamp((s2-s2TextStart)/(1-s2TextStart),0,1);
     const s2Y=s2StartY+(s2EndY-s2StartY)*easePow(s2Raw,0.8);
     root.style.setProperty('--s2Y', s2Y+'px');
 
-    /* ===== Image Opacities — Consistent crossfades ===== */
-    const FADE_FRAC = 0.35;       // scrub duration for all fades (hero rhythm)
-    const LEAD_FRAC = 0.15;       // start handoff when text bottom hits 15% vh
+    /* ===== Crossfades ===== */
+    const FADE_FRAC = 0.35;
+    const LEAD_FRAC = 0.15;
 
-    /* S1 fade-in (hero→S1 pace) */
+    /* S1 → S2 */
     const s1In = clamp(s1/FADE_FRAC, 0, 1);
-
-    /* Gate for S1→S2 (earlier start) */
     const textBottomS1 = s1Y + s1Text.scrollHeight;
     const gateS1S2 = (textBottomS1 <= window.innerHeight * LEAD_FRAC) ? 1 : 0;
-
-    /* S1 stays full until gate; then out vs S2 */
     const x12 = clamp(s2/FADE_FRAC, 0, 1);
-    let s1Alpha = gateS1S2 ? (1 - x12) : 1;
-    s1Alpha = Math.min(s1Alpha, s1In);
-    root.style.setProperty('--s1ImgOpacity', s1Alpha.toFixed(3));
-
-    /* S2 in after gate */
+    let s1Alpha = Math.min(gateS1S2 ? (1 - x12) : 1, s1In);
     let s2Alpha = gateS1S2 ? x12 : 0;
 
-    /* ----- S2 → S3 (new) ----- */
-    /* S2 text position for gating */
+    /* S2 → S3 (robust gate: start when S2 text hits 15% vh, OR once S2 is done) */
     const textBottomS2 = s2Y + s2Text.scrollHeight;
-    const gateS2S3 = (textBottomS2 <= window.innerHeight * LEAD_FRAC) ? 1 : 0;
-
-    /* Crossfade S2 out vs S3 in over same 0.35 window keyed to S3 */
+    const gateS2S3 = (textBottomS2 <= window.innerHeight * LEAD_FRAC) || (s2 >= 0.999);
     const x23 = clamp(s3/FADE_FRAC, 0, 1);
     const s3Alpha = gateS2S3 ? x23 : 0;
-
-    /* Once S3 starts, S2 should fade back down with the same x23 */
     if (gateS2S3) s2Alpha = 1 - x23;
 
+    root.style.setProperty('--s1ImgOpacity', s1Alpha.toFixed(3));
     root.style.setProperty('--s2ImgOpacity', s2Alpha.toFixed(3));
     root.style.setProperty('--s3ImgOpacity', s3Alpha.toFixed(3));
   }
