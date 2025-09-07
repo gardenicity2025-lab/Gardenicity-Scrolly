@@ -5,61 +5,115 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Gardenicity — Hero → S1 → S2 → S3 → S4</title>
 <style>
+  /* ===== Base ===== */
   html,body{
     margin:0; padding:0; height:100%;
     background:#e5e4e0; color:#fff;
     font-family:"Acumin Pro",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
   }
   :root{
+    /* HERO */
     --shift:0px; --titleOpacity:0; --linksOpacity:0; --heroAlpha:1; --heroBlur:0;
+    /* S1 */
     --s1:0; --s1Overlay:0; --s1Y:0px; --s1ImgOpacity:0;
+    /* S2 */
     --s2:0; --s2Overlay:0; --s2Y:0px; --s2ImgOpacity:0;
+    /* S3 */
     --s3:0; --s3ImgOpacity:0;
+    /* S4 */
     --s4:0; --s4Overlay:0; --s4Y:0px; --s4ImgOpacity:0;
   }
 
-  /* HERO */
-  .hero-fixed{position:fixed;inset:0;z-index:3;opacity:var(--heroAlpha);filter:blur(calc(var(--heroBlur)*10px));}
-  .hero-bg{position:absolute;inset:0;background:url("assets/hero1gc.jpg") center/cover no-repeat;opacity:0;animation:heroIn 900ms ease-out forwards;}
-  @keyframes heroIn{from{opacity:0}to{opacity:1}}
-  .hero-media{position:absolute;top:96px;bottom:96px;left:96px;right:82px;display:flex;align-items:flex-end;justify-content:flex-start;overflow:hidden;}
-  .col{max-width:700px;transform:translateY(var(--shift));}
-  .hero-title{margin:0 0 24px 0;font-weight:400;font-size:100px;line-height:100px;opacity:var(--titleOpacity);}
-  .hero-title .line{display:block;}
-  .hero-links{display:flex;flex-direction:column;gap:10px;font-size:24px;line-height:30px;opacity:var(--linksOpacity);}
-  .hero-links a{color:#fff;text-decoration:none;}
-  .driver{height:200vh;}
+  /* ===== HERO (aligned to 96px left) ===== */
+  .hero-fixed{
+    position:fixed; inset:0; z-index:3;
+    opacity:var(--heroAlpha);
+    filter:blur(calc(var(--heroBlur)*10px));
+    pointer-events:auto; will-change:opacity,filter;
+  }
+  .hero-bg{
+    position:absolute; inset:0;
+    background:url("assets/hero1gc.jpg") center/cover no-repeat;
+    opacity:0; animation:heroIn 900ms ease-out forwards; pointer-events:none;
+  }
+  @keyframes heroIn{ from{opacity:0} to{opacity:1} }
 
-  /* FRAMES */
-  figure.frame{margin:0;}
-  .frame{position:fixed;z-index:1;pointer-events:none;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-  .frame img{width:100%;height:100%;object-fit:contain;display:block;}
-  .s1-frame{top:96px;bottom:96px;left:calc(96px + 512px + 96px);right:82px;opacity:var(--s1ImgOpacity);}
-  .s2-frame{top:96px;bottom:96px;left:96px;right:calc(82px + 96px + 512px);opacity:var(--s2ImgOpacity);}
-  .s3-frame{top:0;right:0;bottom:0;left:0;opacity:var(--s3ImgOpacity);}
-  .s3-frame>img{object-fit:cover!important;object-position:center;}
-  .s4-frame{top:96px;bottom:96px;left:calc(96px + 512px + 96px);right:82px;opacity:var(--s4ImgOpacity);}
+  .hero-media{
+    position:absolute; top:96px; bottom:96px; left:96px; right:82px;
+    display:flex; align-items:flex-end; justify-content:flex-start; overflow:hidden;
+  }
+  .col{ position:relative; max-width:700px; transform:translateY(var(--shift)); will-change:transform; }
+  .hero-title{ margin:0 0 24px 0; font-weight:400; font-size:100px; line-height:100px; opacity:var(--titleOpacity); }
+  .hero-title .line{ display:block; }
+  .hero-links{ display:flex; flex-direction:column; gap:10px; font-size:24px; line-height:30px; opacity:var(--linksOpacity); }
+  .hero-links a{ color:#fff; text-decoration:none; transition:color .2s ease; }
+  .hero-links a:hover,.hero-links a:focus-visible{ color:#00A86B; }
 
-  /* SECTIONS */
-  .s1-wrap,.s2-wrap,.s3-wrap,.s4-wrap{position:relative;height:280vh;background:#e5e4e0;}
-  .s1-overlay,.s2-overlay,.s4-overlay{position:fixed;inset:0;z-index:2;pointer-events:none;}
-  .s1-overlay{opacity:var(--s1Overlay);}
-  .s2-overlay{opacity:var(--s2Overlay);}
-  .s4-overlay{opacity:var(--s4Overlay);}
-  .s1-rail,.s4-rail{position:absolute;top:0;bottom:0;left:96px;width:512px;overflow:hidden;}
-  .s1-text{transform:translateY(var(--s1Y));color:#111;}
-  .s4-text{transform:translateY(var(--s4Y));color:#111;}
-  .s1-text p,.s4-text p,.s2-text p{margin:0 0 14px 0;font-size:20px;line-height:28px;}
-  .s2-rail{position:absolute;top:0;bottom:0;right:96px;width:512px;overflow:hidden;}
-  .s2-text{transform:translateY(var(--s2Y));color:#111;text-align:left;}
-  .after{min-height:120vh;}
+  .driver{ height:200vh; }
+
+  /* ===== PINNED, NO-DRIFT IMAGE FRAMES ===== */
+  figure.frame{ margin:0; } /* reset default margin */
+  .frame{
+    position:fixed; z-index:1; pointer-events:none;
+    display:flex; align-items:center; justify-content:center; overflow:hidden;
+  }
+  .frame img{ width:100%; height:100%; object-fit:contain; display:block; }
+
+  /* S1 image RIGHT (512 text + 96 gutter on left) */
+  .s1-frame{
+    top:96px; bottom:96px;
+    left: calc(96px + 512px + 96px);
+    right: 82px;
+    opacity: var(--s1ImgOpacity);
+  }
+  /* S2 image LEFT (mirror) */
+  .s2-frame{
+    top:96px; bottom:96px;
+    left: 96px;
+    right: calc(82px + 96px + 512px);
+    opacity: var(--s2ImgOpacity);
+  }
+  /* S3 image FULL (hero-style, edge-to-edge) */
+  .s3-frame{ top:0; right:0; bottom:0; left:0; opacity:var(--s3ImgOpacity); }
+  .frame.s3-frame>img{
+    width:100%; height:100%;
+    object-fit:cover !important; object-position:center;
+  }
+  /* S4 image RIGHT (same geometry as S1) */
+  .s4-frame{
+    top:96px; bottom:96px;
+    left: calc(96px + 512px + 96px);
+    right: 82px;
+    opacity: var(--s4ImgOpacity);
+  }
+
+  /* ===== SECTION DRIVERS ===== */
+  .s1-wrap, .s2-wrap, .s3-wrap, .s4-wrap{ position:relative; height:280vh; background:#e5e4e0; }
+
+  /* ===== TEXT OVERLAYS (rails) ===== */
+  .s1-overlay, .s2-overlay, .s4-overlay{
+    position:fixed; inset:0; z-index:2; pointer-events:none;
+  }
+  .s1-overlay{ opacity:var(--s1Overlay); }
+  .s2-overlay{ opacity:var(--s2Overlay); }
+  .s4-overlay{ opacity:var(--s4Overlay); }
+
+  .s1-rail, .s4-rail{ position:absolute; top:0; bottom:0; left:96px; width:512px; overflow:hidden; }
+  .s1-text, .s4-text{ color:#111; transform:translateY(var(--s1Y)); }
+  .s1-text p, .s4-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
+
+  .s2-rail{ position:absolute; top:0; bottom:0; right:96px; width:512px; overflow:hidden; }
+  .s2-text{ transform:translateY(var(--s2Y)); color:#111; text-align:left; }
+  .s2-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
+
+  .after{ min-height:120vh; }
 </style>
 </head>
 <body>
 
 <!-- HERO -->
 <div class="hero-fixed" id="hero">
-  <div class="hero-bg"></div>
+  <div class="hero-bg" aria-hidden="true"></div>
   <div class="hero-media" id="hero-media">
     <div class="col" id="hero-col">
       <h1 class="hero-title" id="hero-title">
@@ -67,12 +121,12 @@
         <span class="line">What did</span>
         <span class="line">Geddes see?</span>
       </h1>
-      <nav class="hero-links" id="hero-links">
-        <a href="#">Civic Green</a>
-        <a href="#">Growth</a>
-        <a href="#">Sustenance</a>
-        <a href="#">Leafy SDGs</a>
-        <a href="#">EN/עב</a>
+      <nav class="hero-links" id="hero-links" aria-label="Primary">
+        <a href="https://www.megama.net">Civic Green</a>
+        <a href="https://www.megama.net">Growth</a>
+        <a href="https://www.megama.net">Sustenance</a>
+        <a href="https://www.megama.net">Leafy SDGs</a>
+        <a href="https://www.megama.net">EN/עב</a>
       </nav>
     </div>
   </div>
@@ -80,21 +134,22 @@
 
 <section class="driver" id="driver"></section>
 
-<!-- FRAMES -->
-<figure class="frame s1-frame"><img id="s1-img" src="assets/section1.jpg" alt=""></figure>
-<figure class="frame s2-frame"><img id="s2-img" src="assets/section2.jpg" alt=""></figure>
-<figure class="frame s3-frame"><img id="s3-img" src="assets/section3.jpg" alt=""></figure>
-<figure class="frame s4-frame"><img id="s4-img" src="assets/section4.jpg" alt=""></figure>
+<!-- PINNED FRAMES -->
+<figure class="frame s1-frame" aria-hidden="true"><img id="s1-img" src="assets/section1.jpg" alt=""></figure>
+<figure class="frame s2-frame" aria-hidden="true"><img id="s2-img" src="assets/section2.jpg" alt=""></figure>
+<figure class="frame s3-frame" aria-hidden="true"><img id="s3-img" src="assets/section3.jpg" alt=""></figure>
+<figure class="frame s4-frame" aria-hidden="true"><img id="s4-img" src="assets/section4.jpg" alt=""></figure>
 
 <!-- S1 -->
 <section class="s1-wrap" id="s1-wrap">
   <div class="s1-overlay">
     <div class="s1-rail">
       <div class="s1-text" id="s1-text">
-        <p><strong>HOURS AFTER MY</strong> mother took her last breath…</p>
+        <p><strong>HOURS AFTER MY</strong> mother took her last breath on earth…</p>
         <p>After we opened the windows to let the spirits out…</p>
         <p>After we lit incense stick after incense stick…</p>
-        <p>After we watched MMA fighters on TV…</p>
+        <p>After we watched MMA fighters on TV in the basement…</p>
+        <p>And the smoke kept rising. The chain must not be broken.</p>
       </div>
     </div>
   </div>
@@ -105,24 +160,29 @@
   <div class="s2-overlay">
     <div class="s2-rail">
       <div class="s2-text" id="s2-text">
-        <p><strong>SECTION TWO</strong> opens as the memory fades…</p>
+        <p><strong>SECTION TWO</strong> opens as the previous memory fades…</p>
+        <p>Now the perspective widens to a new frame…</p>
         <p>The city’s edge meets the garden…</p>
+        <p>We follow the lines of growth and care…</p>
+        <p>And learn how places hold time.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- S3 driver -->
+<!-- S3 driver only (full-viewport image lives in the fixed frame above) -->
 <section class="s3-wrap" id="s3-wrap"></section>
 
-<!-- S4 -->
+<!-- S4 (mirror S1: left rail text, right image) -->
 <section class="s4-wrap" id="s4-wrap">
   <div class="s4-overlay">
     <div class="s4-rail">
       <div class="s4-text" id="s4-text">
-        <p><strong>SECTION FOUR</strong> returns to narration…</p>
-        <p>Left-rail text scrolls again…</p>
-        <p>Right image stays pinned…</p>
+        <p><strong>SECTION FOUR</strong> returns to the tight frame…</p>
+        <p>Left-rail narration continues the thread…</p>
+        <p>The horizontal image sits steady at right…</p>
+        <p>Margins and rhythm match Section One…</p>
+        <p>And the cycle of views goes on.</p>
       </div>
     </div>
   </div>
@@ -137,6 +197,7 @@
   const easeInOutCubic=t=>t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
   const easePow=(t,p)=>Math.pow(t,p);
 
+  /* ---------- HERO ---------- */
   const driver=document.getElementById('driver');
   const heroMedia=document.getElementById('hero-media');
   const heroCol=document.getElementById('hero-col');
@@ -160,26 +221,47 @@
   }
   function progressOf(el){
     const r=el.getBoundingClientRect();
-    const vh=window.innerHeight;
+    const vh=window.innerHeight||document.documentElement.clientHeight;
     const total=r.height-vh;
     if(total<=0) return 0;
     return clamp(-r.top/total,0,1);
   }
 
+  /* ---------- SECTIONS ---------- */
   const s1Wrap=document.getElementById('s1-wrap');
   const s2Wrap=document.getElementById('s2-wrap');
   const s3Wrap=document.getElementById('s3-wrap');
   const s4Wrap=document.getElementById('s4-wrap');
+
   const s1Text=document.getElementById('s1-text');
   const s2Text=document.getElementById('s2-text');
   const s4Text=document.getElementById('s4-text');
 
-  let s1StartY=0,s1EndY=0,s2StartY=0,s2EndY=0,s4StartY=0,s4EndY=0;
-  function measureS1(){const vh=window.innerHeight;const h=s1Text.scrollHeight;s1StartY=vh;s1EndY=-h;root.style.setProperty('--s1Y',s1StartY+'px');}
-  function measureS2(){const vh=window.innerHeight;const h=s2Text.scrollHeight;s2StartY=vh;s2EndY=-h;root.style.setProperty('--s2Y',s2StartY+'px');}
-  function measureS4(){const vh=window.innerHeight;const h=s4Text.scrollHeight;s4StartY=vh;s4EndY=-h;root.style.setProperty('--s4Y',s4StartY+'px');}
+  let s1StartY=0, s1EndY=0;
+  let s2StartY=0, s2EndY=0;
+  let s4StartY=0, s4EndY=0;
+
+  function measureS1(){
+    const vh=window.innerHeight;
+    const textH=s1Text.scrollHeight;
+    s1StartY=vh; s1EndY=-textH;
+    root.style.setProperty('--s1Y', s1StartY+'px');
+  }
+  function measureS2(){
+    const vh=window.innerHeight;
+    const textH=s2Text.scrollHeight;
+    s2StartY=vh; s2EndY=-textH;
+    root.style.setProperty('--s2Y', s2StartY+'px');
+  }
+  function measureS4(){
+    const vh=window.innerHeight;
+    const textH=s4Text.scrollHeight;
+    s4StartY=vh; s4EndY=-textH;
+    root.style.setProperty('--s4Y', s4StartY+'px');
+  }
 
   function update(){
+    /* HERO choreography */
     const p=progressOf(driver);
     const pFade=easeInOutCubic(clamp(p/0.60,0,1));
     root.style.setProperty('--titleOpacity',pFade.toFixed(3));
@@ -188,50 +270,81 @@
     root.style.setProperty('--shift',shift.toFixed(1)+'px');
     root.style.setProperty('--linksOpacity',pSlide.toFixed(3));
 
-    const s1=progressOf(s1Wrap),s2=progressOf(s2Wrap),s3=progressOf(s3Wrap),s4=progressOf(s4Wrap);
+    /* Section progress */
+    const s1=progressOf(s1Wrap);
+    const s2=progressOf(s2Wrap);
+    const s3=progressOf(s3Wrap);
+    const s4=progressOf(s4Wrap);
     root.style.setProperty('--s1',s1.toFixed(3));
     root.style.setProperty('--s2',s2.toFixed(3));
     root.style.setProperty('--s3',s3.toFixed(3));
     root.style.setProperty('--s4',s4.toFixed(3));
-    root.style.setProperty('--s1Overlay',(s1>0&&s1<1)?1:0);
-    root.style.setProperty('--s2Overlay',(s2>0&&s2<1)?1:0);
-    root.style.setProperty('--s4Overlay',(s4>0&&s4<1)?1:0);
+
+    /* Overlay visibility */
+    root.style.setProperty('--s1Overlay',(s1>0 && s1<1)?1:0);
+    root.style.setProperty('--s2Overlay',(s2>0 && s2<1)?1:0);
+    root.style.setProperty('--s4Overlay',(s4>0 && s4<1)?1:0);
+
+    /* Dissolve hero while S1 comes in */
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
-    const s1Raw=clamp((s1-0.75)/0.25,0,1);
-    const s1Y=s1StartY+(s1EndY-s1StartY)*easePow(s1Raw,0.8);
-    root.style.setProperty('--s1Y',s1Y+'px');
-    const s2Raw=clamp((s2-0.25)/0.75,0,1);
-    const s2Y=s2StartY+(s2EndY-s2StartY)*easePow(s2Raw,0.8);
-    root.style.setProperty('--s2Y',s2Y+'px');
-    const s4Raw=clamp((s4-0.25)/0.75,0,1);
-    const s4Y=s4StartY+(s4EndY-s4StartY)*easePow(s4Raw,0.8);
-    root.style.setProperty('--s4Y',s4Y+'px');
+    /* Text sweeps (same easing/tempo across sections) */
+    const textEasePow = 0.8;
 
-    const FADE_FRAC=0.35;
-    const x12=clamp(s2/FADE_FRAC,0,1);
-    let s1Alpha=easeInOutCubic(clamp(s1/FADE_FRAC,0,1));
-    let s2Alpha=easeInOutCubic(x12);
-    const x23=clamp(s3/FADE_FRAC,0,1);
-    let s3Alpha=easeInOutCubic(x23);
-    if(s2>=0.999) s2Alpha=1-x23;
-    const x34=clamp(s4/FADE_FRAC,0,1);
-    let s4Alpha=easeInOutCubic(x34);
-    s3Alpha*=1-s4Alpha;
+    const s1TextStart=0.75;
+    const s1Raw=clamp((s1-s1TextStart)/(1-s1TextStart),0,1);
+    const s1Y=s1StartY+(s1EndY-s1StartY)*easePow(s1Raw,textEasePow);
+    root.style.setProperty('--s1Y', s1Y+'px');
 
-    root.style.setProperty('--s1ImgOpacity',s1Alpha.toFixed(3));
-    root.style.setProperty('--s2ImgOpacity',s2Alpha.toFixed(3));
-    root.style.setProperty('--s3ImgOpacity',s3Alpha.toFixed(3));
-    root.style.setProperty('--s4ImgOpacity',s4Alpha.toFixed(3));
+    const s2TextStart=0.25;
+    const s2Raw=clamp((s2-s2TextStart)/(1-s2TextStart),0,1);
+    const s2Y=s2StartY+(s2EndY-s2StartY)*easePow(s2Raw,textEasePow);
+    root.style.setProperty('--s2Y', s2Y+'px');
+
+    const s4TextStart=0.25;
+    const s4Raw=clamp((s4-s4TextStart)/(1-s4TextStart),0,1);
+    const s4Y=s4StartY+(s4EndY-s4StartY)*easePow(s4Raw,textEasePow);
+    root.style.setProperty('--s4Y', s4Y+'px');
+
+    /* ===== Crossfades (aligned timing) ===== */
+    const FADE_FRAC = 0.35;           // same window for all crossfades
+    const LEAD_FRAC = 0.15;
+
+    // S1 → S2 (unchanged, but eased)
+    const s1In  = clamp(s1/FADE_FRAC, 0, 1);
+    const x12   = clamp(s2/FADE_FRAC, 0, 1);
+    const textBottomS1 = s1Y + s1Text.scrollHeight;
+    const gateS1S2 = (textBottomS1 <= window.innerHeight * LEAD_FRAC) ? 1 : 0;
+    let s1Alpha = Math.min(gateS1S2 ? (1 - easeInOutCubic(x12)) : 1, easeInOutCubic(s1In));
+    let s2Alpha = gateS1S2 ? easeInOutCubic(x12) : 0;
+
+    // S2 → S3 (eased, hero-like)
+    const textBottomS2 = s2Y + s2Text.scrollHeight;
+    const gateS2S3 = (textBottomS2 <= window.innerHeight * LEAD_FRAC) || (s2 >= 0.999);
+    const x23 = clamp(s3/FADE_FRAC, 0, 1);
+    const s3In = easeInOutCubic(x23);
+    const s3AlphaPre = gateS2S3 ? s3In : 0;
+    if (gateS2S3) s2Alpha = 1 - s3In;
+
+    // S3 → S4 (new, eased crossfade)
+    const x34 = clamp(s4/FADE_FRAC, 0, 1);
+    const s4In = easeInOutCubic(x34);
+    let s4Alpha = s4In;
+    let s3Alpha = s3AlphaPre * (1 - s4In); // S3 fades out as S4 fades in
+
+    root.style.setProperty('--s1ImgOpacity', s1Alpha.toFixed(3));
+    root.style.setProperty('--s2ImgOpacity', s2Alpha.toFixed(3));
+    root.style.setProperty('--s3ImgOpacity', s3Alpha.toFixed(3));
+    root.style.setProperty('--s4ImgOpacity', s4Alpha.toFixed(3));
   }
 
   async function init(){
-    if(document.fonts&&document.fonts.ready){try{await document.fonts.ready;}catch(e){}}
-    measureHero();measureS1();measureS2();measureS4();update();
-    addEventListener('load',()=>{measureHero();measureS1();measureS2();measureS4();update();});
-    addEventListener('resize',()=>{measureHero();measureS1();measureS2();measureS4();update();});
-    addEventListener('scroll',update,{passive:true});
+    if(document.fonts && document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
+    measureHero(); measureS1(); measureS2(); measureS4(); update();
+    addEventListener('load', ()=>{ measureHero(); measureS1(); measureS2(); measureS4(); update(); });
+    addEventListener('resize', ()=>{ measureHero(); measureS1(); measureS2(); measureS4(); update(); });
+    addEventListener('scroll', update, {passive:true});
   }
   init();
 })();
