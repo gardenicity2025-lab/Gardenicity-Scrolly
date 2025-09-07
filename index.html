@@ -70,20 +70,16 @@
     right: calc(82px + 96px + 512px);
     opacity: var(--s2ImgOpacity);
   }
-/* === Full-bleed Section 3 (like the hero) === */
-.s3-frame {
-  position: fixed;
-  top: 0; right: 0; bottom: 0; left: 0;   /* edge-to-edge */
-  z-index: 1;                              /* same stack as before */
-  opacity: var(--s3ImgOpacity);
-  background: transparent;
-}
-.s3-frame img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;                        /* fills viewport */
-  display: block;
-}
+  /* S3 image FULL (hero-style, edge-to-edge) */
+  .s3-frame{
+    top:0; bottom:0; left:0; right:0;
+    opacity: var(--s3ImgOpacity);
+  }
+  .s3-frame img{
+    width:100%; height:100%;
+    object-fit:cover; /* fill entire viewport */
+  }
+
   /* ===== SECTION DRIVERS ===== */
   .s1-wrap, .s2-wrap, .s3-wrap{ position:relative; height:280vh; background:#e5e4e0; }
 
@@ -304,4 +300,3 @@
 </script>
 </body>
 </html>
-
