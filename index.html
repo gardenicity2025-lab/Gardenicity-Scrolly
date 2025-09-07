@@ -99,7 +99,8 @@
   .s4-overlay{ opacity:var(--s4Overlay); }
 
   .s1-rail, .s4-rail{ position:absolute; top:0; bottom:0; left:96px; width:512px; overflow:hidden; }
-  .s1-text, .s4-text{ color:#111; transform:translateY(var(--s1Y)); }
+  .s1-text{ transform:translateY(var(--s1Y)); color:#111; }
+  .s4-text{ transform:translateY(var(--s4Y)); color:#111; }  /* <- S4 has its own Y */
   .s1-text p, .s4-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
 
   .s2-rail{ position:absolute; top:0; bottom:0; right:96px; width:512px; overflow:hidden; }
@@ -173,7 +174,7 @@
 <!-- S3 driver only (full-viewport image lives in the fixed frame above) -->
 <section class="s3-wrap" id="s3-wrap"></section>
 
-<!-- S4 (mirror S1: left rail text, right image) -->
+<!-- S4 (same layout as S1) -->
 <section class="s4-wrap" id="s4-wrap">
   <div class="s4-overlay">
     <div class="s4-rail">
@@ -289,53 +290,51 @@
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
-    /* Text sweeps (same easing/tempo across sections) */
-    const textEasePow = 0.8;
+    /* Text sweeps */
+    const textEase = 0.8;
 
-    const s1TextStart=0.75;
+    const s1TextStart=0.75; // Section 1 timing
     const s1Raw=clamp((s1-s1TextStart)/(1-s1TextStart),0,1);
-    const s1Y=s1StartY+(s1EndY-s1StartY)*easePow(s1Raw,textEasePow);
+    const s1Y=s1StartY+(s1EndY-s1StartY)*easePow(s1Raw,textEase);
     root.style.setProperty('--s1Y', s1Y+'px');
 
-    const s2TextStart=0.25;
+    const s2TextStart=0.25; // Section 2 timing (existing)
     const s2Raw=clamp((s2-s2TextStart)/(1-s2TextStart),0,1);
-    const s2Y=s2StartY+(s2EndY-s2StartY)*easePow(s2Raw,textEasePow);
+    const s2Y=s2StartY+(s2EndY-s2StartY)*easePow(s2Raw,textEase);
     root.style.setProperty('--s2Y', s2Y+'px');
 
-    const s4TextStart=0.25;
+    const s4TextStart=0.75; // Section 4 matches Section 1
     const s4Raw=clamp((s4-s4TextStart)/(1-s4TextStart),0,1);
-    const s4Y=s4StartY+(s4EndY-s4StartY)*easePow(s4Raw,textEasePow);
+    const s4Y=s4StartY+(s4EndY-s4StartY)*easePow(s4Raw,textEase);
     root.style.setProperty('--s4Y', s4Y+'px');
 
-    /* ===== Crossfades (aligned timing) ===== */
-    const FADE_FRAC = 0.35;           // same window for all crossfades
+    /* ===== Crossfades (kept as in last build) ===== */
+    const FADE_FRAC = 0.35;
     const LEAD_FRAC = 0.15;
 
-    // S1 → S2 (unchanged, but eased)
-    const s1In  = clamp(s1/FADE_FRAC, 0, 1);
-    const x12   = clamp(s2/FADE_FRAC, 0, 1);
+    /* S1 → S2 */
+    const s1In = clamp(s1/FADE_FRAC, 0, 1);
     const textBottomS1 = s1Y + s1Text.scrollHeight;
     const gateS1S2 = (textBottomS1 <= window.innerHeight * LEAD_FRAC) ? 1 : 0;
-    let s1Alpha = Math.min(gateS1S2 ? (1 - easeInOutCubic(x12)) : 1, easeInOutCubic(s1In));
-    let s2Alpha = gateS1S2 ? easeInOutCubic(x12) : 0;
+    const x12 = clamp(s2/FADE_FRAC, 0, 1);
+    let s1Alpha = Math.min(gateS1S2 ? (1 - x12) : 1, s1In);
+    let s2Alpha = gateS1S2 ? x12 : 0;
 
-    // S2 → S3 (eased, hero-like)
+    /* S2 → S3 */
     const textBottomS2 = s2Y + s2Text.scrollHeight;
     const gateS2S3 = (textBottomS2 <= window.innerHeight * LEAD_FRAC) || (s2 >= 0.999);
     const x23 = clamp(s3/FADE_FRAC, 0, 1);
-    const s3In = easeInOutCubic(x23);
-    const s3AlphaPre = gateS2S3 ? s3In : 0;
-    if (gateS2S3) s2Alpha = 1 - s3In;
+    const s3Alpha = gateS2S3 ? x23 : 0;
+    if (gateS2S3) s2Alpha = 1 - x23;
 
-    // S3 → S4 (new, eased crossfade)
+    /* S3 → S4 */
     const x34 = clamp(s4/FADE_FRAC, 0, 1);
-    const s4In = easeInOutCubic(x34);
-    let s4Alpha = s4In;
-    let s3Alpha = s3AlphaPre * (1 - s4In); // S3 fades out as S4 fades in
+    const s4Alpha = x34;
+    const s3AlphaOut = (gateS2S3 ? x23 : 0) * (1 - x34);
 
     root.style.setProperty('--s1ImgOpacity', s1Alpha.toFixed(3));
     root.style.setProperty('--s2ImgOpacity', s2Alpha.toFixed(3));
-    root.style.setProperty('--s3ImgOpacity', s3Alpha.toFixed(3));
+    root.style.setProperty('--s3ImgOpacity', s3AlphaOut.toFixed(3));
     root.style.setProperty('--s4ImgOpacity', s4Alpha.toFixed(3));
   }
 
