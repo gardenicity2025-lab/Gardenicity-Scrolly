@@ -22,7 +22,7 @@
     --s3:0; --s3ImgOpacity:0;
   }
 
-  /* ===== HERO ===== */
+  /* ===== HERO (aligned to 96px left) ===== */
   .hero-fixed{
     position:fixed; inset:0; z-index:3;
     opacity:var(--heroAlpha);
@@ -37,7 +37,7 @@
   @keyframes heroIn{ from{opacity:0} to{opacity:1} }
 
   .hero-media{
-    position:absolute; top:96px; left:96px; right:82px; bottom:96px;
+    position:absolute; top:96px; bottom:96px; left:96px; right:82px;
     display:flex; align-items:flex-end; justify-content:flex-start; overflow:hidden;
   }
   .col{ position:relative; max-width:700px; transform:translateY(var(--shift)); will-change:transform; }
@@ -49,55 +49,47 @@
 
   .driver{ height:200vh; }
 
-  /* ===== FIXED MEDIA FRAMES ===== */
+  /* ===== PINNED, NO-DRIFT IMAGE FRAMES ===== */
   .frame{
     position:fixed; z-index:1; pointer-events:none;
-    top:96px; bottom:96px; left:82px; right:82px;
-    display:flex; align-items:center; justify-content:center;
-    overflow:hidden;
+    top:96px; bottom:96px; display:flex; align-items:center; justify-content:center; overflow:hidden;
   }
-  .frame img{
-    width:100%; height:100%;
-    object-fit:contain;
-    display:block;
-  }
-  .s1-frame{ opacity:var(--s1ImgOpacity); }
-  .s2-frame{ opacity:var(--s2ImgOpacity); }
+  .frame img{ width:100%; height:100%; object-fit:contain; display:block; }
 
-  /* Section 3 full viewport (edge-to-edge like hero) */
-  .s3-frame{
-    position:fixed; inset:0; z-index:1; pointer-events:none;
-    display:flex; align-items:center; justify-content:center;
-    overflow:hidden;
-    opacity:var(--s3ImgOpacity);
+  /* S1 image RIGHT (512 text + 96 gutter on left) */
+  .s1-frame{
+    left: calc(96px + 512px + 96px);
+    right: 82px;
+    opacity: var(--s1ImgOpacity);
   }
-  .s3-frame img{
-    width:100%; height:100%;
-    object-fit:cover; /* fill viewport edge-to-edge */
-    display:block;
+  /* S2 image LEFT (mirror) */
+  .s2-frame{
+    left: 96px;
+    right: calc(82px + 96px + 512px);
+    opacity: var(--s2ImgOpacity);
+  }
+  /* S3 image FULL hero-style viewport; TEMP background helps confirm sizing */
+  .s3-frame{
+    left: 96px; right: 82px;
+    opacity: var(--s3ImgOpacity);
+    background: rgba(0,0,0,.03); /* TEMP: remove after you confirm */
   }
 
   /* ===== SECTION DRIVERS ===== */
   .s1-wrap, .s2-wrap, .s3-wrap{ position:relative; height:280vh; background:#e5e4e0; }
 
-  /* ===== TEXT OVERLAYS ===== */
+  /* ===== TEXT OVERLAYS (rails) ===== */
   .s1-overlay, .s2-overlay{
     position:fixed; inset:0; z-index:2; pointer-events:none;
   }
   .s1-overlay{ opacity:var(--s1Overlay); }
   .s2-overlay{ opacity:var(--s2Overlay); }
 
-  .s1-rail{
-    position:absolute; top:0; bottom:0; left:96px; width:512px;
-    overflow:hidden;
-  }
+  .s1-rail{ position:absolute; top:0; bottom:0; left:96px; width:512px; overflow:hidden; }
   .s1-text{ transform:translateY(var(--s1Y)); color:#111; }
   .s1-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
 
-  .s2-rail{
-    position:absolute; top:0; bottom:0; right:96px; width:512px;
-    overflow:hidden;
-  }
+  .s2-rail{ position:absolute; top:0; bottom:0; right:96px; width:512px; overflow:hidden; }
   .s2-text{ transform:translateY(var(--s2Y)); color:#111; text-align:left; }
   .s2-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
 
@@ -117,11 +109,11 @@
         <span class="line">Geddes see?</span>
       </h1>
       <nav class="hero-links" id="hero-links" aria-label="Primary">
-        <a href="#">Civic Green</a>
-        <a href="#">Growth</a>
-        <a href="#">Sustenance</a>
-        <a href="#">Leafy SDGs</a>
-        <a href="#">EN/עב</a>
+        <a href="https://www.megama.net">Civic Green</a>
+        <a href="https://www.megama.net">Growth</a>
+        <a href="https://www.megama.net">Sustenance</a>
+        <a href="https://www.megama.net">Leafy SDGs</a>
+        <a href="https://www.megama.net">EN/עב</a>
       </nav>
     </div>
   </div>
@@ -129,27 +121,27 @@
 
 <section class="driver" id="driver"></section>
 
-<!-- FIXED MEDIA FRAMES -->
-<figure class="frame s1-frame"><img id="s1-img" src="assets/section1.jpg" alt=""></figure>
-<figure class="frame s2-frame"><img id="s2-img" src="assets/section2.jpg" alt=""></figure>
-<figure class="s3-frame"><img id="s3-img" src="assets/section3.jpg" alt=""></figure>
+<!-- PINNED FRAMES -->
+<figure class="frame s1-frame" aria-hidden="true"><img id="s1-img" src="assets/section1.jpg" alt=""></figure>
+<figure class="frame s2-frame" aria-hidden="true"><img id="s2-img" src="assets/section2.jpg" alt=""></figure>
+<figure class="frame s3-frame" aria-hidden="true"><img id="s3-img" src="assets/section3.jpg" alt=""></figure>
 
-<!-- SECTION 1 -->
+<!-- S1 -->
 <section class="s1-wrap" id="s1-wrap">
   <div class="s1-overlay">
     <div class="s1-rail">
       <div class="s1-text" id="s1-text">
-        <p><strong>HOURS AFTER MY</strong> mother took her last breath…</p>
+        <p><strong>HOURS AFTER MY</strong> mother took her last breath on earth…</p>
         <p>After we opened the windows to let the spirits out…</p>
         <p>After we lit incense stick after incense stick…</p>
-        <p>After we watched MMA fighters on TV…</p>
+        <p>After we watched MMA fighters on TV in the basement…</p>
         <p>And the smoke kept rising. The chain must not be broken.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- SECTION 2 -->
+<!-- S2 -->
 <section class="s2-wrap" id="s2-wrap">
   <div class="s2-overlay">
     <div class="s2-rail">
@@ -164,7 +156,7 @@
   </div>
 </section>
 
-<!-- SECTION 3 -->
+<!-- S3 driver only (full-viewport image lives in the fixed frame above) -->
 <section class="s3-wrap" id="s3-wrap"></section>
 
 <section class="after"></section>
@@ -176,7 +168,7 @@
   const easeInOutCubic=t=>t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
   const easePow=(t,p)=>Math.pow(t,p);
 
-  /* HERO */
+  /* ---------- HERO ---------- */
   const driver=document.getElementById('driver');
   const heroMedia=document.getElementById('hero-media');
   const heroCol=document.getElementById('hero-col');
@@ -206,15 +198,16 @@
     return clamp(-r.top/total,0,1);
   }
 
-  /* Sections */
+  /* ---------- SECTIONS ---------- */
   const s1Wrap=document.getElementById('s1-wrap');
-  const s1Text=document.getElementById('s1-text');
   const s2Wrap=document.getElementById('s2-wrap');
-  const s2Text=document.getElementById('s2-text');
   const s3Wrap=document.getElementById('s3-wrap');
 
-  let s1StartY=0,s1EndY=0;
-  let s2StartY=0,s2EndY=0;
+  const s1Text=document.getElementById('s1-text');
+  const s2Text=document.getElementById('s2-text');
+
+  let s1StartY=0, s1EndY=0;
+  let s2StartY=0, s2EndY=0;
 
   function measureS1(){
     const vh=window.innerHeight;
@@ -230,6 +223,7 @@
   }
 
   function update(){
+    /* HERO choreography */
     const p=progressOf(driver);
     const pFade=easeInOutCubic(clamp(p/0.60,0,1));
     root.style.setProperty('--titleOpacity',pFade.toFixed(3));
@@ -238,6 +232,7 @@
     root.style.setProperty('--shift',shift.toFixed(1)+'px');
     root.style.setProperty('--linksOpacity',pSlide.toFixed(3));
 
+    /* Section progress */
     const s1=progressOf(s1Wrap);
     const s2=progressOf(s2Wrap);
     const s3=progressOf(s3Wrap);
@@ -245,9 +240,11 @@
     root.style.setProperty('--s2',s2.toFixed(3));
     root.style.setProperty('--s3',s3.toFixed(3));
 
+    /* Overlay visibility */
     root.style.setProperty('--s1Overlay',(s1>0 && s1<1)?1:0);
     root.style.setProperty('--s2Overlay',(s2>0 && s2<1)?1:0);
 
+    /* Dissolve hero while S1 comes in */
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
@@ -262,29 +259,36 @@
     const s2Y=s2StartY+(s2EndY-s2StartY)*easePow(s2Raw,0.8);
     root.style.setProperty('--s2Y', s2Y+'px');
 
-    /* Image fades */
-    const s1In=clamp(s1/0.35,0,1);
-    const textBottom=s1Y+s1Text.scrollHeight;
-    let s1Alpha=(textBottom>0)?1:1-clamp(s2/0.35,0,1);
-    s1Alpha=Math.min(s1Alpha,s1In);
-    root.style.setProperty('--s1ImgOpacity',s1Alpha.toFixed(3));
+    /* ===== Crossfades ===== */
+    const FADE_FRAC = 0.35;
+    const LEAD_FRAC = 0.15;
 
-    const gateClear=(textBottom<=0)?1:0;
-    const s2Alpha=gateClear*clamp(s2/0.35,0,1);
-    root.style.setProperty('--s2ImgOpacity',s2Alpha.toFixed(3));
+    /* S1 → S2 */
+    const s1In = clamp(s1/FADE_FRAC, 0, 1);
+    const textBottomS1 = s1Y + s1Text.scrollHeight;
+    const gateS1S2 = (textBottomS1 <= window.innerHeight * LEAD_FRAC) ? 1 : 0;
+    const x12 = clamp(s2/FADE_FRAC, 0, 1);
+    let s1Alpha = Math.min(gateS1S2 ? (1 - x12) : 1, s1In);
+    let s2Alpha = gateS1S2 ? x12 : 0;
 
-    /* Section 2 → 3 crossfade */
-    let s3Alpha=0;
-    if(s2>=1){ s3Alpha=clamp(s3/0.35,0,1); }
-    root.style.setProperty('--s3ImgOpacity',s3Alpha.toFixed(3));
+    /* S2 → S3 (robust gate: start when S2 text hits 15% vh, OR once S2 is done) */
+    const textBottomS2 = s2Y + s2Text.scrollHeight;
+    const gateS2S3 = (textBottomS2 <= window.innerHeight * LEAD_FRAC) || (s2 >= 0.999);
+    const x23 = clamp(s3/FADE_FRAC, 0, 1);
+    const s3Alpha = gateS2S3 ? x23 : 0;
+    if (gateS2S3) s2Alpha = 1 - x23;
+
+    root.style.setProperty('--s1ImgOpacity', s1Alpha.toFixed(3));
+    root.style.setProperty('--s2ImgOpacity', s2Alpha.toFixed(3));
+    root.style.setProperty('--s3ImgOpacity', s3Alpha.toFixed(3));
   }
 
   async function init(){
-    if(document.fonts&&document.fonts.ready){ try{await document.fonts.ready;}catch(e){} }
+    if(document.fonts && document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
     measureHero(); measureS1(); measureS2(); update();
     addEventListener('load', ()=>{ measureHero(); measureS1(); measureS2(); update(); });
     addEventListener('resize', ()=>{ measureHero(); measureS1(); measureS2(); update(); });
-    addEventListener('scroll', update,{passive:true});
+    addEventListener('scroll', update, {passive:true});
   }
   init();
 })();
