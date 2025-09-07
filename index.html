@@ -50,20 +50,21 @@
   .driver{ height:200vh; }
 
   /* ===== PINNED, NO-DRIFT IMAGE FRAMES ===== */
+  figure.frame{ margin:0; } /* reset default margin */
   .frame{
     position:fixed; z-index:1; pointer-events:none;
     display:flex; align-items:center; justify-content:center; overflow:hidden;
   }
   .frame img{ width:100%; height:100%; object-fit:contain; display:block; }
 
-  /* S1 image RIGHT (512 text + 96 gutter on left) */
+  /* S1 image RIGHT */
   .s1-frame{
     top:96px; bottom:96px;
     left: calc(96px + 512px + 96px);
     right: 82px;
     opacity: var(--s1ImgOpacity);
   }
-  /* S2 image LEFT (mirror) */
+  /* S2 image LEFT */
   .s2-frame{
     top:96px; bottom:96px;
     left: 96px;
@@ -71,12 +72,11 @@
     opacity: var(--s2ImgOpacity);
   }
   /* S3 image FULL (hero-style, edge-to-edge) */
-  .s3-frame{ top:0; bottom:0; left:0; right:0; opacity:var(--s3ImgOpacity); }
-
-  /* --- S3 full-bleed fix --- */
-  .frame.s3-frame > img{               /* higher specificity than .frame img */
+  .s3-frame{ top:0; right:0; bottom:0; left:0; opacity:var(--s3ImgOpacity); }
+  .frame.s3-frame > img{
     width:100%; height:100%;
-    object-fit:cover !important;       /* ensure no letterboxing */
+    object-fit:cover !important;
+    object-position:center;
   }
 
   /* ===== SECTION DRIVERS ===== */
