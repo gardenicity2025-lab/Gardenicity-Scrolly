@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → S1 → S2 → S3 → S4</title>
+<title>Gardenicity — Hero → S1 → S2 → S3 → S4 → S5</title>
 <style>
   /* ===== Base ===== */
   html,body{
@@ -20,9 +20,11 @@
     --s2:0; --s2Overlay:0; --s2Y:0px; --s2ImgOpacity:0;
     /* S3 */
     --s3:0; --s3ImgOpacity:0;
-    --s3Scale:1; /* S3 zoom */
+    --s3Scale:1; /* S3 end zoom */
     /* S4 */
     --s4:0; --s4Overlay:0; --s4Y:0px; --s4ImgOpacity:0;
+    /* S5 */
+    --s5:0; --s5Overlay:0; --s5Y:0px; --s5ImgOpacity:0;
   }
 
   /* ===== HERO (aligned to 96px left) ===== */
@@ -79,9 +81,9 @@
   .frame.s3-frame>img{
     width:100%; height:100%;
     object-fit:cover !important; object-position:center;
-    transform: scale(var(--s3Scale));      /* S3 zoom */
-    transform-origin: center center;       /* S3 zoom */
-    will-change: transform;                /* S3 zoom */
+    transform: scale(var(--s3Scale));      /* S3 end zoom */
+    transform-origin: center center;
+    will-change: transform;
   }
   /* S4 image RIGHT (same geometry as S1) */
   .s4-frame{
@@ -90,26 +92,37 @@
     right: 82px;
     opacity: var(--s4ImgOpacity);
   }
+  /* S5 image LEFT (same geometry as S2) */
+  .s5-frame{
+    top:96px; bottom:96px;
+    left: 96px;
+    right: calc(82px + 96px + 512px);
+    opacity: var(--s5ImgOpacity);
+  }
 
   /* ===== SECTION DRIVERS ===== */
-  .s1-wrap, .s2-wrap, .s3-wrap, .s4-wrap{ position:relative; height:280vh; background:#e5e4e0; }
+  .s1-wrap, .s2-wrap, .s3-wrap, .s4-wrap, .s5-wrap{ position:relative; height:280vh; background:#e5e4e0; }
 
   /* ===== TEXT OVERLAYS (rails) ===== */
-  .s1-overlay, .s2-overlay, .s4-overlay{
+  .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay{
     position:fixed; inset:0; z-index:2; pointer-events:none;
   }
   .s1-overlay{ opacity:var(--s1Overlay); }
   .s2-overlay{ opacity:var(--s2Overlay); }
   .s4-overlay{ opacity:var(--s4Overlay); }
+  .s5-overlay{ opacity:var(--s5Overlay); }
 
   .s1-rail, .s4-rail{ position:absolute; top:0; bottom:0; left:96px; width:512px; overflow:hidden; }
-  .s1-text{ transform:translateY(var(--s1Y)); color:#111; }
-  .s4-text{ transform:translateY(var(--s4Y)); color:#111; }  /* S4 has its own Y */
-  .s1-text p, .s4-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
+  .s2-rail, .s5-rail{ position:absolute; top:0; bottom:0; right:96px; width:512px; overflow:hidden; }
 
-  .s2-rail{ position:absolute; top:0; bottom:0; right:96px; width:512px; overflow:hidden; }
+  .s1-text{ transform:translateY(var(--s1Y)); color:#111; }
   .s2-text{ transform:translateY(var(--s2Y)); color:#111; text-align:left; }
-  .s2-text p{ margin:0 0 14px 0; font-size:20px; line-height:28px; }
+  .s4-text{ transform:translateY(var(--s4Y)); color:#111; }
+  .s5-text{ transform:translateY(var(--s5Y)); color:#111; text-align:left; }
+
+  .s1-text p, .s2-text p, .s4-text p, .s5-text p{
+    margin:0 0 14px 0; font-size:20px; line-height:28px;
+  }
 
   .after{ min-height:120vh; }
 </style>
@@ -144,6 +157,7 @@
 <figure class="frame s2-frame" aria-hidden="true"><img id="s2-img" src="assets/section2.jpg" alt=""></figure>
 <figure class="frame s3-frame" aria-hidden="true"><img id="s3-img" src="assets/section3.jpg" alt=""></figure>
 <figure class="frame s4-frame" aria-hidden="true"><img id="s4-img" src="assets/section4.jpg" alt=""></figure>
+<figure class="frame s5-frame" aria-hidden="true"><img id="s5-img" src="assets/section5.jpg" alt=""></figure>
 
 <!-- S1 -->
 <section class="s1-wrap" id="s1-wrap">
@@ -178,7 +192,7 @@
 <!-- S3 driver only (full-viewport image lives in the fixed frame above) -->
 <section class="s3-wrap" id="s3-wrap"></section>
 
-<!-- S4 (same layout as S1) -->
+<!-- S4 (like S1: left rail, right image) -->
 <section class="s4-wrap" id="s4-wrap">
   <div class="s4-overlay">
     <div class="s4-rail">
@@ -188,6 +202,21 @@
         <p>The horizontal image sits steady at right…</p>
         <p>Margins and rhythm match Section One…</p>
         <p>And the cycle of views goes on.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- S5 (like S2: right rail, left image) -->
+<section class="s5-wrap" id="s5-wrap">
+  <div class="s5-overlay">
+    <div class="s5-rail">
+      <div class="s5-text" id="s5-text">
+        <p><strong>SECTION FIVE</strong> shifts the rail again…</p>
+        <p>Now the narrative hugs the right margin…</p>
+        <p>While the image holds the left field of view…</p>
+        <p>Framing the next turn in the story…</p>
+        <p>With the same cadence and pace.</p>
       </div>
     </div>
   </div>
@@ -237,14 +266,17 @@
   const s2Wrap=document.getElementById('s2-wrap');
   const s3Wrap=document.getElementById('s3-wrap');
   const s4Wrap=document.getElementById('s4-wrap');
+  const s5Wrap=document.getElementById('s5-wrap');
 
   const s1Text=document.getElementById('s1-text');
   const s2Text=document.getElementById('s2-text');
   const s4Text=document.getElementById('s4-text');
+  const s5Text=document.getElementById('s5-text');
 
   let s1StartY=0, s1EndY=0;
   let s2StartY=0, s2EndY=0;
   let s4StartY=0, s4EndY=0;
+  let s5StartY=0, s5EndY=0;
 
   function measureS1(){
     const vh=window.innerHeight;
@@ -264,6 +296,12 @@
     s4StartY=vh; s4EndY=-textH;
     root.style.setProperty('--s4Y', s4StartY+'px');
   }
+  function measureS5(){
+    const vh=window.innerHeight;
+    const textH=s5Text.scrollHeight;
+    s5StartY=vh; s5EndY=-textH;
+    root.style.setProperty('--s5Y', s5StartY+'px');
+  }
 
   function update(){
     /* HERO choreography */
@@ -280,37 +318,45 @@
     const s2=progressOf(s2Wrap);
     const s3=progressOf(s3Wrap);
     const s4=progressOf(s4Wrap);
+    const s5=progressOf(s5Wrap);
     root.style.setProperty('--s1',s1.toFixed(3));
     root.style.setProperty('--s2',s2.toFixed(3));
     root.style.setProperty('--s3',s3.toFixed(3));
     root.style.setProperty('--s4',s4.toFixed(3));
+    root.style.setProperty('--s5',s5.toFixed(3));
 
     /* Overlay visibility */
     root.style.setProperty('--s1Overlay',(s1>0 && s1<1)?1:0);
     root.style.setProperty('--s2Overlay',(s2>0 && s2<1)?1:0);
     root.style.setProperty('--s4Overlay',(s4>0 && s4<1)?1:0);
+    root.style.setProperty('--s5Overlay',(s5>0 && s5<1)?1:0);
 
     /* Dissolve hero while S1 comes in */
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
-    /* Text sweeps */
+    /* Text sweeps (same easing as before) */
     const textEase = 0.8;
 
-    const s1TextStart=0.75; // Section 1 timing
+    const s1TextStart=0.75; // S1 timing
     const s1Raw=clamp((s1-s1TextStart)/(1-s1TextStart),0,1);
     const s1Y=s1StartY+(s1EndY-s1StartY)*easePow(s1Raw,textEase);
     root.style.setProperty('--s1Y', s1Y+'px');
 
-    const s2TextStart=0.25; // Section 2 timing (existing)
+    const s2TextStart=0.25; // S2 timing (right rail)
     const s2Raw=clamp((s2-s2TextStart)/(1-s2TextStart),0,1);
     const s2Y=s2StartY+(s2EndY-s2StartY)*easePow(s2Raw,textEase);
     root.style.setProperty('--s2Y', s2Y+'px');
 
-    const s4TextStart=0.75; // Section 4 matches Section 1
+    const s4TextStart=0.75; // S4 matches S1 (left rail)
     const s4Raw=clamp((s4-s4TextStart)/(1-s4TextStart),0,1);
     const s4Y=s4StartY+(s4EndY-s4StartY)*easePow(s4Raw,textEase);
     root.style.setProperty('--s4Y', s4Y+'px');
+
+    const s5TextStart=0.25; // S5 matches S2 (right rail)
+    const s5Raw=clamp((s5-s5TextStart)/(1-s5TextStart),0,1);
+    const s5Y=s5StartY+(s5EndY-s5StartY)*easePow(s5Raw,textEase);
+    root.style.setProperty('--s5Y', s5Y+'px');
 
     /* ===== S3 end zoom (subtle) ===== */
     const SCALE_START = 0.82;   // begin zoom near end of S3
@@ -320,11 +366,11 @@
     const s3Scale     = 1 + (SCALE_MAX - 1) * s3ZoomEase;
     root.style.setProperty('--s3Scale', s3Scale.toFixed(3));
 
-    /* ===== Crossfades (kept as in last build) ===== */
+    /* ===== Crossfades (existing + new S4→S5) ===== */
     const FADE_FRAC = 0.35;
     const LEAD_FRAC = 0.15;
 
-    /* S1 → S2 */
+    /* S1 → S2 (unchanged) */
     const s1In = clamp(s1/FADE_FRAC, 0, 1);
     const textBottomS1 = s1Y + s1Text.scrollHeight;
     const gateS1S2 = (textBottomS1 <= window.innerHeight * LEAD_FRAC) ? 1 : 0;
@@ -332,29 +378,38 @@
     let s1Alpha = Math.min(gateS1S2 ? (1 - x12) : 1, s1In);
     let s2Alpha = gateS1S2 ? x12 : 0;
 
-    /* S2 → S3 */
+    /* S2 → S3 (unchanged) */
     const textBottomS2 = s2Y + s2Text.scrollHeight;
     const gateS2S3 = (textBottomS2 <= window.innerHeight * LEAD_FRAC) || (s2 >= 0.999);
     const x23 = clamp(s3/FADE_FRAC, 0, 1);
     const s3Alpha = gateS2S3 ? x23 : 0;
     if (gateS2S3) s2Alpha = 1 - x23;
 
-    /* S3 → S4 */
+    /* S3 → S4 (unchanged) */
     const x34 = clamp(s4/FADE_FRAC, 0, 1);
-    const s4Alpha = x34;
+    let s4Alpha = x34;
     const s3AlphaOut = (gateS2S3 ? x23 : 0) * (1 - x34);
 
+    /* NEW: S4 → S5 (mirror of S1→S2; gated by S4 text position) */
+    const textBottomS4 = s4Y + s4Text.scrollHeight;
+    const gateS4S5 = (textBottomS4 <= window.innerHeight * LEAD_FRAC) || (s4 >= 0.999);
+    const x45 = clamp(s5/FADE_FRAC, 0, 1);
+    let s5Alpha = gateS4S5 ? x45 : 0;
+    if (gateS4S5) s4Alpha = s4Alpha * (1 - x45);
+
+    /* Apply opacities */
     root.style.setProperty('--s1ImgOpacity', s1Alpha.toFixed(3));
     root.style.setProperty('--s2ImgOpacity', s2Alpha.toFixed(3));
     root.style.setProperty('--s3ImgOpacity', s3AlphaOut.toFixed(3));
     root.style.setProperty('--s4ImgOpacity', s4Alpha.toFixed(3));
+    root.style.setProperty('--s5ImgOpacity', s5Alpha.toFixed(3));
   }
 
   async function init(){
     if(document.fonts && document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
-    measureHero(); measureS1(); measureS2(); measureS4(); update();
-    addEventListener('load', ()=>{ measureHero(); measureS1(); measureS2(); measureS4(); update(); });
-    addEventListener('resize', ()=>{ measureHero(); measureS1(); measureS2(); measureS4(); update(); });
+    measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); update();
+    addEventListener('load', ()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); update(); });
+    addEventListener('resize', ()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); update(); });
     addEventListener('scroll', update, {passive:true});
   }
   init();
