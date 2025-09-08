@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → S1 → S2 → S3 → S4 → S5</title>
+<title>Gardenicity — Hero → S1 → S2 → S3 → S4 → S5 → S6</title>
 <style>
   /* ===== Base ===== */
   html,body{
@@ -25,6 +25,9 @@
     --s4:0; --s4Overlay:0; --s4Y:0px; --s4ImgOpacity:0;
     /* S5 */
     --s5:0; --s5Overlay:0; --s5Y:0px; --s5ImgOpacity:0;
+    /* S6 */
+    --s6:0;
+    --s6Img0Opacity:0; --s6Img1Opacity:0; --s6Img2Opacity:0; --s6Img3Opacity:0;
   }
 
   /* ===== HERO (aligned to 96px left) ===== */
@@ -99,9 +102,26 @@
     right: calc(82px + 96px + 512px);
     opacity: var(--s5ImgOpacity);
   }
+  /* S6 media-only frame (hero-style media area, centered) */
+  .s6-frame{
+    top:96px; bottom:96px; left:96px; right:82px;
+    /* opacity is per-image via CSS vars */
+    display:block; /* stack absolute children */
+  }
+  .s6-frame img{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    object-fit:contain; object-position:center;
+  }
+  #s6-img0{ opacity: var(--s6Img0Opacity); }
+  #s6-img1{ opacity: var(--s6Img1Opacity); }
+  #s6-img2{ opacity: var(--s6Img2Opacity); }
+  #s6-img3{ opacity: var(--s6Img3Opacity); }
 
   /* ===== SECTION DRIVERS ===== */
-  .s1-wrap, .s2-wrap, .s3-wrap, .s4-wrap, .s5-wrap{ position:relative; height:280vh; background:#e5e4e0; }
+  .s1-wrap, .s2-wrap, .s3-wrap, .s4-wrap, .s5-wrap, .s6-wrap{
+    position:relative; height:280vh; background:#e5e4e0;
+  }
 
   /* ===== TEXT OVERLAYS (rails) ===== */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay{
@@ -158,6 +178,13 @@
 <figure class="frame s3-frame" aria-hidden="true"><img id="s3-img" src="assets/section3.jpg" alt=""></figure>
 <figure class="frame s4-frame" aria-hidden="true"><img id="s4-img" src="assets/section4.jpg" alt=""></figure>
 <figure class="frame s5-frame" aria-hidden="true"><img id="s5-img" src="assets/section5.jpg" alt=""></figure>
+<!-- NEW: S6 pinned frame with stacked images -->
+<figure class="frame s6-frame" aria-hidden="true">
+  <img id="s6-img0" src="assets/section6.jpg" alt="">
+  <img id="s6-img1" src="assets/section6-1.jpg" alt="">
+  <img id="s6-img2" src="assets/section6-2.jpg" alt="">
+  <img id="s6-img3" src="assets/section6-3.jpg" alt="">
+</figure>
 
 <!-- S1 -->
 <section class="s1-wrap" id="s1-wrap">
@@ -222,6 +249,9 @@
   </div>
 </section>
 
+<!-- NEW: S6 driver (media-only sequence lives in the pinned s6-frame above) -->
+<section class="s6-wrap" id="s6-wrap"></section>
+
 <section class="after"></section>
 
 <script>
@@ -267,6 +297,7 @@
   const s3Wrap=document.getElementById('s3-wrap');
   const s4Wrap=document.getElementById('s4-wrap');
   const s5Wrap=document.getElementById('s5-wrap');
+  const s6Wrap=document.getElementById('s6-wrap');
 
   const s1Text=document.getElementById('s1-text');
   const s2Text=document.getElementById('s2-text');
@@ -319,11 +350,13 @@
     const s3=progressOf(s3Wrap);
     const s4=progressOf(s4Wrap);
     const s5=progressOf(s5Wrap);
+    const s6=progressOf(s6Wrap);
     root.style.setProperty('--s1',s1.toFixed(3));
     root.style.setProperty('--s2',s2.toFixed(3));
     root.style.setProperty('--s3',s3.toFixed(3));
     root.style.setProperty('--s4',s4.toFixed(3));
     root.style.setProperty('--s5',s5.toFixed(3));
+    root.style.setProperty('--s6',s6.toFixed(3));
 
     /* Overlay visibility */
     root.style.setProperty('--s1Overlay',(s1>0 && s1<1)?1:0);
@@ -366,7 +399,7 @@
     const s3Scale     = 1 + (SCALE_MAX - 1) * s3ZoomEase;
     root.style.setProperty('--s3Scale', s3Scale.toFixed(3));
 
-    /* ===== Crossfades (existing + new S4→S5) ===== */
+    /* ===== Crossfades (existing + new S5→S6) ===== */
     const FADE_FRAC = 0.35;
     const LEAD_FRAC = 0.15;
 
@@ -390,14 +423,42 @@
     let s4Alpha = x34;
     const s3AlphaOut = (gateS2S3 ? x23 : 0) * (1 - x34);
 
-    /* NEW: S4 → S5 (mirror of S1→S2; gated by S4 text position) */
+    /* S4 → S5 (unchanged) */
     const textBottomS4 = s4Y + s4Text.scrollHeight;
     const gateS4S5 = (textBottomS4 <= window.innerHeight * LEAD_FRAC) || (s4 >= 0.999);
     const x45 = clamp(s5/FADE_FRAC, 0, 1);
     let s5Alpha = gateS4S5 ? x45 : 0;
     if (gateS4S5) s4Alpha = s4Alpha * (1 - x45);
 
-    /* Apply opacities */
+    /* NEW: S5 → S6 (gated by S5 text like S1→S2) */
+    const textBottomS5 = s5Y + s5Text.scrollHeight;
+    const gateS5S6 = (textBottomS5 <= window.innerHeight * LEAD_FRAC) || (s5 >= 0.999);
+    const x56 = clamp(s6/FADE_FRAC, 0, 1);
+    const s6Group = gateS5S6 ? x56 : 0;
+    if (gateS5S6) s5Alpha = s5Alpha * (1 - x56);
+
+    /* ===== S6 internal crossfade (4 images) =====
+       We space 3 fades inside s6 evenly using S6_FADE_FRAC,
+       leaving small holds before/between/after fades so the last completes by s6=1. */
+    const S6_FADE_FRAC = 0.28;                   // tune later to match “pace”
+    const S6_HOLD = (1 - 3*S6_FADE_FRAC)/4;     // even spacing so last fade ends at 1
+    const T1 = S6_HOLD;
+    const T2 = T1 + S6_FADE_FRAC + S6_HOLD;
+    const T3 = T2 + S6_FADE_FRAC + S6_HOLD;
+    const step = (t,start,w)=>clamp((t - start)/w, 0, 1); // linear like section fades
+
+    let a0=1, a1=0, a2=0, a3=0;
+    const f1=step(s6, T1, S6_FADE_FRAC); a0*= (1 - f1); a1 = Math.max(a1, f1);
+    const f2=step(s6, T2, S6_FADE_FRAC); a1*= (1 - f2); a2 = Math.max(a2, f2);
+    const f3=step(s6, T3, S6_FADE_FRAC); a2*= (1 - f3); a3 = Math.max(a3, f3);
+
+    // Apply group fade-in (s6Group) to each image layer
+    root.style.setProperty('--s6Img0Opacity', (a0 * s6Group).toFixed(3));
+    root.style.setProperty('--s6Img1Opacity', (a1 * s6Group).toFixed(3));
+    root.style.setProperty('--s6Img2Opacity', (a2 * s6Group).toFixed(3));
+    root.style.setProperty('--s6Img3Opacity', (a3 * s6Group).toFixed(3));
+
+    /* Apply section frame opacities */
     root.style.setProperty('--s1ImgOpacity', s1Alpha.toFixed(3));
     root.style.setProperty('--s2ImgOpacity', s2Alpha.toFixed(3));
     root.style.setProperty('--s3ImgOpacity', s3AlphaOut.toFixed(3));
