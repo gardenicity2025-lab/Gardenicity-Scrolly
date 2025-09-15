@@ -28,7 +28,7 @@
     /* S6 */
     --s6:0;
     --s6Img0Opacity:0; --s6Img1Opacity:0; --s6Img2Opacity:0; --s6Img3Opacity:0;
-    --s6Ready:0; /* S6 load-gate (debug/optional) */
+    --s6Ready:0; /* debug/optional */
   }
 
   /* ===== HERO (aligned to 96px left) ===== */
@@ -372,52 +372,40 @@
     root.style.setProperty('--s5',s5.toFixed(3));
     root.style.setProperty('--s6',s6.toFixed(3));
 
-    /* Overlay visibility */
+    /* Overlays & hero */
     root.style.setProperty('--s1Overlay',(s1>0 && s1<1)?1:0);
     root.style.setProperty('--s2Overlay',(s2>0 && s2<1)?1:0);
     root.style.setProperty('--s4Overlay',(s4>0 && s4<1)?1:0);
     root.style.setProperty('--s5Overlay',(s5>0 && s5<1)?1:0);
-
-    /* Dissolve hero while S1 comes in */
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
-    /* Text sweeps (same easing as before) */
+    /* Text sweeps */
     const textEase = 0.8;
-
-    const s1TextStart=0.75; // S1 timing
-    const s1Raw=clamp((s1-s1TextStart)/(1-s1TextStart),0,1);
+    const s1Raw=clamp((s1-0.75)/0.25,0,1);
     const s1Y=s1StartY+(s1EndY-s1StartY)*easePow(s1Raw,textEase);
     root.style.setProperty('--s1Y', s1Y+'px');
-
-    const s2TextStart=0.25; // S2 timing (right rail)
-    const s2Raw=clamp((s2-s2TextStart)/(1-s2TextStart),0,1);
+    const s2Raw=clamp((s2-0.25)/0.75,0,1);
     const s2Y=s2StartY+(s2EndY-s2StartY)*easePow(s2Raw,textEase);
     root.style.setProperty('--s2Y', s2Y+'px');
-
-    const s4TextStart=0.75; // S4 matches S1 (left rail)
-    const s4Raw=clamp((s4-s4TextStart)/(1-s4TextStart),0,1);
+    const s4Raw=clamp((s4-0.75)/0.25,0,1);
     const s4Y=s4StartY+(s4EndY-s4StartY)*easePow(s4Raw,textEase);
     root.style.setProperty('--s4Y', s4Y+'px');
-
-    const s5TextStart=0.25; // S5 matches S2 (right rail)
-    const s5Raw=clamp((s5-s5TextStart)/(1-s5TextStart),0,1);
+    const s5Raw=clamp((s5-0.25)/0.75,0,1);
     const s5Y=s5StartY+(s5EndY-s5StartY)*easePow(s5Raw,textEase);
     root.style.setProperty('--s5Y', s5Y+'px');
 
     /* ===== S3 end zoom (subtle) ===== */
-    const SCALE_START = 0.82;   // begin zoom near end of S3
-    const SCALE_MAX   = 1.08;   // 8% peak zoom
-    const s3ZoomRaw   = clamp((s3 - SCALE_START) / (1 - SCALE_START), 0, 1);
-    const s3ZoomEase  = easeInOutCubic(s3ZoomRaw);
-    const s3Scale     = 1 + (SCALE_MAX - 1) * s3ZoomEase;
-    root.style.setProperty('--s3Scale', s3Scale.toFixed(3));
+    const SCALE_START = 0.82; const SCALE_MAX = 1.08;
+    const s3ZoomRaw = clamp((s3 - SCALE_START) / (1 - SCALE_START), 0, 1);
+    const s3ZoomEase = easeInOutCubic(s3ZoomRaw);
+    root.style.setProperty('--s3Scale', (1 + (SCALE_MAX - 1) * s3ZoomEase).toFixed(3));
 
     /* ===== Crossfades (existing + S5→S6 with load-gate) ===== */
     const FADE_FRAC = 0.35;
     const LEAD_FRAC = 0.15;
 
-    /* S1 → S2 (unchanged) */
+    /* S1 → S2 */
     const s1In = clamp(s1/FADE_FRAC, 0, 1);
     const textBottomS1 = s1Y + s1Text.scrollHeight;
     const gateS1S2 = (textBottomS1 <= window.innerHeight * LEAD_FRAC) ? 1 : 0;
@@ -425,45 +413,67 @@
     let s1Alpha = Math.min(gateS1S2 ? (1 - x12) : 1, s1In);
     let s2Alpha = gateS1S2 ? x12 : 0;
 
-    /* S2 → S3 (unchanged) */
+    /* S2 → S3 */
     const textBottomS2 = s2Y + s2Text.scrollHeight;
     const gateS2S3 = (textBottomS2 <= window.innerHeight * LEAD_FRAC) || (s2 >= 0.999);
     const x23 = clamp(s3/FADE_FRAC, 0, 1);
     const s3Alpha = gateS2S3 ? x23 : 0;
     if (gateS2S3) s2Alpha = 1 - x23;
 
-    /* S3 → S4 (unchanged) */
+    /* S3 → S4 */
     const x34 = clamp(s4/FADE_FRAC, 0, 1);
     let s4Alpha = x34;
     const s3AlphaOut = (gateS2S3 ? x23 : 0) * (1 - x34);
 
-    /* S4 → S5 (unchanged) */
+    /* S4 → S5 */
     const textBottomS4 = s4Y + s4Text.scrollHeight;
     const gateS4S5 = (textBottomS4 <= window.innerHeight * LEAD_FRAC) || (s4 >= 0.999);
     const x45 = clamp(s5/FADE_FRAC, 0, 1);
     let s5Alpha = gateS4S5 ? x45 : 0;
     if (gateS4S5) s4Alpha = s4Alpha * (1 - x45);
 
-    /* NEW: S5 → S6 (gated by S5 text like S1→S2 AND by S6 first image load) */
+    /* S5 → S6 (gated by S5 text AND S6 first image load) */
     const textBottomS5 = s5Y + s5Text.scrollHeight;
     const gateS5S6Base = (textBottomS5 <= window.innerHeight * LEAD_FRAC) || (s5 >= 0.999);
     const x56 = clamp(s6/FADE_FRAC, 0, 1);
-    const s6Gate = gateS5S6Base && s6FirstReady;   /* S6 load-gate */
-    const s6Group = s6Gate ? x56 : 0;
-    if (s6Gate) s5Alpha = s5Alpha * (1 - x56);     /* only fade S5 when S6 is ready */
+    const s6Gate = gateS5S6Base && s6FirstReady;
+    const s6Group = s6Gate ? x56 : 0;       // S6 group opacity 0→1
+    if (s6Gate) s5Alpha = s5Alpha * (1 - x56);  // fade S5 only when S6 is ready
 
-    /* ===== S6 internal crossfade (4 images, scroll-driven) ===== */
-    const S6_FADE_FRAC = 0.28;                   // tune later to match “pace”
-    const S6_HOLD = (1 - 3*S6_FADE_FRAC)/4;     // even spacing; last fade ends at s6=1
+    /* ===== S6 internal crossfade (4 images, scroll-driven)
+       IMPORTANT: internal timeline starts ONLY AFTER the S6 group is fully in.
+       Internal time t6 maps s6 ∈ [FADE_FRAC, 1] → t6 ∈ [0, 1].
+       Also: holds are 25% longer, renormalized to fit. */
+    // (1) map to internal time after group fade-in
+    const INTERNAL_START = FADE_FRAC;
+    const t6 = clamp((s6 - INTERNAL_START) / (1 - INTERNAL_START), 0, 1);
+
+    // (2) build durations: longer holds (×1.25) then renormalize
+    const S6_FADE_FRAC_BASE = 0.28;   // base fade width before renorm
+    const HOLD_MULT = 1.25;           // +25% longer 100% opacity holds
+    const H_raw = (1 - 3*S6_FADE_FRAC_BASE)/4;
+    const totalRaw = 4*(H_raw*HOLD_MULT) + 3*S6_FADE_FRAC_BASE;
+    const NORM = 1 / totalRaw;
+    const S6_FADE_FRAC = S6_FADE_FRAC_BASE * NORM;
+    const S6_HOLD = H_raw * HOLD_MULT * NORM;
+
     const T1 = S6_HOLD;
     const T2 = T1 + S6_FADE_FRAC + S6_HOLD;
     const T3 = T2 + S6_FADE_FRAC + S6_HOLD;
+
     const step = (t,start,w)=>clamp((t - start)/w, 0, 1); // linear; swap to eased if desired
 
-    let a0=1, a1=0, a2=0, a3=0;
-    const f1=step(s6, T1, S6_FADE_FRAC); a0*= (1 - f1); a1 = Math.max(a1, f1);
-    const f2=step(s6, T2, S6_FADE_FRAC); a1*= (1 - f2); a2 = Math.max(a2, f2);
-    const f3=step(s6, T3, S6_FADE_FRAC); a2*= (1 - f3); a3 = Math.max(a3, f3);
+    let a0=0, a1=0, a2=0, a3=0;
+    if (t6 <= 0) {
+      // While S6 group is fading in (or just finished), keep first image fully solid
+      a0 = 1; a1 = 0; a2 = 0; a3 = 0;
+    } else {
+      // Now run the internal sequence over t6 ∈ (0..1]
+      a0 = 1; a1 = 0; a2 = 0; a3 = 0;
+      const f1=step(t6, T1, S6_FADE_FRAC); a0*= (1 - f1); a1 = Math.max(a1, f1);
+      const f2=step(t6, T2, S6_FADE_FRAC); a1*= (1 - f2); a2 = Math.max(a2, f2);
+      const f3=step(t6, T3, S6_FADE_FRAC); a2*= (1 - f3); a3 = Math.max(a3, f3);
+    }
 
     /* Apply group fade-in (s6Group) to each image layer */
     root.style.setProperty('--s6Img0Opacity', (a0 * s6Group).toFixed(3));
