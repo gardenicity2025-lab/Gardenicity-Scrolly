@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-baseline="s6-gallery-centered-working">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → S1 → S2 → S3 → S4 → S5 → S6</title>
+<title>Gardenicity — Hero → S1 → S2 → S3 → S4 → S5 → S6 → gallery-A-Left</title>
 <style>
   /* ===== Base ===== */
   html,body{
@@ -19,8 +19,7 @@
     /* S2 */
     --s2:0; --s2Overlay:0; --s2Y:0px; --s2ImgOpacity:0;
     /* S3 */
-    --s3:0; --s3ImgOpacity:0;
-    --s3Scale:1; /* S3 end zoom */
+    --s3:0; --s3ImgOpacity:0; --s3Scale:1; /* S3 end zoom */
     /* S4 */
     --s4:0; --s4Overlay:0; --s4Y:0px; --s4ImgOpacity:0;
     /* S5 */
@@ -29,6 +28,10 @@
     --s6:0;
     --s6Img0Opacity:0; --s6Img1Opacity:0; --s6Img2Opacity:0; --s6Img3Opacity:0;
     --s6Ready:0; /* debug/optional */
+    /* gallery-A-Left (right media area) */
+    --galA:0;
+    --galAImg0Opacity:0; --galAImg1Opacity:0; --galAImg2Opacity:0;
+    --galAReady:0; /* debug/optional */
   }
 
   /* ===== HERO (aligned to 96px left) ===== */
@@ -59,14 +62,14 @@
   .driver{ height:200vh; }
 
   /* ===== PINNED, NO-DRIFT IMAGE FRAMES ===== */
-  figure.frame{ margin:0; } /* reset default margin */
+  figure.frame{ margin:0; }
   .frame{
     position:fixed; z-index:1; pointer-events:none;
     display:flex; align-items:center; justify-content:center; overflow:hidden;
   }
   .frame img{ width:100%; height:100%; object-fit:contain; display:block; }
 
-  /* S1 image RIGHT (512 text + 96 gutter on left) */
+  /* S1 image RIGHT (text left: 512 + 96 gutter) */
   .s1-frame{
     top:96px; bottom:96px;
     left: calc(96px + 512px + 96px);
@@ -80,23 +83,23 @@
     right: calc(82px + 96px + 512px);
     opacity: var(--s2ImgOpacity);
   }
-  /* S3 image FULL (hero-style, edge-to-edge) */
+  /* S3 image FULL (hero-style) */
   .s3-frame{ top:0; right:0; bottom:0; left:0; opacity:var(--s3ImgOpacity); }
   .frame.s3-frame>img{
     width:100%; height:100%;
     object-fit:cover !important; object-position:center;
-    transform: scale(var(--s3Scale));      /* S3 end zoom */
+    transform: scale(var(--s3Scale));
     transform-origin: center center;
     will-change: transform;
   }
-  /* S4 image RIGHT (same geometry as S1) */
+  /* S4 image RIGHT (same as S1) */
   .s4-frame{
     top:96px; bottom:96px;
     left: calc(96px + 512px + 96px);
     right: 82px;
     opacity: var(--s4ImgOpacity);
   }
-  /* S5 image LEFT (same geometry as S2) */
+  /* S5 image LEFT (same as S2) */
   .s5-frame{
     top:96px; bottom:96px;
     left: 96px;
@@ -119,8 +122,25 @@
   #s6-img2{ opacity: var(--s6Img2Opacity); }
   #s6-img3{ opacity: var(--s6Img3Opacity); }
 
+  /* gallery-A-Left frame (right media area, same geometry as S1) */
+  .galA-left-frame{
+    top:96px; bottom:96px;
+    left: calc(96px + 512px + 96px);
+    right: 82px;
+    display:block;
+  }
+  .galA-left-frame img{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    object-fit:contain; object-position:center;
+    will-change:opacity;
+  }
+  #galA-img0{ opacity: var(--galAImg0Opacity); }
+  #galA-img1{ opacity: var(--galAImg1Opacity); }
+  #galA-img2{ opacity: var(--galAImg2Opacity); }
+
   /* ===== SECTION DRIVERS ===== */
-  .s1-wrap, .s2-wrap, .s3-wrap, .s4-wrap, .s5-wrap, .s6-wrap{
+  .s1-wrap, .s2-wrap, .s3-wrap, .s4-wrap, .s5-wrap, .s6-wrap, .galA-left-wrap{
     position:relative; height:280vh; background:#e5e4e0;
   }
 
@@ -186,6 +206,12 @@
   <img id="s6-img2" src="assets/section6-2.jpg" alt="">
   <img id="s6-img3" src="assets/section6-3.jpg" alt="">
 </figure>
+<!-- gallery-A-Left pinned frame (right media area) -->
+<figure class="frame galA-left-frame" aria-hidden="true">
+  <img id="galA-img0" src="assets/gallery-A.jpg" alt="">
+  <img id="galA-img1" src="assets/gallery-A1.jpg" alt="">
+  <img id="galA-img2" src="assets/gallery-A2.jpg" alt="">
+</figure>
 
 <!-- S1 -->
 <section class="s1-wrap" id="s1-wrap">
@@ -217,10 +243,10 @@
   </div>
 </section>
 
-<!-- S3 driver only (full-viewport image lives in the fixed frame above) -->
+<!-- S3 driver (full-viewport image is in fixed frame) -->
 <section class="s3-wrap" id="s3-wrap"></section>
 
-<!-- S4 (like S1: left rail, right image) -->
+<!-- S4 (like S1) -->
 <section class="s4-wrap" id="s4-wrap">
   <div class="s4-overlay">
     <div class="s4-rail">
@@ -235,7 +261,7 @@
   </div>
 </section>
 
-<!-- S5 (like S2: right rail, left image) -->
+<!-- S5 (like S2) -->
 <section class="s5-wrap" id="s5-wrap">
   <div class="s5-overlay">
     <div class="s5-rail">
@@ -250,8 +276,11 @@
   </div>
 </section>
 
-<!-- S6 driver (media-only sequence lives in the pinned s6-frame above) -->
+<!-- S6 driver (media-only sequence lives in the fixed s6-frame) -->
 <section class="s6-wrap" id="s6-wrap"></section>
+
+<!-- gallery-A-Left driver (media-only sequence lives in the fixed galA-left-frame) -->
+<section class="galA-left-wrap" id="galA-wrap"></section>
 
 <section class="after"></section>
 
@@ -261,6 +290,8 @@
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
   const easeInOutCubic=t=>t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
   const easePow=(t,p)=>Math.pow(t,p);
+
+  console.info("Baseline: s6-gallery-centered-working (2025-09-15)");
 
   /* ---------- HERO ---------- */
   const driver=document.getElementById('driver');
@@ -299,6 +330,7 @@
   const s4Wrap=document.getElementById('s4-wrap');
   const s5Wrap=document.getElementById('s5-wrap');
   const s6Wrap=document.getElementById('s6-wrap');
+  const galAWrap=document.getElementById('galA-wrap');
 
   const s1Text=document.getElementById('s1-text');
   const s2Text=document.getElementById('s2-text');
@@ -313,15 +345,16 @@
   /* --- S6 load-gate: wait for first image to be fully loaded --- */
   const s6Img0 = document.getElementById('s6-img0');
   let s6FirstReady = false;
-  function markS6Ready(){
-    s6FirstReady = true;
-    root.style.setProperty('--s6Ready','1');  // debug/optional
-  }
-  if (s6Img0 && s6Img0.complete && s6Img0.naturalWidth > 0) {
-    markS6Ready();
-  } else if (s6Img0) {
-    s6Img0.addEventListener('load', markS6Ready, { once:true });
-  }
+  function markS6Ready(){ s6FirstReady = true; root.style.setProperty('--s6Ready','1'); }
+  if (s6Img0 && s6Img0.complete && s6Img0.naturalWidth > 0) markS6Ready();
+  else if (s6Img0) s6Img0.addEventListener('load', markS6Ready, { once:true });
+
+  /* --- gallery-A-Left load-gate: wait for first image to be fully loaded --- */
+  const galAImg0 = document.getElementById('galA-img0');
+  let galAFirstReady = false;
+  function markGalAReady(){ galAFirstReady = true; root.style.setProperty('--galAReady','1'); }
+  if (galAImg0 && galAImg0.complete && galAImg0.naturalWidth > 0) markGalAReady();
+  else if (galAImg0) galAImg0.addEventListener('load', markGalAReady, { once:true });
 
   function measureS1(){
     const vh=window.innerHeight;
@@ -365,12 +398,14 @@
     const s4=progressOf(s4Wrap);
     const s5=progressOf(s5Wrap);
     const s6=progressOf(s6Wrap);
+    const galA=progressOf(galAWrap);
     root.style.setProperty('--s1',s1.toFixed(3));
     root.style.setProperty('--s2',s2.toFixed(3));
     root.style.setProperty('--s3',s3.toFixed(3));
     root.style.setProperty('--s4',s4.toFixed(3));
     root.style.setProperty('--s5',s5.toFixed(3));
     root.style.setProperty('--s6',s6.toFixed(3));
+    root.style.setProperty('--galA',galA.toFixed(3));
 
     /* Overlays & hero */
     root.style.setProperty('--s1Overlay',(s1>0 && s1<1)?1:0);
@@ -401,7 +436,7 @@
     const s3ZoomEase = easeInOutCubic(s3ZoomRaw);
     root.style.setProperty('--s3Scale', (1 + (SCALE_MAX - 1) * s3ZoomEase).toFixed(3));
 
-    /* ===== Crossfades (existing + S5→S6 with load-gate) ===== */
+    /* ===== Crossfades (existing + S6→gallery-A-Left) ===== */
     const FADE_FRAC = 0.35;
     const LEAD_FRAC = 0.15;
 
@@ -432,56 +467,79 @@
     let s5Alpha = gateS4S5 ? x45 : 0;
     if (gateS4S5) s4Alpha = s4Alpha * (1 - x45);
 
-    /* S5 → S6 (gated by S5 text AND S6 first image load) */
+    /* S5 → S6 (unchanged, gated by S5 text + S6 first image) */
     const textBottomS5 = s5Y + s5Text.scrollHeight;
     const gateS5S6Base = (textBottomS5 <= window.innerHeight * LEAD_FRAC) || (s5 >= 0.999);
     const x56 = clamp(s6/FADE_FRAC, 0, 1);
     const s6Gate = gateS5S6Base && s6FirstReady;
-    const s6Group = s6Gate ? x56 : 0;       // S6 group opacity 0→1
-    if (s6Gate) s5Alpha = s5Alpha * (1 - x56);  // fade S5 only when S6 is ready
+    const s6Group = s6Gate ? x56 : 0;  // S6 group opacity 0→1
+    if (s6Gate) s5Alpha = s5Alpha * (1 - x56);
 
-    /* ===== S6 internal crossfade (4 images, scroll-driven)
-       IMPORTANT: internal timeline starts ONLY AFTER the S6 group is fully in.
-       Internal time t6 maps s6 ∈ [FADE_FRAC, 1] → t6 ∈ [0, 1].
-       Also: holds are 25% longer, renormalized to fit. */
-    // (1) map to internal time after group fade-in
-    const INTERNAL_START = FADE_FRAC;
-    const t6 = clamp((s6 - INTERNAL_START) / (1 - INTERNAL_START), 0, 1);
+    /* S6 → gallery-A-Left (media→media; gate on galA first image) */
+    const x6A = clamp(galA/FADE_FRAC, 0, 1);
+    const galAGate = galAFirstReady;          // ensure first galA image is ready
+    const galAGroup = galAGate ? x6A : 0;     // galA group opacity 0→1
 
-    // (2) build durations: longer holds (×1.25) then renormalize
-    const S6_FADE_FRAC_BASE = 0.28;   // base fade width before renorm
-    const HOLD_MULT = 1.25;           // +25% longer 100% opacity holds
-    const H_raw = (1 - 3*S6_FADE_FRAC_BASE)/4;
-    const totalRaw = 4*(H_raw*HOLD_MULT) + 3*S6_FADE_FRAC_BASE;
-    const NORM = 1 / totalRaw;
-    const S6_FADE_FRAC = S6_FADE_FRAC_BASE * NORM;
-    const S6_HOLD = H_raw * HOLD_MULT * NORM;
-
-    const T1 = S6_HOLD;
-    const T2 = T1 + S6_FADE_FRAC + S6_HOLD;
-    const T3 = T2 + S6_FADE_FRAC + S6_HOLD;
-
+    /* ===== S6 internal crossfade (4 images, scroll-driven, +25% holds)
+       Internal timeline starts only AFTER the S6 group is fully in. */
+    const INTERNAL_START_6 = FADE_FRAC;
+    const t6 = clamp((s6 - INTERNAL_START_6) / (1 - INTERNAL_START_6), 0, 1);
+    const S6_FADE_FRAC_BASE = 0.28;
+    const HOLD_MULT_6 = 1.25;
+    const H6_raw = (1 - 3*S6_FADE_FRAC_BASE)/4;
+    const total6Raw = 4*(H6_raw*HOLD_MULT_6) + 3*S6_FADE_FRAC_BASE;
+    const NORM6 = 1 / total6Raw;
+    const S6_FADE_FRAC = S6_FADE_FRAC_BASE * NORM6;
+    const S6_HOLD = H6_raw * HOLD_MULT_6 * NORM6;
+    const T6_1 = S6_HOLD;
+    const T6_2 = T6_1 + S6_FADE_FRAC + S6_HOLD;
+    const T6_3 = T6_2 + S6_FADE_FRAC + S6_HOLD;
     const step = (t,start,w)=>clamp((t - start)/w, 0, 1); // linear; swap to eased if desired
 
-    let a0=0, a1=0, a2=0, a3=0;
-    if (t6 <= 0) {
-      // While S6 group is fading in (or just finished), keep first image fully solid
-      a0 = 1; a1 = 0; a2 = 0; a3 = 0;
-    } else {
-      // Now run the internal sequence over t6 ∈ (0..1]
-      a0 = 1; a1 = 0; a2 = 0; a3 = 0;
-      const f1=step(t6, T1, S6_FADE_FRAC); a0*= (1 - f1); a1 = Math.max(a1, f1);
-      const f2=step(t6, T2, S6_FADE_FRAC); a1*= (1 - f2); a2 = Math.max(a2, f2);
-      const f3=step(t6, T3, S6_FADE_FRAC); a2*= (1 - f3); a3 = Math.max(a3, f3);
+    let a6_0=0,a6_1=0,a6_2=0,a6_3=0;
+    if (t6 <= 0){ a6_0=1; } else {
+      a6_0=1;
+      const f1=step(t6, T6_1, S6_FADE_FRAC); a6_0*= (1 - f1); a6_1 = Math.max(a6_1, f1);
+      const f2=step(t6, T6_2, S6_FADE_FRAC); a6_1*= (1 - f2); a6_2 = Math.max(a6_2, f2);
+      const f3=step(t6, T6_3, S6_FADE_FRAC); a6_2*= (1 - f3); a6_3 = Math.max(a6_3, f3);
     }
 
-    /* Apply group fade-in (s6Group) to each image layer */
-    root.style.setProperty('--s6Img0Opacity', (a0 * s6Group).toFixed(3));
-    root.style.setProperty('--s6Img1Opacity', (a1 * s6Group).toFixed(3));
-    root.style.setProperty('--s6Img2Opacity', (a2 * s6Group).toFixed(3));
-    root.style.setProperty('--s6Img3Opacity', (a3 * s6Group).toFixed(3));
+    /* Apply S6 group fade-in and fade-out as galA comes in */
+    const s6OutFactor = (1 - galAGroup);
+    root.style.setProperty('--s6Img0Opacity', (a6_0 * s6Group * s6OutFactor).toFixed(3));
+    root.style.setProperty('--s6Img1Opacity', (a6_1 * s6Group * s6OutFactor).toFixed(3));
+    root.style.setProperty('--s6Img2Opacity', (a6_2 * s6Group * s6OutFactor).toFixed(3));
+    root.style.setProperty('--s6Img3Opacity', (a6_3 * s6Group * s6OutFactor).toFixed(3));
 
-    /* Apply section frame opacities */
+    /* ===== gallery-A-Left internal crossfade (3 images, scroll-driven)
+       Internal timeline starts only AFTER galA group is fully in. */
+    const INTERNAL_START_A = FADE_FRAC;
+    const tA = clamp((galA - INTERNAL_START_A) / (1 - INTERNAL_START_A), 0, 1);
+
+    const A_FADE_FRAC_BASE = 0.30;   // width of each of the 2 fades before renorm
+    const HOLD_MULT_A = 1.25;        // +25% holds
+    const HA_raw = (1 - 2*A_FADE_FRAC_BASE)/3;  // 3 holds: before, between, after
+    const totalARaw = 3*(HA_raw*HOLD_MULT_A) + 2*A_FADE_FRAC_BASE;
+    const NORMA = 1 / totalARaw;
+    const A_FADE_FRAC = A_FADE_FRAC_BASE * NORMA;
+    const A_HOLD = HA_raw * HOLD_MULT_A * NORMA;
+
+    const TA_1 = A_HOLD;
+    const TA_2 = TA_1 + A_FADE_FRAC + A_HOLD;
+
+    let bA_0=0,bA_1=0,bA_2=0;
+    if (tA <= 0){ bA_0=1; } else {
+      bA_0=1;
+      const g1=step(tA, TA_1, A_FADE_FRAC); bA_0*= (1 - g1); bA_1 = Math.max(bA_1, g1);
+      const g2=step(tA, TA_2, A_FADE_FRAC); bA_1*= (1 - g2); bA_2 = Math.max(bA_2, g2);
+    }
+
+    /* Apply galA group fade-in to layers */
+    root.style.setProperty('--galAImg0Opacity', (bA_0 * galAGroup).toFixed(3));
+    root.style.setProperty('--galAImg1Opacity', (bA_1 * galAGroup).toFixed(3));
+    root.style.setProperty('--galAImg2Opacity', (bA_2 * galAGroup).toFixed(3));
+
+    /* Apply section frame opacities for earlier sections */
     root.style.setProperty('--s1ImgOpacity', s1Alpha.toFixed(3));
     root.style.setProperty('--s2ImgOpacity', s2Alpha.toFixed(3));
     root.style.setProperty('--s3ImgOpacity', s3AlphaOut.toFixed(3));
