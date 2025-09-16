@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → S1 → S2 → gallery-A-Left → S3 → S4 → S5 → gallery-B-Center → S8</title>
+<title>Gardenicity — Hero → S1 → S2 → gallery-A-Left → S3 → S4 → S5 → gallery-B-Center → S8 → S9</title>
 <style>
   /* ===== Base ===== */
   html,body{
@@ -18,7 +18,7 @@
     --s1:0; --s1Overlay:0; --s1Y:0px; --s1ImgOpacity:0;
     /* S2 */
     --s2:0; --s2Overlay:0; --s2Y:0px; --s2ImgOpacity:0;
-    /* gallery-A-Left (right media area) */
+    /* gallery-A-Left */
     --galA:0;
     --galAImg0Opacity:0; --galAImg1Opacity:0; --galAImg2Opacity:0;
     --galAReady:0;
@@ -28,13 +28,14 @@
     --s4:0; --s4Overlay:0; --s4Y:0px; --s4ImgOpacity:0;
     /* S5 */
     --s5:0; --s5Overlay:0; --s5Y:0px; --s5ImgOpacity:0;
-    /* gallery-B-Center (renamed S6) */
+    /* gallery-B-Center */
     --galB:0;
     --galBImg0Opacity:0; --galBImg1Opacity:0; --galBImg2Opacity:0; --galBImg3Opacity:0; --galBImg4Opacity:0;
     --galBReady:0;
     /* S8 (full bleed) */
-    --s8:0; --s8ImgOpacity:0; --s8Scale:1;
-    --s8Ready:0;
+    --s8:0; --s8ImgOpacity:0; --s8Scale:1; --s8Ready:0;
+    /* S9 (like S1/S4) */
+    --s9:0; --s9Overlay:0; --s9Y:0px; --s9ImgOpacity:0;
   }
 
   /* ===== HERO ===== */
@@ -72,14 +73,14 @@
   }
   .frame img{ width:100%; height:100%; object-fit:contain; display:block; }
 
-  /* S1 image RIGHT */
+  /* S1 image RIGHT (text left) */
   .s1-frame{
     top:96px; bottom:96px;
     left: calc(96px + 512px + 96px);
     right: 82px;
     opacity: var(--s1ImgOpacity);
   }
-  /* S2 image LEFT */
+  /* S2 image LEFT (mirror) */
   .s2-frame{
     top:96px; bottom:96px;
     left: 96px;
@@ -155,29 +156,39 @@
     will-change: transform;
   }
 
+  /* NEW: S9 image RIGHT (like S1/S4) */
+  .s9-frame{
+    top:96px; bottom:96px;
+    left: calc(96px + 512px + 96px);
+    right: 82px;
+    opacity: var(--s9ImgOpacity);
+  }
+
   /* ===== SECTION DRIVERS ===== */
-  .s1-wrap, .s2-wrap, .galA-left-wrap, .s3-wrap, .s4-wrap, .s5-wrap, .galB-center-wrap, .s8-wrap{
+  .s1-wrap, .s2-wrap, .galA-left-wrap, .s3-wrap, .s4-wrap, .s5-wrap, .galB-center-wrap, .s8-wrap, .s9-wrap{
     position:relative; height:280vh; background:#e5e4e0;
   }
 
   /* ===== TEXT OVERLAYS (rails) ===== */
-  .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay{
+  .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay, .s9-overlay{
     position:fixed; inset:0; z-index:2; pointer-events:none;
   }
   .s1-overlay{ opacity:var(--s1Overlay); }
   .s2-overlay{ opacity:var(--s2Overlay); }
   .s4-overlay{ opacity:var(--s4Overlay); }
   .s5-overlay{ opacity:var(--s5Overlay); }
+  .s9-overlay{ opacity:var(--s9Overlay); }
 
-  .s1-rail, .s4-rail{ position:absolute; top:0; bottom:0; left:96px; width:512px; overflow:hidden; }
+  .s1-rail, .s4-rail, .s9-rail{ position:absolute; top:0; bottom:0; left:96px; width:512px; overflow:hidden; }
   .s2-rail, .s5-rail{ position:absolute; top:0; bottom:0; right:96px; width:512px; overflow:hidden; }
 
   .s1-text{ transform:translateY(var(--s1Y)); color:#111; }
   .s2-text{ transform:translateY(var(--s2Y)); color:#111; text-align:left; }
   .s4-text{ transform:translateY(var(--s4Y)); color:#111; }
   .s5-text{ transform:translateY(var(--s5Y)); color:#111; text-align:left; }
+  .s9-text{ transform:translateY(var(--s9Y)); color:#111; }
 
-  .s1-text p, .s2-text p, .s4-text p, .s5-text p{
+  .s1-text p, .s2-text p, .s4-text p, .s5-text p, .s9-text p{
     margin:0 0 14px 0; font-size:20px; line-height:28px;
   }
 
@@ -237,6 +248,9 @@
 <figure class="frame s8-frame" aria-hidden="true">
   <img id="s8-img" src="assets/section8.jpg" alt="">
 </figure>
+
+<!-- NEW: S9 (like S1/S4) -->
+<figure class="frame s9-frame" aria-hidden="true"><img id="s9-img" src="assets/section9.jpg" alt=""></figure>
 
 <!-- S1 -->
 <section class="s1-wrap" id="s1-wrap">
@@ -310,6 +324,21 @@
 <!-- S8 driver -->
 <section class="s8-wrap" id="s8-wrap"></section>
 
+<!-- NEW: S9 driver -->
+<section class="s9-wrap" id="s9-wrap">
+  <div class="s9-overlay">
+    <div class="s9-rail">
+      <div class="s9-text" id="s9-text">
+        <p><strong>SECTION NINE</strong> brings us back to the close frame…</p>
+        <p>The left rail carries the narration forward…</p>
+        <p>On the right, the image steadies the scene…</p>
+        <p>Margins, rhythm, and pacing mirror Section One…</p>
+        <p>So the story breathes in familiar cadence.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="after"></section>
 
 <script>
@@ -319,7 +348,7 @@
   const easeInOutCubic=t=>t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
   const easePow=(t,p)=>Math.pow(t,p);
 
-  console.info("Baseline: stable-2025-09-15__gallery-A+B + S8 (full-bleed)");
+  console.info("Baseline: stable-2025-09-15__gallery-A+B + S8 + S9");
 
   /* ---------- HERO ---------- */
   const driver=document.getElementById('driver');
@@ -360,16 +389,19 @@
   const s5Wrap=document.getElementById('s5-wrap');
   const galBWrap=document.getElementById('galB-wrap');
   const s8Wrap=document.getElementById('s8-wrap');
+  const s9Wrap=document.getElementById('s9-wrap');
 
   const s1Text=document.getElementById('s1-text');
   const s2Text=document.getElementById('s2-text');
   const s4Text=document.getElementById('s4-text');
   const s5Text=document.getElementById('s5-text');
+  const s9Text=document.getElementById('s9-text');
 
   let s1StartY=0, s1EndY=0;
   let s2StartY=0, s2EndY=0;
   let s4StartY=0, s4EndY=0;
   let s5StartY=0, s5EndY=0;
+  let s9StartY=0, s9EndY=0;
 
   function measureS1(){
     const vh=window.innerHeight;
@@ -395,8 +427,14 @@
     s5StartY=vh; s5EndY=-textH;
     root.style.setProperty('--s5Y', s5StartY+'px');
   }
+  function measureS9(){
+    const vh=window.innerHeight;
+    const textH=s9Text.scrollHeight;
+    s9StartY=vh; s9EndY=-textH;
+    root.style.setProperty('--s9Y', s9StartY+'px');
+  }
 
-  /* --- Load gates for first images --- */
+  /* --- Load gates --- */
   const galAImg0 = document.getElementById('galA-img0');
   let galAFirstReady = false;
   function markGalAReady(){ galAFirstReady = true; root.style.setProperty('--galAReady','1'); }
@@ -434,6 +472,7 @@
     const s5=progressOf(s5Wrap);
     const galB=progressOf(galBWrap);
     const s8=progressOf(s8Wrap);
+    const s9=progressOf(s9Wrap);
 
     root.style.setProperty('--s1',s1.toFixed(3));
     root.style.setProperty('--s2',s2.toFixed(3));
@@ -443,12 +482,14 @@
     root.style.setProperty('--s5',s5.toFixed(3));
     root.style.setProperty('--galB',galB.toFixed(3));
     root.style.setProperty('--s8',s8.toFixed(3));
+    root.style.setProperty('--s9',s9.toFixed(3));
 
     /* Overlays & hero */
     root.style.setProperty('--s1Overlay',(s1>0 && s1<1)?1:0);
     root.style.setProperty('--s2Overlay',(s2>0 && s2<1)?1:0);
     root.style.setProperty('--s4Overlay',(s4>0 && s4<1)?1:0);
     root.style.setProperty('--s5Overlay',(s5>0 && s5<1)?1:0);
+    root.style.setProperty('--s9Overlay',(s9>0 && s9<1)?1:0);
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
@@ -457,19 +498,30 @@
     const s1Raw=clamp((s1-0.75)/0.25,0,1);
     const s1Y=s1StartY+(s1EndY-s1StartY)*easePow(s1Raw,textEase);
     root.style.setProperty('--s1Y', s1Y+'px');
+
     const s2Raw=clamp((s2-0.25)/0.75,0,1);
     const s2Y=s2StartY+(s2EndY-s2StartY)*easePow(s2Raw,textEase);
     root.style.setProperty('--s2Y', s2Y+'px');
+
     const s4Raw=clamp((s4-0.75)/0.25,0,1);
     const s4Y=s4StartY+(s4EndY-s4StartY)*easePow(s4Raw,textEase);
     root.style.setProperty('--s4Y', s4Y+'px');
+
     const s5Raw=clamp((s5-0.25)/0.75,0,1);
     const s5Y=s5StartY+(s5EndY-s5StartY)*easePow(s5Raw,textEase);
     root.style.setProperty('--s5Y', s5Y+'px');
 
+    const s9Raw=clamp((s9-0.75)/0.25,0,1); /* left rail like S1/S4 */
+    const s9Y=s9StartY+(s9EndY-s9StartY)*easePow(s9Raw,textEase);
+    root.style.setProperty('--s9Y', s9Y+'px');
+
     /* S3 end zoom */
     const s3ZoomRaw = clamp((s3 - 0.82) / 0.18, 0, 1);
     root.style.setProperty('--s3Scale', (1 + 0.08 * easeInOutCubic(s3ZoomRaw)).toFixed(3));
+
+    /* S8 end zoom */
+    const s8ZoomRaw = clamp((s8 - 0.82) / 0.18, 0, 1);
+    root.style.setProperty('--s8Scale', (1 + 0.08 * easeInOutCubic(s8ZoomRaw)).toFixed(3));
 
     /* ===== Crossfades ===== */
     const FADE_FRAC = 0.35;
@@ -518,9 +570,14 @@
     const xB8 = clamp(s8/FADE_FRAC, 0, 1);
     const s8Group = s8FirstReady ? xB8 : 0;
 
+    /* NEW: S8 (full) → S9 (right media with left text) — mirror S3→S4 */
+    const x89 = clamp(s9/FADE_FRAC, 0, 1);
+    const s9Alpha = x89;                      // S9 frame opacity
+    const s8AlphaOut = s8Group * (1 - x89);   // fade S8 as S9 comes in
+
     /* ===== Internal galleries ===== */
 
-    /* gallery-A (3 imgs, +25% holds, starts after group fully in) */
+    /* gallery-A (3 imgs, +25% holds) */
     const INTERNAL_START_A = FADE_FRAC;
     const tA = clamp((galA - INTERNAL_START_A) / (1 - INTERNAL_START_A), 0, 1);
     const A_FADE_FRAC_BASE = 0.30, HOLD_MULT_A = 1.25;
@@ -542,7 +599,7 @@
     root.style.setProperty('--galAImg1Opacity', (a1 * galAGroup * (1 - xA3)).toFixed(3));
     root.style.setProperty('--galAImg2Opacity', (a2 * galAGroup * (1 - xA3)).toFixed(3));
 
-    /* gallery-B (5 imgs, +25% holds, starts after group fully in) */
+    /* gallery-B (5 imgs, +25% holds) */
     const INTERNAL_START_B = FADE_FRAC;
     const tB = clamp((galB - INTERNAL_START_B) / (1 - INTERNAL_START_B), 0, 1);
     const N_B=5, F_B=N_B-1, B_FADE_FRAC_BASE=0.22, HOLD_MULT_B=1.25;
@@ -561,35 +618,28 @@
       const f3=step(tB, TB_3, B_FADE_FRAC); b2*= (1 - f3); b3 = Math.max(b3, f3);
       const f4=step(tB, TB_4, B_FADE_FRAC); b3*= (1 - f4); b4 = Math.max(b4, f4);
     }
-    const galBOut = (1 - s8Group);  // fade gallery-B as S8 comes in
+    const galBOut = (1 - s8Group);
     root.style.setProperty('--galBImg0Opacity', (b0 * galBGroup * galBOut).toFixed(3));
     root.style.setProperty('--galBImg1Opacity', (b1 * galBGroup * galBOut).toFixed(3));
     root.style.setProperty('--galBImg2Opacity', (b2 * galBGroup * galBOut).toFixed(3));
     root.style.setProperty('--galBImg3Opacity', (b3 * galBGroup * galBOut).toFixed(3));
     root.style.setProperty('--galBImg4Opacity', (b4 * galBGroup * galBOut).toFixed(3));
 
-    /* ===== S8 full-bleed behavior ===== */
-
-    // Group opacity: s8Group already 0→1 (load-gated)
-    root.style.setProperty('--s8ImgOpacity', s8Group.toFixed(3));
-
-    // End zoom (mirrors S3): start near the end of S8’s scroll
-    const s8ZoomRaw = clamp((s8 - 0.82) / 0.18, 0, 1);
-    root.style.setProperty('--s8Scale', (1 + 0.08 * easeInOutCubic(s8ZoomRaw)).toFixed(3));
-
-    /* Apply section frame opacities for earlier sections */
+    /* Apply section frame opacities */
     root.style.setProperty('--s1ImgOpacity', s1Alpha.toFixed(3));
     root.style.setProperty('--s2ImgOpacity', s2Alpha.toFixed(3));
     root.style.setProperty('--s3ImgOpacity', s3AlphaOut.toFixed(3));
     root.style.setProperty('--s4ImgOpacity', s4Alpha.toFixed(3));
     root.style.setProperty('--s5ImgOpacity', s5Alpha.toFixed(3));
+    root.style.setProperty('--s8ImgOpacity', s8AlphaOut.toFixed(3));
+    root.style.setProperty('--s9ImgOpacity', s9Alpha.toFixed(3));
   }
 
   async function init(){
     if(document.fonts && document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
-    measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); update();
-    addEventListener('load', ()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); update(); });
-    addEventListener('resize', ()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); update(); });
+    measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); update();
+    addEventListener('load', ()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); update(); });
+    addEventListener('resize', ()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); update(); });
     addEventListener('scroll', update, {passive:true});
   }
   init();
