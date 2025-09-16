@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → S1 → S2 → gallery-A-Left → S3 → S4 → S5 → gallery-B-Center → S8 → S9</title>
+<title>Gardenicity — Hero → S1 → S2 → gallery-A-Left → S3 → S4 → S5 → gallery-B-Center → S8 → S9 → gallery-C-Right</title>
 <style>
   /* ===== Base ===== */
   html,body{
@@ -36,6 +36,10 @@
     --s8:0; --s8ImgOpacity:0; --s8Scale:1; --s8Ready:0;
     /* S9 (like S1/S4) */
     --s9:0; --s9Overlay:0; --s9Y:0px; --s9ImgOpacity:0;
+    /* NEW: gallery-C-Right (left media area, no text) */
+    --galC:0;
+    --galCImg0Opacity:0; --galCImg1Opacity:0; --galCImg2Opacity:0; --galCImg3Opacity:0; --galCImg4Opacity:0;
+    --galCReady:0;
   }
 
   /* ===== HERO ===== */
@@ -65,7 +69,7 @@
 
   .driver{ height:200vh; }
 
-  /* ===== PINNED FRAMES ===== */
+  /* ===== PINNED, NO-DRIFT IMAGE FRAMES ===== */
   figure.frame{ margin:0; }
   .frame{
     position:fixed; z-index:1; pointer-events:none;
@@ -156,7 +160,7 @@
     will-change: transform;
   }
 
-  /* NEW: S9 image RIGHT (like S1/S4) */
+  /* S9 image RIGHT (like S1/S4) */
   .s9-frame{
     top:96px; bottom:96px;
     left: calc(96px + 512px + 96px);
@@ -164,8 +168,27 @@
     opacity: var(--s9ImgOpacity);
   }
 
+  /* NEW: gallery-C-Right (left media area, mirror of S1 geometry) */
+  .galC-left-frame{
+    top:96px; bottom:96px;
+    left: 96px;
+    right: calc(82px + 96px + 512px);
+    display:block;
+  }
+  .galC-left-frame img{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    object-fit:contain; object-position:center;
+    will-change:opacity;
+  }
+  #galC-img0{ opacity: var(--galCImg0Opacity); }
+  #galC-img1{ opacity: var(--galCImg1Opacity); }
+  #galC-img2{ opacity: var(--galCImg2Opacity); }
+  #galC-img3{ opacity: var(--galCImg3Opacity); }
+  #galC-img4{ opacity: var(--galCImg4Opacity); }
+
   /* ===== SECTION DRIVERS ===== */
-  .s1-wrap, .s2-wrap, .galA-left-wrap, .s3-wrap, .s4-wrap, .s5-wrap, .galB-center-wrap, .s8-wrap, .s9-wrap{
+  .s1-wrap, .s2-wrap, .galA-left-wrap, .s3-wrap, .s4-wrap, .s5-wrap, .galB-center-wrap, .s8-wrap, .s9-wrap, .galC-left-wrap{
     position:relative; height:280vh; background:#e5e4e0;
   }
 
@@ -249,8 +272,17 @@
   <img id="s8-img" src="assets/section8.jpg" alt="">
 </figure>
 
-<!-- NEW: S9 (like S1/S4) -->
+<!-- S9 (text left / media right) -->
 <figure class="frame s9-frame" aria-hidden="true"><img id="s9-img" src="assets/section9.jpg" alt=""></figure>
+
+<!-- NEW: gallery-C-Right (media on left) -->
+<figure class="frame galC-left-frame" aria-hidden="true">
+  <img id="galC-img0" src="assets/gallery-C.jpg" alt="">
+  <img id="galC-img1" src="assets/gallery-C1.jpg" alt="">
+  <img id="galC-img2" src="assets/gallery-C2.jpg" alt="">
+  <img id="galC-img3" src="assets/gallery-C3.jpg" alt="">
+  <img id="galC-img4" src="assets/gallery-C4.jpg" alt="">
+</figure>
 
 <!-- S1 -->
 <section class="s1-wrap" id="s1-wrap">
@@ -324,7 +356,7 @@
 <!-- S8 driver -->
 <section class="s8-wrap" id="s8-wrap"></section>
 
-<!-- NEW: S9 driver -->
+<!-- S9 driver -->
 <section class="s9-wrap" id="s9-wrap">
   <div class="s9-overlay">
     <div class="s9-rail">
@@ -339,6 +371,9 @@
   </div>
 </section>
 
+<!-- NEW: gallery-C-Right driver (media-only) -->
+<section class="galC-left-wrap" id="galC-wrap"></section>
+
 <section class="after"></section>
 
 <script>
@@ -348,7 +383,7 @@
   const easeInOutCubic=t=>t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
   const easePow=(t,p)=>Math.pow(t,p);
 
-  console.info("Baseline: stable-2025-09-15__gallery-A+B + S8 + S9");
+  console.info("Baseline: stable-2025-09-15__gallery-A+B + S8 + S9 + gallery-C-Right");
 
   /* ---------- HERO ---------- */
   const driver=document.getElementById('driver');
@@ -390,6 +425,7 @@
   const galBWrap=document.getElementById('galB-wrap');
   const s8Wrap=document.getElementById('s8-wrap');
   const s9Wrap=document.getElementById('s9-wrap');
+  const galCWrap=document.getElementById('galC-wrap');
 
   const s1Text=document.getElementById('s1-text');
   const s2Text=document.getElementById('s2-text');
@@ -453,6 +489,12 @@
   if (s8Img && s8Img.complete && s8Img.naturalWidth > 0) markS8Ready();
   else if (s8Img) s8Img.addEventListener('load', markS8Ready, { once:true });
 
+  const galCImg0 = document.getElementById('galC-img0');
+  let galCFirstReady = false;
+  function markGalCReady(){ galCFirstReady = true; root.style.setProperty('--galCReady','1'); }
+  if (galCImg0 && galCImg0.complete && galCImg0.naturalWidth > 0) markGalCReady();
+  else if (galCImg0) galCImg0.addEventListener('load', markGalCReady, { once:true });
+
   function update(){
     /* HERO choreography */
     const p=progressOf(driver);
@@ -473,6 +515,7 @@
     const galB=progressOf(galBWrap);
     const s8=progressOf(s8Wrap);
     const s9=progressOf(s9Wrap);
+    const galC=progressOf(galCWrap);
 
     root.style.setProperty('--s1',s1.toFixed(3));
     root.style.setProperty('--s2',s2.toFixed(3));
@@ -483,6 +526,7 @@
     root.style.setProperty('--galB',galB.toFixed(3));
     root.style.setProperty('--s8',s8.toFixed(3));
     root.style.setProperty('--s9',s9.toFixed(3));
+    root.style.setProperty('--galC',galC.toFixed(3));
 
     /* Overlays & hero */
     root.style.setProperty('--s1Overlay',(s1>0 && s1<1)?1:0);
@@ -511,7 +555,7 @@
     const s5Y=s5StartY+(s5EndY-s5StartY)*easePow(s5Raw,textEase);
     root.style.setProperty('--s5Y', s5Y+'px');
 
-    const s9Raw=clamp((s9-0.75)/0.25,0,1); /* left rail like S1/S4 */
+    const s9Raw=clamp((s9-0.75)/0.25,0,1);
     const s9Y=s9StartY+(s9EndY-s9StartY)*easePow(s9Raw,textEase);
     root.style.setProperty('--s9Y', s9Y+'px');
 
@@ -523,7 +567,7 @@
     const s8ZoomRaw = clamp((s8 - 0.82) / 0.18, 0, 1);
     root.style.setProperty('--s8Scale', (1 + 0.08 * easeInOutCubic(s8ZoomRaw)).toFixed(3));
 
-    /* ===== Crossfades ===== */
+    /* ===== Crossfades (global) ===== */
     const FADE_FRAC = 0.35;
     const LEAD_FRAC = 0.15;
 
@@ -570,10 +614,17 @@
     const xB8 = clamp(s8/FADE_FRAC, 0, 1);
     const s8Group = s8FirstReady ? xB8 : 0;
 
-    /* NEW: S8 (full) → S9 (right media with left text) — mirror S3→S4 */
+    /* S8 → S9 (like S3→S4) */
     const x89 = clamp(s9/FADE_FRAC, 0, 1);
-    const s9Alpha = x89;                      // S9 frame opacity
-    const s8AlphaOut = s8Group * (1 - x89);   // fade S8 as S9 comes in
+    let s9Alpha = x89;
+    const s8AlphaOut = s8Group * (1 - x89);
+
+    /* NEW: S9 → gallery-C (gate by S9 text bottom + first C image) */
+    const textBottomS9 = s9Y + s9Text.scrollHeight;
+    const gateS9C = (textBottomS9 <= window.innerHeight * LEAD_FRAC) || (s9 >= 0.999);
+    const x9C = clamp(galC/FADE_FRAC, 0, 1);
+    const galCGroup = (gateS9C && galCFirstReady) ? x9C : 0;
+    if (gateS9C) s9Alpha = s9Alpha * (1 - x9C);
 
     /* ===== Internal galleries ===== */
 
@@ -624,6 +675,32 @@
     root.style.setProperty('--galBImg2Opacity', (b2 * galBGroup * galBOut).toFixed(3));
     root.style.setProperty('--galBImg3Opacity', (b3 * galBGroup * galBOut).toFixed(3));
     root.style.setProperty('--galBImg4Opacity', (b4 * galBGroup * galBOut).toFixed(3));
+
+    /* NEW: gallery-C (5 imgs, +25% holds; starts after group is in) */
+    const INTERNAL_START_C = FADE_FRAC;
+    const tC = clamp((galC - INTERNAL_START_C) / (1 - INTERNAL_START_C), 0, 1);
+    const N_C=5, F_C=N_C-1, C_FADE_FRAC_BASE=0.22, HOLD_MULT_C=1.25;
+    const HC_raw = (1 - F_C*C_FADE_FRAC_BASE)/N_C;
+    const totalCRaw = N_C*(HC_raw*HOLD_MULT_C) + F_C*C_FADE_FRAC_BASE;
+    const NORMC=1/totalCRaw;
+    const C_FADE_FRAC=C_FADE_FRAC_BASE*NORMC;
+    const C_HOLD=HC_raw*HOLD_MULT_C*NORMC;
+    const TC_1=C_HOLD, TC_2=TC_1+C_FADE_FRAC+C_HOLD, TC_3=TC_2+C_FADE_FRAC+C_HOLD, TC_4=TC_3+C_FADE_FRAC+C_HOLD;
+
+    let c0=0,c1=0,c2=0,c3=0,c4=0;
+    if (tC <= 0){ c0=1; } else {
+      c0=1;
+      const h1=step(tC, TC_1, C_FADE_FRAC); c0*= (1 - h1); c1 = Math.max(c1, h1);
+      const h2=step(tC, TC_2, C_FADE_FRAC); c1*= (1 - h2); c2 = Math.max(c2, h2);
+      const h3=step(tC, TC_3, C_FADE_FRAC); c2*= (1 - h3); c3 = Math.max(c3, h3);
+      const h4=step(tC, TC_4, C_FADE_FRAC); c3*= (1 - h4); c4 = Math.max(c4, h4);
+    }
+
+    root.style.setProperty('--galCImg0Opacity', (c0 * galCGroup).toFixed(3));
+    root.style.setProperty('--galCImg1Opacity', (c1 * galCGroup).toFixed(3));
+    root.style.setProperty('--galCImg2Opacity', (c2 * galCGroup).toFixed(3));
+    root.style.setProperty('--galCImg3Opacity', (c3 * galCGroup).toFixed(3));
+    root.style.setProperty('--galCImg4Opacity', (c4 * galCGroup).toFixed(3));
 
     /* Apply section frame opacities */
     root.style.setProperty('--s1ImgOpacity', s1Alpha.toFixed(3));
