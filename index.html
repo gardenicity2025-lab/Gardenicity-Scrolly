@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gardenicity — Hero → S1 → S2 → gallery-A-Left → S3 → S4 → S5 → gallery-B-Center → S8 → S9 → gallery-C-Right → S11</title>
+<title>Gardenicity — Hero → S1 → S2 → gallery-A-Left → S3 → S4 → S5 → gallery-B-Center → S8 → S9 → gallery-C-Right → S11 → S12</title>
 <style>
   /* ===== Base ===== */
   html,body{
@@ -40,8 +40,10 @@
     --galC:0;
     --galCImg0Opacity:0; --galCImg1Opacity:0; --galCImg2Opacity:0; --galCImg3Opacity:0; --galCImg4Opacity:0;
     --galCReady:0;
-    /* NEW: S11 (like S1/S4) */
+    /* S11 (like S1/S4) */
     --s11:0; --s11Overlay:0; --s11Y:0px; --s11ImgOpacity:0;
+    /* NEW: S12 (full bleed) */
+    --s12:0; --s12ImgOpacity:0; --s12Scale:1; --s12Ready:0;
   }
 
   /* ===== HERO ===== */
@@ -189,7 +191,7 @@
   #galC-img3{ opacity: var(--galCImg3Opacity); }
   #galC-img4{ opacity: var(--galCImg4Opacity); }
 
-  /* NEW: S11 image RIGHT (like S1/S4/S9) */
+  /* S11 image RIGHT (like S1/S4/S9) */
   .s11-frame{
     top:96px; bottom:96px;
     left: calc(96px + 512px + 96px);
@@ -197,8 +199,18 @@
     opacity: var(--s11ImgOpacity);
   }
 
+  /* NEW: S12 full-bleed */
+  .s12-frame{ top:0; right:0; bottom:0; left:0; opacity:var(--s12ImgOpacity); }
+  .frame.s12-frame>img{
+    width:100%; height:100%;
+    object-fit:cover !important; object-position:center;
+    transform: scale(var(--s12Scale));
+    transform-origin: center center;
+    will-change: transform;
+  }
+
   /* ===== SECTION DRIVERS ===== */
-  .s1-wrap, .s2-wrap, .galA-left-wrap, .s3-wrap, .s4-wrap, .s5-wrap, .galB-center-wrap, .s8-wrap, .s9-wrap, .galC-left-wrap, .s11-wrap{
+  .s1-wrap, .s2-wrap, .galA-left-wrap, .s3-wrap, .s4-wrap, .s5-wrap, .galB-center-wrap, .s8-wrap, .s9-wrap, .galC-left-wrap, .s11-wrap, .s12-wrap{
     position:relative; height:280vh; background:#e5e4e0;
   }
 
@@ -296,8 +308,13 @@
   <img id="galC-img4" src="assets/gallery-C4.jpg" alt="">
 </figure>
 
-<!-- NEW: S11 (text left / media right) -->
+<!-- S11 (text left / media right) -->
 <figure class="frame s11-frame" aria-hidden="true"><img id="s11-img" src="assets/section11.jpg" alt=""></figure>
+
+<!-- NEW: S12 full-bleed -->
+<figure class="frame s12-frame" aria-hidden="true">
+  <img id="s12-img" src="assets/section12.jpg" alt="">
+</figure>
 
 <!-- S1 -->
 <section class="s1-wrap" id="s1-wrap">
@@ -389,7 +406,7 @@
 <!-- gallery-C-Right driver (media-only) -->
 <section class="galC-left-wrap" id="galC-wrap"></section>
 
-<!-- NEW: S11 driver -->
+<!-- S11 driver -->
 <section class="s11-wrap" id="s11-wrap">
   <div class="s11-overlay">
     <div class="s11-rail">
@@ -404,6 +421,9 @@
   </div>
 </section>
 
+<!-- NEW: S12 driver (full-bleed image lives in fixed frame) -->
+<section class="s12-wrap" id="s12-wrap"></section>
+
 <section class="after"></section>
 
 <script>
@@ -413,7 +433,7 @@
   const easeInOutCubic=t=>t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
   const easePow=(t,p)=>Math.pow(t,p);
 
-  console.info("Baseline: + S11 added (left text / right media)");
+  console.info("Baseline: + S12 added (full-bleed, load-gated, end-zoom)");
 
   /* ---------- HERO ---------- */
   const driver=document.getElementById('driver');
@@ -457,6 +477,7 @@
   const s9Wrap=document.getElementById('s9-wrap');
   const galCWrap=document.getElementById('galC-wrap');
   const s11Wrap=document.getElementById('s11-wrap');
+  const s12Wrap=document.getElementById('s12-wrap');
 
   const s1Text=document.getElementById('s1-text');
   const s2Text=document.getElementById('s2-text');
@@ -509,7 +530,7 @@
     root.style.setProperty('--s11Y', s11StartY+'px');
   }
 
-  /* --- Load gates (existing galleries/full) --- */
+  /* --- Load gates --- */
   const galAImg0 = document.getElementById('galA-img0');
   let galAFirstReady = false;
   function markGalAReady(){ galAFirstReady = true; root.style.setProperty('--galAReady','1'); }
@@ -534,6 +555,12 @@
   if (galCImg0 && galCImg0.complete && galCImg0.naturalWidth > 0) markGalCReady();
   else if (galCImg0) galCImg0.addEventListener('load', markGalCReady, { once:true });
 
+  const s12Img = document.getElementById('s12-img');
+  let s12FirstReady = false;
+  function markS12Ready(){ s12FirstReady = true; root.style.setProperty('--s12Ready','1'); }
+  if (s12Img && s12Img.complete && s12Img.naturalWidth > 0) markS12Ready();
+  else if (s12Img) s12Img.addEventListener('load', markS12Ready, { once:true });
+
   function update(){
     /* HERO choreography */
     const p=progressOf(driver);
@@ -556,6 +583,7 @@
     const s9=progressOf(s9Wrap);
     const galC=progressOf(galCWrap);
     const s11=progressOf(s11Wrap);
+    const s12=progressOf(s12Wrap);
 
     root.style.setProperty('--s1',s1.toFixed(3));
     root.style.setProperty('--s2',s2.toFixed(3));
@@ -568,6 +596,7 @@
     root.style.setProperty('--s9',s9.toFixed(3));
     root.style.setProperty('--galC',galC.toFixed(3));
     root.style.setProperty('--s11',s11.toFixed(3));
+    root.style.setProperty('--s12',s12.toFixed(3));
 
     /* Overlays & hero */
     root.style.setProperty('--s1Overlay',(s1>0 && s1<1)?1:0);
@@ -605,13 +634,13 @@
     const s11Y=s11StartY+(s11EndY-s11StartY)*easePow(s11Raw,textEase);
     root.style.setProperty('--s11Y', s11Y+'px');
 
-    /* S3 end zoom */
+    /* End zooms (S3, S8, NEW S12) */
     const s3ZoomRaw = clamp((s3 - 0.82) / 0.18, 0, 1);
     root.style.setProperty('--s3Scale', (1 + 0.08 * easeInOutCubic(s3ZoomRaw)).toFixed(3));
-
-    /* S8 end zoom */
     const s8ZoomRaw = clamp((s8 - 0.82) / 0.18, 0, 1);
     root.style.setProperty('--s8Scale', (1 + 0.08 * easeInOutCubic(s8ZoomRaw)).toFixed(3));
+    const s12ZoomRaw = clamp((s12 - 0.82) / 0.18, 0, 1);
+    root.style.setProperty('--s12Scale', (1 + 0.08 * easeInOutCubic(s12ZoomRaw)).toFixed(3));
 
     /* ===== Crossfades ===== */
     const FADE_FRAC = 0.35;
@@ -672,10 +701,15 @@
     const galCGroup = (gateS9C && galCFirstReady) ? x9C : 0;
     if (gateS9C) s9Alpha = s9Alpha * (1 - x9C);
 
-    /* NEW: gallery-C → S11 (clean crossfade, same timing window) */
+    /* gallery-C → S11 (clean crossfade) */
     const xC11 = clamp(s11/FADE_FRAC, 0, 1);
-    const s11Alpha = xC11;
+    let s11Alpha = xC11;
     const galCOut = (1 - xC11);
+
+    /* NEW: S11 → S12 (full-bleed), gated on S12 first image load */
+    const x11_12 = clamp(s12/FADE_FRAC, 0, 1);
+    const s12Group = s12FirstReady ? x11_12 : 0;
+    s11Alpha = s11Alpha * (s12FirstReady ? (1 - x11_12) : 1);
 
     /* ===== Internal galleries ===== */
 
@@ -727,7 +761,7 @@
     root.style.setProperty('--galBImg3Opacity', (b3 * galBGroup * galBOut).toFixed(3));
     root.style.setProperty('--galBImg4Opacity', (b4 * galBGroup * galBOut).toFixed(3));
 
-    /* gallery-C (5 imgs, +25% holds; starts after group is in) */
+    /* gallery-C (5 imgs, +25% holds; fades out as S11 fades in) */
     const INTERNAL_START_C = FADE_FRAC;
     const tC = clamp((galC - INTERNAL_START_C) / (1 - INTERNAL_START_C), 0, 1);
     const N_C=5, F_C=N_C-1, C_FADE_FRAC_BASE=0.22, HOLD_MULT_C=1.25;
@@ -746,13 +780,13 @@
       const h3=step(tC, TC_3, C_FADE_FRAC); c2*= (1 - h3); c3 = Math.max(c3, h3);
       const h4=step(tC, TC_4, C_FADE_FRAC); c3*= (1 - h4); c4 = Math.max(c4, h4);
     }
-    root.style.setProperty('--galCImg0Opacity', (c0 * galCGroup * galCOut).toFixed(3));
-    root.style.setProperty('--galCImg1Opacity', (c1 * galCGroup * galCOut).toFixed(3));
-    root.style.setProperty('--galCImg2Opacity', (c2 * galCGroup * galCOut).toFixed(3));
-    root.style.setProperty('--galCImg3Opacity', (c3 * galCGroup * galCOut).toFixed(3));
-    root.style.setProperty('--galCImg4Opacity', (c4 * galCGroup * galCOut).toFixed(3));
+    root.style.setProperty('--galCImg0Opacity', (c0 * (1 - xC11)).toFixed(3));
+    root.style.setProperty('--galCImg1Opacity', (c1 * (1 - xC11)).toFixed(3));
+    root.style.setProperty('--galCImg2Opacity', (c2 * (1 - xC11)).toFixed(3));
+    root.style.setProperty('--galCImg3Opacity', (c3 * (1 - xC11)).toFixed(3));
+    root.style.setProperty('--galCImg4Opacity', (c4 * (1 - xC11)).toFixed(3));
 
-    /* Apply section frame opacities */
+    /* ===== Apply section frame opacities ===== */
     root.style.setProperty('--s1ImgOpacity', s1Alpha.toFixed(3));
     root.style.setProperty('--s2ImgOpacity', s2Alpha.toFixed(3));
     root.style.setProperty('--s3ImgOpacity', s3AlphaOut.toFixed(3));
@@ -761,6 +795,7 @@
     root.style.setProperty('--s8ImgOpacity', s8AlphaOut.toFixed(3));
     root.style.setProperty('--s9ImgOpacity', s9Alpha.toFixed(3));
     root.style.setProperty('--s11ImgOpacity', s11Alpha.toFixed(3));
+    root.style.setProperty('--s12ImgOpacity', s12Group.toFixed(3));
   }
 
   async function init(){
