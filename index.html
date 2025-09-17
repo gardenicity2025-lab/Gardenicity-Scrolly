@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-baseline="stable-2025-09-17__S15-center-rail-stop-at-70vh">
+<html lang="en" data-baseline="stable-2025-09-17__revert-S14+add-S15-clean">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -48,9 +48,8 @@
     --s13:0; --s13Overlay:0; --s13Y:0px; --s13ImgOpacity:0;
     /* S14 (like S2) */
     --s14:0; --s14Overlay:0; --s14Y:0px; --s14ImgOpacity:0;
-    /* S15 (full bleed + center rail) */
+    /* NEW: S15 (full bleed) */
     --s15:0; --s15ImgOpacity:0; --s15Scale:1; --s15Ready:0;
-    --s15Overlay:0; --s15Y:0px;
   }
 
   /* ===== HERO ===== */
@@ -232,7 +231,7 @@
     opacity: var(--s14ImgOpacity);
   }
 
-  /* S15 full-bleed */
+  /* NEW: S15 full-bleed */
   .s15-frame{ top:0; right:0; bottom:0; left:0; opacity:var(--s15ImgOpacity); }
   .frame.s15-frame>img{
     width:100%; height:100%;
@@ -282,27 +281,6 @@
 
   .s1-text p, .s2-text p, .s4-text p, .s5-text p, .s9-text p, .s11-text p, .s13-text p, .s14-text p{
     margin:0 0 14px 0; font-size:20px; line-height:28px;
-  }
-
-  /* ===== NEW: S15 CENTER RAIL ===== */
-  .s15-overlay{
-    position:fixed; inset:0; z-index:2; pointer-events:none; opacity:var(--s15Overlay);
-  }
-  .s15-rail{
-    position:absolute; top:0; bottom:0;
-    left: calc(50% - 352px);  /* 704px / 2 */
-    width: 704px;             /* 96 + 512 + 96 */
-    overflow:hidden;
-  }
-  .s15-text{
-    transform:translateY(var(--s15Y));
-    color:#fff;               /* readable over photo; adjust if needed */
-    margin:0 96px;            /* gutters left/right */
-    width:512px;
-  }
-  .s15-text p{
-    margin:0 0 14px 0;
-    font-size:18px; line-height:26px;
   }
 
   .after{ min-height:120vh; }
@@ -388,7 +366,7 @@
 <!-- S14 (right text / left image) -->
 <figure class="frame s14-frame" aria-hidden="true"><img id="s14-img" src="assets/section14.jpg" alt=""></figure>
 
-<!-- S15 full-bleed -->
+<!-- NEW: S15 full-bleed -->
 <figure class="frame s15-frame" aria-hidden="true">
   <img id="s15-img" src="assets/section15.jpg" alt="">
 </figure>
@@ -531,20 +509,8 @@
   </div>
 </section>
 
-<!-- S15 driver (full-bleed + center rail) -->
-<section class="s15-wrap" id="s15-wrap">
-  <div class="s15-overlay">
-    <div class="s15-rail">
-      <div class="s15-text" id="s15-text">
-        <p><strong>EPILOGUE</strong> — The city exhales into the garden…</p>
-        <p>A final cadence settles across the frame…</p>
-        <p>Care and time threaded through each view…</p>
-        <p>We pause where the story breathes…</p>
-        <p>And let the green hold the rest.</p>
-      </div>
-    </div>
-  </div>
-</section>
+<!-- NEW: S15 driver (full-bleed) -->
+<section class="s15-wrap" id="s15-wrap"></section>
 
 <section class="after"></section>
 
@@ -610,7 +576,6 @@
   const s11Text=document.getElementById('s11-text');
   const s13Text=document.getElementById('s13-text');
   const s14Text=document.getElementById('s14-text');
-  const s15Text=document.getElementById('s15-text');
 
   let s1StartY=0, s1EndY=0;
   let s2StartY=0, s2EndY=0;
@@ -620,7 +585,6 @@
   let s11StartY=0, s11EndY=0;
   let s13StartY=0, s13EndY=0;
   let s14StartY=0, s14EndY=0;
-  let s15StartY=0, s15EndY=0;
 
   function measureS1(){ const vh=window.innerHeight; const h=s1Text.scrollHeight; s1StartY=vh; s1EndY=-h; root.style.setProperty('--s1Y', s1StartY+'px'); }
   function measureS2(){ const vh=window.innerHeight; const h=s2Text.scrollHeight; s2StartY=vh; s2EndY=-h; root.style.setProperty('--s2Y', s2StartY+'px'); }
@@ -630,14 +594,6 @@
   function measureS11(){ const vh=window.innerHeight; const h=s11Text.scrollHeight; s11StartY=vh; s11EndY=-h; root.style.setProperty('--s11Y', s11StartY+'px'); }
   function measureS13(){ const vh=window.innerHeight; const h=s13Text.scrollHeight; s13StartY=vh; s13EndY=-h; root.style.setProperty('--s13Y', s13StartY+'px'); }
   function measureS14(){ const vh=window.innerHeight; const h=s14Text.scrollHeight; s14StartY=vh; s14EndY=-h; root.style.setProperty('--s14Y', s14StartY+'px'); }
-
-  /* NEW: measure S15 to stop at 70% viewport height */
-  function measureS15(){
-    const vh=window.innerHeight;
-    s15StartY = vh;           // start from below viewport (like other rails)
-    s15EndY   = 0.70 * vh;    // stop when top hits 70% of viewport
-    root.style.setProperty('--s15Y', s15StartY+'px');
-  }
 
   /* --- Load gates (first images) --- */
   const galAImg0 = document.getElementById('galA-img0');
@@ -665,6 +621,7 @@
   if (s12Img && s12Img.complete && s12Img.naturalWidth > 0) markS12Ready();
   else if (s12Img) s12Img.addEventListener('load', markS12Ready, { once:true });
 
+  /* NEW: S15 gate */
   const s15Img = document.getElementById('s15-img');
   function markS15Ready(){ root.style.setProperty('--s15Ready','1'); }
   if (s15Img && s15Img.complete && s15Img.naturalWidth > 0) markS15Ready();
@@ -722,8 +679,6 @@
     root.style.setProperty('--s11Overlay',(s11>0 && s11<1)?1:0);
     root.style.setProperty('--s13Overlay',(s13>0 && s13<1)?1:0);
     root.style.setProperty('--s14Overlay',(s14>0 && s14<1)?1:0);
-    root.style.setProperty('--s15Overlay',(s15>0 && s15<1)?1:0); /* NEW: show center rail on S15 only */
-
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
@@ -738,18 +693,13 @@
     const s13Raw=clamp((s13-0.75)/0.25,0,1); root.style.setProperty('--s13Y',(s13StartY+(s13EndY-s13StartY)*easePow(s13Raw,E))+'px');
     const s14Raw=clamp((s14-0.25)/0.75,0,1); root.style.setProperty('--s14Y',(s14StartY+(s14EndY-s14StartY)*easePow(s14Raw,E))+'px');
 
-    /* NEW: S15 center-rail sweep (uses the "left-rail" timing window 0.75→1) */
-    const s15Raw=clamp((s15-0.75)/0.25,0,1);
-    const s15Y = s15StartY + (s15EndY - s15StartY) * easePow(s15Raw, E);
-    root.style.setProperty('--s15Y', s15Y+'px');
-
     /* End zooms (full-bleed S3, S8, S12, S15) */
     const s3ZoomRaw = clamp((s3 - 0.82) / 0.18, 0, 1);  root.style.setProperty('--s3Scale',  (1 + 0.08 * easeInOutCubic(s3ZoomRaw)).toFixed(3));
     const s8ZoomRaw = clamp((s8 - 0.82) / 0.18, 0, 1);  root.style.setProperty('--s8Scale',  (1 + 0.08 * easeInOutCubic(s8ZoomRaw)).toFixed(3));
     const s12ZoomRaw = clamp((s12 - 0.82) / 0.18, 0, 1);root.style.setProperty('--s12Scale', (1 + 0.08 * easeInOutCubic(s12ZoomRaw)).toFixed(3));
     const s15ZoomRaw = clamp((s15 - 0.82) / 0.18, 0, 1);root.style.setProperty('--s15Scale', (1 + 0.08 * easeInOutCubic(s15ZoomRaw)).toFixed(3));
 
-    /* ===== Crossfades (standardized; unchanged) ===== */
+    /* ===== Crossfades (standardized) ===== */
     const FADE_FRAC = 0.35;
     const LEAD_FRAC = 0.15;
 
@@ -814,27 +764,80 @@
     let s11Alpha = xC11;
     const galCOut = (1 - xC11);
 
-    /* S11 → S12 (full-bleed) */
+    /* S11 → S12 (full-bleed), load-gated */
     const x11_12 = clamp(s12/FADE_FRAC, 0, 1);
     const s12Group = (getComputedStyle(root).getPropertyValue('--s12Ready')==='1') ? x11_12 : 0;
     s11Alpha = s11Alpha * ((getComputedStyle(root).getPropertyValue('--s12Ready')==='1') ? (1 - x11_12) : 1);
 
-    /* S12 → S13 */
+    /* S12 → S13 (full-bleed → framed, like S3→S4) */
     const x12_13 = clamp(s13/FADE_FRAC, 0, 1);
     let s13Alpha = x12_13;
     const s12AlphaOut2 = s12Group * (1 - x12_13);
 
-    /* S13 → S14 */
+    /* S13 → S14 (like S1→S2) */
     const textBottomS13 = (parseFloat(getComputedStyle(root).getPropertyValue('--s13Y'))||0) + s13Text.scrollHeight;
     const gateS13S14 = (textBottomS13 <= window.innerHeight * LEAD_FRAC) || (s13 >= 0.999);
     const x13_14 = clamp(s14/FADE_FRAC, 0, 1);
     let s14Alpha = gateS13S14 ? x13_14 : 0;
     if (gateS13S14) s13Alpha = s13Alpha * (1 - x13_14);
 
-    /* S14 → S15 (full-bleed; load-gated) */
+    /* NEW: S14 → S15 (full-bleed; load-gated like S11→S12) */
     const x14_15 = clamp(s15/FADE_FRAC, 0, 1);
     const s15Group = (getComputedStyle(root).getPropertyValue('--s15Ready')==='1') ? x14_15 : 0;
     s14Alpha = s14Alpha * ((getComputedStyle(root).getPropertyValue('--s15Ready')==='1') ? (1 - x14_15) : 1);
+
+    /* ===== Internal galleries (unchanged) ===== */
+
+    /* gallery-A (3 imgs, simple stepped crossfade) */
+    const INTERNAL_START_A = FADE_FRAC;
+    const tA = clamp((galA - INTERNAL_START_A) / (1 - INTERNAL_START_A), 0, 1);
+    const A_FADE = 0.30, A_HOLD = (1 - 2*A_FADE)/3 * 1.25;
+    const normA = 1/(3*A_HOLD + 2*A_FADE);
+    const AF=A_FADE*normA, AH=A_HOLD*normA;
+    const step=(t,s,w)=>clamp((t-s)/w,0,1);
+    const TA1=AH, TA2=TA1+AF+AH;
+    let a0=1, a1=0, a2=0;
+    const f1=step(tA, TA1, AF); a0*= (1 - f1); a1 = Math.max(a1, f1);
+    const f2=step(tA, TA2, AF); a1*= (1 - f2); a2 = Math.max(a2, f2);
+    root.style.setProperty('--galAImg0Opacity', (a0 * galAGroup * galAOut).toFixed(3));
+    root.style.setProperty('--galAImg1Opacity', (a1 * galAGroup * galAOut).toFixed(3));
+    root.style.setProperty('--galAImg2Opacity', (a2 * galAGroup * galAOut).toFixed(3));
+
+    /* gallery-B (5 imgs, simple stepped crossfade) */
+    const INTERNAL_START_B = FADE_FRAC;
+    const tB = clamp((galB - INTERNAL_START_B) / (1 - INTERNAL_START_B), 0, 1);
+    const B_FADE = 0.22, B_HOLD = (1 - 4*B_FADE)/5 * 1.25;
+    const normB = 1/(5*B_HOLD + 4*B_FADE);
+    const BF=B_FADE*normB, BH=B_HOLD*normB;
+    const TB1=BH, TB2=TB1+BF+BH, TB3=TB2+BF+BH, TB4=TB3+BF+BH;
+    let b0=1,b1=0,b2=0,b3=0,b4=0;
+    const g1=step(tB, TB1, BF); b0*= (1 - g1); b1 = Math.max(b1, g1);
+    const g2=step(tB, TB2, BF); b1*= (1 - g2); b2 = Math.max(b2, g2);
+    const g3=step(tB, TB3, BF); b2*= (1 - g3); b3 = Math.max(b3, g3);
+    const g4=step(tB, TB4, BF); b3*= (1 - g4); b4 = Math.max(b4, g4);
+    root.style.setProperty('--galBImg0Opacity', (b0 * galBGroup * galBOut).toFixed(3));
+    root.style.setProperty('--galBImg1Opacity', (b1 * galBGroup * galBOut).toFixed(3));
+    root.style.setProperty('--galBImg2Opacity', (b2 * galBGroup * galBOut).toFixed(3));
+    root.style.setProperty('--galBImg3Opacity', (b3 * galBGroup * galBOut).toFixed(3));
+    root.style.setProperty('--galBImg4Opacity', (b4 * galBGroup * galBOut).toFixed(3));
+
+    /* gallery-C (5 imgs) */
+    const INTERNAL_START_C = FADE_FRAC;
+    const tC = clamp((galC - INTERNAL_START_C) / (1 - INTERNAL_START_C), 0, 1);
+    const C_FADE = 0.22, C_HOLD = (1 - 4*C_FADE)/5 * 1.25;
+    const normC = 1/(5*C_HOLD + 4*C_FADE);
+    const CF=C_FADE*normC, CH=C_HOLD*normC;
+    const TC1=CH, TC2=TC1+CF+CH, TC3=TC2+CF+CH, TC4=TC3+CF+CH;
+    let c0=1,c1=0,c2=0,c3=0,c4=0;
+    const h1=step(tC, TC1, CF); c0*= (1 - h1); c1 = Math.max(c1, h1);
+    const h2=step(tC, TC2, CF); c1*= (1 - h2); c2 = Math.max(c2, h2);
+    const h3=step(tC, TC3, CF); c2*= (1 - h3); c3 = Math.max(c3, h3);
+    const h4=step(tC, TC4, CF); c3*= (1 - h4); c4 = Math.max(c4, h4);
+    root.style.setProperty('--galCImg0Opacity', (c0 * galCGroup * galCOut).toFixed(3));
+    root.style.setProperty('--galCImg1Opacity', (c1 * galCGroup * galCOut).toFixed(3));
+    root.style.setProperty('--galCImg2Opacity', (c2 * galCGroup * galCOut).toFixed(3));
+    root.style.setProperty('--galCImg3Opacity', (c3 * galCGroup * galCOut).toFixed(3));
+    root.style.setProperty('--galCImg4Opacity', (c4 * galCGroup * galCOut).toFixed(3));
 
     /* ===== Apply section frame opacities ===== */
     root.style.setProperty('--s1ImgOpacity',  s1Alpha.toFixed(3));
@@ -855,10 +858,9 @@
     if(document.fonts && document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
     measureHero();
     measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14();
-    measureS15(); /* NEW */
     update();
-    addEventListener('load',  ()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15(); update(); });
-    addEventListener('resize',()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15(); update(); });
+    addEventListener('load',  ()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); update(); });
+    addEventListener('resize',()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); update(); });
     addEventListener('scroll', update, {passive:true});
   }
   init();
