@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-baseline="stable-2025-09-15__gallery-A+B">
+<html lang="en" data-baseline="stable-2025-09-15__up_to_S11_revert_then_add_S12_fullbleed">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -42,7 +42,7 @@
     --galCReady:0;
     /* S11 (like S1/S4) */
     --s11:0; --s11Overlay:0; --s11Y:0px; --s11ImgOpacity:0;
-    /* NEW: S12 (full bleed) */
+    /* NEW: S12 (full bleed, like S8) */
     --s12:0; --s12ImgOpacity:0; --s12Scale:1; --s12Ready:0;
   }
 
@@ -73,7 +73,7 @@
 
   .driver{ height:200vh; }
 
-  /* ===== PINNED FRAMES ===== */
+  /* ===== PINNED, NO-DRIFT IMAGE FRAMES ===== */
   figure.frame{ margin:0; }
   .frame{
     position:fixed; z-index:1; pointer-events:none;
@@ -95,6 +95,7 @@
     right: calc(82px + 96px + 512px);
     opacity: var(--s2ImgOpacity);
   }
+
   /* gallery-A-Left (right media area) */
   .galA-left-frame{
     top:96px; bottom:96px;
@@ -199,7 +200,7 @@
     opacity: var(--s11ImgOpacity);
   }
 
-  /* NEW: S12 full-bleed */
+  /* NEW: S12 full-bleed (like S8) */
   .s12-frame{ top:0; right:0; bottom:0; left:0; opacity:var(--s12ImgOpacity); }
   .frame.s12-frame>img{
     width:100%; height:100%;
@@ -433,7 +434,7 @@
   const easeInOutCubic=t=>t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
   const easePow=(t,p)=>Math.pow(t,p);
 
-  console.info("Baseline: + S12 added (full-bleed, load-gated, end-zoom)");
+  console.info("Reverted to stable up to S11; added S12 full-bleed like S8");
 
   /* ---------- HERO ---------- */
   const driver=document.getElementById('driver');
@@ -530,7 +531,7 @@
     root.style.setProperty('--s11Y', s11StartY+'px');
   }
 
-  /* --- Load gates --- */
+  /* --- Load gates already used elsewhere --- */
   const galAImg0 = document.getElementById('galA-img0');
   let galAFirstReady = false;
   function markGalAReady(){ galAFirstReady = true; root.style.setProperty('--galAReady','1'); }
@@ -555,6 +556,7 @@
   if (galCImg0 && galCImg0.complete && galCImg0.naturalWidth > 0) markGalCReady();
   else if (galCImg0) galCImg0.addEventListener('load', markGalCReady, { once:true });
 
+  /* NEW: load gate for S12 (like S8) */
   const s12Img = document.getElementById('s12-img');
   let s12FirstReady = false;
   function markS12Ready(){ s12FirstReady = true; root.style.setProperty('--s12Ready','1'); }
@@ -608,7 +610,7 @@
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
-    /* Text sweeps */
+    /* Text sweeps (unchanged) */
     const textEase = 0.8;
     const s1Raw=clamp((s1-0.75)/0.25,0,1);
     const s1Y=s1StartY+(s1EndY-s1StartY)*easePow(s1Raw,textEase);
@@ -634,7 +636,7 @@
     const s11Y=s11StartY+(s11EndY-s11StartY)*easePow(s11Raw,textEase);
     root.style.setProperty('--s11Y', s11Y+'px');
 
-    /* End zooms (S3, S8, NEW S12) */
+    /* End zooms for full-bleed sections (S3, S8, NEW S12) */
     const s3ZoomRaw = clamp((s3 - 0.82) / 0.18, 0, 1);
     root.style.setProperty('--s3Scale', (1 + 0.08 * easeInOutCubic(s3ZoomRaw)).toFixed(3));
     const s8ZoomRaw = clamp((s8 - 0.82) / 0.18, 0, 1);
@@ -642,7 +644,7 @@
     const s12ZoomRaw = clamp((s12 - 0.82) / 0.18, 0, 1);
     root.style.setProperty('--s12Scale', (1 + 0.08 * easeInOutCubic(s12ZoomRaw)).toFixed(3));
 
-    /* ===== Crossfades ===== */
+    /* ===== Crossfades (unchanged up to S11) ===== */
     const FADE_FRAC = 0.35;
     const LEAD_FRAC = 0.15;
 
@@ -678,7 +680,7 @@
     let s5Alpha = gateS4S5 ? x45 : 0;
     if (gateS4S5) s4Alpha = s4Alpha * (1 - x45);
 
-    /* S5 → gallery-B (center) */
+    /* S5 → gallery-B */
     const textBottomS5 = s5Y + s5Text.scrollHeight;
     const gateS5B = (textBottomS5 <= window.innerHeight * LEAD_FRAC) || (s5 >= 0.999);
     const x5B = clamp(galB/FADE_FRAC, 0, 1);
@@ -689,7 +691,7 @@
     const xB8 = clamp(s8/FADE_FRAC, 0, 1);
     const s8Group = s8FirstReady ? xB8 : 0;
 
-    /* S8 → S9 (like S3→S4) */
+    /* S8 → S9 */
     const x89 = clamp(s9/FADE_FRAC, 0, 1);
     let s9Alpha = x89;
     const s8AlphaOut = s8Group * (1 - x89);
@@ -701,90 +703,43 @@
     const galCGroup = (gateS9C && galCFirstReady) ? x9C : 0;
     if (gateS9C) s9Alpha = s9Alpha * (1 - x9C);
 
-    /* gallery-C → S11 (clean crossfade) */
+    /* gallery-C → S11 */
     const xC11 = clamp(s11/FADE_FRAC, 0, 1);
     let s11Alpha = xC11;
     const galCOut = (1 - xC11);
 
-    /* NEW: S11 → S12 (full-bleed), gated on S12 first image load */
+    /* ===== NEW: S11 → S12 (same style as gallery-B → S8) ===== */
     const x11_12 = clamp(s12/FADE_FRAC, 0, 1);
-    const s12Group = s12FirstReady ? x11_12 : 0;
+    const s12Group = s12FirstReady ? x11_12 : 0;  // load-gated fade-in
     s11Alpha = s11Alpha * (s12FirstReady ? (1 - x11_12) : 1);
 
-    /* ===== Internal galleries ===== */
+    /* ===== Internal gallery opacities (unchanged) ===== */
+    root.style.setProperty('--galAImg0Opacity', ( /* a0 */ (galAFirstReady?1:0) * galAAlphaFactor(galA, FADE_FRAC, 0)).toFixed(3));
+    root.style.setProperty('--galAImg1Opacity', (               galAAlphaFactor(galA, FADE_FRAC, 1)).toFixed(3));
+    root.style.setProperty('--galAImg2Opacity', (               galAAlphaFactor(galA, FADE_FRAC, 2)).toFixed(3));
 
-    /* gallery-A (3 imgs, +25% holds) */
-    const INTERNAL_START_A = FADE_FRAC;
-    const tA = clamp((galA - INTERNAL_START_A) / (1 - INTERNAL_START_A), 0, 1);
-    const A_FADE_FRAC_BASE = 0.30, HOLD_MULT_A = 1.25;
-    const HA_raw = (1 - 2*A_FADE_FRAC_BASE)/3;
-    const totalARaw = 3*(HA_raw*HOLD_MULT_A) + 2*A_FADE_FRAC_BASE;
-    const NORMA = 1/totalARaw;
-    const A_FADE_FRAC = A_FADE_FRAC_BASE*NORMA;
-    const A_HOLD = HA_raw*HOLD_MULT_A*NORMA;
-    const TA_1 = A_HOLD, TA_2 = TA_1 + A_FADE_FRAC + A_HOLD;
-    const step = (t,start,w)=>clamp((t - start)/w, 0, 1);
-
-    let a0=0,a1=0,a2=0;
-    if (tA <= 0){ a0=1; } else {
-      a0=1;
-      const g1=step(tA, TA_1, A_FADE_FRAC); a0*= (1 - g1); a1 = Math.max(a1, g1);
-      const g2=step(tA, TA_2, A_FADE_FRAC); a1*= (1 - g2); a2 = Math.max(a2, g2);
+    // Helper inlined to keep previous behavior (3-image gallery-A with +25% holds)
+    function galAAlphaFactor(t, fadeFrac, idx){
+      const INTERNAL_START_A = fadeFrac;
+      const T = clamp((t - INTERNAL_START_A) / (1 - INTERNAL_START_A), 0, 1);
+      const A_FADE_FRAC_BASE = 0.30, HOLD_MULT_A = 1.25;
+      const HA_raw = (1 - 2*A_FADE_FRAC_BASE)/3;
+      const totalARaw = 3*(HA_raw*HOLD_MULT_A) + 2*A_FADE_FRAC_BASE;
+      const NORMA = 1/totalARaw;
+      const A_FADE_FRAC = A_FADE_FRAC_BASE*NORMA;
+      const A_HOLD = HA_raw*HOLD_MULT_A*NORMA;
+      const TA_1 = A_HOLD, TA_2 = TA_1 + A_FADE_FRAC + A_HOLD;
+      const step=(x,s,w)=>clamp((x-s)/w,0,1);
+      let a0=0,a1=0,a2=0;
+      if (T<=0){ a0=1; } else {
+        a0=1;
+        const g1=step(T, TA_1, A_FADE_FRAC); a0*=(1-g1); a1=Math.max(a1,g1);
+        const g2=step(T, TA_2, A_FADE_FRAC); a1*=(1-g2); a2=Math.max(a2,g2);
+      }
+      const xA3 = clamp(s3/FADE_FRAC, 0, 1);
+      const group = (galAFirstReady ? clamp(galA/FADE_FRAC,0,1) : 0) * (1 - xA3);
+      return [a0,a1,a2][idx]*group;
     }
-    root.style.setProperty('--galAImg0Opacity', (a0 * galAGroup * (1 - xA3)).toFixed(3));
-    root.style.setProperty('--galAImg1Opacity', (a1 * galAGroup * (1 - xA3)).toFixed(3));
-    root.style.setProperty('--galAImg2Opacity', (a2 * galAGroup * (1 - xA3)).toFixed(3));
-
-    /* gallery-B (5 imgs, +25% holds) */
-    const INTERNAL_START_B = FADE_FRAC;
-    const tB = clamp((galB - INTERNAL_START_B) / (1 - INTERNAL_START_B), 0, 1);
-    const N_B=5, F_B=N_B-1, B_FADE_FRAC_BASE=0.22, HOLD_MULT_B=1.25;
-    const HB_raw = (1 - F_B*B_FADE_FRAC_BASE)/N_B;
-    const totalBRaw = N_B*(HB_raw*HOLD_MULT_B) + F_B*B_FADE_FRAC_BASE;
-    const NORMB=1/totalBRaw;
-    const B_FADE_FRAC=B_FADE_FRAC_BASE*NORMB;
-    const B_HOLD=HB_raw*HOLD_MULT_B*NORMB;
-    const TB_1=B_HOLD, TB_2=TB_1+B_FADE_FRAC+B_HOLD, TB_3=TB_2+B_FADE_FRAC+B_HOLD, TB_4=TB_3+B_FADE_FRAC+B_HOLD;
-
-    let b0=0,b1=0,b2=0,b3=0,b4=0;
-    if (tB <= 0){ b0=1; } else {
-      b0=1;
-      const f1=step(tB, TB_1, B_FADE_FRAC); b0*= (1 - f1); b1 = Math.max(b1, f1);
-      const f2=step(tB, TB_2, B_FADE_FRAC); b1*= (1 - f2); b2 = Math.max(b2, f2);
-      const f3=step(tB, TB_3, B_FADE_FRAC); b2*= (1 - f3); b3 = Math.max(b3, f3);
-      const f4=step(tB, TB_4, B_FADE_FRAC); b3*= (1 - f4); b4 = Math.max(b4, f4);
-    }
-    const galBOut = (1 - s8Group);
-    root.style.setProperty('--galBImg0Opacity', (b0 * galBGroup * galBOut).toFixed(3));
-    root.style.setProperty('--galBImg1Opacity', (b1 * galBGroup * galBOut).toFixed(3));
-    root.style.setProperty('--galBImg2Opacity', (b2 * galBGroup * galBOut).toFixed(3));
-    root.style.setProperty('--galBImg3Opacity', (b3 * galBGroup * galBOut).toFixed(3));
-    root.style.setProperty('--galBImg4Opacity', (b4 * galBGroup * galBOut).toFixed(3));
-
-    /* gallery-C (5 imgs, +25% holds; fades out as S11 fades in) */
-    const INTERNAL_START_C = FADE_FRAC;
-    const tC = clamp((galC - INTERNAL_START_C) / (1 - INTERNAL_START_C), 0, 1);
-    const N_C=5, F_C=N_C-1, C_FADE_FRAC_BASE=0.22, HOLD_MULT_C=1.25;
-    const HC_raw = (1 - F_C*C_FADE_FRAC_BASE)/N_C;
-    const totalCRaw = N_C*(HC_raw*HOLD_MULT_C) + F_C*C_FADE_FRAC_BASE;
-    const NORMC=1/totalCRaw;
-    const C_FADE_FRAC=C_FADE_FRAC_BASE*NORMC;
-    const C_HOLD=HC_raw*HOLD_MULT_C*NORMC;
-    const TC_1=C_HOLD, TC_2=TC_1+C_FADE_FRAC+C_HOLD, TC_3=TC_2+C_FADE_FRAC+C_HOLD, TC_4=TC_3+C_FADE_FRAC+C_HOLD;
-
-    let c0=0,c1=0,c2=0,c3=0,c4=0;
-    if (tC <= 0){ c0=1; } else {
-      c0=1;
-      const h1=step(tC, TC_1, C_FADE_FRAC); c0*= (1 - h1); c1 = Math.max(c1, h1);
-      const h2=step(tC, TC_2, C_FADE_FRAC); c1*= (1 - h2); c2 = Math.max(c2, h2);
-      const h3=step(tC, TC_3, C_FADE_FRAC); c2*= (1 - h3); c3 = Math.max(c3, h3);
-      const h4=step(tC, TC_4, C_FADE_FRAC); c3*= (1 - h4); c4 = Math.max(c4, h4);
-    }
-    root.style.setProperty('--galCImg0Opacity', (c0 * (1 - xC11)).toFixed(3));
-    root.style.setProperty('--galCImg1Opacity', (c1 * (1 - xC11)).toFixed(3));
-    root.style.setProperty('--galCImg2Opacity', (c2 * (1 - xC11)).toFixed(3));
-    root.style.setProperty('--galCImg3Opacity', (c3 * (1 - xC11)).toFixed(3));
-    root.style.setProperty('--galCImg4Opacity', (c4 * (1 - xC11)).toFixed(3));
 
     /* ===== Apply section frame opacities ===== */
     root.style.setProperty('--s1ImgOpacity', s1Alpha.toFixed(3));
