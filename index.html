@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-baseline="stable-2025-09-18__S15-left-rail-early-start">
+<html lang="en" data-baseline="stable-2025-09-18__S15-left-rail-early-start__S15-text-white-only">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -271,6 +271,7 @@
     position:absolute; top:0; bottom:0; right:96px; width:512px; overflow:hidden;
   }
 
+  /* ==== Text rails (dark) ==== */
   .s1-text{ transform:translateY(var(--s1Y)); color:#111; }
   .s2-text{ transform:translateY(var(--s2Y)); color:#111; text-align:left; }
   .s4-text{ transform:translateY(var(--s4Y)); color:#111; }
@@ -279,7 +280,9 @@
   .s11-text{ transform:translateY(var(--s11Y)); color:#111; }
   .s13-text{ transform:translateY(var(--s13Y)); color:#111; }
   .s14-text{ transform:translateY(var(--s14Y)); color:#111; text-align:left; }
-  .s15-text{ transform:translateY(var(--s15Y)); color:#111; }
+
+  /* S15 only: white text */
+  .s15-text{ transform:translateY(var(--s15Y)); color:#fff; }
 
   .s1-text p, .s2-text p, .s4-text p, .s5-text p, .s9-text p, .s11-text p, .s13-text p, .s14-text p, .s15-text p{
     margin:0 0 14px 0; font-size:20px; line-height:28px;
@@ -711,7 +714,7 @@
     const s13Raw=clamp((s13-0.75)/0.25,0,1); root.style.setProperty('--s13Y',(s13StartY+(s13EndY-s13StartY)*easePow(s13Raw,E))+'px');
     const s14Raw=clamp((s14-0.25)/0.75,0,1); root.style.setProperty('--s14Y',(s14StartY+(s14EndY-s14StartY)*easePow(s14Raw,E))+'px');
 
-    /* ==== A) TIMING TWEAK FOR S15 (start earlier at 25%) ==== */
+    /* S15 timing (earlier start at 25%) */
     const s15Raw=clamp((s15-0.25)/0.75,0,1);
     root.style.setProperty('--s15Y',(s15StartY+(s15EndY-s15StartY)*easePow(s15Raw,E))+'px');
 
