@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-baseline="stable-2025-09-17__revert-S14+add-S15-clean__S15-center-rail-pin">
+<html lang="en" data-baseline="stable-2025-09-17__revert-S14+add-S15-clean">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -48,9 +48,8 @@
     --s13:0; --s13Overlay:0; --s13Y:0px; --s13ImgOpacity:0;
     /* S14 (like S2) */
     --s14:0; --s14Overlay:0; --s14Y:0px; --s14ImgOpacity:0;
-    /* NEW: S15 (full bleed) + overlay vars */
+    /* NEW: S15 (full bleed) */
     --s15:0; --s15ImgOpacity:0; --s15Scale:1; --s15Ready:0;
-    --s15Overlay:0; --s15Y:0px;
   }
 
   /* ===== HERO ===== */
@@ -250,7 +249,7 @@
   }
 
   /* ===== TEXT OVERLAYS (rails) ===== */
-  .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay, .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay, .s15-overlay{
+  .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay, .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay{
     position:fixed; inset:0; z-index:2; pointer-events:none;
   }
   .s1-overlay{ opacity:var(--s1Overlay); }
@@ -261,8 +260,6 @@
   .s11-overlay{ opacity:var(--s11Overlay); }
   .s13-overlay{ opacity:var(--s13Overlay); }
   .s14-overlay{ opacity:var(--s14Overlay); }
-  /* NEW: keep S15 overlay visible while in section (pins at end) */
-  .s15-overlay{ opacity:var(--s15Overlay); }
 
   /* LEFT rails (text left) */
   .s1-rail, .s4-rail, .s9-rail, .s11-rail, .s13-rail{
@@ -283,20 +280,6 @@
   .s14-text{ transform:translateY(var(--s14Y)); color:#111; text-align:left; }
 
   .s1-text p, .s2-text p, .s4-text p, .s5-text p, .s9-text p, .s11-text p, .s13-text p, .s14-text p{
-    margin:0 0 14px 0; font-size:20px; line-height:28px;
-  }
-
-  /* NEW: S15 center rail (512px, centered & pinned at 50vh, white, centered text) */
-  .s15-rail{
-    position:absolute; top:0; bottom:0;
-    left: calc(50% - 256px); width:512px;
-    overflow:hidden;
-  }
-  .s15-text{
-    transform:translateY(var(--s15Y));
-    color:#fff; text-align:center;
-  }
-  .s15-text p{
     margin:0 0 14px 0; font-size:20px; line-height:28px;
   }
 
@@ -526,19 +509,8 @@
   </div>
 </section>
 
-<!-- NEW: S15 driver (full-bleed image lives in fixed frame) + centered rail -->
-<section class="s15-wrap" id="s15-wrap">
-  <div class="s15-overlay">
-    <div class="s15-rail">
-      <div class="s15-text" id="s15-text">
-        <p><strong>EPILOGUE</strong> — a final cadence in the middle column.</p>
-        <p>Credits, captions, or closing words can flow here.</p>
-        <p>Same sweep window as a left rail, but centered & pinned.</p>
-        <p>We keep breathing with the garden.</p>
-      </div>
-    </div>
-  </div>
-</section>
+<!-- NEW: S15 driver (full-bleed) -->
+<section class="s15-wrap" id="s15-wrap"></section>
 
 <section class="after"></section>
 
@@ -604,7 +576,6 @@
   const s11Text=document.getElementById('s11-text');
   const s13Text=document.getElementById('s13-text');
   const s14Text=document.getElementById('s14-text');
-  const s15Text=document.getElementById('s15-text');
 
   let s1StartY=0, s1EndY=0;
   let s2StartY=0, s2EndY=0;
@@ -614,8 +585,6 @@
   let s11StartY=0, s11EndY=0;
   let s13StartY=0, s13EndY=0;
   let s14StartY=0, s14EndY=0;
-  /* NEW: S15 pin values */
-  let s15StartY=0, s15EndY=0;
 
   function measureS1(){ const vh=window.innerHeight; const h=s1Text.scrollHeight; s1StartY=vh; s1EndY=-h; root.style.setProperty('--s1Y', s1StartY+'px'); }
   function measureS2(){ const vh=window.innerHeight; const h=s2Text.scrollHeight; s2StartY=vh; s2EndY=-h; root.style.setProperty('--s2Y', s2StartY+'px'); }
@@ -625,14 +594,6 @@
   function measureS11(){ const vh=window.innerHeight; const h=s11Text.scrollHeight; s11StartY=vh; s11EndY=-h; root.style.setProperty('--s11Y', s11StartY+'px'); }
   function measureS13(){ const vh=window.innerHeight; const h=s13Text.scrollHeight; s13StartY=vh; s13EndY=-h; root.style.setProperty('--s13Y', s13StartY+'px'); }
   function measureS14(){ const vh=window.innerHeight; const h=s14Text.scrollHeight; s14StartY=vh; s14EndY=-h; root.style.setProperty('--s14Y', s14StartY+'px'); }
-
-  /* NEW: S15 center rail pins when its TOP reaches 50% of viewport */
-  function measureS15(){
-    const vh=window.innerHeight;
-    s15StartY = vh;        /* start below viewport */
-    s15EndY   = 0.50*vh;   /* top reaches middle and pins */
-    root.style.setProperty('--s15Y', s15StartY+'px');
-  }
 
   /* --- Load gates (first images) --- */
   const galAImg0 = document.getElementById('galA-img0');
@@ -718,9 +679,6 @@
     root.style.setProperty('--s11Overlay',(s11>0 && s11<1)?1:0);
     root.style.setProperty('--s13Overlay',(s13>0 && s13<1)?1:0);
     root.style.setProperty('--s14Overlay',(s14>0 && s14<1)?1:0);
-    /* keep S15 overlay visible while in the section, so it stays pinned at end */
-    root.style.setProperty('--s15Overlay', (s15>0)?1:0);
-
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
@@ -735,18 +693,13 @@
     const s13Raw=clamp((s13-0.75)/0.25,0,1); root.style.setProperty('--s13Y',(s13StartY+(s13EndY-s13StartY)*easePow(s13Raw,E))+'px');
     const s14Raw=clamp((s14-0.25)/0.75,0,1); root.style.setProperty('--s14Y',(s14StartY+(s14EndY-s14StartY)*easePow(s14Raw,E))+'px');
 
-    /* NEW: S15 uses left-rail timing window (0.75 → 1.00) and PINS at 50vh */
-    const s15Raw=clamp((s15-0.75)/0.25,0,1);
-    const s15Y = s15StartY + (s15EndY - s15StartY) * Math.pow(s15Raw, E);
-    root.style.setProperty('--s15Y', s15Y+'px');
-
     /* End zooms (full-bleed S3, S8, S12, S15) */
     const s3ZoomRaw = clamp((s3 - 0.82) / 0.18, 0, 1);  root.style.setProperty('--s3Scale',  (1 + 0.08 * easeInOutCubic(s3ZoomRaw)).toFixed(3));
     const s8ZoomRaw = clamp((s8 - 0.82) / 0.18, 0, 1);  root.style.setProperty('--s8Scale',  (1 + 0.08 * easeInOutCubic(s8ZoomRaw)).toFixed(3));
     const s12ZoomRaw = clamp((s12 - 0.82) / 0.18, 0, 1);root.style.setProperty('--s12Scale', (1 + 0.08 * easeInOutCubic(s12ZoomRaw)).toFixed(3));
     const s15ZoomRaw = clamp((s15 - 0.82) / 0.18, 0, 1);root.style.setProperty('--s15Scale', (1 + 0.08 * easeInOutCubic(s15ZoomRaw)).toFixed(3));
 
-    /* ===== Crossfades (standardized; unchanged from your reference) ===== */
+    /* ===== Crossfades (standardized) ===== */
     const FADE_FRAC = 0.35;
     const LEAD_FRAC = 0.15;
 
@@ -833,9 +786,9 @@
     const s15Group = (getComputedStyle(root).getPropertyValue('--s15Ready')==='1') ? x14_15 : 0;
     s14Alpha = s14Alpha * ((getComputedStyle(root).getPropertyValue('--s15Ready')==='1') ? (1 - x14_15) : 1);
 
-    /* ===== Internal galleries (unchanged from your reference) ===== */
+    /* ===== Internal galleries (unchanged) ===== */
 
-    /* gallery-A (3 imgs, stepped crossfade) */
+    /* gallery-A (3 imgs, simple stepped crossfade) */
     const INTERNAL_START_A = FADE_FRAC;
     const tA = clamp((galA - INTERNAL_START_A) / (1 - INTERNAL_START_A), 0, 1);
     const A_FADE = 0.30, A_HOLD = (1 - 2*A_FADE)/3 * 1.25;
@@ -846,14 +799,11 @@
     let a0=1, a1=0, a2=0;
     const f1=step(tA, TA1, AF); a0*= (1 - f1); a1 = Math.max(a1, f1);
     const f2=step(tA, TA2, AF); a1*= (1 - f2); a2 = Math.max(a2, f2);
-    const galAGroup = (getComputedStyle(root).getPropertyValue('--galAReady')==='1') ? 1 : 0;
-    const xA3 = clamp(s3/FADE_FRAC, 0, 1);
-    const galAOut = (1 - xA3);
     root.style.setProperty('--galAImg0Opacity', (a0 * galAGroup * galAOut).toFixed(3));
     root.style.setProperty('--galAImg1Opacity', (a1 * galAGroup * galAOut).toFixed(3));
     root.style.setProperty('--galAImg2Opacity', (a2 * galAGroup * galAOut).toFixed(3));
 
-    /* gallery-B (5 imgs) */
+    /* gallery-B (5 imgs, simple stepped crossfade) */
     const INTERNAL_START_B = FADE_FRAC;
     const tB = clamp((galB - INTERNAL_START_B) / (1 - INTERNAL_START_B), 0, 1);
     const B_FADE = 0.22, B_HOLD = (1 - 4*B_FADE)/5 * 1.25;
@@ -865,9 +815,6 @@
     const g2=step(tB, TB2, BF); b1*= (1 - g2); b2 = Math.max(b2, g2);
     const g3=step(tB, TB3, BF); b2*= (1 - g3); b3 = Math.max(b3, g3);
     const g4=step(tB, TB4, BF); b3*= (1 - g4); b4 = Math.max(b4, g4);
-    const galBGroup = (getComputedStyle(root).getPropertyValue('--galBReady')==='1') ? 1 : 0;
-    const xB8 = clamp(s8/FADE_FRAC, 0, 1);
-    const galBOut = (1 - ((getComputedStyle(root).getPropertyValue('--s8Ready')==='1') ? xB8 : 0));
     root.style.setProperty('--galBImg0Opacity', (b0 * galBGroup * galBOut).toFixed(3));
     root.style.setProperty('--galBImg1Opacity', (b1 * galBGroup * galBOut).toFixed(3));
     root.style.setProperty('--galBImg2Opacity', (b2 * galBGroup * galBOut).toFixed(3));
@@ -886,9 +833,6 @@
     const h2=step(tC, TC2, CF); c1*= (1 - h2); c2 = Math.max(c2, h2);
     const h3=step(tC, TC3, CF); c2*= (1 - h3); c3 = Math.max(c3, h3);
     const h4=step(tC, TC4, CF); c3*= (1 - h4); c4 = Math.max(c4, h4);
-    const galCGroup = (getComputedStyle(root).getPropertyValue('--galCReady')==='1') ? 1 : 0;
-    const xC11 = clamp(s11/FADE_FRAC, 0, 1);
-    const galCOut = (1 - xC11);
     root.style.setProperty('--galCImg0Opacity', (c0 * galCGroup * galCOut).toFixed(3));
     root.style.setProperty('--galCImg1Opacity', (c1 * galCGroup * galCOut).toFixed(3));
     root.style.setProperty('--galCImg2Opacity', (c2 * galCGroup * galCOut).toFixed(3));
@@ -901,7 +845,7 @@
     root.style.setProperty('--s3ImgOpacity',  s3AlphaOut.toFixed(3));
     root.style.setProperty('--s4ImgOpacity',  s4Alpha.toFixed(3));
     root.style.setProperty('--s5ImgOpacity',  s5Alpha.toFixed(3));
-    root.style.setProperty('--s8ImgOpacity',  ( ((getComputedStyle(root).getPropertyValue('--s8Ready')==='1') ? xB8 : 0) * (1 - clamp(s9/FADE_FRAC,0,1)) ).toFixed(3));
+    root.style.setProperty('--s8ImgOpacity',  s8AlphaOut.toFixed(3));
     root.style.setProperty('--s9ImgOpacity',  s9Alpha.toFixed(3));
     root.style.setProperty('--s11ImgOpacity', s11Alpha.toFixed(3));
     root.style.setProperty('--s12ImgOpacity', s12AlphaOut2.toFixed(3));
@@ -913,10 +857,10 @@
   async function init(){
     if(document.fonts && document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
     measureHero();
-    measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
+    measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14();
     update();
-    addEventListener('load',  ()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15(); update(); });
-    addEventListener('resize',()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15(); update(); });
+    addEventListener('load',  ()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); update(); });
+    addEventListener('resize',()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); update(); });
     addEventListener('scroll', update, {passive:true});
   }
   init();
