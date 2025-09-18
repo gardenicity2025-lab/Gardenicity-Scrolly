@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-baseline="stable-2025-09-17__revert-S14+add-S15-left-rail">
+<html lang="en" data-baseline="stable-2025-09-18__S15-left-rail-early-start">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -710,7 +710,10 @@
     const s11Raw=clamp((s11-0.75)/0.25,0,1); root.style.setProperty('--s11Y',(s11StartY+(s11EndY-s11StartY)*easePow(s11Raw,E))+'px');
     const s13Raw=clamp((s13-0.75)/0.25,0,1); root.style.setProperty('--s13Y',(s13StartY+(s13EndY-s13StartY)*easePow(s13Raw,E))+'px');
     const s14Raw=clamp((s14-0.25)/0.75,0,1); root.style.setProperty('--s14Y',(s14StartY+(s14EndY-s14StartY)*easePow(s14Raw,E))+'px');
-    const s15Raw=clamp((s15-0.75)/0.25,0,1); root.style.setProperty('--s15Y',(s15StartY+(s15EndY-s15StartY)*easePow(s15Raw,E))+'px');
+
+    /* ==== A) TIMING TWEAK FOR S15 (start earlier at 25%) ==== */
+    const s15Raw=clamp((s15-0.25)/0.75,0,1);
+    root.style.setProperty('--s15Y',(s15StartY+(s15EndY-s15StartY)*easePow(s15Raw,E))+'px');
 
     /* End zooms (full-bleed S3, S8, S12, S15) */
     const s3ZoomRaw = clamp((s3 - 0.82) / 0.18, 0, 1);  root.style.setProperty('--s3Scale',  (1 + 0.08 * easeInOutCubic(s3ZoomRaw)).toFixed(3));
@@ -887,3 +890,4 @@
 </script>
 </body>
 </html>
+
