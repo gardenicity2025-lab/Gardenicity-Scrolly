@@ -48,7 +48,7 @@
     --s13:0; --s13Overlay:0; --s13Y:0px; --s13ImgOpacity:0;
     /* S14 (like S2) */
     --s14:0; --s14Overlay:0; --s14Y:0px; --s14ImgOpacity:0;
-    /* NEW: S15 (full bleed + left rail overlay) */
+    /* NEW: S15 (full bleed + overlay) */
     --s15:0; --s15Overlay:0; --s15Y:0px; --s15ImgOpacity:0; --s15Scale:1; --s15Ready:0;
   }
 
@@ -263,7 +263,7 @@
   .s15-overlay{ opacity:var(--s15Overlay); }
 
   /* LEFT rails (text left) */
-  .s1-rail, .s4-rail, .s9-rail, .s11-rail, .s13-rail, .s15-rail{
+  .s1-rail, .s4-rail, .s9-rail, .s11-rail, .s13-rail{
     position:absolute; top:0; bottom:0; left:96px; width:512px; overflow:hidden;
   }
   /* RIGHT rails (text right) */
@@ -271,7 +271,7 @@
     position:absolute; top:0; bottom:0; right:96px; width:512px; overflow:hidden;
   }
 
-  /* ==== Text rails (dark) ==== */
+  /* ==== Text rails (dark for all but S15) ==== */
   .s1-text{ transform:translateY(var(--s1Y)); color:#111; }
   .s2-text{ transform:translateY(var(--s2Y)); color:#111; text-align:left; }
   .s4-text{ transform:translateY(var(--s4Y)); color:#111; }
@@ -281,8 +281,18 @@
   .s13-text{ transform:translateY(var(--s13Y)); color:#111; }
   .s14-text{ transform:translateY(var(--s14Y)); color:#111; text-align:left; }
 
-  /* S15 only: white text */
-  .s15-text{ transform:translateY(var(--s15Y)); color:#fff; }
+  /* ===== S15: CENTER COLUMN OVERLAY ===== */
+  .s15-rail{
+    position:absolute; top:0; bottom:0;
+    left:50%; transform:translateX(-50%);
+    width:700px; max-width:calc(100vw - 96px - 82px);
+    overflow:hidden;
+  }
+  .s15-text{
+    transform:translateY(var(--s15Y));
+    color:#fff;
+    text-align:center;
+  }
 
   .s1-text p, .s2-text p, .s4-text p, .s5-text p, .s9-text p, .s11-text p, .s13-text p, .s14-text p, .s15-text p{
     margin:0 0 14px 0; font-size:20px; line-height:28px;
@@ -514,15 +524,15 @@
   </div>
 </section>
 
-<!-- NEW: S15 driver (full-bleed + left rail overlay) -->
+<!-- NEW: S15 driver (full-bleed + CENTER overlay) -->
 <section class="s15-wrap" id="s15-wrap">
   <div class="s15-overlay">
     <div class="s15-rail">
       <div class="s15-text" id="s15-text">
         <p><strong>SECTION FIFTEEN</strong> resolves the arc…</p>
-        <p>The left rail returns for the closing cadence…</p>
+        <p>The cadence gathers in the center column…</p>
         <p>Full-bleed image breathes behind the words…</p>
-        <p>Margins and timing mirror earlier scenes…</p>
+        <p>Margins hold steady; the rhythm stays true…</p>
         <p>And the story comes gently to rest.</p>
       </div>
     </div>
