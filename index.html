@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-baseline="stable-2025-09-18__S15-left-rail-early-start__S15-text-white-only">
+<html lang="en" data-baseline="stable-2025-09-18__revert-desktop__S15-centered__galA-4imgs__lipsum-S1+S2">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -20,7 +20,7 @@
     --s2:0; --s2Overlay:0; --s2Y:0px; --s2ImgOpacity:0;
     /* gallery-A-Left */
     --galA:0;
-    --galAImg0Opacity:0; --galAImg1Opacity:0; --galAImg2Opacity:0;
+    --galAImg0Opacity:0; --galAImg1Opacity:0; --galAImg2Opacity:0; --galAImg3Opacity:0;
     --galAReady:0;
     /* S3 (full bleed) */
     --s3:0; --s3ImgOpacity:0; --s3Scale:1;
@@ -48,7 +48,7 @@
     --s13:0; --s13Overlay:0; --s13Y:0px; --s13ImgOpacity:0;
     /* S14 (like S2) */
     --s14:0; --s14Overlay:0; --s14Y:0px; --s14ImgOpacity:0;
-    /* NEW: S15 (full bleed + overlay) */
+    /* S15 (full bleed + centered overlay) */
     --s15:0; --s15Overlay:0; --s15Y:0px; --s15ImgOpacity:0; --s15Scale:1; --s15Ready:0;
   }
 
@@ -118,6 +118,7 @@
   #galA-img0{ opacity: var(--galAImg0Opacity); }
   #galA-img1{ opacity: var(--galAImg1Opacity); }
   #galA-img2{ opacity: var(--galAImg2Opacity); }
+  #galA-img3{ opacity: var(--galAImg3Opacity); }
 
   /* S3 full-bleed */
   .s3-frame{ top:0; right:0; bottom:0; left:0; opacity:var(--s3ImgOpacity); }
@@ -231,7 +232,7 @@
     opacity: var(--s14ImgOpacity);
   }
 
-  /* NEW: S15 full-bleed */
+  /* S15 full-bleed */
   .s15-frame{ top:0; right:0; bottom:0; left:0; opacity:var(--s15ImgOpacity); }
   .frame.s15-frame>img{
     width:100%; height:100%;
@@ -271,7 +272,6 @@
     position:absolute; top:0; bottom:0; right:96px; width:512px; overflow:hidden;
   }
 
-  /* ==== Text rails (dark for all but S15) ==== */
   .s1-text{ transform:translateY(var(--s1Y)); color:#111; }
   .s2-text{ transform:translateY(var(--s2Y)); color:#111; text-align:left; }
   .s4-text{ transform:translateY(var(--s4Y)); color:#111; }
@@ -281,7 +281,7 @@
   .s13-text{ transform:translateY(var(--s13Y)); color:#111; }
   .s14-text{ transform:translateY(var(--s14Y)); color:#111; text-align:left; }
 
-  /* ===== S15: CENTER COLUMN OVERLAY ===== */
+  /* ===== S15: CENTER COLUMN OVERLAY (centered text) ===== */
   .s15-rail{
     position:absolute; top:0; bottom:0;
     left:50%; transform:translateX(-50%);
@@ -290,8 +290,7 @@
   }
   .s15-text{
     transform:translateY(var(--s15Y));
-    color:#fff;
-    text-align:center;
+    color:#fff; text-align:center;
   }
 
   .s1-text p, .s2-text p, .s4-text p, .s5-text p, .s9-text p, .s11-text p, .s13-text p, .s14-text p, .s15-text p{
@@ -335,6 +334,7 @@
   <img id="galA-img0" src="assets/gallery-A.jpg" alt="">
   <img id="galA-img1" src="assets/gallery-A1.jpg" alt="">
   <img id="galA-img2" src="assets/gallery-A2.jpg" alt="">
+  <img id="galA-img3" src="assets/gallery-A4.jpg" alt="">
 </figure>
 
 <figure class="frame s3-frame" aria-hidden="true"><img id="s3-img" src="assets/section3.jpg" alt=""></figure>
@@ -381,7 +381,7 @@
 <!-- S14 (right text / left image) -->
 <figure class="frame s14-frame" aria-hidden="true"><img id="s14-img" src="assets/section14.jpg" alt=""></figure>
 
-<!-- NEW: S15 full-bleed -->
+<!-- S15 full-bleed -->
 <figure class="frame s15-frame" aria-hidden="true">
   <img id="s15-img" src="assets/section15.jpg" alt="">
 </figure>
@@ -395,7 +395,9 @@
         <p>After we opened the windows to let the spirits out…</p>
         <p>After we lit incense stick after incense stick…</p>
         <p>After we watched MMA fighters on TV in the basement…</p>
-        <p>And the smoke kept rising. The chain must not be broken.</p>
+        <p>And the smoke kept rising. The chain must not be broken. ***Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam varius, metus nec tincidunt tincidunt, nunc erat tincidunt sapien, vel laoreet lacus nisi eget justo. Nullam ut placerat odio. Nulla vitae eros nec mi rutrum eleifend at nec dui. Duis ultricies consequat lobortis. Fusce a aliquam lorem, ac lacinia est. Praesent rutrum odio eget tellus mattis, at malesuada lorem dapibus. Pellentesque accumsan dui a lectus porttitor vestibulum. Nam venenatis urna elit, at condimentum eros elementum interdum. Proin sed semper nulla. Mauris placerat non dui at pretium. Ut aliquam tellus ipsum, non porta ex congue a. Vestibulum molestie egestas tellus, vitae tincidunt nibh mollis nec.
+
+Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non turpis. ***</p>
       </div>
     </div>
   </div>
@@ -410,7 +412,9 @@
         <p>Now the perspective widens to a new frame…</p>
         <p>The city’s edge meets the garden…</p>
         <p>We follow the lines of growth and care…</p>
-        <p>And learn how places hold time.</p>
+        <p>And learn how places hold time. ***Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam varius, metus nec tincidunt tincidunt, nunc erat tincidunt sapien, vel laoreet lacus nisi eget justo. Nullam ut placerat odio. Nulla vitae eros nec mi rutrum eleifend at nec dui. Duis ultricies consequat lobortis. Fusce a aliquam lorem, ac lacinia est. Praesent rutrum odio eget tellus mattis, at malesuada lorem dapibus. Pellentesque accumsan dui a lectus porttitor vestibulum. Nam venenatis urna elit, at condimentum eros elementum interdum. Proin sed semper nulla. Mauris placerat non dui at pretium. Ut aliquam tellus ipsum, non porta ex congue a. Vestibulum molestie egestas tellus, vitae tincidunt nibh mollis nec.
+
+Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non turpis. ***</p>
       </div>
     </div>
   </div>
@@ -524,7 +528,7 @@
   </div>
 </section>
 
-<!-- NEW: S15 driver (full-bleed + CENTER overlay) -->
+<!-- S15 driver (full-bleed + CENTER overlay) -->
 <section class="s15-wrap" id="s15-wrap">
   <div class="s15-overlay">
     <div class="s15-rail">
@@ -651,7 +655,7 @@
   if (s12Img && s12Img.complete && s12Img.naturalWidth > 0) markS12Ready();
   else if (s12Img) s12Img.addEventListener('load', markS12Ready, { once:true });
 
-  /* NEW: S15 gate */
+  /* S15 gate */
   const s15Img = document.getElementById('s15-img');
   function markS15Ready(){ root.style.setProperty('--s15Ready','1'); }
   if (s15Img && s15Img.complete && s15Img.naturalWidth > 0) markS15Ready();
@@ -724,7 +728,7 @@
     const s13Raw=clamp((s13-0.75)/0.25,0,1); root.style.setProperty('--s13Y',(s13StartY+(s13EndY-s13StartY)*easePow(s13Raw,E))+'px');
     const s14Raw=clamp((s14-0.25)/0.75,0,1); root.style.setProperty('--s14Y',(s14StartY+(s14EndY-s14StartY)*easePow(s14Raw,E))+'px');
 
-    /* S15 timing (earlier start at 25%) */
+    /* S15 timing */
     const s15Raw=clamp((s15-0.25)/0.75,0,1);
     root.style.setProperty('--s15Y',(s15StartY+(s15EndY-s15StartY)*easePow(s15Raw,E))+'px');
 
@@ -750,7 +754,8 @@
     const textBottomS2 = (parseFloat(getComputedStyle(root).getPropertyValue('--s2Y'))||0) + s2Text.scrollHeight;
     const gateS2A = (textBottomS2 <= window.innerHeight * LEAD_FRAC) || (s2 >= 0.999);
     const x2A = clamp(galA/FADE_FRAC, 0, 1);
-    const galAGroup = (gateS2A && getComputedStyle(root).getPropertyValue('--galAReady')==='1') ? x2A : 0;
+    let galAGroup = 0;
+    if (gateS2A && getComputedStyle(root).getPropertyValue('--galAReady')==='1') galAGroup = x2A;
     if (gateS2A) s2Alpha = s2Alpha * (1 - x2A);
 
     /* gallery-A → S3 */
@@ -774,7 +779,8 @@
     const textBottomS5 = (parseFloat(getComputedStyle(root).getPropertyValue('--s5Y'))||0) + s5Text.scrollHeight;
     const gateS5B = (textBottomS5 <= window.innerHeight * LEAD_FRAC) || (s5 >= 0.999);
     const x5B = clamp(galB/FADE_FRAC, 0, 1);
-    const galBGroup = (gateS5B && getComputedStyle(root).getPropertyValue('--galBReady')==='1') ? x5B : 0;
+    let galBGroup = 0;
+    if (gateS5B && getComputedStyle(root).getPropertyValue('--galBReady')==='1') galBGroup = x5B;
     if (gateS5B) s5Alpha = s5Alpha * (1 - x5B);
 
     /* gallery-B → S8 (full-bleed) */
@@ -791,7 +797,8 @@
     const textBottomS9 = (parseFloat(getComputedStyle(root).getPropertyValue('--s9Y'))||0) + s9Text.scrollHeight;
     const gateS9C = (textBottomS9 <= window.innerHeight * LEAD_FRAC) || (s9 >= 0.999);
     const x9C = clamp(galC/FADE_FRAC, 0, 1);
-    const galCGroup = (gateS9C && getComputedStyle(root).getPropertyValue('--galCReady')==='1') ? x9C : 0;
+    let galCGroup = 0;
+    if (gateS9C && getComputedStyle(root).getPropertyValue('--galCReady')==='1') galCGroup = x9C;
     if (gateS9C) s9Alpha = s9Alpha * (1 - x9C);
 
     /* gallery-C → S11 */
@@ -816,29 +823,38 @@
     let s14Alpha = gateS13S14 ? x13_14 : 0;
     if (gateS13S14) s13Alpha = s13Alpha * (1 - x13_14);
 
-    /* NEW: S14 → S15 (full-bleed; load-gated like S11→S12) */
+    /* S14 → S15 (full-bleed; load-gated like S11→S12) */
     const x14_15 = clamp(s15/FADE_FRAC, 0, 1);
     const s15Group = (getComputedStyle(root).getPropertyValue('--s15Ready')==='1') ? x14_15 : 0;
     s14Alpha = s14Alpha * ((getComputedStyle(root).getPropertyValue('--s15Ready')==='1') ? (1 - x14_15) : 1);
 
-    /* ===== Internal galleries (unchanged) ===== */
+    /* ===== Internal galleries ===== */
 
-    /* gallery-A (3 imgs, simple stepped crossfade) */
+    /* gallery-A (now 4 imgs, stepped crossfade) */
     const INTERNAL_START_A = FADE_FRAC;
     const tA = clamp((galA - INTERNAL_START_A) / (1 - INTERNAL_START_A), 0, 1);
-    const A_FADE = 0.30, A_HOLD = (1 - 2*A_FADE)/3 * 1.25;
-    const normA = 1/(3*A_HOLD + 2*A_FADE);
-    const AF=A_FADE*normA, AH=A_HOLD*normA;
+    const A_FADE = 0.22;                 /* fade segment between images */
+    const A_HOLD = (1 - 3*A_FADE) / 4;   /* 4 holds, 3 fades -> sums to 1 */
     const step=(t,s,w)=>clamp((t-s)/w,0,1);
-    const TA1=AH, TA2=TA1+AF+AH;
-    let a0=1, a1=0, a2=0;
-    const f1=step(tA, TA1, AF); a0*= (1 - f1); a1 = Math.max(a1, f1);
-    const f2=step(tA, TA2, AF); a1*= (1 - f2); a2 = Math.max(a2, f2);
-    root.style.setProperty('--galAImg0Opacity', (a0 * galAGroup * galAOut).toFixed(3));
-    root.style.setProperty('--galAImg1Opacity', (a1 * galAGroup * galAOut).toFixed(3));
-    root.style.setProperty('--galAImg2Opacity', (a2 * galAGroup * galAOut).toFixed(3));
 
-    /* gallery-B (5 imgs, simple stepped crossfade) */
+    let a0=1, a1=0, a2=0, a3=0;
+    const TA1=A_HOLD;
+    const TA2=TA1 + A_FADE + A_HOLD;
+    const TA3=TA2 + A_FADE + A_HOLD;
+
+    const g1=step(tA, TA1, A_FADE); a0*= (1 - g1); a1 = Math.max(a1, g1);
+    const g2=step(tA, TA2, A_FADE); a1*= (1 - g2); a2 = Math.max(a2, g2);
+    const g3=step(tA, TA3, A_FADE); a2*= (1 - g3); a3 = Math.max(a3, g3);
+
+    const galAGroup2 = (getComputedStyle(root).getPropertyValue('--galAReady')==='1') ? clamp(galA/FADE_FRAC,0,1) : 0;
+    const galAOut2   = (1 - clamp(s3/FADE_FRAC,0,1));
+
+    root.style.setProperty('--galAImg0Opacity', (a0 * galAGroup2 * galAOut2).toFixed(3));
+    root.style.setProperty('--galAImg1Opacity', (a1 * galAGroup2 * galAOut2).toFixed(3));
+    root.style.setProperty('--galAImg2Opacity', (a2 * galAGroup2 * galAOut2).toFixed(3));
+    root.style.setProperty('--galAImg3Opacity', (a3 * galAGroup2 * galAOut2).toFixed(3));
+
+    /* gallery-B (5 imgs, stepped crossfade) */
     const INTERNAL_START_B = FADE_FRAC;
     const tB = clamp((galB - INTERNAL_START_B) / (1 - INTERNAL_START_B), 0, 1);
     const B_FADE = 0.22, B_HOLD = (1 - 4*B_FADE)/5 * 1.25;
@@ -846,17 +862,20 @@
     const BF=B_FADE*normB, BH=B_HOLD*normB;
     const TB1=BH, TB2=TB1+BF+BH, TB3=TB2+BF+BH, TB4=TB3+BF+BH;
     let b0=1,b1=0,b2=0,b3=0,b4=0;
-    const g1=step(tB, TB1, BF); b0*= (1 - g1); b1 = Math.max(b1, g1);
-    const g2=step(tB, TB2, BF); b1*= (1 - g2); b2 = Math.max(b2, g2);
-    const g3=step(tB, TB3, BF); b2*= (1 - g3); b3 = Math.max(b3, g3);
-    const g4=step(tB, TB4, BF); b3*= (1 - g4); b4 = Math.max(b4, g4);
-    root.style.setProperty('--galBImg0Opacity', (b0 * galBGroup * galBOut).toFixed(3));
-    root.style.setProperty('--galBImg1Opacity', (b1 * galBGroup * galBOut).toFixed(3));
-    root.style.setProperty('--galBImg2Opacity', (b2 * galBGroup * galBOut).toFixed(3));
-    root.style.setProperty('--galBImg3Opacity', (b3 * galBGroup * galBOut).toFixed(3));
-    root.style.setProperty('--galBImg4Opacity', (b4 * galBGroup * galBOut).toFixed(3));
+    const h=(t,s,w)=>clamp((t-s)/w,0,1);
+    const gB1=h(tB, TB1, BF); b0*= (1 - gB1); b1 = Math.max(b1, gB1);
+    const gB2=h(tB, TB2, BF); b1*= (1 - gB2); b2 = Math.max(b2, gB2);
+    const gB3=h(tB, TB3, BF); b2*= (1 - gB3); b3 = Math.max(b3, gB3);
+    const gB4=h(tB, TB4, BF); b3*= (1 - gB4); b4 = Math.max(b4, gB4);
+    const galBGroup2 = (getComputedStyle(root).getPropertyValue('--galBReady')==='1') ? clamp(galB/FADE_FRAC,0,1) : 0;
+    const galBOut2 = (1 - clamp(s8/FADE_FRAC,0,1));
+    root.style.setProperty('--galBImg0Opacity', (b0 * galBGroup2 * galBOut2).toFixed(3));
+    root.style.setProperty('--galBImg1Opacity', (b1 * galBGroup2 * galBOut2).toFixed(3));
+    root.style.setProperty('--galBImg2Opacity', (b2 * galBGroup2 * galBOut2).toFixed(3));
+    root.style.setProperty('--galBImg3Opacity', (b3 * galBGroup2 * galBOut2).toFixed(3));
+    root.style.setProperty('--galBImg4Opacity', (b4 * galBGroup2 * galBOut2).toFixed(3));
 
-    /* gallery-C (5 imgs) */
+    /* gallery-C (5 imgs, stepped crossfade) */
     const INTERNAL_START_C = FADE_FRAC;
     const tC = clamp((galC - INTERNAL_START_C) / (1 - INTERNAL_START_C), 0, 1);
     const C_FADE = 0.22, C_HOLD = (1 - 4*C_FADE)/5 * 1.25;
@@ -864,15 +883,17 @@
     const CF=C_FADE*normC, CH=C_HOLD*normC;
     const TC1=CH, TC2=TC1+CF+CH, TC3=TC2+CF+CH, TC4=TC3+CF+CH;
     let c0=1,c1=0,c2=0,c3=0,c4=0;
-    const h1=step(tC, TC1, CF); c0*= (1 - h1); c1 = Math.max(c1, h1);
-    const h2=step(tC, TC2, CF); c1*= (1 - h2); c2 = Math.max(c2, h2);
-    const h3=step(tC, TC3, CF); c2*= (1 - h3); c3 = Math.max(c3, h3);
-    const h4=step(tC, TC4, CF); c3*= (1 - h4); c4 = Math.max(c4, h4);
-    root.style.setProperty('--galCImg0Opacity', (c0 * galCGroup * galCOut).toFixed(3));
-    root.style.setProperty('--galCImg1Opacity', (c1 * galCGroup * galCOut).toFixed(3));
-    root.style.setProperty('--galCImg2Opacity', (c2 * galCGroup * galCOut).toFixed(3));
-    root.style.setProperty('--galCImg3Opacity', (c3 * galCGroup * galCOut).toFixed(3));
-    root.style.setProperty('--galCImg4Opacity', (c4 * galCGroup * galCOut).toFixed(3));
+    const gC1=clamp((tC-TC1)/CF,0,1); c0*= (1 - gC1); c1 = Math.max(c1, gC1);
+    const gC2=clamp((tC-TC2)/CF,0,1); c1*= (1 - gC2); c2 = Math.max(c2, gC2);
+    const gC3=clamp((tC-TC3)/CF,0,1); c2*= (1 - gC3); c3 = Math.max(c3, gC3);
+    const gC4=clamp((tC-TC4)/CF,0,1); c3*= (1 - gC4); c4 = Math.max(c4, gC4);
+    const galCGroup2 = (getComputedStyle(root).getPropertyValue('--galCReady')==='1') ? clamp(galC/FADE_FRAC,0,1) : 0;
+    const galCOut2 = (1 - clamp(s11/FADE_FRAC,0,1));
+    root.style.setProperty('--galCImg0Opacity', (c0 * galCGroup2 * galCOut2).toFixed(3));
+    root.style.setProperty('--galCImg1Opacity', (c1 * galCGroup2 * galCOut2).toFixed(3));
+    root.style.setProperty('--galCImg2Opacity', (c2 * galCGroup2 * galCOut2).toFixed(3));
+    root.style.setProperty('--galCImg3Opacity', (c3 * galCGroup2 * galCOut2).toFixed(3));
+    root.style.setProperty('--galCImg4Opacity', (c4 * galCGroup2 * galCOut2).toFixed(3));
 
     /* ===== Apply section frame opacities ===== */
     root.style.setProperty('--s1ImgOpacity',  s1Alpha.toFixed(3));
