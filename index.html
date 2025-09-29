@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-baseline="stable-2025-09-18__revert-desktop__S15-centered__galA-4imgs__lipsum-S1+S2">
+<html lang="en" data-baseline="stable-2025-09-18__rails-480px">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -90,7 +90,7 @@
   /* S1 image RIGHT (text left) */
   .s1-frame{
     top:96px; bottom:96px;
-    left: calc(96px + 512px + 96px);
+    left: calc(96px + 480px + 96px);
     right: 82px;
     opacity: var(--s1ImgOpacity);
   }
@@ -98,14 +98,14 @@
   .s2-frame{
     top:96px; bottom:96px;
     left: 96px;
-    right: calc(82px + 96px + 512px);
+    right: calc(82px + 96px + 480px);
     opacity: var(--s2ImgOpacity);
   }
 
   /* gallery-A-Left (right media area) */
   .galA-left-frame{
     top:96px; bottom:96px;
-    left: calc(96px + 512px + 96px);
+    left: calc(96px + 480px + 96px);
     right: 82px;
     display:block;
   }
@@ -133,7 +133,7 @@
   /* S4 image RIGHT */
   .s4-frame{
     top:96px; bottom:96px;
-    left: calc(96px + 512px + 96px);
+    left: calc(96px + 480px + 96px);
     right: 82px;
     opacity: var(--s4ImgOpacity);
   }
@@ -141,7 +141,7 @@
   .s5-frame{
     top:96px; bottom:96px;
     left: 96px;
-    right: calc(82px + 96px + 512px);
+    right: calc(82px + 96px + 480px);
     opacity: var(--s5ImgOpacity);
   }
 
@@ -175,7 +175,7 @@
   /* S9 image RIGHT (like S1/S4) */
   .s9-frame{
     top:96px; bottom:96px;
-    left: calc(96px + 512px + 96px);
+    left: calc(96px + 480px + 96px);
     right: 82px;
     opacity: var(--s9ImgOpacity);
   }
@@ -184,7 +184,7 @@
   .galC-left-frame{
     top:96px; bottom:96px;
     left: 96px;
-    right: calc(82px + 96px + 512px);
+    right: calc(82px + 96px + 480px);
     display:block;
   }
   .galC-left-frame img{
@@ -202,7 +202,7 @@
   /* S11 image RIGHT (like S1/S4/S9) */
   .s11-frame{
     top:96px; bottom:96px;
-    left: calc(96px + 512px + 96px);
+    left: calc(96px + 480px + 96px);
     right: 82px;
     opacity: var(--s11ImgOpacity);
   }
@@ -220,7 +220,7 @@
   /* S13 image RIGHT (like S1) */
   .s13-frame{
     top:96px; bottom:96px;
-    left: calc(96px + 512px + 96px);
+    left: calc(96px + 480px + 96px);
     right: 82px;
     opacity: var(--s13ImgOpacity);
   }
@@ -228,7 +228,7 @@
   .s14-frame{
     top:96px; bottom:96px;
     left: 96px;
-    right: calc(82px + 96px + 512px);
+    right: calc(82px + 96px + 480px);
     opacity: var(--s14ImgOpacity);
   }
 
@@ -265,11 +265,11 @@
 
   /* LEFT rails (text left) */
   .s1-rail, .s4-rail, .s9-rail, .s11-rail, .s13-rail{
-    position:absolute; top:0; bottom:0; left:96px; width:512px; overflow:hidden;
+    position:absolute; top:0; bottom:0; left:96px; width:480px; overflow:hidden;
   }
   /* RIGHT rails (text right) */
   .s2-rail, .s5-rail, .s14-rail{
-    position:absolute; top:0; bottom:0; right:96px; width:512px; overflow:hidden;
+    position:absolute; top:0; bottom:0; right:96px; width:480px; overflow:hidden;
   }
 
   .s1-text{ transform:translateY(var(--s1Y)); color:#111; }
@@ -334,7 +334,7 @@
   <img id="galA-img0" src="assets/gallery-A.jpg" alt="">
   <img id="galA-img1" src="assets/gallery-A1.jpg" alt="">
   <img id="galA-img2" src="assets/gallery-A2.jpg" alt="">
-  <img id="galA-img3" src="assets/gallery-A3.jpg" alt="">
+  <img id="galA-img3" src="assets/gallery-A4.jpg" alt="">
 </figure>
 
 <figure class="frame s3-frame" aria-hidden="true"><img id="s3-img" src="assets/section3.jpg" alt=""></figure>
@@ -828,9 +828,9 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
     const s15Group = (getComputedStyle(root).getPropertyValue('--s15Ready')==='1') ? x14_15 : 0;
     s14Alpha = s14Alpha * ((getComputedStyle(root).getPropertyValue('--s15Ready')==='1') ? (1 - x14_15) : 1);
 
-    /* ===== Internal galleries ===== */
+    /* ===== Internal galleries (unchanged) ===== */
 
-    /* gallery-A (now 4 imgs, stepped crossfade) */
+    /* gallery-A (4 imgs, stepped crossfade) */
     const INTERNAL_START_A = FADE_FRAC;
     const tA = clamp((galA - INTERNAL_START_A) / (1 - INTERNAL_START_A), 0, 1);
     const A_FADE = 0.22;                 /* fade segment between images */
