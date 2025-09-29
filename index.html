@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-baseline="stable-2025-09-18__rails-480px">
+<html lang="en" data-baseline="stable-2025-09-29__rails-480px__galA-A3-fix">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -334,7 +334,7 @@
   <img id="galA-img0" src="assets/gallery-A.jpg" alt="">
   <img id="galA-img1" src="assets/gallery-A1.jpg" alt="">
   <img id="galA-img2" src="assets/gallery-A2.jpg" alt="">
-  <img id="galA-img3" src="assets/gallery-A4.jpg" alt="">
+  <img id="galA-img3" src="assets/gallery-A3.jpg" alt="">
 </figure>
 
 <figure class="frame s3-frame" aria-hidden="true"><img id="s3-img" src="assets/section3.jpg" alt=""></figure>
@@ -828,7 +828,7 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
     const s15Group = (getComputedStyle(root).getPropertyValue('--s15Ready')==='1') ? x14_15 : 0;
     s14Alpha = s14Alpha * ((getComputedStyle(root).getPropertyValue('--s15Ready')==='1') ? (1 - x14_15) : 1);
 
-    /* ===== Internal galleries (unchanged) ===== */
+    /* ===== Internal galleries ===== */
 
     /* gallery-A (4 imgs, stepped crossfade) */
     const INTERNAL_START_A = FADE_FRAC;
@@ -891,7 +891,7 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
     const galCOut2 = (1 - clamp(s11/FADE_FRAC,0,1));
     root.style.setProperty('--galCImg0Opacity', (c0 * galCGroup2 * galCOut2).toFixed(3));
     root.style.setProperty('--galCImg1Opacity', (c1 * galCGroup2 * galCOut2).toFixed(3));
-    root.style.setProperty('--galCImg2Opacity', (c2 * galCGroup2 * galCOut2).toFixed(3));
+   root.style.setProperty('--galCImg2Opacity', (c2 * galCGroup2 * galCOut2).toFixed(3));
     root.style.setProperty('--galCImg3Opacity', (c3 * galCGroup2 * galCOut2).toFixed(3));
     root.style.setProperty('--galCImg4Opacity', (c4 * galCGroup2 * galCOut2).toFixed(3));
 
