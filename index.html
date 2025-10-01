@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-baseline="stable-2025-10-01__rails-480px__galA-4__galC-6">
+<html lang="en" data-baseline="stable-2025-09-29__rails-480px__galA-A3-fix">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -38,7 +38,7 @@
     --s9:0; --s9Overlay:0; --s9Y:0px; --s9ImgOpacity:0;
     /* gallery-C-Right (media left, no text) */
     --galC:0;
-    --galCImg0Opacity:0; --galCImg1Opacity:0; --galCImg2Opacity:0; --galCImg3Opacity:0; --galCImg4Opacity:0; --galCImg5Opacity:0;
+    --galCImg0Opacity:0; --galCImg1Opacity:0; --galCImg2Opacity:0; --galCImg3Opacity:0; --galCImg4Opacity:0;
     --galCReady:0;
     /* S11 (left text / right image) */
     --s11:0; --s11Overlay:0; --s11Y:0px; --s11ImgOpacity:0;
@@ -198,7 +198,6 @@
   #galC-img2{ opacity: var(--galCImg2Opacity); }
   #galC-img3{ opacity: var(--galCImg3Opacity); }
   #galC-img4{ opacity: var(--galCImg4Opacity); }
-  #galC-img5{ opacity: var(--galCImg5Opacity); }
 
   /* S11 image RIGHT (like S1/S4/S9) */
   .s11-frame{
@@ -366,7 +365,6 @@
   <img id="galC-img2" src="assets/gallery-C2.jpg" alt="">
   <img id="galC-img3" src="assets/gallery-C3.jpg" alt="">
   <img id="galC-img4" src="assets/gallery-C4.jpg" alt="">
-  <img id="galC-img5" src="assets/gallery-C5.jpg" alt="">
 </figure>
 
 <!-- S11 (left text / right image) -->
@@ -850,6 +848,7 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
 
     const galAGroup2 = (getComputedStyle(root).getPropertyValue('--galAReady')==='1') ? clamp(galA/FADE_FRAC,0,1) : 0;
     const galAOut2   = (1 - clamp(s3/FADE_FRAC,0,1));
+
     root.style.setProperty('--galAImg0Opacity', (a0 * galAGroup2 * galAOut2).toFixed(3));
     root.style.setProperty('--galAImg1Opacity', (a1 * galAGroup2 * galAOut2).toFixed(3));
     root.style.setProperty('--galAImg2Opacity', (a2 * galAGroup2 * galAOut2).toFixed(3));
@@ -876,35 +875,25 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
     root.style.setProperty('--galBImg3Opacity', (b3 * galBGroup2 * galBOut2).toFixed(3));
     root.style.setProperty('--galBImg4Opacity', (b4 * galBGroup2 * galBOut2).toFixed(3));
 
-    /* gallery-C (6 imgs, stepped crossfade) */
+    /* gallery-C (5 imgs, stepped crossfade) */
     const INTERNAL_START_C = FADE_FRAC;
     const tC = clamp((galC - INTERNAL_START_C) / (1 - INTERNAL_START_C), 0, 1);
-
-    /* Shape the timing similar to gallery B, extended to 6 images (5 fades). */
-    const C_FADE = 0.22;
-    const C_HOLD = (1 - 5*C_FADE)/6 * 1.25;  /* generous holds, like B */
-    const normC = 1/(6*C_HOLD + 5*C_FADE);   /* normalize to sum≈1 */
+    const C_FADE = 0.22, C_HOLD = (1 - 4*C_FADE)/5 * 1.25;
+    const normC = 1/(5*C_HOLD + 4*C_FADE);
     const CF=C_FADE*normC, CH=C_HOLD*normC;
-
-    const TC1=CH, TC2=TC1+CF+CH, TC3=TC2+CF+CH, TC4=TC3+CF+CH, TC5=TC4+CF+CH;
-
-    let c0=1,c1=0,c2=0,c3=0,c4=0,c5=0;
-    const step=(t,s,w)=>clamp((t-s)/w,0,1);
-    const gC1=step(tC, TC1, CF); c0*= (1 - gC1); c1 = Math.max(c1, gC1);
-    const gC2=step(tC, TC2, CF); c1*= (1 - gC2); c2 = Math.max(c2, gC2);
-    const gC3=step(tC, TC3, CF); c2*= (1 - gC3); c3 = Math.max(c3, gC3);
-    const gC4=step(tC, TC4, CF); c3*= (1 - gC4); c4 = Math.max(c4, gC4);
-    const gC5=step(tC, TC5, CF); c4*= (1 - gC5); c5 = Math.max(c5, gC5);
-
+    const TC1=CH, TC2=TC1+CF+CH, TC3=TC2+CF+CH, TC4=TC3+CF+CH;
+    let c0=1,c1=0,c2=0,c3=0,c4=0;
+    const gC1=clamp((tC-TC1)/CF,0,1); c0*= (1 - gC1); c1 = Math.max(c1, gC1);
+    const gC2=clamp((tC-TC2)/CF,0,1); c1*= (1 - gC2); c2 = Math.max(c2, gC2);
+    const gC3=clamp((tC-TC3)/CF,0,1); c2*= (1 - gC3); c3 = Math.max(c3, gC3);
+    const gC4=clamp((tC-TC4)/CF,0,1); c3*= (1 - gC4); c4 = Math.max(c4, gC4);
     const galCGroup2 = (getComputedStyle(root).getPropertyValue('--galCReady')==='1') ? clamp(galC/FADE_FRAC,0,1) : 0;
     const galCOut2 = (1 - clamp(s11/FADE_FRAC,0,1));
-
     root.style.setProperty('--galCImg0Opacity', (c0 * galCGroup2 * galCOut2).toFixed(3));
     root.style.setProperty('--galCImg1Opacity', (c1 * galCGroup2 * galCOut2).toFixed(3));
-    root.style.setProperty('--galCImg2Opacity', (c2 * galCGroup2 * galCOut2).toFixed(3));
+   root.style.setProperty('--galCImg2Opacity', (c2 * galCGroup2 * galCOut2).toFixed(3));
     root.style.setProperty('--galCImg3Opacity', (c3 * galCGroup2 * galCOut2).toFixed(3));
     root.style.setProperty('--galCImg4Opacity', (c4 * galCGroup2 * galCOut2).toFixed(3));
-    root.style.setProperty('--galCImg5Opacity', (c5 * galCGroup2 * galCOut2).toFixed(3));
 
     /* ===== Apply section frame opacities ===== */
     root.style.setProperty('--s1ImgOpacity',  s1Alpha.toFixed(3));
