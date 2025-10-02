@@ -300,15 +300,14 @@
 
   .after{ min-height:120vh; }
 
-  /* === Section 15 link fix === */
-  .s15-overlay { pointer-events:auto !important; }
-  .s15-rail, .s15-text { pointer-events:auto !important; }
+  /* === Section 15 clickable links fix === */
+  .s15-overlay { pointer-events:none; }
+  .s15-rail, .s15-text, .s15-text a { pointer-events:auto !important; }
 
   .s15-text a {
     color:#fff;
     text-decoration:none;
     transition:color .2s ease;
-    pointer-events:auto !important;
   }
   .s15-text a:hover,
   .s15-text a:focus-visible {
