@@ -308,6 +308,12 @@
   .s15-text a:focus-visible{
     color:#00A86B;
   }
+/* Force links in S15 to be interactive */
+.s15-text a {
+  position: relative;
+  z-index: 10;         /* bring links above overlay */
+  pointer-events: auto; /* guarantee clickability */
+}
 
   .after{ min-height:120vh; }
 </style>
