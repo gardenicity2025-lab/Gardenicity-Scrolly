@@ -300,18 +300,23 @@
 
   .after{ min-height:120vh; }
 
-  /* === Fix: make Section 15 links clickable === */
+  /* === Section 15 link fix === */
   .s15-overlay {
-    pointer-events:auto; /* allow interaction only here */
+    pointer-events: auto;   /* allow clicks inside */
   }
-  .s15-overlay .s15-text a {
-    color:#fff;
-    text-decoration:none;
-    transition:color .2s ease;
+  .s15-rail,
+  .s15-text {
+    pointer-events: auto;   /* ensure rail/text block is interactive */
   }
-  .s15-overlay .s15-text a:hover,
-  .s15-overlay .s15-text a:focus-visible {
-    color:#00A86B;
+
+  .s15-text a {
+    color: #fff;
+    text-decoration: none;
+    transition: color .2s ease;
+  }
+  .s15-text a:hover,
+  .s15-text a:focus-visible {
+    color: #00A86B;
   }
 </style>
 
