@@ -299,7 +299,22 @@
   }
 
   .after{ min-height:120vh; }
+
+  /* === Fix: make Section 15 links clickable === */
+  .s15-overlay {
+    pointer-events:auto; /* allow interaction only here */
+  }
+  .s15-overlay .s15-text a {
+    color:#fff;
+    text-decoration:none;
+    transition:color .2s ease;
+  }
+  .s15-overlay .s15-text a:hover,
+  .s15-overlay .s15-text a:focus-visible {
+    color:#00A86B;
+  }
 </style>
+
 </head>
 <body>
 
