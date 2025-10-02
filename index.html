@@ -292,14 +292,26 @@
   .s15-text{
     transform:translateY(var(--s15Y));
     color:#fff; text-align:center;
+    pointer-events:auto; /* allow links to work */
   }
-
   .s1-text p, .s2-text p, .s4-text p, .s5-text p, .s9-text p, .s11-text p, .s13-text p, .s14-text p, .s15-text p{
     margin:0 0 14px 0; font-size:20px; line-height:28px;
   }
 
+  /* ===== S15 LINKS ===== */
+  .s15-text a{
+    color:#fff;
+    text-decoration:none;
+    transition:color .2s ease;
+  }
+  .s15-text a:hover,
+  .s15-text a:focus-visible{
+    color:#00A86B;
+  }
+
   .after{ min-height:120vh; }
 </style>
+
 </head>
 <body>
 
