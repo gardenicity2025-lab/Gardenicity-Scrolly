@@ -262,7 +262,7 @@
   .s11-overlay{ opacity:var(--s11Overlay); }
   .s13-overlay{ opacity:var(--s13Overlay); }
   .s14-overlay{ opacity:var(--s14Overlay); }
-  .s15-overlay{ opacity:var(--s15Overlay); pointer-events:auto; z-index:3; }
+  .s15-overlay{ opacity:var(--s15Overlay); }
 
   /* LEFT rails (text left) */
   .s1-rail, .s4-rail, .s9-rail, .s11-rail, .s13-rail{
@@ -292,31 +292,14 @@
   .s15-text{
     transform:translateY(var(--s15Y));
     color:#fff; text-align:center;
-    position: relative;
-    z-index: 4;
-    pointer-events:auto;
   }
+
   .s1-text p, .s2-text p, .s4-text p, .s5-text p, .s9-text p, .s11-text p, .s13-text p, .s14-text p, .s15-text p{
     margin:0 0 14px 0; font-size:20px; line-height:28px;
   }
 
-  /* ===== S15 LINKS ===== */
-  .s15-text a{
-    color:#fff;
-    text-decoration:none;
-    transition:color .2s ease;
-    position: relative;
-    z-index: 5;
-    pointer-events:auto;
-  }
-  .s15-text a:hover,
-  .s15-text a:focus-visible{
-    color:#00A86B;
-  }
-
   .after{ min-height:120vh; }
 </style>
-
 </head>
 <body>
 
