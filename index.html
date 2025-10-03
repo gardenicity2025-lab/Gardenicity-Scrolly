@@ -666,37 +666,19 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
   function measureS14(){ const vh=window.innerHeight; const h=s14Text.scrollHeight; s14StartY=vh; s14EndY=-h; root.style.setProperty('--s14Y', s14StartY+'px'); }
   function measureS15(){ const vh=window.innerHeight; const h=s15Text.scrollHeight; s15StartY=vh; s15EndY=-h; root.style.setProperty('--s15Y', s15StartY+'px'); }
 
-  /* --- Load gates (first images) --- */
-  const galAImg0 = document.getElementById('galA-img0');
-  function markGalAReady(){ root.style.setProperty('--galAReady','1'); }
-  if (galAImg0 && galAImg0.complete && galAImg0.naturalWidth > 0) markGalAReady();
-  else if (galAImg0) galAImg0.addEventListener('load', markGalAReady, { once:true });
-
-  const galBImg0 = document.getElementById('galB-img0');
-  function markGalBReady(){ root.style.setProperty('--galBReady','1'); }
-  if (galBImg0 && galBImg0.complete && galBImg0.naturalWidth > 0) markGalBReady();
-  else if (galBImg0) galBImg0.addEventListener('load', markGalBReady, { once:true });
-
-  const s8Img = document.getElementById('s8-img');
-  function markS8Ready(){ root.style.setProperty('--s8Ready','1'); }
-  if (s8Img && s8Img.complete && s8Img.naturalWidth > 0) markS8Ready();
-  else if (s8Img) s8Img.addEventListener('load', markS8Ready, { once:true });
-
-  const galCImg0 = document.getElementById('galC-img0');
-  function markGalCReady(){ root.style.setProperty('--galCReady','1'); }
-  if (galCImg0 && galCImg0.complete && galCImg0.naturalWidth > 0) markGalCReady();
-  else if (galCImg0) galCImg0.addEventListener('load', markGalCReady, { once:true });
-
-  const s12Img = document.getElementById('s12-img');
-  function markS12Ready(){ root.style.setProperty('--s12Ready','1'); }
-  if (s12Img && s12Img.complete && s12Img.naturalWidth > 0) markS12Ready();
-  else if (s12Img) s12Img.addEventListener('load', markS12Ready, { once:true });
-
-  /* S15 gate */
-  const s15Img = document.getElementById('s15-img');
-  function markS15Ready(){ root.style.setProperty('--s15Ready','1'); }
-  if (s15Img && s15Img.complete && s15Img.naturalWidth > 0) markS15Ready();
-  else if (s15Img) s15Img.addEventListener('load', markS15Ready, { once:true });
+  /* --- Load gates --- */
+  function loadReady(id,varName){
+    const el=document.getElementById(id);
+    function mark(){ root.style.setProperty(varName,'1'); }
+    if(el && el.complete && el.naturalWidth>0) mark();
+    else if(el) el.addEventListener('load',mark,{once:true});
+  }
+  loadReady('galA-img0','--galAReady');
+  loadReady('galB-img0','--galBReady');
+  loadReady('s8-img','--s8Ready');
+  loadReady('galC-img0','--galCReady');
+  loadReady('s12-img','--s12Ready');
+  loadReady('s15-img','--s15Ready');
 
   function update(){
     /* HERO choreography */
@@ -708,245 +690,73 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
     root.style.setProperty('--shift',shift.toFixed(1)+'px');
     root.style.setProperty('--linksOpacity',pSlide.toFixed(3));
 
-    /* Progress */
-    const s1=progressOf(s1Wrap);
-    const s2=progressOf(s2Wrap);
-    const galA=progressOf(galAWrap);
-    const s3=progressOf(s3Wrap);
-    const s4=progressOf(s4Wrap);
-    const s5=progressOf(s5Wrap);
-    const galB=progressOf(galBWrap);
-    const s8=progressOf(s8Wrap);
-    const s9=progressOf(s9Wrap);
-    const galC=progressOf(galCWrap);
-    const s11=progressOf(s11Wrap);
-    const s12=progressOf(s12Wrap);
-    const s13=progressOf(s13Wrap);
-    const s14=progressOf(s14Wrap);
-    const s15=progressOf(s15Wrap);
+    /* Progress values */
+    const vals={
+      s1:progressOf(s1Wrap), s2:progressOf(s2Wrap), galA:progressOf(galAWrap), s3:progressOf(s3Wrap),
+      s4:progressOf(s4Wrap), s5:progressOf(s5Wrap), galB:progressOf(galBWrap), s8:progressOf(s8Wrap),
+      s9:progressOf(s9Wrap), galC:progressOf(galCWrap), s11:progressOf(s11Wrap), s12:progressOf(s12Wrap),
+      s13:progressOf(s13Wrap), s14:progressOf(s14Wrap), s15:progressOf(s15Wrap)
+    };
+    for(const k in vals){ root.style.setProperty(`--${k}`,vals[k].toFixed(3)); }
 
-    root.style.setProperty('--s1',s1.toFixed(3));
-    root.style.setProperty('--s2',s2.toFixed(3));
-    root.style.setProperty('--galA',galA.toFixed(3));
-    root.style.setProperty('--s3',s3.toFixed(3));
-    root.style.setProperty('--s4',s4.toFixed(3));
-    root.style.setProperty('--s5',s5.toFixed(3));
-    root.style.setProperty('--galB',galB.toFixed(3));
-    root.style.setProperty('--s8',s8.toFixed(3));
-    root.style.setProperty('--s9',s9.toFixed(3));
-    root.style.setProperty('--galC',galC.toFixed(3));
-    root.style.setProperty('--s11',s11.toFixed(3));
-    root.style.setProperty('--s12',s12.toFixed(3));
-    root.style.setProperty('--s13',s13.toFixed(3));
-    root.style.setProperty('--s14',s14.toFixed(3));
-    root.style.setProperty('--s15',s15.toFixed(3));
-
-    /* Overlays & hero */
-    root.style.setProperty('--s1Overlay',(s1>0 && s1<1)?1:0);
-    root.style.setProperty('--s2Overlay',(s2>0 && s2<1)?1:0);
-    root.style.setProperty('--s4Overlay',(s4>0 && s4<1)?1:0);
-    root.style.setProperty('--s5Overlay',(s5>0 && s5<1)?1:0);
-    root.style.setProperty('--s9Overlay',(s9>0 && s9<1)?1:0);
-    root.style.setProperty('--s11Overlay',(s11>0 && s11<1)?1:0);
-    root.style.setProperty('--s13Overlay',(s13>0 && s13<1)?1:0);
-    root.style.setProperty('--s14Overlay',(s14>0 && s14<1)?1:0);
-    root.style.setProperty('--s15Overlay',(s15>0 && s15<1)?1:0);
-    root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
-    root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
-
-    /* Text sweeps (consistent curves) */
-    const E=0.8;
-    const s1Raw=clamp((s1-0.75)/0.25,0,1); root.style.setProperty('--s1Y',  (s1StartY +(s1EndY -s1StartY )*easePow(s1Raw,E))+'px');
-    const s2Raw=clamp((s2-0.25)/0.75,0,1); root.style.setProperty('--s2Y',  (s2StartY +(s2EndY -s2StartY )*easePow(s2Raw,E))+'px');
-    const s4Raw=clamp((s4-0.75)/0.25,0,1); root.style.setProperty('--s4Y',  (s4StartY +(s4EndY -s4StartY )*easePow(s4Raw,E))+'px');
-    const s5Raw=clamp((s5-0.25)/0.75,0,1); root.style.setProperty('--s5Y',  (s5StartY +(s5EndY -s5StartY )*easePow(s5Raw,E))+'px');
-    const s9Raw=clamp((s9-0.75)/0.25,0,1); root.style.setProperty('--s9Y',  (s9StartY +(s9EndY -s9StartY )*easePow(s9Raw,E))+'px');
-    const s11Raw=clamp((s11-0.75)/0.25,0,1); root.style.setProperty('--s11Y',(s11StartY+(s11EndY-s11StartY)*easePow(s11Raw,E))+'px');
-    const s13Raw=clamp((s13-0.75)/0.25,0,1); root.style.setProperty('--s13Y',(s13StartY+(s13EndY-s13StartY)*easePow(s13Raw,E))+'px');
-    const s14Raw=clamp((s14-0.25)/0.75,0,1); root.style.setProperty('--s14Y',(s14StartY+(s14EndY-s14StartY)*easePow(s14Raw,E))+'px');
-
-    /* S15 timing */
-    const s15Raw=clamp((s15-0.25)/0.75,0,1);
-    root.style.setProperty('--s15Y',(s15StartY+(s15EndY-s15StartY)*easePow(s15Raw,E))+'px');
-
-    /* End zooms (full-bleed S3, S8, S12, S15) */
-    const s3ZoomRaw = clamp((s3 - 0.82) / 0.18, 0, 1);  root.style.setProperty('--s3Scale',  (1 + 0.08 * easeInOutCubic(s3ZoomRaw)).toFixed(3));
-    const s8ZoomRaw = clamp((s8 - 0.82) / 0.18, 0, 1);  root.style.setProperty('--s8Scale',  (1 + 0.08 * easeInOutCubic(s8ZoomRaw)).toFixed(3));
-    const s12ZoomRaw = clamp((s12 - 0.82) / 0.18, 0, 1);root.style.setProperty('--s12Scale', (1 + 0.08 * easeInOutCubic(s12ZoomRaw)).toFixed(3));
-    const s15ZoomRaw = clamp((s15 - 0.82) / 0.18, 0, 1);root.style.setProperty('--s15Scale', (1 + 0.08 * easeInOutCubic(s15ZoomRaw)).toFixed(3));
-
-    /* ===== Crossfades (standardized) ===== */
-    const FADE_FRAC = 0.35;
-    const LEAD_FRAC = 0.15;
-
-    /* S1 → S2 */
-    const s1In = clamp(s1/FADE_FRAC, 0, 1);
-    const textBottomS1 = (parseFloat(getComputedStyle(root).getPropertyValue('--s1Y'))||0) + s1Text.scrollHeight;
-    const gateS1S2 = (textBottomS1 <= window.innerHeight * LEAD_FRAC) ? 1 : 0;
-    const x12 = clamp(s2/FADE_FRAC, 0, 1);
-    let s1Alpha = Math.min(gateS1S2 ? (1 - x12) : 1, s1In);
-    let s2Alpha = gateS1S2 ? x12 : 0;
-
-    /* S2 → gallery-A */
-    const textBottomS2 = (parseFloat(getComputedStyle(root).getPropertyValue('--s2Y'))||0) + s2Text.scrollHeight;
-    const gateS2A = (textBottomS2 <= window.innerHeight * LEAD_FRAC) || (s2 >= 0.999);
-    const x2A = clamp(galA/FADE_FRAC, 0, 1);
-    let galAGroup = 0;
-    if (gateS2A && getComputedStyle(root).getPropertyValue('--galAReady')==='1') galAGroup = x2A;
-    if (gateS2A) s2Alpha = s2Alpha * (1 - x2A);
-
-    /* gallery-A → S3 */
-    const xA3 = clamp(s3/FADE_FRAC, 0, 1);
-    const s3Alpha = xA3;
-    const galAOut = (1 - xA3);
-
-    /* S3 → S4 */
-    const x34 = clamp(s4/FADE_FRAC, 0, 1);
-    let s4Alpha = x34;
-    const s3AlphaOut = s3Alpha * (1 - x34);
-
-    /* S4 → S5 */
-    const textBottomS4 = (parseFloat(getComputedStyle(root).getPropertyValue('--s4Y'))||0) + s4Text.scrollHeight;
-    const gateS4S5 = (textBottomS4 <= window.innerHeight * LEAD_FRAC) || (s4 >= 0.999);
-    const x45 = clamp(s5/FADE_FRAC, 0, 1);
-    let s5Alpha = gateS4S5 ? x45 : 0;
-    if (gateS4S5) s4Alpha = s4Alpha * (1 - x45);
-
-    /* S5 → gallery-B */
-    const textBottomS5 = (parseFloat(getComputedStyle(root).getPropertyValue('--s5Y'))||0) + s5Text.scrollHeight;
-    const gateS5B = (textBottomS5 <= window.innerHeight * LEAD_FRAC) || (s5 >= 0.999);
-    const x5B = clamp(galB/FADE_FRAC, 0, 1);
-    let galBGroup = 0;
-    if (gateS5B && getComputedStyle(root).getPropertyValue('--galBReady')==='1') galBGroup = x5B;
-    if (gateS5B) s5Alpha = s5Alpha * (1 - x5B);
-
-    /* gallery-B → S8 (full-bleed) */
-    const xB8 = clamp(s8/FADE_FRAC, 0, 1);
-    const s8Group = (getComputedStyle(root).getPropertyValue('--s8Ready')==='1') ? xB8 : 0;
-    const galBOut = (1 - s8Group);
-
-    /* S8 → S9 */
-    const x89 = clamp(s9/FADE_FRAC, 0, 1);
-    let s9Alpha = x89;
-    const s8AlphaOut = s8Group * (1 - x89);
-
-    /* S9 → gallery-C */
-    const textBottomS9 = (parseFloat(getComputedStyle(root).getPropertyValue('--s9Y'))||0) + s9Text.scrollHeight;
-    const gateS9C = (textBottomS9 <= window.innerHeight * LEAD_FRAC) || (s9 >= 0.999);
-    const x9C = clamp(galC/FADE_FRAC, 0, 1);
-    let galCGroup = 0;
-    if (gateS9C && getComputedStyle(root).getPropertyValue('--galCReady')==='1') galCGroup = x9C;
-    if (gateS9C) s9Alpha = s9Alpha * (1 - x9C);
-
-    /* gallery-C → S11 */
-    const xC11 = clamp(s11/FADE_FRAC, 0, 1);
-    let s11Alpha = xC11;
-    const galCOut = (1 - xC11);
-
-    /* S11 → S12 (full-bleed), load-gated */
-    const x11_12 = clamp(s12/FADE_FRAC, 0, 1);
-    const s12Group = (getComputedStyle(root).getPropertyValue('--s12Ready')==='1') ? x11_12 : 0;
-    s11Alpha = s11Alpha * ((getComputedStyle(root).getPropertyValue('--s12Ready')==='1') ? (1 - x11_12) : 1);
-
-    /* S12 → S13 (full-bleed → framed, like S3→S4) */
-    const x12_13 = clamp(s13/FADE_FRAC, 0, 1);
-    let s13Alpha = x12_13;
-    const s12AlphaOut2 = s12Group * (1 - x12_13);
-
-    /* S13 → S14 (like S1→S2) */
-    const textBottomS13 = (parseFloat(getComputedStyle(root).getPropertyValue('--s13Y'))||0) + s13Text.scrollHeight;
-    const gateS13S14 = (textBottomS13 <= window.innerHeight * LEAD_FRAC) || (s13 >= 0.999);
-    const x13_14 = clamp(s14/FADE_FRAC, 0, 1);
-    let s14Alpha = gateS13S14 ? x13_14 : 0;
-    if (gateS13S14) s13Alpha = s13Alpha * (1 - x13_14);
-
-    /* S14 → S15 (full-bleed; load-gated like S11→S12) */
-    const x14_15 = clamp(s15/FADE_FRAC, 0, 1);
-    const s15Group = (getComputedStyle(root).getPropertyValue('--s15Ready')==='1') ? x14_15 : 0;
-    s14Alpha = s14Alpha * ((getComputedStyle(root).getPropertyValue('--s15Ready')==='1') ? (1 - x14_15) : 1);
+    /* Overlays & hero fade */
+    ['s1','s2','s4','s5','s9','s11','s13','s14','s15'].forEach(k=>{
+      root.style.setProperty(`--${k}Overlay`,(vals[k]>0 && vals[k]<1)?1:0);
+    });
+    root.style.setProperty('--heroAlpha',(1-vals.s1).toFixed(3));
+    root.style.setProperty('--heroBlur',(vals.s1*0.8).toFixed(3));
 
     /* ===== Internal galleries ===== */
 
-    /* gallery-A (4 imgs, stepped crossfade) — unchanged */
-    const INTERNAL_START_A = FADE_FRAC;
-    const tA = clamp((galA - INTERNAL_START_A) / (1 - INTERNAL_START_A), 0, 1);
-    const A_FADE = 0.22;                 /* fade segment between images */
-    const A_HOLD = (1 - 3*A_FADE) / 4;   /* 4 holds, 3 fades -> sums to 1 */
-    const step=(t,s,w)=>clamp((t-s)/w,0,1);
+    /* gallery-A (4 imgs baseline) */
+    const tA=clamp((vals.galA-0.35)/(1-0.35),0,1);
+    const A_FADE=0.22, A_HOLD=(1-3*A_FADE)/4;
+    let a=[1,0,0,0]; const step=(t,s,w)=>clamp((t-s)/w,0,1);
+    const TA=[A_HOLD, A_HOLD+A_FADE+A_HOLD, A_HOLD*2+2*A_FADE+A_HOLD];
+    const g1=step(tA,TA[0],A_FADE); a[0]*=(1-g1); a[1]=Math.max(a[1],g1);
+    const g2=step(tA,TA[1],A_FADE); a[1]*=(1-g2); a[2]=Math.max(a[2],g2);
+    const g3=step(tA,TA[2],A_FADE); a[2]*=(1-g3); a[3]=Math.max(a[3],g3);
+    ['0','1','2','3'].forEach((i,idx)=>root.style.setProperty(`--galAImg${i}Opacity`,(a[idx]*vals.galA).toFixed(3)));
 
-    let a0=1, a1=0, a2=0, a3=0;
-    const TA1=A_HOLD;
-    const TA2=TA1 + A_FADE + A_HOLD;
-    const TA3=TA2 + A_FADE + A_HOLD;
-
-    const g1=step(tA, TA1, A_FADE); a0*= (1 - g1); a1 = Math.max(a1, g1);
-    const g2=step(tA, TA2, A_FADE); a1*= (1 - g2); a2 = Math.max(a2, g2);
-    const g3=step(tA, TA3, A_FADE); a2*= (1 - g3); a3 = Math.max(a3, g3);
-
-    const galAGroup2 = (getComputedStyle(root).getPropertyValue('--galAReady')==='1') ? clamp(galA/FADE_FRAC,0,1) : 0;
-    const galAOut2   = (1 - clamp(s3/FADE_FRAC,0,1));
-    root.style.setProperty('--galAImg0Opacity', (a0 * galAGroup2 * galAOut2).toFixed(3));
-    root.style.setProperty('--galAImg1Opacity', (a1 * galAGroup2 * galAOut2).toFixed(3));
-    root.style.setProperty('--galAImg2Opacity', (a2 * galAGroup2 * galAOut2).toFixed(3));
-    root.style.setProperty('--galAImg3Opacity', (a3 * galAGroup2 * galAOut2).toFixed(3));
-
-    /* gallery-B (5 imgs, stepped crossfade) — unchanged */
-    const INTERNAL_START_B = FADE_FRAC;
-    const tB = clamp((galB - INTERNAL_START_B) / (1 - INTERNAL_START_B), 0, 1);
-    const B_FADE = 0.22, B_HOLD = (1 - 4*B_FADE)/5 * 1.25;
-    const normB = 1/(5*B_HOLD + 4*B_FADE);
-    const BF=B_FADE*normB, BH=B_HOLD*normB;
-    const TB1=BH, TB2=TB1+BF+BH, TB3=TB2+BF+BH, TB4=TB3+BF+BH;
-    let b0=1,b1=0,b2=0,b3=0,b4=0;
+    /* gallery-B (5 imgs, scaled 1.25x) */
+    const B_SCALE=1.25;
+    const tB=clamp(((vals.galB-0.35)*B_SCALE)/(1-0.35),0,1);
+    const B_FADE=0.22, B_HOLD=(1-4*B_FADE)/5;
+    let b=[1,0,0,0,0];
+    const TB=[B_HOLD, B_HOLD+B_FADE+B_HOLD, B_HOLD*2+2*B_FADE+B_HOLD, B_HOLD*3+3*B_FADE+B_HOLD];
     const h=(t,s,w)=>clamp((t-s)/w,0,1);
-    const gB1=h(tB, TB1, BF); b0*= (1 - gB1); b1 = Math.max(b1, gB1);
-    const gB2=h(tB, TB2, BF); b1*= (1 - gB2); b2 = Math.max(b2, gB2);
-    const gB3=h(tB, TB3, BF); b2*= (1 - gB3); b3 = Math.max(b3, gB3);
-    const gB4=h(tB, TB4, BF); b3*= (1 - gB4); b4 = Math.max(b4, gB4);
-    const galBGroup2 = (getComputedStyle(root).getPropertyValue('--galBReady')==='1') ? clamp(galB/FADE_FRAC,0,1) : 0;
-    const galBOut2 = (1 - clamp(s8/FADE_FRAC,0,1));
-    root.style.setProperty('--galBImg0Opacity', (b0 * galBGroup2 * galBOut2).toFixed(3));
-    root.style.setProperty('--galBImg1Opacity', (b1 * galBGroup2 * galBOut2).toFixed(3));
-    root.style.setProperty('--galBImg2Opacity', (b2 * galBGroup2 * galBOut2).toFixed(3));
-    root.style.setProperty('--galBImg3Opacity', (b3 * galBGroup2 * galBOut2).toFixed(3));
-    root.style.setProperty('--galBImg4Opacity', (b4 * galBGroup2 * galBOut2).toFixed(3));
+    const gB1=h(tB,TB[0],B_FADE); b[0]*=(1-gB1); b[1]=Math.max(b[1],gB1);
+    const gB2=h(tB,TB[1],B_FADE); b[1]*=(1-gB2); b[2]=Math.max(b[2],gB2);
+    const gB3=h(tB,TB[2],B_FADE); b[2]*=(1-gB3); b[3]=Math.max(b[3],gB3);
+    const gB4=h(tB,TB[3],B_FADE); b[3]*=(1-gB4); b[4]=Math.max(b[4],gB4);
+    ['0','1','2','3','4'].forEach((i,idx)=>root.style.setProperty(`--galBImg${i}Opacity`,(b[idx]*vals.galB).toFixed(3)));
 
-    /* gallery-C (now 6 imgs, stepped crossfade; minimal change) */
-    const INTERNAL_START_C = FADE_FRAC;
-    const tC = clamp((galC - INTERNAL_START_C) / (1 - INTERNAL_START_C), 0, 1);
-    const C_FADE = 0.22, C_HOLD = (1 - 5*C_FADE)/6 * 1.25;  /* match style of B */
-    const normC = 1/(6*C_HOLD + 5*C_FADE);
-    const CF=C_FADE*normC, CH=C_HOLD*normC;
-    const TC1=CH, TC2=TC1+CF+CH, TC3=TC2+CF+CH, TC4=TC3+CF+CH, TC5=TC4+CF+CH;
-    let c0=1,c1=0,c2=0,c3=0,c4=0,c5=0;
-    const stepC=(t,s,w)=>clamp((t-s)/w,0,1);
-    const gC1=stepC(tC, TC1, CF); c0*= (1 - gC1); c1 = Math.max(c1, gC1);
-    const gC2=stepC(tC, TC2, CF); c1*= (1 - gC2); c2 = Math.max(c2, gC2);
-    const gC3=stepC(tC, TC3, CF); c2*= (1 - gC3); c3 = Math.max(c3, gC3);
-    const gC4=stepC(tC, TC4, CF); c3*= (1 - gC4); c4 = Math.max(c4, gC4);
-    const gC5=stepC(tC, TC5, CF); c4*= (1 - gC5); c5 = Math.max(c5, gC5);
-    const galCGroup2 = (getComputedStyle(root).getPropertyValue('--galCReady')==='1') ? clamp(galC/FADE_FRAC,0,1) : 0;
-    const galCOut2 = (1 - clamp(s11/FADE_FRAC,0,1));
-    root.style.setProperty('--galCImg0Opacity', (c0 * galCGroup2 * galCOut2).toFixed(3));
-    root.style.setProperty('--galCImg1Opacity', (c1 * galCGroup2 * galCOut2).toFixed(3));
-    root.style.setProperty('--galCImg2Opacity', (c2 * galCGroup2 * galCOut2).toFixed(3));
-    root.style.setProperty('--galCImg3Opacity', (c3 * galCGroup2 * galCOut2).toFixed(3));
-    root.style.setProperty('--galCImg4Opacity', (c4 * galCGroup2 * galCOut2).toFixed(3));
-    root.style.setProperty('--galCImg5Opacity', (c5 * galCGroup2 * galCOut2).toFixed(3));
+    /* gallery-C (6 imgs, scaled 1.5x) */
+    const C_SCALE=1.5;
+    const tC=clamp(((vals.galC-0.35)*C_SCALE)/(1-0.35),0,1);
+    const C_FADE=0.22, C_HOLD=(1-5*C_FADE)/6;
+    let c=[1,0,0,0,0,0];
+    const TC=[C_HOLD, C_HOLD+C_FADE+C_HOLD, C_HOLD*2+2*C_FADE+C_HOLD, C_HOLD*3+3*C_FADE+C_HOLD, C_HOLD*4+4*C_FADE+C_HOLD];
+    const gC1=step(tC,TC[0],C_FADE); c[0]*=(1-gC1); c[1]=Math.max(c[1],gC1);
+    const gC2=step(tC,TC[1],C_FADE); c[1]*=(1-gC2); c[2]=Math.max(c[2],gC2);
+    const gC3=step(tC,TC[2],C_FADE); c[2]*=(1-gC3); c[3]=Math.max(c[3],gC3);
+    const gC4=step(tC,TC[3],C_FADE); c[3]*=(1-gC4); c[4]=Math.max(c[4],gC4);
+    const gC5=step(tC,TC[4],C_FADE); c[4]*=(1-gC5); c[5]=Math.max(c[5],gC5);
+    ['0','1','2','3','4','5'].forEach((i,idx)=>root.style.setProperty(`--galCImg${i}Opacity`,(c[idx]*vals.galC).toFixed(3)));
 
     /* ===== Apply section frame opacities ===== */
-    root.style.setProperty('--s1ImgOpacity',  s1Alpha.toFixed(3));
-    root.style.setProperty('--s2ImgOpacity',  s2Alpha.toFixed(3));
-    root.style.setProperty('--s3ImgOpacity',  s3AlphaOut.toFixed(3));
-    root.style.setProperty('--s4ImgOpacity',  s4Alpha.toFixed(3));
-    root.style.setProperty('--s5ImgOpacity',  s5Alpha.toFixed(3));
-    root.style.setProperty('--s8ImgOpacity',  s8AlphaOut.toFixed(3));
-    root.style.setProperty('--s9ImgOpacity',  s9Alpha.toFixed(3));
-    root.style.setProperty('--s11ImgOpacity', s11Alpha.toFixed(3));
-    root.style.setProperty('--s12ImgOpacity', s12AlphaOut2.toFixed(3));
-    root.style.setProperty('--s13ImgOpacity', s13Alpha.toFixed(3));
-    root.style.setProperty('--s14ImgOpacity', s14Alpha.toFixed(3));
-    root.style.setProperty('--s15ImgOpacity', s15Group.toFixed(3));
+    root.style.setProperty('--s1ImgOpacity',  (vals.s1).toFixed(3));
+    root.style.setProperty('--s2ImgOpacity',  (vals.s2).toFixed(3));
+    root.style.setProperty('--s3ImgOpacity',  (1-vals.s3).toFixed(3));
+    root.style.setProperty('--s4ImgOpacity',  (vals.s4).toFixed(3));
+    root.style.setProperty('--s5ImgOpacity',  (vals.s5).toFixed(3));
+    root.style.setProperty('--s8ImgOpacity',  (1-vals.s8).toFixed(3));
+    root.style.setProperty('--s9ImgOpacity',  (vals.s9).toFixed(3));
+    root.style.setProperty('--s11ImgOpacity', (vals.s11).toFixed(3));
+    root.style.setProperty('--s12ImgOpacity', (1-vals.s12).toFixed(3));
+    root.style.setProperty('--s13ImgOpacity', (vals.s13).toFixed(3));
+    root.style.setProperty('--s14ImgOpacity', (vals.s14).toFixed(3));
+    root.style.setProperty('--s15ImgOpacity', (vals.s15).toFixed(3));
   }
 
   async function init(){
@@ -954,12 +764,13 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
     measureHero();
     measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
     update();
-    addEventListener('load',  ()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15(); update(); });
-    addEventListener('resize',()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15(); update(); });
-    addEventListener('scroll', update, {passive:true});
+    addEventListener('load',()=>{measureHero();measureS1();measureS2();measureS4();measureS5();measureS9();measureS11();measureS13();measureS14();measureS15();update();});
+    addEventListener('resize',()=>{measureHero();measureS1();measureS2();measureS4();measureS5();measureS9();measureS11();measureS13();measureS14();measureS15();update();});
+    addEventListener('scroll',update,{passive:true});
   }
   init();
 })();
 </script>
+
 </body>
 </html>
