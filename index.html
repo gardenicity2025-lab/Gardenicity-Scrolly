@@ -293,7 +293,7 @@
     transform:translateY(var(--s15Y));
     color:#fff; text-align:center;
     position: relative;
-    z-index: 3;
+    z-index: 5;            /* above overlay */
     pointer-events:auto;
   }
   .s1-text p, .s2-text p, .s4-text p, .s5-text p, .s9-text p, .s11-text p, .s13-text p, .s14-text p, .s15-text p{
@@ -307,7 +307,7 @@
     transition:color .2s ease, text-decoration .2s ease;
     pointer-events:auto;
     position: relative;
-    z-index: 4;
+    z-index: 6;
   }
   .s15-text a:hover,
   .s15-text a:focus-visible{
