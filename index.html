@@ -892,7 +892,7 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
 
     /* gallery-B (5 imgs, stepped crossfade) — unchanged */
     const INTERNAL_START_B = FADE_FRAC;
-    const tB = clamp((galB - INTERNAL_START_B) / (1 - INTERNAL_START_B), 0, 1);
+    const tB = clamp(((galB - INTERNAL_START_B) / (1 - INTERNAL_START_B)) * 1.25, 0, 1);
     const B_FADE = 0.22, B_HOLD = (1 - 4*B_FADE)/5 * 1.25;
     const normB = 1/(5*B_HOLD + 4*B_FADE);
     const BF=B_FADE*normB, BH=B_HOLD*normB;
@@ -913,7 +913,7 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
 
     /* gallery-C (now 6 imgs, stepped crossfade; minimal change) */
     const INTERNAL_START_C = FADE_FRAC;
-    const tC = clamp((galC - INTERNAL_START_C) / (1 - INTERNAL_START_C), 0, 1);
+    const tC = clamp(((galC - INTERNAL_START_C) / (1 - INTERNAL_START_C)) * 1.5, 0, 1);
     const C_FADE = 0.22, C_HOLD = (1 - 5*C_FADE)/6 * 1.25;  /* match style of B */
     const normC = 1/(6*C_HOLD + 5*C_FADE);
     const CF=C_FADE*normC, CH=C_HOLD*normC;
