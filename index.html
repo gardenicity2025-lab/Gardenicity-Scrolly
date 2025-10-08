@@ -324,94 +324,246 @@
   .s15-text a:focus-visible{
     color:#00A86B;
   }
-/* ====== RESPONSIVE / HYBRID ADAPTIVE BEHAVIOR ====== */
+/* =========================================================
+   RESPONSIVE / HYBRID ADAPTIVE BEHAVIOR — UPDATED VERSION
+   ---------------------------------------------------------
+   • Desktop ≥1366px : Original 3-column viewport preserved
+   • Tablet 768–1365px : Softer shrink, no disruption
+   • Mobile ≤767px : NYT-style stacked flow
+   ========================================================= */
 
-/* --- 1200–1365px (fluid middle phase) --- */
+/* ---------- 1. Tablet / Small Desktop (≤1365px) ---------- */
 @media (max-width: 1365px) {
-  .s1-rail, .s2-rail, .s4-rail, .s5-rail,
-  .s9-rail, .s11-rail, .s13-rail, .s14-rail {
-    width: clamp(380px, 32vw, 460px);
+
+  .s1-rail, .s2-rail, .s4-rail, .s5-rail, .s9-rail,
+  .s11-rail, .s13-rail, .s14-rail {
+    width: 380px;
   }
-  .hero-title { font-size: 80px; line-height: 88px; }
-  .hero-links { font-size: 20px; line-height: 26px; }
+
+  .hero-title {
+    font-size: 80px;
+    line-height: 86px;
+  }
+
+  .hero-links {
+    font-size: 20px;
+    line-height: 26px;
+  }
+
   .s1-text p, .s2-text p, .s4-text p, .s5-text p,
   .s9-text p, .s11-text p, .s13-text p, .s14-text p,
-  .s15-text p { font-size: 18px; line-height: 26px; }
+  .s15-text p {
+    font-size: 18px;
+    line-height: 26px;
+  }
 }
 
-/* --- Tablet (768–1199px): mild reduction, keeps rails --- */
+/* ---------- 2. Narrow Tablet / Laptop (≤1199px) ---------- */
 @media (max-width: 1199px) {
-  .s1-rail, .s2-rail, .s4-rail, .s5-rail,
-  .s9-rail, .s11-rail, .s13-rail, .s14-rail {
-    width: clamp(300px, 40vw, 420px);
+  .s1-rail, .s2-rail, .s4-rail, .s5-rail, .s9-rail,
+  .s11-rail, .s13-rail, .s14-rail {
+    width: 320px;
   }
-  .hero-media { top:64px; bottom:64px; left:64px; right:64px; }
-  .hero-title { font-size:64px; line-height:72px; }
-  .hero-links { font-size:18px; line-height:24px; }
+
+  .hero-title {
+    font-size: 64px;
+    line-height: 70px;
+  }
+
+  .hero-links {
+    font-size: 18px;
+    line-height: 24px;
+  }
+
   .s1-text p, .s2-text p, .s4-text p, .s5-text p,
   .s9-text p, .s11-text p, .s13-text p, .s14-text p,
-  .s15-text p { font-size:17px; line-height:25px; }
+  .s15-text p {
+    font-size: 17px;
+    line-height: 25px;
+  }
 }
 
-/* --- Mobile (≤767px): stacked layout (NYT style) --- */
+/* ---------- 3. Mobile / NYT-Style Stacked Flow (≤767px) ---------- */
 @media (max-width: 767px) {
 
-  html, body { overflow-x:hidden; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    background: #eaeeec;
+  }
 
-  /* HERO becomes vertical block */
+  /* ---- Hero ---- */
   .hero-fixed {
-    position:relative;
-    height:100vh;
+    position: relative;
+    height: 100vh;
+    width: 100%;
   }
+
   .hero-media {
-    position:relative;
-    top:auto; bottom:auto; left:auto; right:auto;
-    flex-direction:column;
-    align-items:flex-start;
-    justify-content:flex-end;
-    padding:64px 24px;
-  }
-  .hero-title { font-size:48px; line-height:52px; margin-bottom:16px; }
-  .hero-links { font-size:18px; line-height:22px; }
-
-  /* Reset fixed frames to normal flow */
-  .frame {
-    position:relative !important;
-    width:100%; height:auto;
-  }
-  .frame img {
-    position:relative !important;
-    width:100%; height:auto;
-    object-fit:cover !important;
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
   }
 
-  /* Full-bleed sections remain 100vh */
-  .s3-frame, .s8-frame, .s12-frame, .s15-frame {
-    height:100vh;
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background-size: cover;
+    background-position: center;
   }
 
-  /* Text rails become full-width blocks */
-  .s1-rail, .s2-rail, .s4-rail, .s5-rail,
-  .s9-rail, .s11-rail, .s13-rail, .s14-rail, .s15-rail {
-    position:relative;
-    width:100%;
-    left:auto; right:auto;
-    padding:32px 24px;
+  .hero-title {
+    position: absolute;
+    bottom: 100px;
+    left: 20px;
+    right: 20px;
+    font-size: 42px;
+    line-height: 48px;
+    text-align: left;
+    color: #fff;
   }
 
-  /* Text readability */
+  .hero-links {
+    position: absolute;
+    bottom: 40px;
+    left: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 18px;
+    line-height: 22px;
+    text-align: left;
+  }
+
+  .hero-links a {
+    color: #fff;
+    text-decoration: none;
+    transition: color .2s ease;
+  }
+
+  .hero-links a:hover,
+  .hero-links a:focus-visible {
+    color: #00A86B;
+  }
+
+  /* ---- General Stacked Flow ---- */
+  .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap, .s9-wrap,
+  .s11-wrap, .s13-wrap, .s14-wrap {
+    position: relative;
+    height: auto;
+    padding: 40px 20px;
+  }
+
+  .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
+  .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay,
+  .s15-overlay {
+    position: relative;
+    inset: unset;
+    opacity: 1 !important;
+    pointer-events: auto;
+  }
+
+  .s1-rail, .s2-rail, .s4-rail, .s5-rail, .s9-rail,
+  .s11-rail, .s13-rail, .s14-rail, .s15-rail {
+    position: relative;
+    width: 100%;
+    left: unset;
+    right: unset;
+    transform: none;
+    overflow: visible;
+  }
+
+  .s1-text, .s2-text, .s4-text, .s5-text, .s9-text,
+  .s11-text, .s13-text, .s14-text, .s15-text {
+    transform: none !important;
+    color: #111;
+    text-align: left;
+  }
+
   .s1-text p, .s2-text p, .s4-text p, .s5-text p,
   .s9-text p, .s11-text p, .s13-text p, .s14-text p,
-  .s15-text p { font-size:16px; line-height:24px; color:#111; }
-
-  /* Adjust centered overlay for S15 */
-  .s15-rail {
-    transform:none;
-    padding:48px 24px;
+  .s15-text p {
+    font-size: 16px;
+    line-height: 24px;
+    margin: 0 0 20px 0;
   }
-  .s15-text { text-align:center; }
-}
 
+  /* ---- Galleries become sequential blocks ---- */
+  .galA-left-frame, .galB-center-frame, .galC-left-frame {
+    position: relative;
+    width: 100%;
+    height: auto;
+    top: unset;
+    bottom: unset;
+    left: unset;
+    right: unset;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 0 40px 0;
+  }
+
+  .galA-left-frame img,
+  .galB-center-frame img,
+  .galC-left-frame img {
+    position: relative;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    opacity: 1 !important;
+  }
+
+  /* ---- Full-bleed image sections (Hero, 4, 8, 12, 15) ---- */
+  .s4-frame, .s8-frame, .s12-frame, .s15-frame {
+    position: relative;
+    top: unset; bottom: unset; left: unset; right: unset;
+    width: 100%;
+    height: 100vh;
+    margin: 0;
+  }
+
+  .s4-frame img, .s8-frame img, .s12-frame img, .s15-frame img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* ---- Final Section (text over image) ---- */
+  .s15-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.25);
+    pointer-events: auto;
+  }
+
+  .s15-rail {
+    text-align: center;
+    padding: 40px 20px;
+    color: #fff;
+  }
+
+  .s15-rail a {
+    color: #fff;
+    text-decoration: none;
+    transition: color .2s ease;
+  }
+
+  .s15-rail a:hover,
+  .s15-rail a:focus-visible {
+    color: #00A86B;
+  }
+}
 </style>
 
 
