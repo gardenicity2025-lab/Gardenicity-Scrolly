@@ -324,6 +324,94 @@
   .s15-text a:focus-visible{
     color:#00A86B;
   }
+/* ====== RESPONSIVE / HYBRID ADAPTIVE BEHAVIOR ====== */
+
+/* --- 1200–1365px (fluid middle phase) --- */
+@media (max-width: 1365px) {
+  .s1-rail, .s2-rail, .s4-rail, .s5-rail,
+  .s9-rail, .s11-rail, .s13-rail, .s14-rail {
+    width: clamp(380px, 32vw, 460px);
+  }
+  .hero-title { font-size: 80px; line-height: 88px; }
+  .hero-links { font-size: 20px; line-height: 26px; }
+  .s1-text p, .s2-text p, .s4-text p, .s5-text p,
+  .s9-text p, .s11-text p, .s13-text p, .s14-text p,
+  .s15-text p { font-size: 18px; line-height: 26px; }
+}
+
+/* --- Tablet (768–1199px): mild reduction, keeps rails --- */
+@media (max-width: 1199px) {
+  .s1-rail, .s2-rail, .s4-rail, .s5-rail,
+  .s9-rail, .s11-rail, .s13-rail, .s14-rail {
+    width: clamp(300px, 40vw, 420px);
+  }
+  .hero-media { top:64px; bottom:64px; left:64px; right:64px; }
+  .hero-title { font-size:64px; line-height:72px; }
+  .hero-links { font-size:18px; line-height:24px; }
+  .s1-text p, .s2-text p, .s4-text p, .s5-text p,
+  .s9-text p, .s11-text p, .s13-text p, .s14-text p,
+  .s15-text p { font-size:17px; line-height:25px; }
+}
+
+/* --- Mobile (≤767px): stacked layout (NYT style) --- */
+@media (max-width: 767px) {
+
+  html, body { overflow-x:hidden; }
+
+  /* HERO becomes vertical block */
+  .hero-fixed {
+    position:relative;
+    height:100vh;
+  }
+  .hero-media {
+    position:relative;
+    top:auto; bottom:auto; left:auto; right:auto;
+    flex-direction:column;
+    align-items:flex-start;
+    justify-content:flex-end;
+    padding:64px 24px;
+  }
+  .hero-title { font-size:48px; line-height:52px; margin-bottom:16px; }
+  .hero-links { font-size:18px; line-height:22px; }
+
+  /* Reset fixed frames to normal flow */
+  .frame {
+    position:relative !important;
+    width:100%; height:auto;
+  }
+  .frame img {
+    position:relative !important;
+    width:100%; height:auto;
+    object-fit:cover !important;
+  }
+
+  /* Full-bleed sections remain 100vh */
+  .s3-frame, .s8-frame, .s12-frame, .s15-frame {
+    height:100vh;
+  }
+
+  /* Text rails become full-width blocks */
+  .s1-rail, .s2-rail, .s4-rail, .s5-rail,
+  .s9-rail, .s11-rail, .s13-rail, .s14-rail, .s15-rail {
+    position:relative;
+    width:100%;
+    left:auto; right:auto;
+    padding:32px 24px;
+  }
+
+  /* Text readability */
+  .s1-text p, .s2-text p, .s4-text p, .s5-text p,
+  .s9-text p, .s11-text p, .s13-text p, .s14-text p,
+  .s15-text p { font-size:16px; line-height:24px; color:#111; }
+
+  /* Adjust centered overlay for S15 */
+  .s15-rail {
+    transform:none;
+    padding:48px 24px;
+  }
+  .s15-text { text-align:center; }
+}
+
 </style>
 
 
