@@ -324,66 +324,8 @@
   .s15-text a:focus-visible{
     color:#00A86B;
   }
-/* =========================================================
-   RESPONSIVE / HYBRID ADAPTIVE BEHAVIOR — UPDATED VERSION
-   ---------------------------------------------------------
-   • Desktop ≥1366px : Original 3-column viewport preserved
-   • Tablet 768–1365px : Softer shrink, no disruption
-   • Mobile ≤767px : NYT-style stacked flow
-   ========================================================= */
 
-/* ---------- 1. Tablet / Small Desktop (≤1365px) ---------- */
-@media (max-width: 1365px) {
-
-  .s1-rail, .s2-rail, .s4-rail, .s5-rail, .s9-rail,
-  .s11-rail, .s13-rail, .s14-rail {
-    width: 380px;
-  }
-
-  .hero-title {
-    font-size: 80px;
-    line-height: 86px;
-  }
-
-  .hero-links {
-    font-size: 20px;
-    line-height: 26px;
-  }
-
-  .s1-text p, .s2-text p, .s4-text p, .s5-text p,
-  .s9-text p, .s11-text p, .s13-text p, .s14-text p,
-  .s15-text p {
-    font-size: 18px;
-    line-height: 26px;
-  }
-}
-
-/* ---------- 2. Narrow Tablet / Laptop (≤1199px) ---------- */
-@media (max-width: 1199px) {
-  .s1-rail, .s2-rail, .s4-rail, .s5-rail, .s9-rail,
-  .s11-rail, .s13-rail, .s14-rail {
-    width: 320px;
-  }
-
-  .hero-title {
-    font-size: 64px;
-    line-height: 70px;
-  }
-
-  .hero-links {
-    font-size: 18px;
-    line-height: 24px;
-  }
-
-  .s1-text p, .s2-text p, .s4-text p, .s5-text p,
-  .s9-text p, .s11-text p, .s13-text p, .s14-text p,
-  .s15-text p {
-    font-size: 17px;
-    line-height: 25px;
-  }
-}
-
-/* ---------- 3. Mobile / NYT-Style Stacked Flow (≤767px) ---------- */
+/* ---------- MOBILE VIEW (≤767px) — NYT-style scrollytelling flow ---------- */
 @media (max-width: 767px) {
 
   html, body {
@@ -393,15 +335,10 @@
     background: #eaeeec;
   }
 
-  /* ---- Hero ---- */
+  /* ==== HERO ==== */
   .hero-fixed {
     position: relative;
-    height: 100vh;
     width: 100%;
-  }
-
-  .hero-media {
-    position: relative;
     height: 100vh;
     overflow: hidden;
   }
@@ -411,33 +348,36 @@
     inset: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
     background-size: cover;
     background-position: center;
+    object-fit: cover;
+    z-index: 1;
+  }
+
+  .hero-media {
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    padding: 0 20px 40px 20px;
+    z-index: 2;
   }
 
   .hero-title {
-    position: absolute;
-    bottom: 100px;
-    left: 20px;
-    right: 20px;
+    margin: 0 0 12px 0;
     font-size: 42px;
     line-height: 48px;
-    text-align: left;
     color: #fff;
+    text-align: left;
   }
 
   .hero-links {
-    position: absolute;
-    bottom: 40px;
-    left: 20px;
-    right: 20px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 4px;
     font-size: 18px;
-    line-height: 22px;
-    text-align: left;
+    line-height: 24px;
   }
 
   .hero-links a {
@@ -451,17 +391,17 @@
     color: #00A86B;
   }
 
-  /* ---- General Stacked Flow ---- */
+  /* ==== STACKED TEXT + IMAGE SECTIONS ==== */
   .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap, .s9-wrap,
   .s11-wrap, .s13-wrap, .s14-wrap {
     position: relative;
-    height: auto;
+    width: 100%;
     padding: 40px 20px;
+    box-sizing: border-box;
   }
 
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
-  .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay,
-  .s15-overlay {
+  .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
     position: relative;
     inset: unset;
     opacity: 1 !important;
@@ -469,7 +409,7 @@
   }
 
   .s1-rail, .s2-rail, .s4-rail, .s5-rail, .s9-rail,
-  .s11-rail, .s13-rail, .s14-rail, .s15-rail {
+  .s11-rail, .s13-rail, .s14-rail {
     position: relative;
     width: 100%;
     left: unset;
@@ -479,29 +419,23 @@
   }
 
   .s1-text, .s2-text, .s4-text, .s5-text, .s9-text,
-  .s11-text, .s13-text, .s14-text, .s15-text {
+  .s11-text, .s13-text, .s14-text {
     transform: none !important;
     color: #111;
     text-align: left;
+    font-size: 16px;
+    line-height: 24px;
   }
 
   .s1-text p, .s2-text p, .s4-text p, .s5-text p,
-  .s9-text p, .s11-text p, .s13-text p, .s14-text p,
-  .s15-text p {
-    font-size: 16px;
-    line-height: 24px;
-    margin: 0 0 20px 0;
+  .s9-text p, .s11-text p, .s13-text p, .s14-text p {
+    margin: 0 0 18px 0;
   }
 
-  /* ---- Galleries become sequential blocks ---- */
+  /* ==== GALLERIES ==== */
   .galA-left-frame, .galB-center-frame, .galC-left-frame {
     position: relative;
     width: 100%;
-    height: auto;
-    top: unset;
-    bottom: unset;
-    left: unset;
-    right: unset;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -511,19 +445,19 @@
   .galA-left-frame img,
   .galB-center-frame img,
   .galC-left-frame img {
-    position: relative;
     width: 100%;
     height: auto;
     object-fit: cover;
     opacity: 1 !important;
+    margin: 0 0 16px 0;
   }
 
-  /* ---- Full-bleed image sections (Hero, 4, 8, 12, 15) ---- */
+  /* ==== FULL-BLEED SECTIONS (4, 8, 12, 15) ==== */
   .s4-frame, .s8-frame, .s12-frame, .s15-frame {
     position: relative;
-    top: unset; bottom: unset; left: unset; right: unset;
     width: 100%;
     height: 100vh;
+    overflow: hidden;
     margin: 0;
   }
 
@@ -535,7 +469,7 @@
     object-fit: cover;
   }
 
-  /* ---- Final Section (text over image) ---- */
+  /* ==== FINAL SECTION (15) TEXT OVER IMAGE ==== */
   .s15-overlay {
     position: absolute;
     inset: 0;
@@ -543,7 +477,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: rgba(0, 0, 0, 0.25);
+    background: rgba(0,0,0,0.25);
     pointer-events: auto;
   }
 
@@ -563,9 +497,13 @@
   .s15-rail a:focus-visible {
     color: #00A86B;
   }
+
+  /* Small padding for post-hero flow */
+  section {
+    padding-bottom: 40px;
+  }
 }
 </style>
-
 
 </head>
 <body>
