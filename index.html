@@ -349,28 +349,16 @@
     background: #000;
   }
 
-  /* ==== HERO (pinned + fade behavior) ==== */
-  .hero-fixed {
-    position: fixed;
-    inset: 0;
-    z-index: 3;
-    width: 100%;
-    height: 100vh;
-    overflow: hidden;
-    opacity: var(--heroAlpha);
-    filter: blur(calc(var(--heroBlur) * 10px));
-    will-change: opacity, filter;
-    background: #000;
-  }
-
   /* Give space below hero to enable scroll-triggered animation */
   .driver {
-    height: 180vh; /* allows scroll without unpinning hero */
+    height: 200vh; /* enables scroll under pinned hero */
   }
 
   .hero-bg {
     position: absolute;
     inset: 0;
+    width: 100%;
+    height: 100%;
     background: url("assets/hero1gc.jpg") center/cover no-repeat;
     opacity: 0;
     animation: heroInMobile 1.2s ease-out forwards;
@@ -404,6 +392,7 @@
     line-height: 48px;
     color: #fff;
     font-weight: 400;
+    text-align: left;
   }
 
   .hero-links {
@@ -432,10 +421,12 @@
     width: 100%;
     padding: 40px 20px;
     box-sizing: border-box;
+    min-height: 100vh;
   }
 
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
-  .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
+  .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay,
+  .s15-overlay {
     position: relative;
     inset: unset;
     opacity: 1 !important;
@@ -443,7 +434,7 @@
   }
 
   .s1-rail, .s2-rail, .s4-rail, .s5-rail, .s9-rail,
-  .s11-rail, .s13-rail, .s14-rail {
+  .s11-rail, .s13-rail, .s14-rail, .s15-rail {
     position: relative;
     width: 100%;
     left: unset;
@@ -453,7 +444,7 @@
   }
 
   .s1-text, .s2-text, .s4-text, .s5-text, .s9-text,
-  .s11-text, .s13-text, .s14-text {
+  .s11-text, .s13-text, .s14-text, .s15-text {
     transform: none !important;
     color: #111;
     text-align: left;
@@ -462,7 +453,8 @@
   }
 
   .s1-text p, .s2-text p, .s4-text p, .s5-text p,
-  .s9-text p, .s11-text p, .s13-text p, .s14-text p {
+  .s9-text p, .s11-text p, .s13-text p, .s14-text p,
+  .s15-text p {
     margin: 0 0 18px 0;
   }
 
@@ -532,10 +524,43 @@
     color: #00A86B;
   }
 
+  /* ===== FIX: Restore scroll flow beneath fixed hero ===== */
+  section.s1-wrap,
+  section.s2-wrap,
+  section.galA-left-wrap,
+  section.s3-wrap,
+  section.s4-wrap,
+  section.s5-wrap,
+  section.galB-center-wrap,
+  section.s8-wrap,
+  section.s9-wrap,
+  section.galC-left-wrap,
+  section.s11-wrap,
+  section.s12-wrap,
+  section.s13-wrap,
+  section.s14-wrap,
+  section.s15-wrap {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    box-sizing: border-box;
+    background: #eaeeec;
+  }
+
+  /* ensure overlays don’t block scroll */
+  .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
+  .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay, .s15-overlay {
+    pointer-events: none;
+  }
+
+  /* Small padding for post-hero flow */
   section {
     padding-bottom: 40px;
   }
+
 }
+
+
 </style>
 
 </head>
