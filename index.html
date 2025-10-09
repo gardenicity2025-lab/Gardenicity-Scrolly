@@ -327,115 +327,50 @@
 
 /* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
 @media (max-width:768px){
-  /* --- Base layout --- */
-  body{
-    margin:0;
-    padding:0 20px;
-    background:#eaeeec;
-  }
-
-  /* --- Hero --- */
+  body{margin:0;padding:0 20px;}
   .hero-media{top:20px;bottom:20px;left:20px;right:20px;}
   .hero-title{font-size:78px;line-height:1.05;}
   .hero-links{font-size:20px;line-height:26px;}
 
-  /* --- Stacked sections (image + text) --- */
+  /* Unpin and stack image+text sections */
   .s1-frame,.s2-frame,.s4-frame,.s5-frame,
   .s9-frame,.s11-frame,.s13-frame,.s14-frame{
-    position:relative!important;
-    inset:auto!important;
-    width:100%;
-    height:auto;
-    margin:40px 0 0 0;
-    opacity:1!important;
-    z-index:1;
-    display:block;
+    position:static;width:100%;height:auto;
+    opacity:1!important;margin:20px auto;display:block;
   }
   .s1-frame img,.s2-frame img,.s4-frame img,.s5-frame img,
   .s9-frame img,.s11-frame img,.s13-frame img,.s14-frame img{
-    display:block;
-    width:100%;
-    height:auto;
-    max-width:calc(100% - 40px);
-    margin:0 auto 20px auto;
-    object-fit:contain;
-    border-radius:0;
+    width:100%;height:auto;object-fit:contain;
+    max-width:calc(100% - 40px);margin:0 auto 20px auto;display:block;
   }
 
-  /* Overlay/text rails become flowing blocks */
   .s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,
   .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay{
-    position:static!important;
-    opacity:1!important;
-    pointer-events:auto;
-    margin:0;
-    padding:0;
+    position:static;opacity:1!important;pointer-events:auto;
+    width:100%;padding:0;margin:0;
   }
   .s1-rail,.s2-rail,.s4-rail,.s5-rail,
   .s9-rail,.s11-rail,.s13-rail,.s14-rail{
-    position:static!important;
-    width:auto;
-    margin:0 0 40px 0;
-    padding:0;
+    position:static;width:auto;margin:0 0 40px 0;padding:0;
   }
   .s1-text,.s2-text,.s4-text,.s5-text,
   .s9-text,.s11-text,.s13-text,.s14-text{
-    transform:none!important;
-    margin:0 0 40px 0;
-    text-align:left;
-    color:#111;
+    transform:none!important;margin:0 0 40px 0;
+    text-align:left;color:#111;
   }
 
-  /* --- Galleries (A,B,C) keep full width --- */
-  .galA-left-frame,
-  .galB-center-frame,
-  .galC-left-frame{
-    position:relative!important;
-    inset:auto!important;
-    left:0; right:0;
-    width:100%;
-    height:auto;
-    z-index:0;
-    margin:40px 0;
+  /* Galleries scale within margins */
+  .galA-left-frame,.galB-center-frame,.galC-left-frame{
+    left:20px;right:20px;
   }
-  .galA-left-frame img,
-  .galB-center-frame img,
-  .galC-left-frame img{
-    width:100%;
-    height:auto;
-    object-fit:contain;
-    display:block;
+  /* Full-bleed pinned frames unchanged */
+  .frame.s3-frame,.frame.s8-frame,.frame.s12-frame,.frame.s15-frame{
+    left:0;right:0;top:0;bottom:0;
   }
-
-  /* --- Full-bleed sections (3,8,12,15) scroll inline --- */
-  .frame.s3-frame,
-  .frame.s8-frame,
-  .frame.s12-frame,
-  .frame.s15-frame{
-    position:relative!important;
-    inset:auto!important;
-    width:100%;
-    height:auto;
-    margin:40px 0;
-    opacity:1!important;
-    z-index:0;
-  }
-  .frame.s3-frame img,
-  .frame.s8-frame img,
-  .frame.s12-frame img,
-  .frame.s15-frame img{
-    width:100%;
-    height:auto;
-    object-fit:cover;
-    display:block;
-  }
-
-  /* --- Section 15 text safe margins --- */
-  .s15-text{
-    padding:0 20px;
-    text-align:center;
-  }
+  /* Final section center text with safe padding */
+  .s15-text{padding:0 20px;}
 }
+
 
 
 
