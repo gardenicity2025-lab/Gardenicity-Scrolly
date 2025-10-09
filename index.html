@@ -332,22 +332,37 @@
     margin: 0;
     padding: 0;
     overflow-x: hidden;
-    overflow-y: auto;
     background: #eaeeec;
     font-family: "Avenir", "Helvetica", sans-serif;
   }
 
-  section {
-    position: relative;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 40px 20px;
+  /* Reset all fixed/pinned frames */
+  .frame {
+    position: relative !important;
+    width: 100% !important;
+    height: auto !important;
+    inset: unset !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    z-index: 0 !important;
+    display: block !important;
   }
 
-  /* ==== HERO (static full screen) ==== */
+  .frame img {
+    position: relative !important;
+    width: 100% !important;
+    height: auto !important;
+    object-fit: cover !important;
+    object-position: center !important;
+    display: block !important;
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+
+  /* Hero */
   .hero-fixed {
-    position: relative;
-    width: 100%;
+    position: relative !important;
     height: 100vh;
     overflow: hidden;
   }
@@ -355,11 +370,8 @@
   .hero-bg {
     position: absolute;
     inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    background-size: cover;
-    background-position: center;
+    background: url("assets/hero1gc.jpg") center/cover no-repeat;
+    opacity: 1 !important;
   }
 
   .hero-media {
@@ -375,14 +387,17 @@
   }
 
   .hero-title {
-    font-size: 40px;
-    line-height: 46px;
+    font-size: 42px;
+    line-height: 48px;
     margin-bottom: 12px;
+    opacity: 1 !important;
+    transform: none !important;
   }
 
   .hero-links {
     font-size: 18px;
     line-height: 24px;
+    opacity: 1 !important;
   }
 
   .hero-links a {
@@ -390,15 +405,21 @@
     text-decoration: none;
   }
 
-  /* ==== GENERIC TEXT SECTIONS ==== */
+  /* Stacked text sections */
+  section {
+    position: relative;
+    width: 100%;
+    padding: 40px 20px;
+    box-sizing: border-box;
+    color: #111;
+  }
+
   .s1-wrap, .s2-wrap, .s3-wrap, .s4-wrap, .s5-wrap,
   .s8-wrap, .s9-wrap, .s11-wrap, .s12-wrap,
   .s13-wrap, .s14-wrap, .s15-wrap {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    padding: 40px 20px;
-    color: #111;
   }
 
   .s1-text, .s2-text, .s4-text, .s5-text, .s9-text,
@@ -407,39 +428,33 @@
     line-height: 24px;
   }
 
-  /* ==== GALLERIES ==== */
-  .galA-left-frame, .galB-center-frame, .galC-left-frame {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    width: 100%;
-    margin-bottom: 40px;
-  }
-
+  /* Galleries (just show all images stacked) */
   .galA-left-frame img,
   .galB-center-frame img,
   .galC-left-frame img {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    opacity: 1 !important;
+    margin-bottom: 20px;
+  }
+
+  /* Full-bleed sections */
+  .s4-frame, .s8-frame, .s12-frame, .s15-frame {
+    width: 100%;
+    height: auto;
+    margin: 40px 0;
+  }
+
+  .s4-frame img, .s8-frame img, .s12-frame img, .s15-frame img {
     width: 100%;
     height: auto;
     object-fit: cover;
   }
 
-  /* ==== FULL-BLEED SECTIONS ==== */
-  .s4-frame, .s8-frame, .s12-frame, .s15-frame {
-    width: 100%;
-    height: 100vh;
-    overflow: hidden;
-  }
-
-  .s4-frame img, .s8-frame img, .s12-frame img, .s15-frame img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  /* Small footer spacing */
-  section:last-of-type {
-    padding-bottom: 80px;
+  /* Minor spacing for last section */
+  .after {
+    min-height: 60vh;
   }
 }
 
