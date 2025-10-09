@@ -328,8 +328,6 @@
 /* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
 @media (max-width:768px){
   body{margin:0;padding:0 20px;}
-
-  /* Hero stays pinned with 20px margins */
   .hero-media{top:20px;bottom:20px;left:20px;right:20px;}
   .hero-title{font-size:78px;line-height:1.05;}
   .hero-links{font-size:20px;line-height:26px;}
@@ -337,70 +335,43 @@
   /* Unpin and stack image+text sections */
   .s1-frame,.s2-frame,.s4-frame,.s5-frame,
   .s9-frame,.s11-frame,.s13-frame,.s14-frame{
-    position:relative !important;
-    width:100%;
-    height:auto;
-    display:block;
-    opacity:1 !important;
-    visibility:visible !important;
-    z-index:2 !important;
-    margin:40px auto 0 auto;
-    pointer-events:none;
+    position:static;width:100%;height:auto;
+    opacity:1!important;margin:20px auto;display:block;
   }
-
   .s1-frame img,.s2-frame img,.s4-frame img,.s5-frame img,
   .s9-frame img,.s11-frame img,.s13-frame img,.s14-frame img{
-    display:block;
-    width:100%;
-    height:auto;
-    object-fit:contain;
-    max-width:calc(100% - 40px);
-    margin:0 auto 20px auto;
-    border-radius:0;
+    width:100%;height:auto;object-fit:contain;
+    max-width:calc(100% - 40px);margin:0 auto 20px auto;display:block;
   }
 
-  /* Text rails scroll naturally */
   .s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,
   .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay{
-    position:static;
-    opacity:1 !important;
-    pointer-events:auto;
-    width:100%;
-    padding:0;
-    margin:0;
-    z-index:3 !important;
+    position:static;opacity:1!important;pointer-events:auto;
+    width:100%;padding:0;margin:0;
   }
-
   .s1-rail,.s2-rail,.s4-rail,.s5-rail,
   .s9-rail,.s11-rail,.s13-rail,.s14-rail{
-    position:static;
-    width:auto;
-    margin:0 0 40px 0;
-    padding:0;
+    position:static;width:auto;margin:0 0 40px 0;padding:0;
   }
-
   .s1-text,.s2-text,.s4-text,.s5-text,
   .s9-text,.s11-text,.s13-text,.s14-text{
-    transform:none !important;
-    margin:0 0 40px 0;
-    text-align:left;
-    color:#111;
+    transform:none!important;margin:0 0 40px 0;
+    text-align:left;color:#111;
   }
 
-  /* Galleries: keep working pinned behavior but safe margins */
+  /* Galleries scale within margins */
   .galA-left-frame,.galB-center-frame,.galC-left-frame{
-    left:20px;
-    right:20px;
+    left:20px;right:20px;
   }
-
   /* Full-bleed pinned frames unchanged */
   .frame.s3-frame,.frame.s8-frame,.frame.s12-frame,.frame.s15-frame{
     left:0;right:0;top:0;bottom:0;
   }
-
-  /* Final section centered text with safe margins */
+  /* Final section center text with safe padding */
   .s15-text{padding:0 20px;}
 }
+
+
 
 </style>
 
@@ -1039,59 +1010,5 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
   init();
 })();
 </script>
-<script>
-/* === MOBILE INLINE IMAGES PATCH === */
-(function(){
-  if (window.innerWidth <= 768) {
-    const sections = [
-      {id:'s1-wrap', img:'#s1-img'},
-      {id:'s2-wrap', img:'#s2-img'},
-      {id:'s4-wrap', img:'#s4-img'},
-      {id:'s5-wrap', img:'#s5-img'},
-      {id:'s9-wrap', img:'#s9-img'},
-      {id:'s11-wrap', img:'#s11-img'},
-      {id:'s13-wrap', img:'#s13-img'},
-      {id:'s14-wrap', img:'#s14-img'}
-    ];
-
-    sections.forEach(({id,img})=>{
-      const wrap = document.getElementById(id);
-      const src = document.querySelector(img)?.getAttribute('src');
-      if (wrap && src) {
-        const el = document.createElement('img');
-        el.src = src;
-        el.alt = '';
-        el.className = 'mobile-inline-img';
-        wrap.prepend(el);
-      }
-    });
-
-    // hide fixed frames on mobile
-    document.querySelectorAll('.frame').forEach(f=>{
-      f.style.display='none';
-    });
-
-    // inject simple fade-in style for these inline images
-    const style = document.createElement('style');
-    style.textContent = `
-      @media (max-width:768px){
-        img.mobile-inline-img{
-          width:100%;
-          height:auto;
-          max-width:calc(100% - 40px);
-          margin:0 auto 20px auto;
-          object-fit:contain;
-          display:block;
-          opacity:0;
-          animation:mobileImgIn 0.8s ease-out forwards;
-        }
-        @keyframes mobileImgIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:none;}}
-      }`;
-    document.head.appendChild(style);
-  }
-})();
-</script>
-
-
 </body>
 </html>
