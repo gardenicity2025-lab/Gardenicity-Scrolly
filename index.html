@@ -325,107 +325,186 @@
     color:#00A86B;
   }
 
-/* ---------- MOBILE VIEW (≤767px) — NYT-style scrollytelling flow ---------- */
-/* ---------- FINAL EMERGENCY MOBILE RESET (≤767px) ---------- */
+/* ---------- MOBILE VIEW (≤767px) — NYT-style narrative stack ---------- */
 @media screen and (max-width: 767px) {
 
   html, body {
-    margin: 0 !important;
-    padding: 0 !important;
-    overflow-x: hidden !important;
-    overflow-y: auto !important;
-    background: #eaeeec !important;
-    font-family: "Avenir", "Helvetica", sans-serif !important;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background: #eaeeec;
+    font-family: "Avenir", "Helvetica", sans-serif;
+    color: #111;
   }
 
-  /* --- Unfix all pinned elements --- */
-  .frame,
-  .hero-fixed,
-  [class*="-wrap"],
+  /* ==== HERO ==== */
+  .hero-fixed {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: url("assets/hero1gc.jpg") center/cover no-repeat;
+    z-index: 1;
+  }
+
+  .hero-media {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    padding: 0 20px 40px 20px;
+    z-index: 2;
+    color: #fff;
+  }
+
+  .hero-title {
+    font-size: 42px;
+    line-height: 46px;
+    margin-bottom: 10px;
+    opacity: 1;
+  }
+
+  .hero-links {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 18px;
+    line-height: 22px;
+  }
+
+  .hero-links a {
+    color: #fff;
+    text-decoration: none;
+  }
+
+  /* ==== SECTION STACKS ==== */
+  section {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 40px 20px;
+    position: relative;
+  }
+
+  /* overlays and rails become normal flow */
   [class*="-overlay"],
   [class*="-rail"],
   [class*="-text"] {
     position: relative !important;
-    inset: auto !important;
-    top: auto !important;
-    bottom: auto !important;
-    left: auto !important;
-    right: auto !important;
-    display: block !important;
+    inset: unset !important;
     width: 100% !important;
-    height: auto !important;
-    opacity: 1 !important;
     transform: none !important;
-    filter: none !important;
-    pointer-events: auto !important;
-    z-index: auto !important;
-  }
-
-  /* --- Make sure every image shows --- */
-  img {
-    display: block !important;
-    width: 100% !important;
-    height: auto !important;
-    object-fit: cover !important;
-    object-position: center !important;
     opacity: 1 !important;
-    transform: none !important;
-  }
-
-  /* --- Force visible hero --- */
-  .hero-fixed {
-    background: none !important;
-    height: auto !important;
-  }
-
-  .hero-bg {
-    position: relative !important;
-    width: 100% !important;
-    height: auto !important;
-    background: url("assets/hero1gc.jpg") center/cover no-repeat !important;
-  }
-
-  .hero-media {
-    position: relative !important;
-    padding: 40px 20px !important;
     color: #111 !important;
     text-align: left !important;
   }
 
-  .hero-title {
-    font-size: 36px !important;
-    line-height: 42px !important;
-    margin-bottom: 12px !important;
-    color: #111 !important;
-    opacity: 1 !important;
+  /* ensure each frame shows image before its text */
+  .frame {
+    position: relative !important;
+    width: 100% !important;
+    height: auto !important;
+    margin-bottom: 20px !important;
   }
 
-  .hero-links a {
-    color: #006644 !important;
-    text-decoration: none !important;
-  }
-
-  /* --- Basic flow for all sections --- */
-  section {
+  .frame img {
     display: block !important;
     width: 100% !important;
-    box-sizing: border-box !important;
-    padding: 40px 20px !important;
-    background: transparent !important;
-    color: #111 !important;
+    height: auto !important;
+    object-fit: cover !important;
   }
 
+  /* ==== GALLERIES ==== */
+  .galA-left-frame,
+  .galB-center-frame,
+  .galC-left-frame {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 40px;
+  }
+
+  .galA-left-frame img,
+  .galB-center-frame img,
+  .galC-left-frame img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* ==== FULL-BLEED SECTIONS ==== */
+  .s4-frame,
+  .s8-frame,
+  .s12-frame,
+  .s15-frame {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    margin: 0;
+  }
+
+  .s4-frame img,
+  .s8-frame img,
+  .s12-frame img,
+  .s15-frame img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* ==== FINAL SECTION (15) TEXT OVER IMAGE ==== */
+  .s15-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.3);
+  }
+
+  .s15-rail {
+    text-align: center;
+    color: #fff;
+    padding: 40px 20px;
+  }
+
+  .s15-rail a {
+    color: #fff;
+    text-decoration: none;
+  }
+
+  /* ==== TYPOGRAPHY ==== */
   p {
-    font-size: 16px !important;
-    line-height: 24px !important;
-    margin: 0 0 16px 0 !important;
-    color: #111 !important;
+    font-size: 16px;
+    line-height: 24px;
+    margin: 0 0 16px 0;
   }
 
+  h1, h2, h3, h4 {
+    color: #111;
+  }
+
+  /* small buffer at end */
   .after {
-    min-height: 60vh !important;
+    min-height: 40vh;
   }
 }
+
 
 </style>
 
