@@ -326,137 +326,88 @@
   }
 
 /* ---------- MOBILE VIEW (≤767px) — NYT-style scrollytelling flow ---------- */
-@media (max-width: 767px) {
-
-  html, body {
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
-    background: #eaeeec;
-    font-family: "Avenir", "Helvetica", sans-serif;
-  }
-
-  /* Reset all fixed/pinned frames */
-  .frame {
-    position: relative !important;
-    width: 100% !important;
-    height: auto !important;
-    inset: unset !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
-    z-index: 0 !important;
-    display: block !important;
-  }
-
-  .frame img {
-    position: relative !important;
-    width: 100% !important;
-    height: auto !important;
-    object-fit: cover !important;
-    object-position: center !important;
-    display: block !important;
-    opacity: 1 !important;
-    transform: none !important;
-    filter: none !important;
-  }
-
-  /* Hero */
-  .hero-fixed {
-    position: relative !important;
-    height: 100vh;
-    overflow: hidden;
-  }
-
-  .hero-bg {
-    position: absolute;
-    inset: 0;
-    background: url("assets/hero1gc.jpg") center/cover no-repeat;
-    opacity: 1 !important;
-  }
-
-  .hero-media {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    align-items: flex-start;
-    padding: 0 20px 40px 20px;
-    color: #fff;
-    z-index: 2;
-  }
-
-  .hero-title {
-    font-size: 42px;
-    line-height: 48px;
-    margin-bottom: 12px;
-    opacity: 1 !important;
-    transform: none !important;
-  }
-
-  .hero-links {
-    font-size: 18px;
-    line-height: 24px;
-    opacity: 1 !important;
-  }
-
-  .hero-links a {
-    color: #fff;
-    text-decoration: none;
-  }
-
-  /* Stacked text sections */
-  section {
-    position: relative;
-    width: 100%;
-    padding: 40px 20px;
-    box-sizing: border-box;
-    color: #111;
-  }
-
+/* ---------- MOBILE VIEW (≤767px) — forced stacked fallback ---------- */
+@media screen and (max-width: 767px) {
+  /* hard reset everything fixed or hidden */
+  .frame,
+  .hero-fixed,
+  .hero-bg,
+  .hero-media,
   .s1-wrap, .s2-wrap, .s3-wrap, .s4-wrap, .s5-wrap,
   .s8-wrap, .s9-wrap, .s11-wrap, .s12-wrap,
   .s13-wrap, .s14-wrap, .s15-wrap {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+    all: unset !important;
+    display: block !important;
+    width: 100% !important;
+    position: relative !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    z-index: auto !important;
   }
 
-  .s1-text, .s2-text, .s4-text, .s5-text, .s9-text,
-  .s11-text, .s13-text, .s14-text, .s15-text {
-    font-size: 16px;
-    line-height: 24px;
+  body {
+    background: #eaeeec !important;
+    color: #111 !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    font-family: "Avenir", "Helvetica", sans-serif !important;
   }
 
-  /* Galleries (just show all images stacked) */
-  .galA-left-frame img,
-  .galB-center-frame img,
-  .galC-left-frame img {
+  .frame img {
     display: block !important;
     width: 100% !important;
     height: auto !important;
+    object-fit: cover !important;
     opacity: 1 !important;
-    margin-bottom: 20px;
+    transform: none !important;
   }
 
-  /* Full-bleed sections */
-  .s4-frame, .s8-frame, .s12-frame, .s15-frame {
-    width: 100%;
-    height: auto;
-    margin: 40px 0;
+  .hero-fixed {
+    height: 100vh !important;
+    overflow: hidden !important;
   }
 
-  .s4-frame img, .s8-frame img, .s12-frame img, .s15-frame img {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
+  .hero-bg {
+    background: url("assets/hero1gc.jpg") center/cover no-repeat !important;
   }
 
-  /* Minor spacing for last section */
+  .hero-media {
+    position: absolute !important;
+    bottom: 40px !important;
+    left: 20px !important;
+    right: 20px !important;
+    color: #fff !important;
+  }
+
+  .hero-title {
+    font-size: 40px !important;
+    line-height: 44px !important;
+    margin-bottom: 12px !important;
+    opacity: 1 !important;
+  }
+
+  .hero-links {
+    font-size: 18px !important;
+    line-height: 24px !important;
+    opacity: 1 !important;
+  }
+
+  section {
+    padding: 40px 20px !important;
+  }
+
+  p {
+    color: #111 !important;
+    font-size: 16px !important;
+    line-height: 24px !important;
+  }
+
+  /* give space at end */
   .after {
-    min-height: 60vh;
+    min-height: 60vh !important;
   }
 }
+
 
 </style>
 
