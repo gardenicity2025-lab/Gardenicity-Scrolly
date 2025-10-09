@@ -405,6 +405,7 @@
 </style>
 
 </head>
+
 <body>
 
 <!-- HERO -->
@@ -1038,5 +1039,59 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
   init();
 })();
 </script>
+<script>
+/* === MOBILE INLINE IMAGES PATCH === */
+(function(){
+  if (window.innerWidth <= 768) {
+    const sections = [
+      {id:'s1-wrap', img:'#s1-img'},
+      {id:'s2-wrap', img:'#s2-img'},
+      {id:'s4-wrap', img:'#s4-img'},
+      {id:'s5-wrap', img:'#s5-img'},
+      {id:'s9-wrap', img:'#s9-img'},
+      {id:'s11-wrap', img:'#s11-img'},
+      {id:'s13-wrap', img:'#s13-img'},
+      {id:'s14-wrap', img:'#s14-img'}
+    ];
+
+    sections.forEach(({id,img})=>{
+      const wrap = document.getElementById(id);
+      const src = document.querySelector(img)?.getAttribute('src');
+      if (wrap && src) {
+        const el = document.createElement('img');
+        el.src = src;
+        el.alt = '';
+        el.className = 'mobile-inline-img';
+        wrap.prepend(el);
+      }
+    });
+
+    // hide fixed frames on mobile
+    document.querySelectorAll('.frame').forEach(f=>{
+      f.style.display='none';
+    });
+
+    // inject simple fade-in style for these inline images
+    const style = document.createElement('style');
+    style.textContent = `
+      @media (max-width:768px){
+        img.mobile-inline-img{
+          width:100%;
+          height:auto;
+          max-width:calc(100% - 40px);
+          margin:0 auto 20px auto;
+          object-fit:contain;
+          display:block;
+          opacity:0;
+          animation:mobileImgIn 0.8s ease-out forwards;
+        }
+        @keyframes mobileImgIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:none;}}
+      }`;
+    document.head.appendChild(style);
+  }
+})();
+</script>
+
+
 </body>
 </html>
