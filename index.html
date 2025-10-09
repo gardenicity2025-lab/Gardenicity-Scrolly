@@ -326,185 +326,172 @@
   }
 
 /* ---------- MOBILE VIEW (≤767px) — NYT-style narrative stack ---------- */
+/* ---------- MOBILE (<767px): NYT-style one-column + pinned hero/galleries ---------- */
 @media screen and (max-width: 767px) {
 
   html, body {
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
-    overflow-y: auto;
-    background: #eaeeec;
-    font-family: "Avenir", "Helvetica", sans-serif;
-    color: #111;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    background: #eaeeec !important;
+    font-family: "Avenir", "Helvetica", sans-serif !important;
+    color: #111 !important;
   }
 
-  /* ==== HERO ==== */
-  .hero-fixed {
-    position: relative;
-    width: 100%;
-    height: 100vh;
-    overflow: hidden;
-  }
-
-  .hero-bg {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    background: url("assets/hero1gc.jpg") center/cover no-repeat;
-    z-index: 1;
-  }
-
-  .hero-media {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    align-items: flex-start;
-    padding: 0 20px 40px 20px;
-    z-index: 2;
-    color: #fff;
-  }
-
-  .hero-title {
-    font-size: 42px;
-    line-height: 46px;
-    margin-bottom: 10px;
-    opacity: 1;
-  }
-
-  .hero-links {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    font-size: 18px;
-    line-height: 22px;
-  }
-
-  .hero-links a {
-    color: #fff;
-    text-decoration: none;
-  }
-
-  /* ==== SECTION STACKS ==== */
-  section {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 40px 20px;
-    position: relative;
-  }
-
-  /* overlays and rails become normal flow */
+  /* Reset all pinning except the hero / galleries / full-bleeds */
+  section,
+  [class*="-wrap"],
   [class*="-overlay"],
   [class*="-rail"],
   [class*="-text"] {
     position: relative !important;
     inset: unset !important;
     width: 100% !important;
+    height: auto !important;
     transform: none !important;
     opacity: 1 !important;
-    color: #111 !important;
+    pointer-events: auto !important;
+    z-index: auto !important;
+  }
+
+  /* ==== HERO (full-bleed pinned) ==== */
+  .hero-fixed {
+    position: sticky !important;
+    top: 0 !important;
+    width: 100% !important;
+    height: 100vh !important;
+    overflow: hidden !important;
+    z-index: 2 !important;
+  }
+
+  .hero-bg {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    background-size: cover !important;
+    background-position: center !important;
+    z-index: 1 !important;
+  }
+
+  .hero-media {
+    position: absolute !important;
+    bottom: 40px !important;
+    left: 20px !important;
+    right: 20px !important;
+    z-index: 3 !important;
+    color: #fff !important;
+  }
+
+  .hero-title {
+    font-size: 42px !important;
+    line-height: 48px !important;
+    margin-bottom: 12px !important;
     text-align: left !important;
   }
 
-  /* ensure each frame shows image before its text */
-  .frame {
-    position: relative !important;
-    width: 100% !important;
-    height: auto !important;
-    margin-bottom: 20px !important;
+  .hero-links {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+    font-size: 18px !important;
+    line-height: 22px !important;
+  }
+
+  .hero-links a { color: #fff !important; text-decoration: none !important; transition: color .2s ease !important; }
+  .hero-links a:hover, .hero-links a:focus-visible { color: #00A86B !important; }
+
+  /* ==== SIMPLE IMAGE + TEXT STACKS ==== */
+  .s1-wrap, .s2-wrap, .s5-wrap, .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 40px 20px !important;
+    box-sizing: border-box !important;
   }
 
   .frame img {
-    display: block !important;
     width: 100% !important;
     height: auto !important;
     object-fit: cover !important;
+    margin-bottom: 20px !important;
+    display: block !important;
   }
 
-  /* ==== GALLERIES ==== */
-  .galA-left-frame,
-  .galB-center-frame,
-  .galC-left-frame {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    margin-bottom: 40px;
+  .s1-text, .s2-text, .s5-text, .s9-text, .s11-text, .s13-text, .s14-text {
+    font-size: 16px !important;
+    line-height: 24px !important;
+    text-align: left !important;
+    color: #111 !important;
+  }
+
+  /* ==== GALLERIES (pinned, cross-fade simplified) ==== */
+  .galA-left-frame, .galB-center-frame, .galC-left-frame {
+    position: sticky !important;
+    top: 0 !important;
+    width: 100% !important;
+    height: 100vh !important;
+    overflow: hidden !important;
+    z-index: 1 !important;
   }
 
   .galA-left-frame img,
   .galB-center-frame img,
   .galC-left-frame img {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-    display: block;
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    opacity: 0 !important;
+    transition: opacity 1.5s ease-in-out !important;
   }
 
-  /* ==== FULL-BLEED SECTIONS ==== */
-  .s4-frame,
-  .s8-frame,
-  .s12-frame,
-  .s15-frame {
-    position: relative;
-    width: 100%;
-    height: 100vh;
-    overflow: hidden;
-    margin: 0;
+  .galA-left-frame img.active,
+  .galB-center-frame img.active,
+  .galC-left-frame img.active {
+    opacity: 1 !important;
   }
 
-  .s4-frame img,
-  .s8-frame img,
-  .s12-frame img,
-  .s15-frame img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  /* ==== FULL-BLEED SECTIONS (4, 8, 12, 15) ==== */
+  .s4-frame, .s8-frame, .s12-frame, .s15-frame {
+    position: sticky !important;
+    top: 0 !important;
+    width: 100% !important;
+    height: 100vh !important;
+    overflow: hidden !important;
+    z-index: 1 !important;
   }
 
-  /* ==== FINAL SECTION (15) TEXT OVER IMAGE ==== */
+  .s4-frame img, .s8-frame img, .s12-frame img, .s15-frame img {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+  }
+
+  /* ==== FINAL (S15) TEXT OVERLAY ==== */
   .s15-overlay {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: rgba(0, 0, 0, 0.3);
+    position: absolute !important;
+    inset: 0 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    background: rgba(0,0,0,0.25) !important;
+    z-index: 2 !important;
   }
 
   .s15-rail {
-    text-align: center;
-    color: #fff;
-    padding: 40px 20px;
+    color: #fff !important;
+    text-align: center !important;
+    padding: 40px 20px !important;
   }
 
-  .s15-rail a {
-    color: #fff;
-    text-decoration: none;
-  }
-
-  /* ==== TYPOGRAPHY ==== */
-  p {
-    font-size: 16px;
-    line-height: 24px;
-    margin: 0 0 16px 0;
-  }
-
-  h1, h2, h3, h4 {
-    color: #111;
-  }
-
-  /* small buffer at end */
-  .after {
-    min-height: 40vh;
-  }
+  .s15-rail a { color: #fff !important; text-decoration: none !important; transition: color .2s ease !important; }
+  .s15-rail a:hover, .s15-rail a:focus-visible { color: #00A86B !important; }
 }
-
 
 </style>
 
@@ -1139,8 +1126,40 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
     addEventListener('resize',()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15(); update(); });
     addEventListener('scroll', update, {passive:true});
   }
-  init();
+init();
 })();
+</script>  <!-- ✅ this closes your first big script correctly -->
+
+<script>
+  // ---------- MOBILE HANDLER ----------
+  if (window.innerWidth < 768) {
+
+    // Disable heavy desktop ScrollTriggers
+    if (typeof ScrollTrigger !== "undefined") {
+      ScrollTrigger.getAll().forEach(st => st.kill());
+    }
+
+    // Lightweight cross-fade for gallery frames
+    ["galA-left-frame", "galB-center-frame", "galC-left-frame"].forEach(cls => {
+      const gallery = document.querySelector(`.${cls}`);
+      if (!gallery) return;
+      const imgs = gallery.querySelectorAll("img");
+      let idx = 0;
+      if (imgs.length > 0) {
+        imgs[0].classList.add("active");
+        setInterval(() => {
+          imgs[idx].classList.remove("active");
+          idx = (idx + 1) % imgs.length;
+          imgs[idx].classList.add("active");
+        }, 3500);
+      }
+    });
+  }
 </script>
+
+</body>
+</html>
+
+
 </body>
 </html>
