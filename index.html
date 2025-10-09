@@ -333,64 +333,54 @@
     padding: 0;
     overflow-x: hidden;
     overflow-y: auto;
-    min-height: 100%;
     background: #eaeeec;
+    font-family: "Avenir", "Helvetica", sans-serif;
   }
 
-  /* ==== HERO (pinned + fade behavior) ==== */
+  section {
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 40px 20px;
+  }
+
+  /* ==== HERO (static full screen) ==== */
   .hero-fixed {
-    position: fixed;
-    inset: 0;
-    z-index: 3;
+    position: relative;
     width: 100%;
     height: 100vh;
     overflow: hidden;
-    opacity: var(--heroAlpha);
-    filter: blur(calc(var(--heroBlur) * 10px));
-    will-change: opacity, filter;
-    background: #000;
   }
 
   .hero-bg {
     position: absolute;
     inset: 0;
-    background: url("assets/hero1gc.jpg") center/cover no-repeat;
-    opacity: 0;
-    animation: heroInMobile 1.2s ease-out forwards;
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  @keyframes heroInMobile {
-    from { opacity: 0; }
-    to   { opacity: 1; }
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background-size: cover;
+    background-position: center;
   }
 
   .hero-media {
     position: absolute;
     inset: 0;
     display: flex;
-    align-items: flex-end;
-    justify-content: flex-start;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
     padding: 0 20px 40px 20px;
+    color: #fff;
     z-index: 2;
-    opacity: var(--titleOpacity);
-    transform: translateY(var(--shift));
-    will-change: opacity, transform;
   }
 
   .hero-title {
-    margin: 0 0 12px 0;
-    font-size: 42px;
-    line-height: 48px;
-    color: #fff;
-    font-weight: 400;
+    font-size: 40px;
+    line-height: 46px;
+    margin-bottom: 12px;
   }
 
   .hero-links {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
     font-size: 18px;
     line-height: 24px;
   }
@@ -398,83 +388,32 @@
   .hero-links a {
     color: #fff;
     text-decoration: none;
-    transition: color .2s ease;
   }
 
-  .hero-links a:hover,
-  .hero-links a:focus-visible {
-    color: #00A86B;
-  }
-
-  /* ==== SCROLL DRIVERS ==== */
-  .driver {
-    height: 220vh; /* create vertical scroll area for hero fade */
-  }
-
-  section.s1-wrap,
-  section.s2-wrap,
-  section.galA-left-wrap,
-  section.s3-wrap,
-  section.s4-wrap,
-  section.s5-wrap,
-  section.galB-center-wrap,
-  section.s8-wrap,
-  section.s9-wrap,
-  section.galC-left-wrap,
-  section.s11-wrap,
-  section.s12-wrap,
-  section.s13-wrap,
-  section.s14-wrap,
-  section.s15-wrap {
-    position: relative;
-    width: 100%;
-    min-height: 100vh;
-    box-sizing: border-box;
-    background: #eaeeec;
-  }
-
-  /* ====== STACKED TEXT SECTIONS ====== */
-  .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
-  .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay, .s15-overlay {
-    position: relative;
-    inset: unset;
-    opacity: 1 !important;
-    pointer-events: auto;
-  }
-
-  .s1-rail, .s2-rail, .s4-rail, .s5-rail,
-  .s9-rail, .s11-rail, .s13-rail, .s14-rail {
-    position: relative;
-    width: 100%;
-    left: unset;
-    right: unset;
-    transform: none;
-    overflow: visible;
-  }
-
-  .s1-text, .s2-text, .s4-text, .s5-text,
-  .s9-text, .s11-text, .s13-text, .s14-text {
-    transform: none !important;
+  /* ==== GENERIC TEXT SECTIONS ==== */
+  .s1-wrap, .s2-wrap, .s3-wrap, .s4-wrap, .s5-wrap,
+  .s8-wrap, .s9-wrap, .s11-wrap, .s12-wrap,
+  .s13-wrap, .s14-wrap, .s15-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 40px 20px;
     color: #111;
-    text-align: left;
+  }
+
+  .s1-text, .s2-text, .s4-text, .s5-text, .s9-text,
+  .s11-text, .s13-text, .s14-text, .s15-text {
     font-size: 16px;
     line-height: 24px;
-    padding: 40px 20px;
-  }
-
-  .s1-text p, .s2-text p, .s4-text p, .s5-text p,
-  .s9-text p, .s11-text p, .s13-text p, .s14-text p {
-    margin: 0 0 18px 0;
   }
 
   /* ==== GALLERIES ==== */
   .galA-left-frame, .galB-center-frame, .galC-left-frame {
-    position: relative;
-    width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    margin: 0 0 40px 0;
+    gap: 20px;
+    width: 100%;
+    margin-bottom: 40px;
   }
 
   .galA-left-frame img,
@@ -483,59 +422,24 @@
     width: 100%;
     height: auto;
     object-fit: cover;
-    opacity: 1 !important;
-    margin: 0 0 16px 0;
   }
 
   /* ==== FULL-BLEED SECTIONS ==== */
   .s4-frame, .s8-frame, .s12-frame, .s15-frame {
-    position: relative;
     width: 100%;
     height: 100vh;
     overflow: hidden;
-    margin: 0;
   }
 
   .s4-frame img, .s8-frame img, .s12-frame img, .s15-frame img {
-    position: absolute;
-    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
 
-  /* ==== FINAL SECTION (15) TEXT ==== */
-  .s15-overlay {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: rgba(0,0,0,0.25);
-    pointer-events: auto;
-  }
-
-  .s15-rail {
-    text-align: center;
-    padding: 40px 20px;
-    color: #fff;
-  }
-
-  .s15-rail a {
-    color: #fff;
-    text-decoration: none;
-    transition: color .2s ease;
-  }
-
-  .s15-rail a:hover,
-  .s15-rail a:focus-visible {
-    color: #00A86B;
-  }
-
-  /* ==== POST-HERO SPACING ==== */
-  section {
-    padding-bottom: 40px;
+  /* Small footer spacing */
+  section:last-of-type {
+    padding-bottom: 80px;
   }
 }
 
