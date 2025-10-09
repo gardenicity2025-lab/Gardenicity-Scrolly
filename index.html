@@ -332,6 +332,8 @@
     margin: 0;
     padding: 0;
     overflow-x: hidden;
+    overflow-y: auto;
+    min-height: 100%;
     background: #eaeeec;
   }
 
@@ -349,16 +351,9 @@
     background: #000;
   }
 
-  /* Give space below hero to enable scroll-triggered animation */
-  .driver {
-    height: 200vh; /* enables scroll under pinned hero */
-  }
-
   .hero-bg {
     position: absolute;
     inset: 0;
-    width: 100%;
-    height: 100%;
     background: url("assets/hero1gc.jpg") center/cover no-repeat;
     opacity: 0;
     animation: heroInMobile 1.2s ease-out forwards;
@@ -379,8 +374,6 @@
     justify-content: flex-start;
     padding: 0 20px 40px 20px;
     z-index: 2;
-
-    /* Driven dynamically by JS scroll progress */
     opacity: var(--titleOpacity);
     transform: translateY(var(--shift));
     will-change: opacity, transform;
@@ -392,7 +385,6 @@
     line-height: 48px;
     color: #fff;
     font-weight: 400;
-    text-align: left;
   }
 
   .hero-links {
@@ -414,27 +406,44 @@
     color: #00A86B;
   }
 
-  /* ==== STACKED TEXT + IMAGE SECTIONS ==== */
-  .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap, .s9-wrap,
-  .s11-wrap, .s13-wrap, .s14-wrap {
-    position: relative;
-    width: 100%;
-    padding: 40px 20px;
-    box-sizing: border-box;
-    min-height: 100vh;
+  /* ==== SCROLL DRIVERS ==== */
+  .driver {
+    height: 220vh; /* create vertical scroll area for hero fade */
   }
 
+  section.s1-wrap,
+  section.s2-wrap,
+  section.galA-left-wrap,
+  section.s3-wrap,
+  section.s4-wrap,
+  section.s5-wrap,
+  section.galB-center-wrap,
+  section.s8-wrap,
+  section.s9-wrap,
+  section.galC-left-wrap,
+  section.s11-wrap,
+  section.s12-wrap,
+  section.s13-wrap,
+  section.s14-wrap,
+  section.s15-wrap {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    box-sizing: border-box;
+    background: #eaeeec;
+  }
+
+  /* ====== STACKED TEXT SECTIONS ====== */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
-  .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay,
-  .s15-overlay {
+  .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay, .s15-overlay {
     position: relative;
     inset: unset;
     opacity: 1 !important;
     pointer-events: auto;
   }
 
-  .s1-rail, .s2-rail, .s4-rail, .s5-rail, .s9-rail,
-  .s11-rail, .s13-rail, .s14-rail, .s15-rail {
+  .s1-rail, .s2-rail, .s4-rail, .s5-rail,
+  .s9-rail, .s11-rail, .s13-rail, .s14-rail {
     position: relative;
     width: 100%;
     left: unset;
@@ -443,18 +452,18 @@
     overflow: visible;
   }
 
-  .s1-text, .s2-text, .s4-text, .s5-text, .s9-text,
-  .s11-text, .s13-text, .s14-text, .s15-text {
+  .s1-text, .s2-text, .s4-text, .s5-text,
+  .s9-text, .s11-text, .s13-text, .s14-text {
     transform: none !important;
     color: #111;
     text-align: left;
     font-size: 16px;
     line-height: 24px;
+    padding: 40px 20px;
   }
 
   .s1-text p, .s2-text p, .s4-text p, .s5-text p,
-  .s9-text p, .s11-text p, .s13-text p, .s14-text p,
-  .s15-text p {
+  .s9-text p, .s11-text p, .s13-text p, .s14-text p {
     margin: 0 0 18px 0;
   }
 
@@ -478,7 +487,7 @@
     margin: 0 0 16px 0;
   }
 
-  /* ==== FULL-BLEED SECTIONS (4, 8, 12, 15) ==== */
+  /* ==== FULL-BLEED SECTIONS ==== */
   .s4-frame, .s8-frame, .s12-frame, .s15-frame {
     position: relative;
     width: 100%;
@@ -495,7 +504,7 @@
     object-fit: cover;
   }
 
-  /* ==== FINAL SECTION (15) TEXT OVER IMAGE ==== */
+  /* ==== FINAL SECTION (15) TEXT ==== */
   .s15-overlay {
     position: absolute;
     inset: 0;
@@ -524,42 +533,11 @@
     color: #00A86B;
   }
 
-  /* ===== FIX: Restore scroll flow beneath fixed hero ===== */
-  section.s1-wrap,
-  section.s2-wrap,
-  section.galA-left-wrap,
-  section.s3-wrap,
-  section.s4-wrap,
-  section.s5-wrap,
-  section.galB-center-wrap,
-  section.s8-wrap,
-  section.s9-wrap,
-  section.galC-left-wrap,
-  section.s11-wrap,
-  section.s12-wrap,
-  section.s13-wrap,
-  section.s14-wrap,
-  section.s15-wrap {
-    position: relative;
-    width: 100%;
-    min-height: 100vh;
-    box-sizing: border-box;
-    background: #eaeeec;
-  }
-
-  /* ensure overlays don’t block scroll */
-  .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
-  .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay, .s15-overlay {
-    pointer-events: none;
-  }
-
-  /* Small padding for post-hero flow */
+  /* ==== POST-HERO SPACING ==== */
   section {
     padding-bottom: 40px;
   }
-
 }
-
 
 </style>
 
