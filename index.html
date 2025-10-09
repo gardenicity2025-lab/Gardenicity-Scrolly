@@ -326,6 +326,7 @@
   }
 
 /* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
+/* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
 @media (max-width:768px){
 
   html,body{
@@ -333,13 +334,12 @@
     overflow-x:hidden;
   }
 
-  /* general reset for mobile spacing */
   section{
     margin:0;
     padding:0;
   }
 
-  /* Hero stays pinned one viewport tall */
+  /* Hero stays pinned only at start */
   .hero-fixed{
     position:fixed;
     inset:0;
@@ -359,15 +359,16 @@
     line-height:24px;
   }
 
-  /* Drivers: shorter scroll length for smoother mobile pacing */
+  /* Make all drivers scroll normally */
   .s1-wrap, .s2-wrap, .galA-left-wrap, .s3-wrap, .s4-wrap, .s5-wrap,
   .galB-center-wrap, .s8-wrap, .s9-wrap, .galC-left-wrap, .s11-wrap, .s12-wrap,
   .s13-wrap, .s14-wrap, .s15-wrap{
+    position:relative;
     height:auto;
-    min-height:100vh;
+    min-height:auto;
   }
 
-  /* Text rails stack vertically */
+  /* Text rails stack naturally */
   .s1-rail, .s2-rail, .s4-rail, .s5-rail, .s9-rail, .s11-rail, .s13-rail, .s14-rail{
     position:relative;
     width:auto;
@@ -383,13 +384,13 @@
     padding:0 20px;
   }
 
-  /* Final section centered text with safe margins */
+  /* Section 15 text centered with side padding */
   .s15-text{
     padding:0 20px;
     text-align:center;
   }
 
-  /* --- FIX: show section images + correct stacking on mobile --- */
+  /* All section images scroll inline */
   figure.frame.s1-frame,
   figure.frame.s2-frame,
   figure.frame.s4-frame,
@@ -397,7 +398,11 @@
   figure.frame.s9-frame,
   figure.frame.s11-frame,
   figure.frame.s13-frame,
-  figure.frame.s14-frame{
+  figure.frame.s14-frame,
+  figure.frame.s3-frame,
+  figure.frame.s8-frame,
+  figure.frame.s12-frame,
+  figure.frame.s15-frame{
     position:relative !important;
     opacity:1 !important;
     z-index:auto !important;
@@ -405,57 +410,45 @@
     top:auto; bottom:auto; left:auto; right:auto;
     width:100%;
     height:auto;
-    margin:0 auto;
+    margin:0 auto 24px auto;
   }
-  figure.frame.s1-frame img,
-  figure.frame.s2-frame img,
-  figure.frame.s4-frame img,
-  figure.frame.s5-frame img,
-  figure.frame.s9-frame img,
-  figure.frame.s11-frame img,
-  figure.frame.s13-frame img,
-  figure.frame.s14-frame img{
+
+  figure.frame img{
     display:block;
     width:100%;
     height:auto;
     object-fit:contain;
-    margin:0 auto 24px auto;
+    margin:0 auto;
   }
 
-  /* let overlays scroll normally */
+  /* Overlays scroll normally */
   .s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,
-  .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay{
+  .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay,.s15-overlay{
     position:relative !important;
     z-index:auto !important;
     opacity:1 !important;
   }
 
-  /* galleries remain pinned behind text */
+  /* Galleries scroll like regular content (not pinned) */
   .galA-left-frame,.galB-center-frame,.galC-left-frame{
-    position:fixed;
-    top:0; left:0; right:0; bottom:0;
-    z-index:0 !important;
+    position:relative !important;
+    top:auto; left:auto; right:auto; bottom:auto;
+    z-index:auto !important;
+    margin:0 auto 24px auto;
   }
 
-  /* full-bleed sections fill the screen */
-  .s3-frame,.s8-frame,.s12-frame,.s15-frame{
-    position:fixed;
-    top:0; left:0; right:0; bottom:0;
-    height:100vh;
-    object-fit:cover;
-  }
-
-  /* spacing between stacked sections */
-  .s1-wrap img, .s2-wrap img, .s4-wrap img, .s5-wrap img,
-  .s9-wrap img, .s11-wrap img, .s13-wrap img, .s14-wrap img{
-    margin-bottom:20px;
-  }
-
-  /* readable text size on small devices */
+  /* Readable text sizing */
   .s1-text p, .s2-text p, .s4-text p, .s5-text p,
   .s9-text p, .s11-text p, .s13-text p, .s14-text p, .s15-text p{
     font-size:18px;
     line-height:26px;
+  }
+
+  /* Breathing space between stacked content */
+  .s1-wrap img, .s2-wrap img, .s4-wrap img, .s5-wrap img,
+  .s9-wrap img, .s11-wrap img, .s13-wrap img, .s14-wrap img,
+  .s3-frame img, .s8-frame img, .s12-frame img, .s15-frame img{
+    margin-bottom:20px;
   }
 }
 
