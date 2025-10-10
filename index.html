@@ -1,4 +1,3 @@
-October 10, 2025-Responsive test2
 <!doctype html>
 <html lang="en" data-baseline="stable-2025-10-01__rails-460px__galC-6-only">
 <head>
@@ -328,24 +327,26 @@ October 10, 2025-Responsive test2
 /* ===== Hide mobile-only Section 1 image on desktop ===== */
 .s1-mobile-frame { display:none; }
 
-
 /* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
 @media screen and (max-width:768px) {
+
   body{margin:0;padding:0 20px;}
   .hero-media{top:20px;bottom:20px;left:20px;right:20px;}
   .hero-title{font-size:78px;line-height:1.05;}
   .hero-links{font-size:20px;line-height:26px;}
 
-  /* --- Section 1 mobile viewport image --- */
+  /* --- Section 1: pinned mobile viewport image --- */
   .s1-mobile-frame{
-    display:block;
-    position:relative;
-    width:100%;
-    height:100vh;            /* full viewport */
-    margin:0 auto 40px auto;
+    display:flex;
+    position:fixed;           /* stays pinned in viewport */
+    inset:0;
+    align-items:center;
+    justify-content:center;
+    background:#eaeeec;
     opacity:var(--s1ImgOpacity);
-    transition:opacity 0.6s ease;
+    transition:opacity 0.8s ease;
     z-index:1;
+    pointer-events:none;      /* no interference with scroll */
   }
   .s1-mobile-frame img{
     width:100%;
@@ -353,8 +354,23 @@ October 10, 2025-Responsive test2
     object-fit:contain;
     display:block;
   }
-  /* Hide fixed S1 frame only on mobile */
+
+  /* Hide fixed desktop frame on mobile */
   figure.s1-frame{display:none;}
+
+  /* --- Section 1 text scrolls after fade complete --- */
+  .s1-overlay{
+    position:relative;
+    margin-top:100vh;   /* start text after full image viewport */
+    z-index:2;
+    opacity:1!important;
+    pointer-events:auto;
+  }
+
+  /* Hide mobile S1 image until hero fully faded */
+  body:not(.hero-ended) .s1-mobile-frame {
+    opacity:0 !important;
+  }
 
   /* --- Unpin and stack other image+text sections --- */
   .s2-frame,.s4-frame,.s5-frame,
@@ -834,6 +850,10 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
     root.style.setProperty('--s15Overlay',(s15>0 && s15<1)?1:0);
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
+// --- Mobile gate for pinned Section 1 image ---
+// When hero fully faded, reveal Section 1 pinned image (mobile only)
+if (s1 >= 0.99) document.body.classList.add('hero-ended');
+else document.body.classList.remove('hero-ended');
 
     /* Text sweeps (consistent curves) */
     const E=0.8;
