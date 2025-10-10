@@ -338,15 +338,15 @@
   /* --- Section 1: pinned mobile viewport image --- */
   .s1-mobile-frame{
     display:flex;
-    position:fixed;           /* stays pinned in viewport */
+    position:fixed;
     inset:0;
     align-items:center;
     justify-content:center;
     background:#eaeeec;
-    opacity:var(--s1ImgOpacity);
+    opacity:var(--s1ImgOpacity,1);
     transition:opacity 0.8s ease;
     z-index:1;
-    pointer-events:none;      /* no interference with scroll */
+    pointer-events:none;
   }
   .s1-mobile-frame img{
     width:100%;
@@ -354,25 +354,23 @@
     object-fit:contain;
     display:block;
   }
+  figure.s1-frame{display:none;} /* hide desktop fixed frame */
 
-  /* Hide fixed desktop frame on mobile */
-  figure.s1-frame{display:none;}
-
-  /* --- Section 1 text scrolls after fade complete --- */
+  /* --- Section 1 text scrolls only after image fade-out --- */
   .s1-overlay{
     position:relative;
-    margin-top:100vh;   /* start text after full image viewport */
+    margin-top:calc(100vh + 20vh * var(--s1ImgOpacity)); /* pushes text below while image visible */
     z-index:2;
     opacity:1!important;
     pointer-events:auto;
   }
 
-  /* Hide mobile S1 image until hero fully faded */
+  /* Hide S1 image until hero fade-out complete */
   body:not(.hero-ended) .s1-mobile-frame {
     opacity:0 !important;
   }
 
-  /* --- Unpin and stack other image+text sections --- */
+  /* --- Other image+text sections stacked --- */
   .s2-frame,.s4-frame,.s5-frame,
   .s9-frame,.s11-frame,.s13-frame,.s14-frame{
     position:static;width:100%;height:auto;
@@ -399,7 +397,7 @@
     text-align:left;color:#111;
   }
 
-  /* --- Galleries scale within margins --- */
+  /* --- Galleries within margins --- */
   .galA-left-frame,.galB-center-frame,.galC-left-frame{
     left:20px;right:20px;
   }
@@ -850,10 +848,13 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
     root.style.setProperty('--s15Overlay',(s15>0 && s15<1)?1:0);
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
-// --- Mobile gate for pinned Section 1 image ---
-// When hero fully faded, reveal Section 1 pinned image (mobile only)
+// --- Mobile gate for Section 1 pinned image ---
 if (s1 >= 0.99) document.body.classList.add('hero-ended');
 else document.body.classList.remove('hero-ended');
+
+// --- Section 1 image fade-out and text delay (mobile only) ---
+const s1Fade = Math.min(Math.max((scrollY - window.innerHeight * 1.0) / (window.innerHeight * 0.6), 0), 1);
+root.style.setProperty('--s1ImgOpacity', (1 - s1Fade).toFixed(3));
 
     /* Text sweeps (consistent curves) */
     const E=0.8;
