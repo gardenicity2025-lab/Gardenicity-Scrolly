@@ -327,40 +327,38 @@
 
 /* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
 @media (max-width:768px){
-  /* Restore your baseline mobile spacing + typography */
+
+  /* --- Hero adjustments --- */
   body{margin:0;padding:0 20px;}
   .hero-media{top:20px;bottom:20px;left:20px;right:20px;}
   .hero-title{font-size:78px;line-height:1.05;}
   .hero-links{font-size:20px;line-height:26px;}
 
-  /* --- Section 1 pinned cinematic image --- */
-  .s1-mobile-frame{
+  /* --- Section 1 pinned viewport cinematic fade --- */
+  figure.s1-frame{
     position:fixed;
     top:0;left:20px;right:20px;bottom:0;
-    display:flex;align-items:center;justify-content:center;
-    background:#eaeeec;
-    opacity:var(--s1ImgOpacity);
-    transition:opacity 0.8s ease;
     z-index:1;
+    height:100vh;
+    opacity:var(--s1MobileOpacity,1);
+    transition:opacity .8s ease;
+    display:flex;align-items:center;justify-content:center;
     pointer-events:none;
   }
-  .s1-mobile-frame img{
+  figure.s1-frame img{
     width:100%;
     height:100%;
-    object-fit:contain;
-    display:block;
+    object-fit:cover;
+    object-position:center;
   }
 
-  /* Hide desktop fixed frame */
-  figure.s1-frame{display:none;}
-
-  /* Section 1 text begins after the pinned image fades out */
+  /* --- Section 1 text appears after image fade --- */
   .s1-overlay{
     position:relative;
-    margin-top:100vh;     /* start scroll after image viewport */
+    margin-top:100vh;
+    opacity:var(--s1TextOpacity,0);
+    transition:opacity .6s ease .2s;
     z-index:2;
-    opacity:1!important;
-    pointer-events:auto;
   }
   .s1-rail{position:static;width:auto;margin:0 0 40px 0;padding:0;}
   .s1-text{
@@ -370,7 +368,7 @@
     color:#111;
   }
 
-  /* --- Stack remaining image + text sections --- */
+  /* --- Remaining image + text sections stacked --- */
   .s2-frame,.s4-frame,.s5-frame,
   .s9-frame,.s11-frame,.s13-frame,.s14-frame{
     position:static;width:100%;height:auto;
@@ -379,27 +377,39 @@
   .s2-frame img,.s4-frame img,.s5-frame img,
   .s9-frame img,.s11-frame img,.s13-frame img,.s14-frame img{
     width:100%;height:auto;object-fit:contain;
-    max-width:calc(100% - 40px);margin:0 auto 20px auto;display:block;
+    max-width:calc(100% - 40px);
+    margin:0 auto 20px auto;
+    display:block;
   }
 
   .s2-overlay,.s4-overlay,.s5-overlay,
   .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay{
-    position:static;opacity:1!important;pointer-events:auto;
-    width:100%;padding:0;margin:0;
+    position:static;
+    opacity:1!important;
+    pointer-events:auto;
+    width:100%;
+    padding:0;
+    margin:0;
   }
   .s2-rail,.s4-rail,.s5-rail,
   .s9-rail,.s11-rail,.s13-rail,.s14-rail{
-    position:static;width:auto;margin:0 0 40px 0;padding:0;
+    position:static;
+    width:auto;
+    margin:0 0 40px 0;
+    padding:0;
   }
   .s2-text,.s4-text,.s5-text,
   .s9-text,.s11-text,.s13-text,.s14-text{
-    transform:none!important;margin:0 0 40px 0;
-    text-align:left;color:#111;
+    transform:none!important;
+    margin:0 0 40px 0;
+    text-align:left;
+    color:#111;
   }
 
-  /* --- Galleries scale within margins --- */
+  /* --- Galleries within margins --- */
   .galA-left-frame,.galB-center-frame,.galC-left-frame{
-    left:20px;right:20px;
+    left:20px;
+    right:20px;
   }
 
   /* --- Full-bleed pinned frames unchanged --- */
@@ -407,14 +417,23 @@
     left:0;right:0;top:0;bottom:0;
   }
 
-  /* --- Final section padding --- */
+  /* --- Section 15 padding fix --- */
   .s15-text{padding:0 20px;}
+
+  /* --- Reset stacking context for galleries + later sections --- */
+  section:not(.s1-wrap),
+  .frame:not(.s1-frame),
+  .galA-left-frame,
+  .galB-center-frame,
+  .galC-left-frame {
+    position:relative;
+    z-index:3;
+  }
 }
 
 </style>
 
 </head>
-
 <body>
 
 <!-- HERO -->
