@@ -1,3 +1,4 @@
+October 10, 2025-Responsive test2
 <!doctype html>
 <html lang="en" data-baseline="stable-2025-10-01__rails-460px__galC-6-only">
 <head>
@@ -324,9 +325,12 @@
   .s15-text a:focus-visible{
     color:#00A86B;
   }
+/* ===== Hide mobile-only Section 1 image on desktop ===== */
+.s1-mobile-frame { display:none; }
+
 
 /* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
-@media (max-width:768px){
+@media screen and (max-width:768px) {
   body{margin:0;padding:0 20px;}
   .hero-media{top:20px;bottom:20px;left:20px;right:20px;}
   .hero-title{font-size:78px;line-height:1.05;}
