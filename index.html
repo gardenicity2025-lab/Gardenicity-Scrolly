@@ -335,7 +335,7 @@
   .hero-title{font-size:78px;line-height:1.05;}
   .hero-links{font-size:20px;line-height:26px;}
 
-  /* --- Section 1: pinned mobile viewport image --- */
+  /* --- Section 1 pinned mobile viewport image --- */
   .s1-mobile-frame{
     display:flex;
     position:fixed;
@@ -344,7 +344,7 @@
     justify-content:center;
     background:#eaeeec;
     opacity:var(--s1ImgOpacity,1);
-    transition:opacity 0.8s ease;
+    transition:opacity 0.4s linear;
     z-index:1;
     pointer-events:none;
   }
@@ -356,21 +356,17 @@
   }
   figure.s1-frame{display:none;} /* hide desktop fixed frame */
 
-  /* --- Section 1 text scrolls only after image fade-out --- */
+  /* --- Section 1 text enters only after image fade complete --- */
   .s1-overlay{
     position:relative;
-    margin-top:calc(100vh + 20vh * var(--s1ImgOpacity)); /* pushes text below while image visible */
     z-index:2;
     opacity:1!important;
     pointer-events:auto;
+    transform:translateY(var(--s1TextOffset,100vh));
+    transition:transform 0.4s ease-out;
   }
 
-  /* Hide S1 image until hero fade-out complete */
-  body:not(.hero-ended) .s1-mobile-frame {
-    opacity:0 !important;
-  }
-
-  /* --- Other image+text sections stacked --- */
+  /* --- Stack remaining sections normally --- */
   .s2-frame,.s4-frame,.s5-frame,
   .s9-frame,.s11-frame,.s13-frame,.s14-frame{
     position:static;width:100%;height:auto;
@@ -384,7 +380,6 @@
 
   .s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,
   .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay{
-    position:static;opacity:1!important;pointer-events:auto;
     width:100%;padding:0;margin:0;
   }
   .s1-rail,.s2-rail,.s4-rail,.s5-rail,
@@ -410,6 +405,33 @@
   /* --- Final section center text with safe padding --- */
   .s15-text{padding:0 20px;}
 }
+</style>
+
+<script>
+/* ===== MOBILE FADE→TEXT HANDOFF LOGIC (Section 1 only) ===== */
+(function(){
+  const root=document.documentElement;
+  function onScrollMobile(){
+    if(window.innerWidth>768) return; // desktop unaffected
+    const vh=window.innerHeight;
+    const scrollY=window.scrollY||window.pageYOffset;
+
+    const fadeStart=vh*1.0;   // when image starts fading
+    const fadeEnd  =vh*1.8;   // when image fully gone
+    const t=Math.min(Math.max((scrollY-fadeStart)/(fadeEnd-fadeStart),0),1);
+
+    const imgOpacity=1-t;
+    root.style.setProperty('--s1ImgOpacity',imgOpacity.toFixed(3));
+
+    // Hold text below viewport until image fully faded
+    const textOffset=(imgOpacity>0)?'100vh':'0';
+    root.style.setProperty('--s1TextOffset',textOffset);
+  }
+  window.addEventListener('scroll',onScrollMobile,{passive:true});
+  window.addEventListener('resize',onScrollMobile);
+  window.addEventListener('load',onScrollMobile);
+})();
+</script>
 
 </style>
 
