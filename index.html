@@ -325,57 +325,53 @@
     color:#00A86B;
   }
 
-/* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
+<!-- === MOBILE HERO → SECTION 1 IMAGE → TEXT HANDOFF === -->
+<style>
 @media (max-width:768px){
-  body{margin:0;padding:0 20px;}
+
+  /* keep hero sizing tighter */
   .hero-media{top:20px;bottom:20px;left:20px;right:20px;}
   .hero-title{font-size:78px;line-height:1.05;}
   .hero-links{font-size:20px;line-height:26px;}
 
-  /* --- Section 1 cinematic pinned image --- */
-  .s1-frame {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    height: 100vh;
-    margin: 0;
-    z-index: 1;
-    opacity: var(--s1MobileOpacity, 1);
-    transition: opacity 0.6s ease;
+  /* Section 1 pinned image with proper margins */
+  .s1-frame{
+    position:fixed;
+    top:0; left:20px; right:20px; bottom:0;
+    height:100vh;
+    margin:0;
+    z-index:1;
+    opacity:var(--s1MobileOpacity,1);
+    transition:opacity 0.6s ease;
   }
-  .s1-frame img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-    display: block;
-  }
-
-  /* Section 1 text overlay starts below the viewport and scrolls in after fade */
-  .s1-overlay {
-    position: relative;
-    margin-top: var(--s1TextOffset, 100vh);
-    z-index: 2;
-    transition: margin-top 0.6s ease;
+  .s1-frame img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    object-position:center;
+    display:block;
   }
 
-  /* all other sections remain stacked and scroll normally */
+  /* Section 1 text waits below viewport */
+  .s1-overlay{
+    position:relative;
+    margin-top:var(--s1TextOffset,100vh);
+    z-index:2;
+    transition:margin-top 0.6s ease, opacity 0.6s ease;
+    opacity:var(--s1TextOpacity,0);
+  }
+
+  /* Stack later sections normally */
   .s2-frame,.s4-frame,.s5-frame,
   .s9-frame,.s11-frame,.s13-frame,.s14-frame{
     position:static;width:100%;height:auto;
-    margin:20px auto;display:block;opacity:1;
+    margin:20px auto;display:block;opacity:1!important;
   }
-
   .s2-frame img,.s4-frame img,.s5-frame img,
   .s9-frame img,.s11-frame img,.s13-frame img,.s14-frame img{
     width:100%;height:auto;object-fit:contain;
     max-width:calc(100% - 40px);
     margin:0 auto 20px auto;display:block;
-  }
-
-  .s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,
-  .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay{
-    width:100%;padding:0;margin:0;
-    opacity:1;pointer-events:auto;
   }
 
   .s1-rail,.s2-rail,.s4-rail,.s5-rail,
@@ -385,23 +381,51 @@
 
   .s1-text,.s2-text,.s4-text,.s5-text,
   .s9-text,.s11-text,.s13-text,.s14-text{
-    transform:none;margin:0 0 40px 0;
+    transform:none!important;margin:0 0 40px 0;
     text-align:left;color:#111;
   }
 
-  /* Galleries scale within margins */
   .galA-left-frame,.galB-center-frame,.galC-left-frame{
     left:20px;right:20px;
   }
 
-  /* Full-bleed pinned frames unchanged */
   .frame.s3-frame,.frame.s8-frame,.frame.s12-frame,.frame.s15-frame{
     left:0;right:0;top:0;bottom:0;
   }
 
-  /* Final section center text with safe padding */
   .s15-text{padding:0 20px;}
 }
+</style>
+
+<script>
+(function(){
+  const root=document.documentElement;
+
+  function onScrollMobile(){
+    if(window.innerWidth>768) return; // run only mobile
+    const vh=window.innerHeight;
+    const y=window.scrollY||window.pageYOffset;
+
+    // Fade hero → section 1 image
+    const fadeStart=vh*0.1;
+    const fadeEnd=vh*1.0;
+    const t=Math.min(Math.max((y-fadeStart)/(fadeEnd-fadeStart),0),1);
+    const imgOpacity=1-t;
+
+    // When image gone, bring in text
+    const textVisible=(t>0.9)?1:0;
+    const textOffset=(t>0.9)?'0':'100vh';
+
+    root.style.setProperty('--s1MobileOpacity',imgOpacity.toFixed(3));
+    root.style.setProperty('--s1TextOffset',textOffset);
+    root.style.setProperty('--s1TextOpacity',textVisible);
+  }
+
+  window.addEventListener('scroll',onScrollMobile,{passive:true});
+  window.addEventListener('resize',onScrollMobile);
+  window.addEventListener('load',onScrollMobile);
+})();
+</script>
 
 </style>
 
