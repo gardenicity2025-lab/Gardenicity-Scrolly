@@ -1,4 +1,4 @@
- <!doctype html>
+<!doctype html>
 <html lang="en" data-baseline="stable-2025-10-01__rails-460px__galC-6-only">
 <head>
 <meta charset="utf-8" />
@@ -327,126 +327,51 @@
 
 /* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
 @media (max-width:768px){
-
-  /* Base mobile spacing & hero */
   body{margin:0;padding:0 20px;}
   .hero-media{top:20px;bottom:20px;left:20px;right:20px;}
   .hero-title{font-size:78px;line-height:1.05;}
   .hero-links{font-size:20px;line-height:26px;}
 
-  /* --- Section 1 image & fade timing --- */
-  figure.s1-frame{display:none;} /* hide fixed desktop frame */
-  .s1-mobile-frame{
-    position:fixed;
-    inset:0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:#eaeeec;
-    opacity:var(--s1ImgOpacity,1);
-    transition:opacity 0.8s ease;
-    z-index:1;
-    pointer-events:none;
-  }
-  .s1-mobile-frame img{
-    width:100%;
-    height:100%;
-    object-fit:contain;
-  }
-
-  /* --- Section 1 text reveal after hero fade --- */
-  .s1-overlay{
-    position:relative;
-    z-index:0;  /* below hero by default */
-    opacity:0;
-    animation:s1Reveal 0.8s ease-in forwards;
-    animation-delay:0.6s;
-  }
-  @keyframes s1Reveal{to{opacity:1;}}
-  .s1-text{margin-top:100vh;} /* push text below hero height */
-
-  /* --- Unpin and stack other framed sections --- */
-  .s2-frame,.s4-frame,.s5-frame,
+  /* Unpin and stack image+text sections */
+  .s1-frame,.s2-frame,.s4-frame,.s5-frame,
   .s9-frame,.s11-frame,.s13-frame,.s14-frame{
     position:static;width:100%;height:auto;
     opacity:1!important;margin:20px auto;display:block;
   }
-  .s2-frame img,.s4-frame img,.s5-frame img,
+  .s1-frame img,.s2-frame img,.s4-frame img,.s5-frame img,
   .s9-frame img,.s11-frame img,.s13-frame img,.s14-frame img{
     width:100%;height:auto;object-fit:contain;
     max-width:calc(100% - 40px);margin:0 auto 20px auto;display:block;
   }
 
-  /* --- Overlays & text blocks --- */
   .s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,
   .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay{
-    position:relative;
-    opacity:1!important;
-    pointer-events:auto;
-    width:100%;
-    padding:0;
-    margin:0;
-    z-index:0; /* below hero/full-bleeds */
+    position:static;opacity:1!important;pointer-events:auto;
+    width:100%;padding:0;margin:0;
   }
   .s1-rail,.s2-rail,.s4-rail,.s5-rail,
   .s9-rail,.s11-rail,.s13-rail,.s14-rail{
-    position:relative;width:auto;margin:0 0 40px 0;padding:0;z-index:0;
+    position:static;width:auto;margin:0 0 40px 0;padding:0;
   }
-
-  /* --- Text above their own framed images only --- */
   .s1-text,.s2-text,.s4-text,.s5-text,
   .s9-text,.s11-text,.s13-text,.s14-text{
-    transform:none!important;
-    margin:0 0 40px 0;
-    text-align:left;
-    color:#111;
-    position:relative;
-    z-index:2; /* above section image only */
+    transform:none!important;margin:0 0 40px 0;
+    text-align:left;color:#111;
   }
 
-  /* --- Text for full-bleed sections below fixed frames --- */
-  .s3-text,.s8-text,.s12-text,.s15-text{
-    position:relative;
-    z-index:0;
-  }
-
-  /* --- Galleries within margins --- */
+  /* Galleries scale within margins */
   .galA-left-frame,.galB-center-frame,.galC-left-frame{
     left:20px;right:20px;
   }
-
-  /* --- Full-bleed pinned frames unchanged --- */
+  /* Full-bleed pinned frames unchanged */
   .frame.s3-frame,.frame.s8-frame,.frame.s12-frame,.frame.s15-frame{
     left:0;right:0;top:0;bottom:0;
-    z-index:1; /* ensure these sit above scrolling text */
   }
-
-  /* --- Final section (S15) margins + stacking --- */
-  .s15-text{
-    padding:0 20px;
-    text-align:center;
-    color:#fff;
-    position:relative;
-    z-index:2;
-    max-width:calc(100% - 40px);
-    margin:0 auto 60px auto;
-  }
-  .s15-rail{
-    position:relative;
-    left:0;
-    transform:none;
-    width:100%;
-    max-width:none;
-    margin:0 auto;
-    padding:0;
-  }
-  .s15-overlay{
-    position:relative;
-    z-index:0;
-    opacity:1!important;
-    pointer-events:auto;
-  }
+  /* Final section center text with safe padding */
+  .s15-text{padding:0 20px;}
 }
+
+
 
 </style>
 
@@ -1087,4 +1012,3 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
 </script>
 </body>
 </html>
-       
