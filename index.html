@@ -353,15 +353,17 @@
     height:100%;
     object-fit:contain;
   }
-  /* Delay Section 1 text after hero fade */
+
+  /* --- Section 1 text reveal after hero fade --- */
   .s1-overlay{
     position:relative;
-    z-index:2;
+    z-index:0;  /* below hero by default */
     opacity:0;
     animation:s1Reveal 0.8s ease-in forwards;
     animation-delay:0.6s;
   }
   @keyframes s1Reveal{to{opacity:1;}}
+  .s1-text{margin-top:100vh;} /* push text below hero height */
 
   /* --- Unpin and stack other framed sections --- */
   .s2-frame,.s4-frame,.s5-frame,
@@ -378,15 +380,20 @@
   /* --- Overlays & text blocks --- */
   .s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,
   .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay{
-    position:static;opacity:1!important;pointer-events:auto;
-    width:100%;padding:0;margin:0;
+    position:relative;
+    opacity:1!important;
+    pointer-events:auto;
+    width:100%;
+    padding:0;
+    margin:0;
+    z-index:0; /* below hero/full-bleeds */
   }
   .s1-rail,.s2-rail,.s4-rail,.s5-rail,
   .s9-rail,.s11-rail,.s13-rail,.s14-rail{
-    position:static;width:auto;margin:0 0 40px 0;padding:0;
+    position:relative;width:auto;margin:0 0 40px 0;padding:0;z-index:0;
   }
 
-  /* --- Text above their own images only --- */
+  /* --- Text above their own framed images only --- */
   .s1-text,.s2-text,.s4-text,.s5-text,
   .s9-text,.s11-text,.s13-text,.s14-text{
     transform:none!important;
@@ -394,12 +401,13 @@
     text-align:left;
     color:#111;
     position:relative;
-    z-index:3;
+    z-index:2; /* above section image only */
   }
-  /* --- Text for full-bleed sections below image --- */
+
+  /* --- Text for full-bleed sections below fixed frames --- */
   .s3-text,.s8-text,.s12-text,.s15-text{
     position:relative;
-    z-index:1;
+    z-index:0;
   }
 
   /* --- Galleries within margins --- */
@@ -410,6 +418,7 @@
   /* --- Full-bleed pinned frames unchanged --- */
   .frame.s3-frame,.frame.s8-frame,.frame.s12-frame,.frame.s15-frame{
     left:0;right:0;top:0;bottom:0;
+    z-index:1; /* ensure these sit above scrolling text */
   }
 
   /* --- Final section (S15) margins + stacking --- */
@@ -433,11 +442,12 @@
   }
   .s15-overlay{
     position:relative;
-    z-index:1;
+    z-index:0;
     opacity:1!important;
     pointer-events:auto;
   }
 }
+
 </style>
 
 </head>
