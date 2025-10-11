@@ -327,100 +327,53 @@
 
 /* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
 @media (max-width:768px){
-
-  /* Base layout + hero sizing */
-  body {
-    margin: 0;
-    padding: 0 20px;
-  }
-  .hero-media { top:20px; bottom:20px; left:20px; right:20px; }
-  .hero-title { font-size:78px; line-height:1.05; }
-  .hero-links { font-size:20px; line-height:26px; }
-
-/* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
-@media (max-width:768px){
-
-  /* --- base layout --- */
   body{margin:0;padding:0 20px;}
   .hero-media{top:20px;bottom:20px;left:20px;right:20px;}
   .hero-title{font-size:78px;line-height:1.05;}
   .hero-links{font-size:20px;line-height:26px;}
 
-  /* --- simply unpin & stack image+text sections --- */
+  /* Unpin and stack image+text sections */
   .s1-frame,.s2-frame,.s4-frame,.s5-frame,
   .s9-frame,.s11-frame,.s13-frame,.s14-frame{
-    position:static;
-    width:100%;
-    height:auto;
-    margin:20px 0;
-    display:block;
+    position:static;width:100%;height:auto;
+    opacity:1!important;margin:20px auto;display:block;
   }
   .s1-frame img,.s2-frame img,.s4-frame img,.s5-frame img,
   .s9-frame img,.s11-frame img,.s13-frame img,.s14-frame img{
-    width:100%;
-    height:auto;
-    object-fit:contain;
-    max-width:calc(100% - 40px);
-    margin:0 auto 20px;
-    display:block;
+    width:100%;height:auto;object-fit:contain;
+    max-width:calc(100% - 40px);margin:0 auto 20px auto;display:block;
   }
 
   .s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,
   .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay{
-    position:static;
-    width:auto;
-    margin:0 0 40px 0;
-    padding:0;
-    opacity:1;
-    pointer-events:auto;
+    position:static;opacity:1!important;pointer-events:auto;
+    width:100%;padding:0;margin:0;
   }
   .s1-rail,.s2-rail,.s4-rail,.s5-rail,
   .s9-rail,.s11-rail,.s13-rail,.s14-rail{
-    position:static;
-    width:auto;
-    margin:0;
-    padding:0;
+    position:static;width:auto;margin:0 0 40px 0;padding:0;
   }
   .s1-text,.s2-text,.s4-text,.s5-text,
   .s9-text,.s11-text,.s13-text,.s14-text{
-    transform:none;
-    color:#111;
-    text-align:left;
-    margin:0 0 40px 0;
+    transform:none!important;margin:0 0 40px 0;
+    text-align:left;color:#111;
   }
 
-  /* --- galleries within viewport margins --- */
+  /* Galleries scale within margins */
   .galA-left-frame,.galB-center-frame,.galC-left-frame{
-    left:20px;
-    right:20px;
+    left:20px;right:20px;
   }
-
-  /* --- full-bleeds stay relative --- */
+  /* Full-bleed pinned frames unchanged */
   .frame.s3-frame,.frame.s8-frame,.frame.s12-frame,.frame.s15-frame{
-    position:relative;
-    width:100%;
-    height:auto;
     left:0;right:0;top:0;bottom:0;
-    display:block;
-    margin:0;
   }
-  .frame.s3-frame img,.frame.s8-frame img,
-  .frame.s12-frame img,.frame.s15-frame img{
-    width:100%;
-    height:auto;
-    display:block;
-    object-fit:cover;
-  }
-
-  /* --- Section 15 text margin fix --- */
-  .s15-text{
-    padding:0 20px;
-    margin:0 auto 40px;
-    width:calc(100% - 40px);
-  }
+  /* Final section center text with safe padding */
+  .s15-text{padding:0 20px;}
 }
 
 
+
+</style>
 
 </head>
 
