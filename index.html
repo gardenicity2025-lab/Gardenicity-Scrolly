@@ -363,12 +363,29 @@
   .galA-left-frame,.galB-center-frame,.galC-left-frame{
     left:20px;right:20px;
   }
+
   /* Full-bleed pinned frames unchanged */
   .frame.s3-frame,.frame.s8-frame,.frame.s12-frame,.frame.s15-frame{
     left:0;right:0;top:0;bottom:0;
   }
+
   /* Final section center text with safe padding */
   .s15-text{padding:0 20px;}
+
+  /* Center S1 image in viewport with 20px margins */
+  .s1-frame {
+    position: relative !important;
+    width: calc(100% - 40px);
+    margin: 20px auto;
+    opacity: 1 !important;
+    display: block;
+  }
+  .s1-frame img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+  }
 }
 
 
