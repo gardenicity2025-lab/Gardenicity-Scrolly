@@ -328,110 +328,123 @@
 /* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
 @media (max-width:768px){
   /* --- Base layout --- */
-  body {
-    margin: 0;
-    padding: 0 20px;
-    background: #eaeeec;
+  body{
+    margin:0;
+    padding:0 20px;
+    background:#eaeeec;
   }
 
-  /* --- Hero adjustments --- */
-  .hero-media { top:20px; bottom:20px; left:20px; right:20px; }
-  .hero-title { font-size:78px; line-height:1.05; }
-  .hero-links { font-size:20px; line-height:26px; }
+  /* --- Hero --- */
+  .hero-media{top:20px;bottom:20px;left:20px;right:20px;}
+  .hero-title{font-size:78px;line-height:1.05;}
+  .hero-links{font-size:20px;line-height:26px;}
 
-  /* --- Ensure section images are visible --- */
-  .s1-frame, .s2-frame, .s4-frame, .s5-frame,
-  .s9-frame, .s11-frame, .s13-frame, .s14-frame {
-    position: relative !important;
-    display: block !important;
-    width: 100%;
-    height: auto;
-    margin: 40px auto;
-    opacity: 1 !important;
-    pointer-events: auto;
-    z-index: 1;
-    background: transparent;
+  /* --- Force all fixed frames into document flow --- */
+  figure.frame{
+    position:relative !important;
+    inset:auto !important;
+    z-index:auto !important;
+    pointer-events:auto !important;
   }
 
-  .s1-frame img, .s2-frame img, .s4-frame img, .s5-frame img,
-  .s9-frame img, .s11-frame img, .s13-frame img, .s14-frame img {
-    display: block;
-    width: 100%;
-    height: auto;
-    object-fit: contain;
-    object-position: center;
-    max-width: calc(100% - 40px);
-    margin: 0 auto 20px auto;
+  /* --- Section image frames --- */
+  .s1-frame,.s2-frame,.s4-frame,.s5-frame,
+  .s9-frame,.s11-frame,.s13-frame,.s14-frame{
+    display:block !important;
+    width:100%;
+    height:auto;
+    margin:40px auto;
+    opacity:1 !important;
+    background:transparent;
   }
 
-  /* --- Text overlays: revert to normal flow --- */
-  .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
-  .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay, .s15-overlay {
-    position: relative !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
-    z-index: 2;
-    width: 100%;
-    padding: 0;
-    margin: 0;
+  .s1-frame img,.s2-frame img,.s4-frame img,.s5-frame img,
+  .s9-frame img,.s11-frame img,.s13-frame img,.s14-frame img{
+    width:100%;
+    height:auto;
+    object-fit:contain;
+    display:block;
+    margin:0 auto 20px auto;
+    max-width:calc(100% - 40px);
   }
 
-  .s1-rail, .s2-rail, .s4-rail, .s5-rail,
-  .s9-rail, .s11-rail, .s13-rail, .s14-rail, .s15-rail {
-    position: static !important;
-    width: auto;
-    margin: 0 0 40px 0;
-    padding: 0;
+  /* --- Text overlays in normal flow --- */
+  .s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,
+  .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay,.s15-overlay{
+    position:relative !important;
+    opacity:1 !important;
+    pointer-events:auto !important;
+    width:100%;
+    margin:0;
+    padding:0;
+    z-index:auto;
   }
 
-  .s1-text, .s2-text, .s4-text, .s5-text,
-  .s9-text, .s11-text, .s13-text, .s14-text {
-    transform: none !important;
-    margin: 0 0 40px 0;
-    color: #111;
-    text-align: left;
+  .s1-rail,.s2-rail,.s4-rail,.s5-rail,
+  .s9-rail,.s11-rail,.s13-rail,.s14-rail,.s15-rail{
+    position:static !important;
+    width:auto;
+    margin:0 0 40px 0;
+    padding:0;
   }
 
-  /* --- Galleries remain within side margins --- */
-  .galA-left-frame, .galB-center-frame, .galC-left-frame {
-    left: 20px;
-    right: 20px;
+  .s1-text,.s2-text,.s4-text,.s5-text,
+  .s9-text,.s11-text,.s13-text,.s14-text{
+    transform:none !important;
+    margin:0 0 40px 0;
+    color:#111;
+    text-align:left;
   }
 
-  /* --- Full-bleed pinned sections --- */
-  .frame.s3-frame, .frame.s8-frame, .frame.s12-frame, .frame.s15-frame {
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
+  /* --- Galleries keep safe side margins --- */
+  .galA-left-frame,.galB-center-frame,.galC-left-frame{
+    left:20px !important;
+    right:20px !important;
   }
 
-  /* --- Section 15: repair layout & links --- */
-  .s15-overlay {
-    position: relative !important;
-    pointer-events: auto;
-    opacity: 1 !important;
-    z-index: 3;
+  /* --- Full-bleed pinned frames: visible, not fixed --- */
+  .frame.s3-frame,.frame.s8-frame,.frame.s12-frame,.frame.s15-frame{
+    position:relative !important;
+    inset:auto !important;
+    display:block;
+    width:100%;
+    height:auto;
+    z-index:auto;
   }
 
-  .s15-rail {
-    position: static !important;
-    width: auto;
-    margin: 0 auto;
-    padding: 0 20px;
+  .frame.s3-frame img,
+  .frame.s8-frame img,
+  .frame.s12-frame img,
+  .frame.s15-frame img{
+    width:100%;
+    height:auto;
+    object-fit:cover;
+    display:block;
   }
 
-  .s15-text {
-    padding: 0 20px;
-    margin: 40px 0 20px 0;
-    color: #fff;
-    text-align: center;
-    pointer-events: auto;
-    z-index: 4;
+  /* --- S15 text repair --- */
+  .s15-overlay{
+    position:relative !important;
+    opacity:1 !important;
+    pointer-events:auto;
+    z-index:auto;
+  }
+
+  .s15-rail{
+    position:static !important;
+    width:auto;
+    margin:0 auto;
+    padding:0 20px;
+  }
+
+  .s15-text{
+    color:#fff;
+    text-align:center;
+    margin:40px 0 20px 0;
+    padding:0 20px;
+    line-height:1.5;
   }
 }
-
-
 
 </style>
 
