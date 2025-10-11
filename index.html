@@ -446,6 +446,24 @@
   }
 }
 
+/* ===== TEST OVERRIDE ===== */
+@media (max-width:768px){
+  body{
+    background:#ffebee !important;
+  }
+  html::before{
+    content:"✅ MOBILE CSS IS ACTIVE";
+    position:fixed;
+    top:10px;
+    left:10px;
+    color:#000;
+    background:#00ffb0;
+    padding:4px 8px;
+    font-size:14px;
+    z-index:9999;
+  }
+}
+
 </style>
 
 </head>
