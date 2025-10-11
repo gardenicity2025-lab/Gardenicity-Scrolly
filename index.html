@@ -633,28 +633,6 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
 
 <script>
 (function(){
-  // ===== MOBILE SAFEGUARD: Disable desktop scroll logic =====
-  if (window.innerWidth <= 768) {
-    // Make all frames part of normal document flow
-    document.querySelectorAll('.frame').forEach(f => {
-      f.style.position = 'static';
-      f.style.opacity = '1';
-      f.style.pointerEvents = 'auto';
-    });
-
-    // Make text overlays visible and scrollable
-    document.querySelectorAll('.s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,.s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay').forEach(o=>{
-      o.style.position='static';
-      o.style.opacity='1';
-      o.style.pointerEvents='auto';
-      o.style.width='100%';
-      o.style.margin='0 0 40px 0';
-    });
-
-    // Skip the rest of the heavy desktop scroll logic
-    return;
-  }
-
   const root=document.documentElement;
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
   const easeInOutCubic=t=>t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
@@ -1034,4 +1012,3 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
 </script>
 </body>
 </html>
-
