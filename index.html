@@ -327,55 +327,17 @@
 
 /* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
 @media (max-width:768px){
-  body{margin:0;padding:0 20px;}
-  .hero-media{top:20px;bottom:20px;left:20px;right:20px;}
-  .hero-title{font-size:78px;line-height:1.05;}
-  .hero-links{font-size:20px;line-height:26px;}
 
-  /* Unpin and stack image+text sections */
-  .s1-frame,.s2-frame,.s4-frame,.s5-frame,
-  .s9-frame,.s11-frame,.s13-frame,.s14-frame{
-    position:static;width:100%;height:auto;
-    opacity:1!important;margin:20px auto;display:block;
+  /* Base layout + hero sizing */
+  body {
+    margin: 0;
+    padding: 0 20px;
   }
-  .s1-frame img,.s2-frame img,.s4-frame img,.s5-frame img,
-  .s9-frame img,.s11-frame img,.s13-frame img,.s14-frame img{
-    width:100%;height:auto;object-fit:contain;
-    max-width:calc(100% - 40px);margin:0 auto 20px auto;display:block;
-  }
+  .hero-media { top:20px; bottom:20px; left:20px; right:20px; }
+  .hero-title { font-size:78px; line-height:1.05; }
+  .hero-links { font-size:20px; line-height:26px; }
 
-  .s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,
-  .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay{
-    position:static;opacity:1!important;pointer-events:auto;
-    width:100%;padding:0;margin:0;
-  }
-  .s1-rail,.s2-rail,.s4-rail,.s5-rail,
-  .s9-rail,.s11-rail,.s13-rail,.s14-rail{
-    position:static;width:auto;margin:0 0 40px 0;padding:0;
-  }
-  .s1-text,.s2-text,.s4-text,.s5-text,
-  .s9-text,.s11-text,.s13-text,.s14-text{
-    transform:none!important;margin:0 0 40px 0;
-    text-align:left;color:#111;
-  }
-
-  /* Galleries scale within margins */
-  .galA-left-frame,.galB-center-frame,.galC-left-frame{
-    left:20px;right:20px;
-  }
-  /* Full-bleed pinned frames unchanged */
-  .frame.s3-frame,.frame.s8-frame,.frame.s12-frame,.frame.s15-frame{
-    left:0;right:0;top:0;bottom:0;
-  }
-  /* Final section center text with safe padding */
-  .s15-text{padding:0 20px;}
-}
-
-
-/* ===== MOBILE FIX v2: isolate each section image in its own flow ===== */
-@media (max-width:768px){
-
-  /* Section image frames now act as normal flow blocks, not global fixed */
+  /* ===== STICKY SECTION IMAGES (S1,S2,S4,S5,S9,S11,S13,S14) ===== */
   .frame.s1-frame,
   .frame.s2-frame,
   .frame.s4-frame,
@@ -384,13 +346,15 @@
   .frame.s11-frame,
   .frame.s13-frame,
   .frame.s14-frame {
-    position: relative !important;
+    position: sticky !important;
+    top: 0 !important;
     width: 100% !important;
     height: auto !important;
-    margin: 60px 0 20px 0 !important;
     display: block !important;
     z-index: 1 !important;
     opacity: 1 !important;
+    margin: 0 0 20px 0 !important;
+    background: transparent !important;
   }
 
   .frame.s1-frame img,
@@ -401,24 +365,30 @@
   .frame.s11-frame img,
   .frame.s13-frame img,
   .frame.s14-frame img {
-    display: block !important;
     width: calc(100% - 40px) !important;
     height: auto !important;
+    display: block !important;
     margin: 0 auto 20px auto !important;
     object-fit: contain !important;
-    border: none !important;
   }
 
-  /* text rails directly follow their own image */
+  /* ===== TEXT RAILS UNDER EACH IMAGE ===== */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
   .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
     position: relative !important;
+    width: calc(100% - 40px) !important;
+    margin: 0 auto 60px auto !important;
+    padding: 0 20px !important;
     opacity: 1 !important;
     pointer-events: auto !important;
-    margin: 0 auto 60px auto !important;
-    width: calc(100% - 40px) !important;
-    padding: 0 20px !important;
     z-index: 2 !important;
+  }
+
+  .s1-rail, .s2-rail, .s4-rail, .s5-rail,
+  .s9-rail, .s11-rail, .s13-rail, .s14-rail {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
   .s1-text, .s2-text, .s4-text, .s5-text,
@@ -429,37 +399,40 @@
     margin: 0 0 40px 0 !important;
   }
 
-  /* keep galleries centered inside margins */
+  /* ===== GALLERIES ===== */
   .galA-left-frame, .galB-center-frame, .galC-left-frame {
     left: 20px !important;
     right: 20px !important;
   }
 
-  /* full-bleeds unchanged but not covered by text */
+  /* ===== FULL-BLEEDS ===== */
   .frame.s3-frame, .frame.s8-frame, .frame.s12-frame, .frame.s15-frame {
     position: relative !important;
     width: 100% !important;
     height: auto !important;
-    display: block !important;
-    left: 0 !important; right: 0 !important; top: 0 !important; bottom: 0 !important;
+    left: 0 !important; right: 0 !important;
+    top: 0 !important; bottom: 0 !important;
     z-index: 0 !important;
+    display: block !important;
+    margin: 0 !important;
   }
 
-  .frame.s3-frame img, .frame.s8-frame img, .frame.s12-frame img, .frame.s15-frame img {
+  .frame.s3-frame img, .frame.s8-frame img,
+  .frame.s12-frame img, .frame.s15-frame img {
     width: 100% !important;
     height: auto !important;
-    object-fit: cover !important;
     display: block !important;
+    object-fit: cover !important;
   }
 
-  /* Section 15 margin fix */
-  .s15-rail, .s15-text {
+  /* ===== SECTION 15 TEXT MARGIN FIX ===== */
+  .s15-text {
     padding: 0 20px !important;
     margin: 0 auto 40px auto !important;
     width: calc(100% - 40px) !important;
   }
 }
-
+   
 </style>
 
 </head>
@@ -1099,3 +1072,4 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
 </script>
 </body>
 </html>
+
