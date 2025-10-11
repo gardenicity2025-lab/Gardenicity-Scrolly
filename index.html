@@ -372,54 +372,6 @@
 }
 
 
-/* ===== MOBILE PATCH: make section images visible again ===== */
-@media (max-width:768px){
-  /* Only restore visibility, don't alter pin or fade logic */
-  .s1-frame img,
-  .s2-frame img,
-  .s4-frame img,
-  .s5-frame img,
-  .s9-frame img,
-  .s11-frame img,
-  .s13-frame img,
-  .s14-frame img {
-    display:block;
-    width:calc(100% - 40px);
-    height:auto;
-    margin:0 auto 20px auto;
-    object-fit:contain;
-    position:relative;
-    z-index:1;
-    opacity:1;
-  }
-
-  /* Make sure overlays scroll in flow below each image */
-  .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
-  .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
-    position:relative;
-    z-index:2;
-    opacity:1;
-    pointer-events:auto;
-    margin:0 0 40px 0;
-  }
-
-  /* Section 15 text margin fix */
-  .s15-text{
-    padding:0 20px;
-    margin:0 auto 40px auto;
-    width:calc(100% - 40px);
-  }
-}
-/* ===== TEST PATCH: force section frames visible on mobile ===== */
-@media (max-width:768px){
-  .s1-frame,.s2-frame,.s4-frame,.s5-frame,
-  .s9-frame,.s11-frame,.s13-frame,.s14-frame{
-    opacity:1 !important;
-    transform:none !important;
-  }
-}
-
-
 
 </style>
 
@@ -681,6 +633,28 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
 
 <script>
 (function(){
+  // ===== MOBILE SAFEGUARD: Disable desktop scroll logic =====
+  if (window.innerWidth <= 768) {
+    // Make all frames part of normal document flow
+    document.querySelectorAll('.frame').forEach(f => {
+      f.style.position = 'static';
+      f.style.opacity = '1';
+      f.style.pointerEvents = 'auto';
+    });
+
+    // Make text overlays visible and scrollable
+    document.querySelectorAll('.s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,.s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay').forEach(o=>{
+      o.style.position='static';
+      o.style.opacity='1';
+      o.style.pointerEvents='auto';
+      o.style.width='100%';
+      o.style.margin='0 0 40px 0';
+    });
+
+    // Skip the rest of the heavy desktop scroll logic
+    return;
+  }
+
   const root=document.documentElement;
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
   const easeInOutCubic=t=>t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
@@ -1060,3 +1034,4 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
 </script>
 </body>
 </html>
+
