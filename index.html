@@ -372,10 +372,10 @@
 }
 
 
-/* ===== MOBILE FIX: Center-pinned section images (S1, S2, S4, S5, S9, S11, S13, S14) ===== */
+/* ===== MOBILE FIX v2: isolate each section image in its own flow ===== */
 @media (max-width:768px){
 
-  /* Center image frames in viewport (pinned) */
+  /* Section image frames now act as normal flow blocks, not global fixed */
   .frame.s1-frame,
   .frame.s2-frame,
   .frame.s4-frame,
@@ -384,22 +384,15 @@
   .frame.s11-frame,
   .frame.s13-frame,
   .frame.s14-frame {
-    position: fixed !important;
-    top: 0 !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
+    position: relative !important;
     width: 100% !important;
-    height: 100% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    opacity: var(--s1ImgOpacity, 1) !important;
-    pointer-events: none !important;
+    height: auto !important;
+    margin: 60px 0 20px 0 !important;
+    display: block !important;
     z-index: 1 !important;
+    opacity: 1 !important;
   }
 
-  /* Image sizing inside those frames */
   .frame.s1-frame img,
   .frame.s2-frame img,
   .frame.s4-frame img,
@@ -408,32 +401,64 @@
   .frame.s11-frame img,
   .frame.s13-frame img,
   .frame.s14-frame img {
-    width: auto !important;
-    height: 100% !important;
-    max-height: 100vh !important;
+    display: block !important;
+    width: calc(100% - 40px) !important;
+    height: auto !important;
+    margin: 0 auto 20px auto !important;
     object-fit: contain !important;
+    border: none !important;
   }
 
-  /* Let overlays scroll naturally below */
+  /* text rails directly follow their own image */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
   .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
     position: relative !important;
     opacity: 1 !important;
     pointer-events: auto !important;
-    z-index: 2 !important;
-    margin-top: 100vh !important; /* start after image viewport */
+    margin: 0 auto 60px auto !important;
+    width: calc(100% - 40px) !important;
     padding: 0 20px !important;
+    z-index: 2 !important;
   }
 
   .s1-text, .s2-text, .s4-text, .s5-text,
   .s9-text, .s11-text, .s13-text, .s14-text {
     transform: none !important;
-    margin: 0 0 40px 0 !important;
-    text-align: left !important;
     color: #111 !important;
+    text-align: left !important;
+    margin: 0 0 40px 0 !important;
+  }
+
+  /* keep galleries centered inside margins */
+  .galA-left-frame, .galB-center-frame, .galC-left-frame {
+    left: 20px !important;
+    right: 20px !important;
+  }
+
+  /* full-bleeds unchanged but not covered by text */
+  .frame.s3-frame, .frame.s8-frame, .frame.s12-frame, .frame.s15-frame {
+    position: relative !important;
+    width: 100% !important;
+    height: auto !important;
+    display: block !important;
+    left: 0 !important; right: 0 !important; top: 0 !important; bottom: 0 !important;
+    z-index: 0 !important;
+  }
+
+  .frame.s3-frame img, .frame.s8-frame img, .frame.s12-frame img, .frame.s15-frame img {
+    width: 100% !important;
+    height: auto !important;
+    object-fit: cover !important;
+    display: block !important;
+  }
+
+  /* Section 15 margin fix */
+  .s15-rail, .s15-text {
+    padding: 0 20px !important;
+    margin: 0 auto 40px auto !important;
+    width: calc(100% - 40px) !important;
   }
 }
-
 
 </style>
 
