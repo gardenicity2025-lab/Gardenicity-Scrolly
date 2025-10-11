@@ -410,6 +410,15 @@
     width:calc(100% - 40px);
   }
 }
+/* ===== TEST PATCH: force section frames visible on mobile ===== */
+@media (max-width:768px){
+  .s1-frame,.s2-frame,.s4-frame,.s5-frame,
+  .s9-frame,.s11-frame,.s13-frame,.s14-frame{
+    opacity:1 !important;
+    transform:none !important;
+  }
+}
+
 
 
 </style>
