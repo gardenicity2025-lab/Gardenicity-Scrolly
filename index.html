@@ -327,27 +327,30 @@
 
 /* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
 @media (max-width:768px){
-  body{margin:0;padding:0 20px;}
+  body{
+    margin:0;
+    padding:0 20px;
+  }
+
+  /* ==== HERO ==== */
   .hero-media{top:20px;bottom:20px;left:20px;right:20px;}
   .hero-title{font-size:78px;line-height:1.05;}
   .hero-links{font-size:20px;line-height:26px;}
 
-  /* === Image + text sections === */
+  /* ==== SECTION IMAGE + TEXT (S1, S2, S4, S5, S9, S11, S13, S14) ==== */
   .s1-frame,.s2-frame,.s4-frame,.s5-frame,
   .s9-frame,.s11-frame,.s13-frame,.s14-frame{
     position:fixed;
-    inset:0 20px;
-    height:calc(100vh - 40px);
+    top:20px; bottom:20px; left:20px; right:20px;   /* viewport margins */
+    height:auto;
     display:flex;
     align-items:center;
     justify-content:center;
     z-index:1;
     pointer-events:none;
-    opacity:var(--s1ImgOpacity);
-    transition:opacity 0.6s ease;
   }
 
-  /* ensure each section uses its own opacity var */
+  /* individual opacities controlled by JS */
   .s1-frame{opacity:var(--s1ImgOpacity);}
   .s2-frame{opacity:var(--s2ImgOpacity);}
   .s4-frame{opacity:var(--s4ImgOpacity);}
@@ -359,11 +362,15 @@
 
   .s1-frame img,.s2-frame img,.s4-frame img,.s5-frame img,
   .s9-frame img,.s11-frame img,.s13-frame img,.s14-frame img{
-    width:100%;height:auto;object-fit:contain;
-    max-width:calc(100% - 40px);margin:0 auto;
+    width:100%;
+    height:auto;
+    object-fit:contain;
+    display:block;
+    margin:0 auto;
+    max-width:calc(100% - 0px);
   }
 
-  /* === Text overlays become flow content === */
+  /* ==== TEXT OVERLAYS — converted to flow ==== */
   .s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,
   .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay{
     position:relative;
@@ -371,12 +378,14 @@
     width:100%;
     opacity:1!important;
     pointer-events:auto;
-    margin-top:100vh; /* appears after image fades */
+    margin-top:calc(100vh - 40px); /* appears after section image viewport */
     background:transparent;
+    padding:0;
   }
 
   .s1-rail,.s2-rail,.s4-rail,.s5-rail,
   .s9-rail,.s11-rail,.s13-rail,.s14-rail{
+    position:relative;
     width:auto;
     margin:0;
     padding:0;
@@ -388,21 +397,27 @@
     text-align:left;
     color:#111;
     margin:0 0 40px 0;
+    font-size:18px;
+    line-height:26px;
   }
 
-  /* === Galleries scale within safe area === */
+  /* ==== GALLERIES ==== */
   .galA-left-frame,.galB-center-frame,.galC-left-frame{
     left:20px;right:20px;
   }
 
-  /* === Full-bleeds keep edge-to-edge === */
+  /* ==== FULL BLEEDS (unchanged) ==== */
   .frame.s3-frame,.frame.s8-frame,.frame.s12-frame,.frame.s15-frame{
     left:0;right:0;top:0;bottom:0;
   }
 
-  /* === Final section safe padding === */
-  .s15-text{padding:0 20px;}
+  /* ==== SECTION 15 TEXT ==== */
+  .s15-text{
+    padding:0 20px;
+    text-align:center;
+  }
 }
+
 
 
 </style>
@@ -1044,3 +1059,4 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
 </script>
 </body>
 </html>
+
