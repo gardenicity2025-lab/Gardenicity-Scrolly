@@ -372,6 +372,45 @@
 }
 
 
+/* ===== MOBILE PATCH: make section images visible again ===== */
+@media (max-width:768px){
+  /* Only restore visibility, don't alter pin or fade logic */
+  .s1-frame img,
+  .s2-frame img,
+  .s4-frame img,
+  .s5-frame img,
+  .s9-frame img,
+  .s11-frame img,
+  .s13-frame img,
+  .s14-frame img {
+    display:block;
+    width:calc(100% - 40px);
+    height:auto;
+    margin:0 auto 20px auto;
+    object-fit:contain;
+    position:relative;
+    z-index:1;
+    opacity:1;
+  }
+
+  /* Make sure overlays scroll in flow below each image */
+  .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
+  .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
+    position:relative;
+    z-index:2;
+    opacity:1;
+    pointer-events:auto;
+    margin:0 0 40px 0;
+  }
+
+  /* Section 15 text margin fix */
+  .s15-text{
+    padding:0 20px;
+    margin:0 auto 40px auto;
+    width:calc(100% - 40px);
+  }
+}
+
 
 </style>
 
