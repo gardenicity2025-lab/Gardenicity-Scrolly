@@ -810,22 +810,28 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
   }
   init();
 })();
-</script>
-<!-- === Script controlling hero → Section 1 fade gate === -->
+<!-- === Script controlling hero → Section 1 fade gate (revised for reliability) === -->
 <script>
 (function(){
-  const root=document.documentElement;
-  const heroEndThreshold = 0.05; // trigger once hero is ~95% faded out
-  function onScrollHeroGate(){
-    const heroAlpha = parseFloat(getComputedStyle(root)
-      .getPropertyValue('--heroAlpha')) || 0;
-    if (heroAlpha <= heroEndThreshold)
-      document.body.classList.add('hero-ended');
-    else
-      document.body.classList.remove('hero-ended');
+  const root = document.documentElement;
+  const hero = document.getElementById('hero');
+  const body = document.body;
+
+  function onScrollHeroGate() {
+    const rect = hero.getBoundingClientRect();
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+    const passedHero = rect.bottom <= vh * 0.2; 
+    // toggles when hero bottom moves above 20% from viewport top
+
+    if (passedHero) {
+      body.classList.add('hero-ended');
+    } else {
+      body.classList.remove('hero-ended');
+    }
   }
-  window.addEventListener('scroll', onScrollHeroGate, {passive:true});
-  window.addEventListener('resize', onScrollHeroGate, {passive:true});
+
+  window.addEventListener('scroll', onScrollHeroGate, { passive: true });
+  window.addEventListener('resize', onScrollHeroGate, { passive: true });
   window.addEventListener('load', onScrollHeroGate);
 })();
 </script>
