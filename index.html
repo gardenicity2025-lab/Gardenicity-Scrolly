@@ -332,45 +332,77 @@
   .hero-title{font-size:78px;line-height:1.05;}
   .hero-links{font-size:20px;line-height:26px;}
 
-  /* Unpin and stack image+text sections */
+  /* === Image + text sections === */
   .s1-frame,.s2-frame,.s4-frame,.s5-frame,
   .s9-frame,.s11-frame,.s13-frame,.s14-frame{
-    position:static;width:100%;height:auto;
-    opacity:1!important;margin:20px auto;display:block;
+    position:fixed;
+    inset:0 20px;
+    height:calc(100vh - 40px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:1;
+    pointer-events:none;
+    opacity:var(--s1ImgOpacity);
+    transition:opacity 0.6s ease;
   }
+
+  /* ensure each section uses its own opacity var */
+  .s1-frame{opacity:var(--s1ImgOpacity);}
+  .s2-frame{opacity:var(--s2ImgOpacity);}
+  .s4-frame{opacity:var(--s4ImgOpacity);}
+  .s5-frame{opacity:var(--s5ImgOpacity);}
+  .s9-frame{opacity:var(--s9ImgOpacity);}
+  .s11-frame{opacity:var(--s11ImgOpacity);}
+  .s13-frame{opacity:var(--s13ImgOpacity);}
+  .s14-frame{opacity:var(--s14ImgOpacity);}
+
   .s1-frame img,.s2-frame img,.s4-frame img,.s5-frame img,
   .s9-frame img,.s11-frame img,.s13-frame img,.s14-frame img{
     width:100%;height:auto;object-fit:contain;
-    max-width:calc(100% - 40px);margin:0 auto 20px auto;display:block;
+    max-width:calc(100% - 40px);margin:0 auto;
   }
 
+  /* === Text overlays become flow content === */
   .s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,
   .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay{
-    position:static;opacity:1!important;pointer-events:auto;
-    width:100%;padding:0;margin:0;
-  }
-  .s1-rail,.s2-rail,.s4-rail,.s5-rail,
-  .s9-rail,.s11-rail,.s13-rail,.s14-rail{
-    position:static;width:auto;margin:0 0 40px 0;padding:0;
-  }
-  .s1-text,.s2-text,.s4-text,.s5-text,
-  .s9-text,.s11-text,.s13-text,.s14-text{
-    transform:none!important;margin:0 0 40px 0;
-    text-align:left;color:#111;
+    position:relative;
+    z-index:2;
+    width:100%;
+    opacity:1!important;
+    pointer-events:auto;
+    margin-top:100vh; /* appears after image fades */
+    background:transparent;
   }
 
-  /* Galleries scale within margins */
+  .s1-rail,.s2-rail,.s4-rail,.s5-rail,
+  .s9-rail,.s11-rail,.s13-rail,.s14-rail{
+    width:auto;
+    margin:0;
+    padding:0;
+  }
+
+  .s1-text,.s2-text,.s4-text,.s5-text,
+  .s9-text,.s11-text,.s13-text,.s14-text{
+    transform:none!important;
+    text-align:left;
+    color:#111;
+    margin:0 0 40px 0;
+  }
+
+  /* === Galleries scale within safe area === */
   .galA-left-frame,.galB-center-frame,.galC-left-frame{
     left:20px;right:20px;
   }
-  /* Full-bleed pinned frames unchanged */
+
+  /* === Full-bleeds keep edge-to-edge === */
   .frame.s3-frame,.frame.s8-frame,.frame.s12-frame,.frame.s15-frame{
     left:0;right:0;top:0;bottom:0;
   }
-  /* Final section center text with safe padding */
+
+  /* === Final section safe padding === */
   .s15-text{padding:0 20px;}
 }
-
 
 
 </style>
@@ -1012,4 +1044,3 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
 </script>
 </body>
 </html>
-
