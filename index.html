@@ -372,6 +372,68 @@
 }
 
 
+/* ===== MOBILE FIX: Center-pinned section images (S1, S2, S4, S5, S9, S11, S13, S14) ===== */
+@media (max-width:768px){
+
+  /* Center image frames in viewport (pinned) */
+  .frame.s1-frame,
+  .frame.s2-frame,
+  .frame.s4-frame,
+  .frame.s5-frame,
+  .frame.s9-frame,
+  .frame.s11-frame,
+  .frame.s13-frame,
+  .frame.s14-frame {
+    position: fixed !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    opacity: var(--s1ImgOpacity, 1) !important;
+    pointer-events: none !important;
+    z-index: 1 !important;
+  }
+
+  /* Image sizing inside those frames */
+  .frame.s1-frame img,
+  .frame.s2-frame img,
+  .frame.s4-frame img,
+  .frame.s5-frame img,
+  .frame.s9-frame img,
+  .frame.s11-frame img,
+  .frame.s13-frame img,
+  .frame.s14-frame img {
+    width: auto !important;
+    height: 100% !important;
+    max-height: 100vh !important;
+    object-fit: contain !important;
+  }
+
+  /* Let overlays scroll naturally below */
+  .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
+  .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
+    position: relative !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    z-index: 2 !important;
+    margin-top: 100vh !important; /* start after image viewport */
+    padding: 0 20px !important;
+  }
+
+  .s1-text, .s2-text, .s4-text, .s5-text,
+  .s9-text, .s11-text, .s13-text, .s14-text {
+    transform: none !important;
+    margin: 0 0 40px 0 !important;
+    text-align: left !important;
+    color: #111 !important;
+  }
+}
+
 
 </style>
 
