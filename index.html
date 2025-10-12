@@ -327,63 +327,70 @@
 
 /* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
 @media (max-width:768px){
-  body{
+  html,body{
     margin:0;
     padding:0 20px;
+    overflow-x:hidden;
+    background:#eaeeec;
   }
 
   /* ==== HERO ==== */
-  .hero-media{top:20px;bottom:20px;left:20px;right:20px;}
-  .hero-title{font-size:78px;line-height:1.05;}
+  .hero-fixed{
+    position:relative;
+    inset:auto;
+    height:auto;
+    opacity:1;
+    filter:none;
+  }
+  .hero-bg{
+    position:relative;
+    inset:auto;
+    width:100%;
+    height:auto;
+    background:url("assets/hero1gc.jpg") center/cover no-repeat;
+  }
+  .hero-media{
+    position:relative;
+    top:auto;bottom:auto;left:auto;right:auto;
+    padding:60px 0 40px 0;
+  }
+  .hero-title{font-size:64px;line-height:1.05;margin-bottom:16px;}
   .hero-links{font-size:20px;line-height:26px;}
 
-  /* ==== SECTION IMAGE + TEXT (S1, S2, S4, S5, S9, S11, S13, S14) ==== */
+  /* ==== SECTIONS (S1, S2, S4, S5, S9, S11, S13, S14) ==== */
   .s1-frame,.s2-frame,.s4-frame,.s5-frame,
   .s9-frame,.s11-frame,.s13-frame,.s14-frame{
-    position:fixed;
-    top:20px; bottom:20px; left:20px; right:20px;   /* viewport margins */
+    position:relative;
+    top:auto;bottom:auto;left:auto;right:auto;
+    width:100%;
     height:auto;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+    margin:60px 0 0 0;
     z-index:1;
-    pointer-events:none;
+    pointer-events:auto;
+    opacity:1!important;
   }
-
-  /* individual opacities controlled by JS */
-  .s1-frame{opacity:var(--s1ImgOpacity);}
-  .s2-frame{opacity:var(--s2ImgOpacity);}
-  .s4-frame{opacity:var(--s4ImgOpacity);}
-  .s5-frame{opacity:var(--s5ImgOpacity);}
-  .s9-frame{opacity:var(--s9ImgOpacity);}
-  .s11-frame{opacity:var(--s11ImgOpacity);}
-  .s13-frame{opacity:var(--s13ImgOpacity);}
-  .s14-frame{opacity:var(--s14ImgOpacity);}
-
   .s1-frame img,.s2-frame img,.s4-frame img,.s5-frame img,
   .s9-frame img,.s11-frame img,.s13-frame img,.s14-frame img{
     width:100%;
     height:auto;
-    object-fit:contain;
     display:block;
-    margin:0 auto;
-    max-width:calc(100% - 0px);
+    object-fit:contain;
+    border-radius:4px;
   }
 
-  /* ==== TEXT OVERLAYS — converted to natural flow ==== */
+  /* ==== TEXT: directly below image ==== */
   .s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,
   .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay{
     position:relative;
-    z-index:2;
+    inset:auto;
     width:100%;
     opacity:1!important;
     pointer-events:auto;
     background:transparent;
-    margin-top:calc(100vh - 40px); /* start after image viewport */
-    margin-bottom:60px;
+    margin:20px 0 60px 0;
     padding:0;
+    z-index:2;
   }
-
   .s1-rail,.s2-rail,.s4-rail,.s5-rail,
   .s9-rail,.s11-rail,.s13-rail,.s14-rail{
     position:relative;
@@ -391,34 +398,64 @@
     margin:0;
     padding:0;
   }
-
   .s1-text,.s2-text,.s4-text,.s5-text,
   .s9-text,.s11-text,.s13-text,.s14-text{
     transform:none!important;
-    text-align:left;
     color:#111;
+    text-align:left;
     margin:0;
-    padding:0 0 40px 0;
     font-size:18px;
     line-height:26px;
   }
 
   /* ==== GALLERIES ==== */
   .galA-left-frame,.galB-center-frame,.galC-left-frame{
-    left:20px;
-    right:20px;
+    position:relative;
+    left:0;right:0;top:auto;bottom:auto;
+    width:100%;
+    height:auto;
+    margin:40px 0;
+  }
+  .galA-left-frame img,
+  .galB-center-frame img,
+  .galC-left-frame img{
+    width:100%;
+    height:auto;
+    object-fit:contain;
+    display:block;
   }
 
-  /* ==== FULL BLEEDS (unchanged) ==== */
+  /* ==== FULL BLEEDS ==== */
   .frame.s3-frame,.frame.s8-frame,.frame.s12-frame,.frame.s15-frame{
-    left:0;right:0;top:0;bottom:0;
+    position:relative;
+    left:0;right:0;top:auto;bottom:auto;
+    width:100%;
+    height:auto;
+    margin:40px 0;
+  }
+  .frame.s3-frame img,
+  .frame.s8-frame img,
+  .frame.s12-frame img,
+  .frame.s15-frame img{
+    width:100%;
+    height:auto;
+    object-fit:cover;
+    display:block;
   }
 
   /* ==== SECTION 15 TEXT ==== */
+  .s15-overlay{
+    position:relative;
+    opacity:1!important;
+    pointer-events:auto;
+    margin:20px 0 60px 0;
+  }
   .s15-text{
     padding:0 20px;
     text-align:center;
-    margin:20px 0 40px 0; /* mobile-safe padding */
+    color:#111;
+    font-size:18px;
+    line-height:26px;
   }
 }
 
