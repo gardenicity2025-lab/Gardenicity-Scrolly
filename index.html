@@ -325,68 +325,100 @@
     color:#00A86B;
   }
 
-/* ===== FINAL MOBILE FIX: sequential fade and text reveal ===== */
+/* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
 @media (max-width:768px){
+  body{
+    margin:0;
+    padding:0 20px;
+  }
 
-  body{margin:0;padding:0 20px;}
-
-  /* hero stays as before */
+  /* ==== HERO ==== */
   .hero-media{top:20px;bottom:20px;left:20px;right:20px;}
   .hero-title{font-size:78px;line-height:1.05;}
   .hero-links{font-size:20px;line-height:26px;}
 
-  /* SECTION IMAGES in normal flow */
+  /* ==== SECTION IMAGE + TEXT (S1, S2, S4, S5, S9, S11, S13, S14) ==== */
   .s1-frame,.s2-frame,.s4-frame,.s5-frame,
   .s9-frame,.s11-frame,.s13-frame,.s14-frame{
-    position:relative;
-    top:auto;bottom:auto;left:auto;right:auto;
-    width:100%;
-    margin:20px 0;
+    position:fixed;
+    top:20px; bottom:20px; left:20px; right:20px;   /* viewport margins */
     height:auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
     z-index:1;
-    opacity:1;
-    transition:opacity 0.8s ease-in-out;
+    pointer-events:none;
   }
+
+  /* individual opacities controlled by JS */
+  .s1-frame{opacity:var(--s1ImgOpacity);}
+  .s2-frame{opacity:var(--s2ImgOpacity);}
+  .s4-frame{opacity:var(--s4ImgOpacity);}
+  .s5-frame{opacity:var(--s5ImgOpacity);}
+  .s9-frame{opacity:var(--s9ImgOpacity);}
+  .s11-frame{opacity:var(--s11ImgOpacity);}
+  .s13-frame{opacity:var(--s13ImgOpacity);}
+  .s14-frame{opacity:var(--s14ImgOpacity);}
+
   .s1-frame img,.s2-frame img,.s4-frame img,.s5-frame img,
   .s9-frame img,.s11-frame img,.s13-frame img,.s14-frame img{
     width:100%;
     height:auto;
     object-fit:contain;
-    border-radius:4px;
+    display:block;
+    margin:0 auto;
+    max-width:calc(100% - 0px);
   }
 
-  /* TEXT SECTIONS */
+  /* ==== TEXT OVERLAYS — converted to flow ==== */
   .s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,
   .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay{
     position:relative;
-    margin:20px 0 60px 0;
-    background:transparent;
     z-index:2;
-    pointer-events:auto;
+    width:100%;
     opacity:1!important;
+    pointer-events:auto;
+    margin-top:calc(100vh - 40px); /* appears after section image viewport */
+    background:transparent;
+    padding:0;
   }
+
+  .s1-rail,.s2-rail,.s4-rail,.s5-rail,
+  .s9-rail,.s11-rail,.s13-rail,.s14-rail{
+    position:relative;
+    width:auto;
+    margin:0;
+    padding:0;
+  }
+
   .s1-text,.s2-text,.s4-text,.s5-text,
   .s9-text,.s11-text,.s13-text,.s14-text{
     transform:none!important;
     text-align:left;
     color:#111;
-    font-size:18px;line-height:26px;
-    margin:0;
+    margin:0 0 40px 0;
+    font-size:18px;
+    line-height:26px;
   }
 
-  /* gallery frames get same margin */
+  /* ==== GALLERIES ==== */
   .galA-left-frame,.galB-center-frame,.galC-left-frame{
-    position:relative;
-    top:auto;bottom:auto;left:auto;right:auto;
-    margin:20px 0;
+    left:20px;right:20px;
   }
 
+  /* ==== FULL BLEEDS (unchanged) ==== */
   .frame.s3-frame,.frame.s8-frame,.frame.s12-frame,.frame.s15-frame{
-    position:relative;
-    top:auto;bottom:auto;left:auto;right:auto;
+    left:0;right:0;top:0;bottom:0;
   }
-  .s15-text{padding:0 20px;text-align:center;}
+
+  /* ==== SECTION 15 TEXT ==== */
+  .s15-text{
+    padding:0 20px;
+    text-align:center;
+  }
 }
+
+
 
 </style>
 
@@ -1025,43 +1057,5 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
   init();
 })();
 </script>
-
-<script>
-(function(){
-  const root=document.documentElement;
-
-  function fadeSectionsMobile(){
-    if(window.innerWidth >= 768) return;
-    const sections = [
-      's1','s2','s4','s5','s9','s11','s13','s14'
-    ];
-    const vh = window.innerHeight;
-    const y = window.scrollY;
-
-    sections.forEach((id,i)=>{
-      const el = document.querySelector(`.${id}-frame`);
-      if(!el) return;
-      const top = el.offsetTop - vh*0.5;
-      const bottom = top + el.offsetHeight + vh*0.5;
-      let opacity = 1;
-      if(y < top) opacity = 0;
-      else if(y > bottom) opacity = 0;
-      else {
-        const mid = (top+bottom)/2;
-        const dist = Math.abs(y - mid);
-        const half = (bottom-top)/2;
-        opacity = 1 - dist/half;
-        opacity = Math.max(0,Math.min(1,opacity));
-      }
-      el.style.opacity = opacity.toFixed(3);
-    });
-  }
-
-  window.addEventListener('scroll',fadeSectionsMobile,{passive:true});
-  window.addEventListener('resize',fadeSectionsMobile);
-  window.addEventListener('load',fadeSectionsMobile);
-})();
-</script>
-
 </body>
 </html>
