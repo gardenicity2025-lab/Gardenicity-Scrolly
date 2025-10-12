@@ -325,70 +325,47 @@
     color:#00A86B;
   }
 
-/* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
+/* ===== MOBILE FIX: stacked fade + text reveal ===== */
 @media (max-width:768px){
-  body{
-    margin:0;
-    padding:0 20px;
-  }
 
-  /* ==== HERO ==== */
+  body{margin:0;padding:0 20px;}
+
+  /* HERO */
   .hero-media{top:20px;bottom:20px;left:20px;right:20px;}
   .hero-title{font-size:78px;line-height:1.05;}
   .hero-links{font-size:20px;line-height:26px;}
 
-  /* ==== SECTION IMAGE + TEXT (S1, S2, S4, S5, S9, S11, S13, S14) ==== */
+  /* ==== SECTION FRAMES ==== */
   .s1-frame,.s2-frame,.s4-frame,.s5-frame,
   .s9-frame,.s11-frame,.s13-frame,.s14-frame{
     position:fixed;
-    top:20px; bottom:20px; left:20px; right:20px;   /* viewport margins */
-    height:auto;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+    top:20px; bottom:20px; left:20px; right:20px;
+    display:flex; align-items:center; justify-content:center;
     z-index:1;
     pointer-events:none;
+    opacity:var(--mobileImgOpacity,1);
+    transition:opacity 0.4s ease-out;
   }
-
-  /* individual opacities controlled by JS */
-  .s1-frame{opacity:var(--s1ImgOpacity);}
-  .s2-frame{opacity:var(--s2ImgOpacity);}
-  .s4-frame{opacity:var(--s4ImgOpacity);}
-  .s5-frame{opacity:var(--s5ImgOpacity);}
-  .s9-frame{opacity:var(--s9ImgOpacity);}
-  .s11-frame{opacity:var(--s11ImgOpacity);}
-  .s13-frame{opacity:var(--s13ImgOpacity);}
-  .s14-frame{opacity:var(--s14ImgOpacity);}
-
   .s1-frame img,.s2-frame img,.s4-frame img,.s5-frame img,
   .s9-frame img,.s11-frame img,.s13-frame img,.s14-frame img{
-    width:100%;
-    height:auto;
-    object-fit:contain;
-    display:block;
-    margin:0 auto;
-    max-width:calc(100% - 0px);
+    width:100%; height:auto; object-fit:contain;
   }
 
-  /* ==== TEXT OVERLAYS — converted to flow ==== */
+  /* ==== SECTION TEXTS (flow after image) ==== */
   .s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,
   .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay{
     position:relative;
     z-index:2;
-    width:100%;
     opacity:1!important;
     pointer-events:auto;
-    margin-top:calc(100vh - 40px); /* appears after section image viewport */
-    background:transparent;
+    margin-top:calc(100vh - 40px); /* sits right after fade zone */
     padding:0;
+    background:transparent;
   }
 
   .s1-rail,.s2-rail,.s4-rail,.s5-rail,
   .s9-rail,.s11-rail,.s13-rail,.s14-rail{
-    position:relative;
-    width:auto;
-    margin:0;
-    padding:0;
+    width:auto; margin:0; padding:0;
   }
 
   .s1-text,.s2-text,.s4-text,.s5-text,
@@ -396,29 +373,21 @@
     transform:none!important;
     text-align:left;
     color:#111;
-    margin:0 0 40px 0;
-    font-size:18px;
-    line-height:26px;
+    font-size:18px; line-height:26px;
+    margin:0 0 60px 0;
   }
 
   /* ==== GALLERIES ==== */
-  .galA-left-frame,.galB-center-frame,.galC-left-frame{
-    left:20px;right:20px;
-  }
+  .galA-left-frame,.galB-center-frame,.galC-left-frame{left:20px;right:20px;}
 
-  /* ==== FULL BLEEDS (unchanged) ==== */
+  /* ==== FULL BLEEDS ==== */
   .frame.s3-frame,.frame.s8-frame,.frame.s12-frame,.frame.s15-frame{
     left:0;right:0;top:0;bottom:0;
   }
 
-  /* ==== SECTION 15 TEXT ==== */
-  .s15-text{
-    padding:0 20px;
-    text-align:center;
-  }
+  /* ==== S15 text ==== */
+  .s15-text{padding:0 20px;text-align:center;}
 }
-
-
 
 </style>
 
@@ -1060,37 +1029,44 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
 
 <script>
 (function(){
+  const root=document.documentElement;
+
   function fadeSectionsMobile(){
-    if(window.innerWidth >= 768) return;   // desktop untouched
-    const y  = window.scrollY;
+    if(window.innerWidth >= 768) return;
+    const scrollY = window.scrollY;
     const vh = window.innerHeight;
 
-    // helper
-    const f = (y,a,b)=>Math.min(Math.max((b-y)/(b-a),0),1);
-
-    // sequential fade zones (1 viewport apart)
-    const ranges = [
-      ['--s1ImgOpacity', 0.1, 0.9],
-      ['--s2ImgOpacity', 1.1, 1.9],
-      ['--s4ImgOpacity', 2.1, 2.9],
-      ['--s5ImgOpacity', 3.1, 3.9],
-      ['--s9ImgOpacity', 4.1, 4.9],
-      ['--s11ImgOpacity',5.1,5.9],
-      ['--s13ImgOpacity',6.1,6.9],
-      ['--s14ImgOpacity',7.1,7.9]
+    // fade timing per section, spaced vertically
+    const seq = [
+      ['--s1ImgOpacity', 0*vh, 1*vh],
+      ['--s2ImgOpacity', 1*vh, 2*vh],
+      ['--s4ImgOpacity', 2*vh, 3*vh],
+      ['--s5ImgOpacity', 3*vh, 4*vh],
+      ['--s9ImgOpacity', 4*vh, 5*vh],
+      ['--s11ImgOpacity',5*vh, 6*vh],
+      ['--s13ImgOpacity',6*vh, 7*vh],
+      ['--s14ImgOpacity',7*vh, 8*vh]
     ];
 
-    ranges.forEach(([v,a,b])=>{
-      document.documentElement.style.setProperty(v, f(y,vh*a,vh*b).toFixed(3));
+    seq.forEach(([v,start,end])=>{
+      const fadeStart = start + vh*0.25;   // starts fading 25% in
+      const fadeEnd   = end   - vh*0.25;   // done fading 25% before end
+      let opacity = 1;
+      if(scrollY > fadeStart && scrollY < fadeEnd){
+        const t = (scrollY - fadeStart) / (fadeEnd - fadeStart);
+        opacity = 1 - t;
+      } else if(scrollY >= fadeEnd){
+        opacity = 0;
+      }
+      root.style.setProperty(v, opacity.toFixed(3));
     });
   }
 
   window.addEventListener('scroll', fadeSectionsMobile,{passive:true});
   window.addEventListener('resize', fadeSectionsMobile);
-  window.addEventListener('load',   fadeSectionsMobile);
+  window.addEventListener('load', fadeSectionsMobile);
 })();
 </script>
-
 
 </body>
 </html>
