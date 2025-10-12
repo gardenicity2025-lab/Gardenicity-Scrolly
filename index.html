@@ -325,62 +325,100 @@
     color:#00A86B;
   }
 
-/* ===== MOBILE (≤768px) — simple stacked flow with fade ===== */
+/* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
 @media (max-width:768px){
+  body{
+    margin:0;
+    padding:0 20px;
+  }
 
-  body{margin:0;padding:0 20px;}
-
-  /* HERO unchanged */
+  /* ==== HERO ==== */
   .hero-media{top:20px;bottom:20px;left:20px;right:20px;}
   .hero-title{font-size:78px;line-height:1.05;}
   .hero-links{font-size:20px;line-height:26px;}
 
-  /* SECTION IMAGES — inline, fade via JS */
+  /* ==== SECTION IMAGE + TEXT (S1, S2, S4, S5, S9, S11, S13, S14) ==== */
   .s1-frame,.s2-frame,.s4-frame,.s5-frame,
   .s9-frame,.s11-frame,.s13-frame,.s14-frame{
-    position:relative;
-    width:100%;
-    margin:60px 0 0 0;
-    opacity:0;
-    transition:opacity 0.6s ease-in-out;
+    position:fixed;
+    top:20px; bottom:20px; left:20px; right:20px;   /* viewport margins */
+    height:auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:1;
+    pointer-events:none;
   }
+
+  /* individual opacities controlled by JS */
+  .s1-frame{opacity:var(--s1ImgOpacity);}
+  .s2-frame{opacity:var(--s2ImgOpacity);}
+  .s4-frame{opacity:var(--s4ImgOpacity);}
+  .s5-frame{opacity:var(--s5ImgOpacity);}
+  .s9-frame{opacity:var(--s9ImgOpacity);}
+  .s11-frame{opacity:var(--s11ImgOpacity);}
+  .s13-frame{opacity:var(--s13ImgOpacity);}
+  .s14-frame{opacity:var(--s14ImgOpacity);}
+
   .s1-frame img,.s2-frame img,.s4-frame img,.s5-frame img,
   .s9-frame img,.s11-frame img,.s13-frame img,.s14-frame img{
     width:100%;
     height:auto;
     object-fit:contain;
     display:block;
-    border-radius:4px;
+    margin:0 auto;
+    max-width:calc(100% - 0px);
   }
 
-  /* TEXTS — normal flow directly after image */
+  /* ==== TEXT OVERLAYS — converted to flow ==== */
   .s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,
   .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay{
     position:relative;
+    z-index:2;
+    width:100%;
     opacity:1!important;
+    pointer-events:auto;
+    margin-top:calc(100vh - 40px); /* appears after section image viewport */
     background:transparent;
-    margin:20px 0 60px 0;
+    padding:0;
   }
+
+  .s1-rail,.s2-rail,.s4-rail,.s5-rail,
+  .s9-rail,.s11-rail,.s13-rail,.s14-rail{
+    position:relative;
+    width:auto;
+    margin:0;
+    padding:0;
+  }
+
   .s1-text,.s2-text,.s4-text,.s5-text,
   .s9-text,.s11-text,.s13-text,.s14-text{
     transform:none!important;
-    color:#111;
     text-align:left;
+    color:#111;
+    margin:0 0 40px 0;
     font-size:18px;
     line-height:26px;
-    margin:0;
   }
 
-  /* GALLERIES + FULL BLEEDS = inline */
-  .galA-left-frame,.galB-center-frame,.galC-left-frame,
+  /* ==== GALLERIES ==== */
+  .galA-left-frame,.galB-center-frame,.galC-left-frame{
+    left:20px;right:20px;
+  }
+
+  /* ==== FULL BLEEDS (unchanged) ==== */
   .frame.s3-frame,.frame.s8-frame,.frame.s12-frame,.frame.s15-frame{
-    position:relative;
-    top:auto;bottom:auto;left:auto;right:auto;
-    margin:40px 0;
+    left:0;right:0;top:0;bottom:0;
   }
 
-  .s15-text{padding:0 20px;text-align:center;}
+  /* ==== SECTION 15 TEXT ==== */
+  .s15-text{
+    padding:0 20px;
+    text-align:center;
+  }
 }
+
+
 
 </style>
 
@@ -1019,33 +1057,5 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
   init();
 })();
 </script>
-
-<script>
-(function(){
-  if(window.innerWidth >= 768) return; // desktop untouched
-
-  const frames = document.querySelectorAll(
-    '.s1-frame,.s2-frame,.s4-frame,.s5-frame,' +
-    '.s9-frame,.s11-frame,.s13-frame,.s14-frame'
-  );
-
-  function fadeOnScroll(){
-    const vh = window.innerHeight;
-    frames.forEach(f=>{
-      const rect = f.getBoundingClientRect();
-      const midpoint = rect.top + rect.height/2;
-      const dist = Math.abs(midpoint - vh/2);
-      const fade = Math.max(0, 1 - dist/(vh*0.6)); // closer to center → more visible
-      f.style.opacity = fade.toFixed(2);
-    });
-  }
-
-  window.addEventListener('scroll', fadeOnScroll, {passive:true});
-  window.addEventListener('resize', fadeOnScroll);
-  window.addEventListener('load', fadeOnScroll);
-})();
-</script>
-
-
 </body>
-</html> 
+</html>
