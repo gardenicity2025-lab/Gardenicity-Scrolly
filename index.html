@@ -1057,6 +1057,40 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
   init();
 })();
 </script>
+
+<script>
+(function(){
+  function fadeSectionsMobile(){
+    if(window.innerWidth >= 768) return;   // desktop untouched
+    const y  = window.scrollY;
+    const vh = window.innerHeight;
+
+    // helper
+    const f = (y,a,b)=>Math.min(Math.max((b-y)/(b-a),0),1);
+
+    // sequential fade zones (1 viewport apart)
+    const ranges = [
+      ['--s1ImgOpacity', 0.1, 0.9],
+      ['--s2ImgOpacity', 1.1, 1.9],
+      ['--s4ImgOpacity', 2.1, 2.9],
+      ['--s5ImgOpacity', 3.1, 3.9],
+      ['--s9ImgOpacity', 4.1, 4.9],
+      ['--s11ImgOpacity',5.1,5.9],
+      ['--s13ImgOpacity',6.1,6.9],
+      ['--s14ImgOpacity',7.1,7.9]
+    ];
+
+    ranges.forEach(([v,a,b])=>{
+      document.documentElement.style.setProperty(v, f(y,vh*a,vh*b).toFixed(3));
+    });
+  }
+
+  window.addEventListener('scroll', fadeSectionsMobile,{passive:true});
+  window.addEventListener('resize', fadeSectionsMobile);
+  window.addEventListener('load',   fadeSectionsMobile);
+})();
+</script>
+
+
 </body>
 </html>
-
