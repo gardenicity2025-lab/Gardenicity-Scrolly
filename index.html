@@ -416,26 +416,26 @@
     text-align:center;
   }
 
-  /* ==== PATCH: Ensure section text starts below fixed image viewport ==== */
-  .s1-overlay,
-  .s2-overlay,
-  .s4-overlay,
-  .s5-overlay,
-  .s9-overlay,
-  .s11-overlay,
-  .s13-overlay,
-  .s14-overlay {
-    padding-top: calc(100vh - 40px); /* ensures text starts after image viewport */
+  /* ==== TEXT BELOW IMAGE VIEWPORT (spacing & alignment) ==== */
+  .s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,
+  .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay{
+    margin-top:100vh;               /* ensures text enters after image viewport */
+    background:#eaeeec;
+    padding:0 20px;
+    z-index:3;
   }
 
-  .s1-text, .s2-text, .s4-text, .s5-text,
-  .s9-text, .s11-text, .s13-text, .s14-text {
-    margin-bottom: 60px; /* spacing before next section */
+  .s1-text,.s2-text,.s4-text,.s5-text,
+  .s9-text,.s11-text,.s13-text,.s14-text{
+    color:#111;
+    font-size:18px;
+    line-height:27px;
+    max-width:640px;
+    margin:0 auto 80px;
+    transform:none!important;
+    text-align:left;
   }
 }
-
-
-
 
 </style>
 
@@ -1076,4 +1076,3 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
 </script>
 </body>
 </html>
-
