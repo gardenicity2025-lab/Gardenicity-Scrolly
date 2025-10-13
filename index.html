@@ -327,14 +327,9 @@
 
 /* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
 @media (max-width:768px){
-  html,body{
-    margin:0;
-    padding:0;
-    overflow-x:hidden;
-  }
-
   body{
-    background:#eaeeec;
+    margin:0;
+    padding:0 20px;
   }
 
   /* ==== HERO ==== */
@@ -342,19 +337,20 @@
   .hero-title{font-size:78px;line-height:1.05;}
   .hero-links{font-size:20px;line-height:26px;}
 
-  /* ==== SECTION IMAGES ==== */
+  /* ==== SECTION IMAGE + TEXT (S1, S2, S4, S5, S9, S11, S13, S14) ==== */
   .s1-frame,.s2-frame,.s4-frame,.s5-frame,
   .s9-frame,.s11-frame,.s13-frame,.s14-frame{
     position:fixed;
-    top:20px; bottom:20px; left:20px; right:20px;
+    top:20px; bottom:20px; left:20px; right:20px;   /* viewport margins */
+    height:auto;
     display:flex;
     align-items:center;
     justify-content:center;
-    height:auto;
     z-index:1;
     pointer-events:none;
   }
 
+  /* individual opacities controlled by JS */
   .s1-frame{opacity:var(--s1ImgOpacity);}
   .s2-frame{opacity:var(--s2ImgOpacity);}
   .s4-frame{opacity:var(--s4ImgOpacity);}
@@ -374,17 +370,7 @@
     max-width:calc(100% - 0px);
   }
 
-  /* ==== GALLERIES ==== */
-  .galA-left-frame,.galB-center-frame,.galC-left-frame{
-    left:20px;right:20px;
-  }
-
-  /* ==== FULL BLEEDS ==== */
-  .frame.s3-frame,.frame.s8-frame,.frame.s12-frame,.frame.s15-frame{
-    left:0;right:0;top:0;bottom:0;
-  }
-
-  /* ==== TEXT COLUMN PATCH ==== */
+  /* ==== TEXT OVERLAYS — converted to flow ==== */
   .s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,
   .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay{
     position:relative;
@@ -393,7 +379,7 @@
     opacity:1!important;
     pointer-events:auto;
     background:transparent;
-    padding-top:calc(100vh + 20px); /* start below image viewport */
+    padding:0;
   }
 
   .s1-rail,.s2-rail,.s4-rail,.s5-rail,
@@ -401,32 +387,60 @@
     position:relative;
     width:auto;
     margin:0;
-    padding:0 20px;
-    box-sizing:border-box;
+    padding:0;
   }
 
   .s1-text,.s2-text,.s4-text,.s5-text,
   .s9-text,.s11-text,.s13-text,.s14-text{
     transform:none!important;
-    position:relative!important;
     text-align:left;
     color:#111;
+    margin:0 0 40px 0;
     font-size:18px;
     line-height:26px;
-    margin:0 0 60px 0;
+  }
+
+  /* ==== GALLERIES ==== */
+  .galA-left-frame,.galB-center-frame,.galC-left-frame{
+    left:20px;right:20px;
+  }
+
+  /* ==== FULL BLEEDS (unchanged) ==== */
+  .frame.s3-frame,.frame.s8-frame,.frame.s12-frame,.frame.s15-frame{
+    left:0;right:0;top:0;bottom:0;
   }
 
   /* ==== SECTION 15 TEXT ==== */
   .s15-text{
     padding:0 20px;
     text-align:center;
-    font-size:18px;
-    line-height:26px;
+  }
+
+  /* ==== PATCH: Ensure section text starts below fixed image viewport ==== */
+  .s1-overlay,
+  .s2-overlay,
+  .s4-overlay,
+  .s5-overlay,
+  .s9-overlay,
+  .s11-overlay,
+  .s13-overlay,
+  .s14-overlay {
+    padding-top: calc(100vh - 40px); /* ensures text starts after image viewport */
+  }
+
+  .s1-text, .s2-text, .s4-text, .s5-text,
+  .s9-text, .s11-text, .s13-text, .s14-text {
+    margin-bottom: 60px; /* spacing before next section */
   }
 }
 
+
+
+
 </style>
+
 </head>
+
 <body>
 
 <!-- HERO -->
