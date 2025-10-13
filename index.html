@@ -327,23 +327,65 @@
 
 /* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
 @media (max-width:768px){
-
-  html,body{
+  body{
     margin:0;
-    padding:0;
-    overflow-x:hidden;
+    padding:0 20px;
   }
 
-  /* --- HERO (unchanged behaviour) --- */
+  /* ==== HERO ==== */
   .hero-media{top:20px;bottom:20px;left:20px;right:20px;}
-  .hero-title{font-size:72px;line-height:1.05;margin:0 20px;}
-  .hero-links{font-size:20px;line-height:26px;margin:0 20px;}
+  .hero-title{font-size:78px;line-height:1.05;}
+  .hero-links{font-size:20px;line-height:26px;}
 
-  /* --- SECTION TEXT RAILS --- */
+  /* ==== SECTION IMAGE + TEXT (S1, S2, S4, S5, S9, S11, S13, S14) ==== */
+  .s1-frame,.s2-frame,.s4-frame,.s5-frame,
+  .s9-frame,.s11-frame,.s13-frame,.s14-frame{
+    position:fixed;
+    top:20px; bottom:20px; left:20px; right:20px;   /* viewport margins */
+    height:auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:1;
+    pointer-events:none;
+  }
+
+  /* individual opacities controlled by JS */
+  .s1-frame{opacity:var(--s1ImgOpacity);}
+  .s2-frame{opacity:var(--s2ImgOpacity);}
+  .s4-frame{opacity:var(--s4ImgOpacity);}
+  .s5-frame{opacity:var(--s5ImgOpacity);}
+  .s9-frame{opacity:var(--s9ImgOpacity);}
+  .s11-frame{opacity:var(--s11ImgOpacity);}
+  .s13-frame{opacity:var(--s13ImgOpacity);}
+  .s14-frame{opacity:var(--s14ImgOpacity);}
+
+  .s1-frame img,.s2-frame img,.s4-frame img,.s5-frame img,
+  .s9-frame img,.s11-frame img,.s13-frame img,.s14-frame img{
+    width:100%;
+    height:auto;
+    object-fit:contain;
+    display:block;
+    margin:0 auto;
+    max-width:calc(100% - 0px);
+  }
+
+  /* ==== TEXT OVERLAYS — converted to flow ==== */
+  .s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,
+  .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay{
+    position:relative;
+    z-index:2;
+    width:100%;
+    opacity:1!important;
+    pointer-events:auto;
+    background:transparent;
+    padding:0;
+  }
+
   .s1-rail,.s2-rail,.s4-rail,.s5-rail,
   .s9-rail,.s11-rail,.s13-rail,.s14-rail{
-    position:relative!important;
-    width:auto!important;
+    position:relative;
+    width:auto;
     margin:0;
     padding:0;
   }
@@ -351,38 +393,48 @@
   .s1-text,.s2-text,.s4-text,.s5-text,
   .s9-text,.s11-text,.s13-text,.s14-text{
     transform:none!important;
-    position:relative!important;
     text-align:left;
     color:#111;
+    margin:0 0 40px 0;
     font-size:18px;
     line-height:26px;
-    margin:0 auto 60px;
-    padding:0 20px;
-    width:auto;
-    max-width:100%;
-    box-sizing:border-box;
   }
 
-  /* --- SECTION OVERLAYS (containers) --- */
-  .s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,
-  .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay{
-    position:relative!important;
-    z-index:2;
-    background:transparent;
-    margin:0;
-    padding:0;
-    opacity:1!important;
+  /* ==== GALLERIES ==== */
+  .galA-left-frame,.galB-center-frame,.galC-left-frame{
+    left:20px;right:20px;
   }
 
-  /* --- S15 specific adjustment --- */
+  /* ==== FULL BLEEDS (unchanged) ==== */
+  .frame.s3-frame,.frame.s8-frame,.frame.s12-frame,.frame.s15-frame{
+    left:0;right:0;top:0;bottom:0;
+  }
+
+  /* ==== SECTION 15 TEXT ==== */
   .s15-text{
-    position:relative!important;
-    transform:none!important;
-    margin:40px 20px;
-    padding:0;
+    padding:0 20px;
     text-align:center;
   }
+
+  /* ==== PATCH: Ensure section text starts below fixed image viewport ==== */
+  .s1-overlay,
+  .s2-overlay,
+  .s4-overlay,
+  .s5-overlay,
+  .s9-overlay,
+  .s11-overlay,
+  .s13-overlay,
+  .s14-overlay {
+    padding-top: calc(100vh - 40px); /* ensures text starts after image viewport */
+  }
+
+  .s1-text, .s2-text, .s4-text, .s5-text,
+  .s9-text, .s11-text, .s13-text, .s14-text {
+    margin-bottom: 60px; /* spacing before next section */
+  }
 }
+
+
 
 
 </style>
