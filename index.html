@@ -1,5 +1,3 @@
-Oct 13-Scrollytelling mobile responsive / texts not yet working baseline 
-
 <!doctype html>
 <html lang="en" data-baseline="stable-2025-10-01__rails-460px__galC-6-only">
 <head>
@@ -327,114 +325,60 @@ Oct 13-Scrollytelling mobile responsive / texts not yet working baseline
     color:#00A86B;
   }
 
-/* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
+/* === FINAL MOBILE LAYOUT REFINEMENT === */
 @media (max-width:768px){
-  body{
-    margin:0;
-    padding:0 20px;
-  }
 
-  /* ==== HERO ==== */
-  .hero-media{top:20px;bottom:20px;left:20px;right:20px;}
-  .hero-title{font-size:78px;line-height:1.05;}
-  .hero-links{font-size:20px;line-height:26px;}
-
-  /* ==== SECTION IMAGE + TEXT (S1, S2, S4, S5, S9, S11, S13, S14) ==== */
-  .s1-frame,.s2-frame,.s4-frame,.s5-frame,
-  .s9-frame,.s11-frame,.s13-frame,.s14-frame{
-    position:fixed;
-    top:20px; bottom:20px; left:20px; right:20px;   /* viewport margins */
-    height:auto;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    z-index:1;
-    pointer-events:none;
-  }
-
-  /* individual opacities controlled by JS */
-  .s1-frame{opacity:var(--s1ImgOpacity);}
-  .s2-frame{opacity:var(--s2ImgOpacity);}
-  .s4-frame{opacity:var(--s4ImgOpacity);}
-  .s5-frame{opacity:var(--s5ImgOpacity);}
-  .s9-frame{opacity:var(--s9ImgOpacity);}
-  .s11-frame{opacity:var(--s11ImgOpacity);}
-  .s13-frame{opacity:var(--s13ImgOpacity);}
-  .s14-frame{opacity:var(--s14ImgOpacity);}
-
-  .s1-frame img,.s2-frame img,.s4-frame img,.s5-frame img,
-  .s9-frame img,.s11-frame img,.s13-frame img,.s14-frame img{
-    width:100%;
-    height:auto;
-    object-fit:contain;
+  /* --- unify rails into one centered text column --- */
+  .s1-rail,.s2-rail,.s4-rail,.s5-rail,
+  .s9-rail,.s11-rail,.s13-rail,.s14-rail {
     display:block;
+    width:100%;
     margin:0 auto;
-    max-width:calc(100% - 0px);
+    padding:0 20px;
+    max-width:640px;
   }
 
-  /* ==== TEXT OVERLAYS — converted to flow ==== */
+  /* --- center the text content below the image fade --- */
   .s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,
-  .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay{
+  .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay {
     position:relative;
-    z-index:2;
-    width:100%;
+    top:100vh;               /* text appears after image viewport */
+    z-index:3;               /* ensure above fading image */
+    background:transparent;
     opacity:1!important;
     pointer-events:auto;
-    background:transparent;
-    padding:0;
-  }
-
-  .s1-rail,.s2-rail,.s4-rail,.s5-rail,
-  .s9-rail,.s11-rail,.s13-rail,.s14-rail{
-    position:relative;
-    width:auto;
-    margin:0;
-    padding:0;
+    margin:0 auto;
+    text-align:left;
   }
 
   .s1-text,.s2-text,.s4-text,.s5-text,
-  .s9-text,.s11-text,.s13-text,.s14-text{
-    transform:none!important;
-    text-align:left;
+  .s9-text,.s11-text,.s13-text,.s14-text {
     color:#111;
-    margin:0 0 40px 0;
     font-size:18px;
-    line-height:26px;
+    line-height:27px;
+    margin:0 0 80px 0;
+    transform:none!important;
   }
 
-  /* ==== GALLERIES ==== */
-  .galA-left-frame,.galB-center-frame,.galC-left-frame{
-    left:20px;right:20px;
+  /* --- keep section images exactly as before --- */
+  .s1-frame,.s2-frame,.s4-frame,.s5-frame,
+  .s9-frame,.s11-frame,.s13-frame,.s14-frame {
+    z-index:1;
   }
 
-  /* ==== FULL BLEEDS (unchanged) ==== */
-  .frame.s3-frame,.frame.s8-frame,.frame.s12-frame,.frame.s15-frame{
-    left:0;right:0;top:0;bottom:0;
-  }
-
-  /* ==== SECTION 15 TEXT ==== */
-  .s15-text{
-    padding:0 20px;
+  /* --- section 15: white centered text on bleed image --- */
+  .s15-text {
+    color:#fff!important;
     text-align:center;
-  }
-
-  /* ==== PATCH: Ensure section text starts below fixed image viewport ==== */
-  .s1-overlay,
-  .s2-overlay,
-  .s4-overlay,
-  .s5-overlay,
-  .s9-overlay,
-  .s11-overlay,
-  .s13-overlay,
-  .s14-overlay {
-    padding-top: calc(100vh - 40px); /* ensures text starts after image viewport */
-  }
-
-  .s1-text, .s2-text, .s4-text, .s5-text,
-  .s9-text, .s11-text, .s13-text, .s14-text {
-    margin-bottom: 60px; /* spacing before next section */
+    background:transparent!important;
+    max-width:640px;
+    margin:0 auto 80px;
+    padding:0 20px;
+    position:relative;
+    z-index:3;
   }
 }
+
 
 
 
@@ -1078,4 +1022,3 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
 </script>
 </body>
 </html>
-
