@@ -433,6 +433,67 @@
     margin-bottom: 60px; /* spacing before next section */
   }
 }
+/* === MOBILE: FINAL VIEWPORT IMAGE + TEXT BEHAVIOR === */
+@media (max-width:768px){
+
+  /* --- neutralize desktop rail layout --- */
+  .s1-rail,.s2-rail,.s4-rail,.s5-rail,
+  .s9-rail,.s11-rail,.s13-rail,.s14-rail {
+    float:none !important;
+    position:relative !important;
+    width:100%;
+    max-width:640px;
+    margin:0 auto;
+    padding:0 20px;
+    display:block;
+  }
+
+  /* --- make text enter after image fade --- */
+  .s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,
+  .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay {
+    position:relative !important;
+    top:auto !important;
+    margin-top:100vh;             /* start text one full viewport below image */
+    background:transparent !important;
+    z-index:3;
+    opacity:1 !important;
+    pointer-events:auto;
+  }
+
+  /* --- text column styling --- */
+  .s1-text,.s2-text,.s4-text,.s5-text,
+  .s9-text,.s11-text,.s13-text,.s14-text {
+    transform:none !important;
+    color:#111;
+    font-size:18px;
+    line-height:26px;
+    text-align:left;
+    margin:0 0 60px 0;
+    padding:0;                    /* 20 px already from parent rail */
+  }
+
+  /* --- keep section images pinned and cross-fading --- */
+  .s1-frame,.s2-frame,.s4-frame,.s5-frame,
+  .s9-frame,.s11-frame,.s13-frame,.s14-frame {
+    position:fixed !important;
+    top:20px; bottom:20px; left:20px; right:20px;
+    z-index:1;
+    pointer-events:none;
+  }
+
+  /* --- Section 15: white centered text on full-bleed image --- */
+  .s15-text {
+    color:#fff !important;
+    background:transparent !important;
+    text-align:center;
+    max-width:640px;
+    margin:0 auto 60px;
+    padding:0 20px;
+    position:relative;
+    z-index:3;
+  }
+}
+
 
 </style>
 
@@ -1073,4 +1134,3 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
 </script>
 </body>
 </html>
-
