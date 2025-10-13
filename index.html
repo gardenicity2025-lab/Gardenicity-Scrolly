@@ -329,7 +329,8 @@
 @media (max-width:768px){
   body{
     margin:0;
-    padding:0 20px;
+    padding:0;
+    background:#eaeeec;
   }
 
   /* ==== HERO ==== */
@@ -337,12 +338,19 @@
   .hero-title{font-size:78px;line-height:1.05;}
   .hero-links{font-size:20px;line-height:26px;}
 
-  /* ==== SECTION IMAGE + TEXT (S1, S2, S4, S5, S9, S11, S13, S14) ==== */
+  /* ==== SECTION WRAPS ==== */
+  .s1-wrap,.s2-wrap,.s4-wrap,.s5-wrap,
+  .s9-wrap,.s11-wrap,.s13-wrap,.s14-wrap{
+    position:relative;
+    min-height:200vh; /* 100vh for image + 100vh for text scroll */
+    background:#eaeeec;
+  }
+
+  /* ==== FIXED IMAGE FRAMES ==== */
   .s1-frame,.s2-frame,.s4-frame,.s5-frame,
   .s9-frame,.s11-frame,.s13-frame,.s14-frame{
     position:fixed;
-    top:20px; bottom:20px; left:20px; right:20px;   /* viewport margins */
-    height:auto;
+    top:20px; bottom:20px; left:20px; right:20px;
     display:flex;
     align-items:center;
     justify-content:center;
@@ -350,7 +358,7 @@
     pointer-events:none;
   }
 
-  /* individual opacities controlled by JS */
+  /* JS-controlled opacity fades still apply */
   .s1-frame{opacity:var(--s1ImgOpacity);}
   .s2-frame{opacity:var(--s2ImgOpacity);}
   .s4-frame{opacity:var(--s4ImgOpacity);}
@@ -366,28 +374,20 @@
     height:auto;
     object-fit:contain;
     display:block;
-    margin:0 auto;
-    max-width:calc(100% - 0px);
   }
 
-  /* ==== TEXT OVERLAYS — converted to flow ==== */
+  /* ==== TEXT OVERLAY SCROLLS AFTER IMAGE ==== */
   .s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,
   .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay{
     position:relative;
+    top:100vh; /* start after full image viewport */
     z-index:2;
-    width:100%;
     opacity:1!important;
     pointer-events:auto;
-    background:transparent;
-    padding:0;
-  }
-
-  .s1-rail,.s2-rail,.s4-rail,.s5-rail,
-  .s9-rail,.s11-rail,.s13-rail,.s14-rail{
-    position:relative;
-    width:auto;
-    margin:0;
-    padding:0;
+    background:#eaeeec;
+    padding:0 20px;
+    max-width:640px;
+    margin:0 auto;
   }
 
   .s1-text,.s2-text,.s4-text,.s5-text,
@@ -395,9 +395,9 @@
     transform:none!important;
     text-align:left;
     color:#111;
-    margin:0 0 40px 0;
     font-size:18px;
-    line-height:26px;
+    line-height:27px;
+    margin:0 0 80px 0;
   }
 
   /* ==== GALLERIES ==== */
@@ -414,26 +414,9 @@
   .s15-text{
     padding:0 20px;
     text-align:center;
-  }
-
-  /* ==== TEXT BELOW IMAGE VIEWPORT (spacing & alignment) ==== */
-  .s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,
-  .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay{
-    margin-top:100vh;               /* ensures text enters after image viewport */
-    background:#eaeeec;
-    padding:0 20px;
-    z-index:3;
-  }
-
-  .s1-text,.s2-text,.s4-text,.s5-text,
-  .s9-text,.s11-text,.s13-text,.s14-text{
     color:#111;
-    font-size:18px;
-    line-height:27px;
     max-width:640px;
     margin:0 auto 80px;
-    transform:none!important;
-    text-align:left;
   }
 }
 
