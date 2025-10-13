@@ -396,6 +396,27 @@
   /* ---- SECTION 15 TEXT ---- */
   .s15-text{padding:0 20px;text-align:center;}
 }
+/* ===== MOBILE OVERRIDE PATCH: disable scroll JS transforms ===== */
+@media (max-width:768px){
+  :root{
+    --s1ImgOpacity:1; --s2ImgOpacity:1; --s4ImgOpacity:1; --s5ImgOpacity:1;
+    --s9ImgOpacity:1; --s11ImgOpacity:1; --s13ImgOpacity:1; --s14ImgOpacity:1;
+    --s1Overlay:1; --s2Overlay:1; --s4Overlay:1; --s5Overlay:1;
+    --s9Overlay:1; --s11Overlay:1; --s13Overlay:1; --s14Overlay:1;
+    --s1Y:0px; --s2Y:0px; --s4Y:0px; --s5Y:0px;
+    --s9Y:0px; --s11Y:0px; --s13Y:0px; --s14Y:0px;
+  }
+  /* freeze animations */
+  .s1-frame,.s2-frame,.s4-frame,.s5-frame,
+  .s9-frame,.s11-frame,.s13-frame,.s14-frame{
+    opacity:1!important;
+    transform:none!important;
+  }
+  .s1-text,.s2-text,.s4-text,.s5-text,
+  .s9-text,.s11-text,.s13-text,.s14-text{
+    transform:none!important;
+  }
+}
 
 </style>
 
