@@ -378,7 +378,6 @@
     width:100%;
     opacity:1!important;
     pointer-events:auto;
-    margin-top:calc(100vh - 40px); /* appears after section image viewport */
     background:transparent;
     padding:0;
   }
@@ -416,7 +415,25 @@
     padding:0 20px;
     text-align:center;
   }
+
+  /* ==== PATCH: Ensure section text starts below fixed image viewport ==== */
+  .s1-overlay,
+  .s2-overlay,
+  .s4-overlay,
+  .s5-overlay,
+  .s9-overlay,
+  .s11-overlay,
+  .s13-overlay,
+  .s14-overlay {
+    padding-top: calc(100vh - 40px); /* ensures text starts after image viewport */
+  }
+
+  .s1-text, .s2-text, .s4-text, .s5-text,
+  .s9-text, .s11-text, .s13-text, .s14-text {
+    margin-bottom: 60px; /* spacing before next section */
+  }
 }
+
 
 
 
