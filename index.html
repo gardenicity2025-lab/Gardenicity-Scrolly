@@ -427,7 +427,61 @@
     margin:0 auto 80px;
   }
 }
+/* ===== FINAL MOBILE RESET (full reset of fixed frames) ===== */
+@media (max-width:768px){
+  /* hide all fixed frames so only inline content appears */
+  figure.frame{
+    position:relative !important;
+    top:auto !important; bottom:auto !important;
+    left:auto !important; right:auto !important;
+    width:100% !important;
+    height:auto !important;
+    opacity:1 !important;
+    z-index:auto !important;
+    pointer-events:auto !important;
+    display:block !important;
+    overflow:hidden !important;
+  }
+  figure.frame img{
+    position:relative !important;
+    width:100% !important;
+    height:auto !important;
+    object-fit:contain !important;
+    display:block !important;
+  }
 
+  /* disable overlay and transform logic */
+  .s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,
+  .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay,
+  .s15-overlay{
+    position:relative !important;
+    opacity:1 !important;
+    pointer-events:auto !important;
+    background:transparent !important;
+    transform:none !important;
+  }
+  .s1-text,.s2-text,.s4-text,.s5-text,
+  .s9-text,.s11-text,.s13-text,.s14-text,
+  .s15-text{
+    transform:none !important;
+    position:relative !important;
+    color:#111 !important;
+    font-size:18px !important;
+    line-height:27px !important;
+    margin:0 20px 60px !important;
+    text-align:left !important;
+  }
+  .s15-text{text-align:center !important;}
+
+  /* neutralize JS custom properties */
+  :root{
+    --s1ImgOpacity:1;--s2ImgOpacity:1;--s4ImgOpacity:1;--s5ImgOpacity:1;
+    --s9ImgOpacity:1;--s11ImgOpacity:1;--s13ImgOpacity:1;--s14ImgOpacity:1;
+    --s1Overlay:1;--s2Overlay:1;--s4Overlay:1;--s5Overlay:1;
+    --s9Overlay:1;--s11Overlay:1;--s13Overlay:1;--s14Overlay:1;--s15Overlay:1;
+    --s1Y:0px;--s2Y:0px;--s4Y:0px;--s5Y:0px;--s9Y:0px;--s11Y:0px;--s13Y:0px;--s14Y:0px;
+  }
+}
 </style>
 
 </head>
