@@ -335,45 +335,48 @@
   }
 
   /* ==== HERO ==== */
-  .hero-media{top:20px;bottom:20px;left:20px;right:20px;}
-  .hero-title{font-size:78px;line-height:1.05;}
-  .hero-links{font-size:20px;line-height:26px;}
+  .hero-media{
+    top:20px;bottom:auto;left:20px;right:20px;
+    position:relative;
+    display:flex;flex-direction:column;
+    align-items:flex-start;justify-content:flex-end;
+  }
+  .hero-title{font-size:64px;line-height:1.05;margin:0 0 12px;}
+  .hero-links{font-size:18px;line-height:26px;margin-bottom:40px;}
 
-  /* ==== SECTION IMAGES (stay pinned and fade) ==== */
+  /* ==== STANDARD SECTIONS ==== */
   .s1-frame,.s2-frame,.s4-frame,.s5-frame,
   .s9-frame,.s11-frame,.s13-frame,.s14-frame{
-    position:fixed;
-    top:20px; bottom:20px; left:20px; right:20px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+    position:relative;   /* ← remove pinning */
+    top:auto;bottom:auto;left:auto;right:auto;
+    width:100%;
+    margin:60px 0 0;
     z-index:1;
     pointer-events:none;
   }
+
   .s1-frame img,.s2-frame img,.s4-frame img,.s5-frame img,
   .s9-frame img,.s11-frame img,.s13-frame img,.s14-frame img{
     width:100%;
     height:auto;
-    object-fit:contain;
     display:block;
+    object-fit:contain;
   }
 
-  /* ==== TEXT OVERLAYS (flow below image) ==== */
+  /* ==== TEXT ==== */
   .s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,
   .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay{
     position:relative;
-    margin-top:100vh;           /* start after image viewport */
-    z-index:2;
+    opacity:1!important;
+    visibility:visible!important;
+    pointer-events:auto!important;
     background:transparent;
     padding:0;
-    opacity:1 !important;       /* force visible */
-    visibility:visible !important;
-    pointer-events:auto !important;
+    margin:0;
   }
 
   .s1-rail,.s2-rail,.s4-rail,.s5-rail,
   .s9-rail,.s11-rail,.s13-rail,.s14-rail{
-    position:relative;
     width:100%;
     max-width:640px;
     margin:0 auto;
@@ -386,26 +389,45 @@
     font-size:18px;
     line-height:26px;
     text-align:left;
-    transform:none!important;   /* disable desktop transform */
-    margin:0 0 80px 0;
+    transform:none!important;
+    margin:20px 0 80px;
   }
 
-  /* ==== GALLERIES ==== */
+  /* ==== GALLERIES (fit in column) ==== */
   .galA-left-frame,.galB-center-frame,.galC-left-frame{
-    left:20px;right:20px;
+    position:relative;
+    left:auto;right:auto;
+    margin:40px 0;
+  }
+  .galA-left-frame img,
+  .galB-center-frame img,
+  .galC-left-frame img{
+    width:100%;height:auto;object-fit:contain;display:block;
   }
 
   /* ==== FULL BLEEDS ==== */
   .frame.s3-frame,.frame.s8-frame,.frame.s12-frame,.frame.s15-frame{
-    left:0;right:0;top:0;bottom:0;
+    position:relative;
+    left:0;right:0;top:auto;bottom:auto;
+    width:100%;
+    margin:60px 0 0;
+  }
+  .frame.s3-frame img,
+  .frame.s8-frame img,
+  .frame.s12-frame img,
+  .frame.s15-frame img{
+    width:100%;
+    height:auto;
+    display:block;
+    object-fit:cover;
   }
 
   /* ==== SECTION 15 ==== */
   .s15-overlay{
     position:relative;
-    margin-top:100vh;
-    opacity:1 !important;
-    visibility:visible !important;
+    margin:20px 0 60px;
+    opacity:1!important;
+    visibility:visible!important;
   }
   .s15-rail{
     position:relative;
@@ -415,14 +437,15 @@
     padding:0 20px;
   }
   .s15-text{
-    color:#fff !important;
+    color:#fff!important;
     text-align:center;
     font-size:18px;
     line-height:26px;
-    margin:0 auto 80px;
+    margin:20px 0 80px;
     transform:none!important;
   }
 }
+
 
 </style>
 
