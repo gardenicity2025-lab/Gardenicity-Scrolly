@@ -433,6 +433,41 @@
     margin-bottom: 60px; /* spacing before next section */
   }
 }
+/* === PATCH: Ensure section text enters its own viewport after image === */
+@media (max-width:768px){
+  /* Create a fade-out zone after each image frame */
+  .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
+  .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
+    position:relative;
+    min-height:200vh; /* image (100vh) + text scroll (100vh) */
+    background:#eaeeec;
+  }
+
+  /* Let overlays (text) start only after first viewport */
+  .s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,
+  .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay{
+    position:sticky;
+    top:100vh; /* start after image area */
+    z-index:2;
+    opacity:1!important;
+    background:#eaeeec;
+    pointer-events:auto;
+    padding:0 20px;
+  }
+
+  /* Keep text column readable */
+  .s1-text,.s2-text,.s4-text,.s5-text,
+  .s9-text,.s11-text,.s13-text,.s14-text{
+    color:#111;
+    text-align:left;
+    font-size:18px;
+    line-height:27px;
+    margin:0 auto;
+    max-width:640px;
+    transform:none!important;
+  }
+}
+
 
 
 
