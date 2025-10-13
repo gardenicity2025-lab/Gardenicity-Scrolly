@@ -422,7 +422,62 @@
     margin:0 auto 80px;
   }
 }
+/* === PATCH: mobile text viewport separation and visibility fix === */
+@media (max-width:768px){
 
+  /* Make sure each section has its own vertical scroll space */
+  .s1-wrap,.s2-wrap,.s4-wrap,.s5-wrap,
+  .s9-wrap,.s11-wrap,.s13-wrap,.s14-wrap {
+    position: relative;
+    background:#eaeeec;
+    min-height: 200vh; /* image (100vh) + text (100vh) */
+    overflow: visible;
+  }
+
+  /* Keep images behind text and unaffected */
+  .s1-frame,.s2-frame,.s4-frame,.s5-frame,
+  .s9-frame,.s11-frame,.s13-frame,.s14-frame {
+    z-index: 1;
+  }
+
+  /* Place overlays visibly above the image, starting after one full viewport */
+  .s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,
+  .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay {
+    position: relative;
+    top: 100vh;             /* appears after image viewport */
+    z-index: 3;             /* ensures above image */
+    background: #eaeeec;
+    color: #111;
+    padding: 0 20px;
+    max-width: 640px;
+    margin: 0 auto;
+    opacity: 1 !important;
+    pointer-events: auto;
+  }
+
+  /* Readable single-column flow for text */
+  .s1-text,.s2-text,.s4-text,.s5-text,
+  .s9-text,.s11-text,.s13-text,.s14-text {
+    font-size: 18px;
+    line-height: 27px;
+    text-align: left;
+    color: inherit;
+    margin: 0 0 80px 0;
+    transform: none !important;
+  }
+
+  /* Fix section 15 contrast and spacing */
+  .s15-text {
+    color: #111 !important;
+    background: #eaeeec;
+    padding: 0 20px;
+    max-width: 640px;
+    margin: 0 auto 80px;
+    position: relative;
+    z-index: 3;
+    text-align: center;
+  }
+}
 
 </style>
 
