@@ -331,6 +331,7 @@
   body{
     margin:0;
     padding:0;
+    overflow-x:hidden;
   }
 
   /* ==== HERO ==== */
@@ -341,22 +342,24 @@
   /* ==== SECTION IMAGES ==== */
   .s1-frame,.s2-frame,.s4-frame,.s5-frame,
   .s9-frame,.s11-frame,.s13-frame,.s14-frame{
-    position:fixed;
-    top:20px; bottom:20px; left:20px; right:20px;
-    height:auto;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+    position:relative !important;
+    width:100%;
+    margin:0 auto;
+    padding:0;
+    top:auto; bottom:auto; left:auto; right:auto;
+    display:block;
     z-index:1;
-    pointer-events:none;
+    opacity:1;
+    transition:opacity 0.8s ease-out;
   }
 
   .s1-frame img,.s2-frame img,.s4-frame img,.s5-frame img,
   .s9-frame img,.s11-frame img,.s13-frame img,.s14-frame img{
     width:100%;
     height:auto;
-    object-fit:contain;
     display:block;
+    object-fit:contain;
+    margin:20px 0;
   }
 
   /* ==== TEXT BLOCKS ==== */
@@ -364,21 +367,12 @@
   .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay{
     position:relative !important;
     z-index:2;
-    width:100%;
-    opacity:1!important;
-    pointer-events:auto;
     background:transparent;
-    margin-top:calc(100vh + 20px); /* appear after viewport image */
     padding:0 20px 60px 20px;
+    margin:0 auto;
     box-sizing:border-box;
-  }
-
-  .s1-rail,.s2-rail,.s4-rail,.s5-rail,
-  .s9-rail,.s11-rail,.s13-rail,.s14-rail{
-    position:relative !important;
-    width:auto !important;
-    margin:0;
-    padding:0;
+    max-width:100%;
+    opacity:1!important;
   }
 
   .s1-text,.s2-text,.s4-text,.s5-text,
@@ -391,60 +385,36 @@
     margin:0 0 40px 0;
   }
 
-  /* ==== GALLERIES ==== */
-  .galA-left-frame,.galB-center-frame,.galC-left-frame{
-    left:20px;right:20px;
-  }
-
-  /* ==== FULL BLEEDS ==== */
-  .frame.s3-frame,.frame.s8-frame,.frame.s12-frame,.frame.s15-frame{
-    left:0;right:0;top:0;bottom:0;
+  /* ==== SCROLL FADE (fade out image when text enters) ==== */
+  .section-inview .s1-frame,
+  .section-inview .s2-frame,
+  .section-inview .s4-frame,
+  .section-inview .s5-frame,
+  .section-inview .s9-frame,
+  .section-inview .s11-frame,
+  .section-inview .s13-frame,
+  .section-inview .s14-frame {
+    opacity:0;
   }
 
   /* ==== SECTION 15 ==== */
   .s15-overlay{
-    position:fixed;
-    top:0; bottom:0; left:0; right:0;
-    z-index:3;
-    pointer-events:none;
-  }
-  .s15-text{
     position:relative;
+    z-index:3;
+    padding:40px 20px;
+    text-align:center;
+  }
+
+  .s15-text{
     padding:0 20px;
     text-align:center;
-    box-sizing:border-box;
-  }
-}
-/* === MOBILE DIAGNOSTIC TEST === */
-@media (max-width:768px){
-
-  /* Make section text blocks obvious */
-  .s1-text, .s2-text, .s4-text, .s5-text,
-  .s9-text, .s11-text, .s13-text, .s14-text {
-    background: rgba(255, 0, 0, 0.1) !important;
-    border: 2px dashed red !important;
-    color: black !important;
-    transform: none !important;
-    font-size: 20px !important;
-  }
-
-  /* Mark overlays in blue if they are still active (to confirm positioning) */
-  .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
-  .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
-    background: rgba(0, 0, 255, 0.05) !important;
-    border: 1px solid rgba(0,0,255,0.3) !important;
-  }
-
-  /* Hero sanity check */
-  .hero-title {
-    color: green !important;
   }
 }
 
 
 </style>
-
 </head>
+
 <body>
 
 <!-- HERO -->
@@ -1078,6 +1048,23 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
   init();
 })();
 </script>
+<script>
+if (window.innerWidth <= 768) {
+  const sections = document.querySelectorAll('.s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay, .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay');
+  const observer = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      const parent = entry.target.closest('section');
+      if(entry.isIntersecting){
+        parent?.classList.add('section-inview');
+      } else {
+        parent?.classList.remove('section-inview');
+      }
+    });
+  }, {threshold:0.3});
+
+  sections.forEach(sec=>observer.observe(sec));
+}
+</script>
+
 </body>
 </html>
-
