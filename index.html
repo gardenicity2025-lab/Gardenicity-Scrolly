@@ -359,7 +359,7 @@
     display:block;
   }
 
-  /* ==== TEXT COLUMNS (formerly overlays) ==== */
+  /* ==== TEXT BLOCKS ==== */
   .s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,
   .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay{
     position:relative !important;
@@ -368,14 +368,15 @@
     opacity:1!important;
     pointer-events:auto;
     background:transparent;
-    padding: calc(100vh + 40px) 20px 60px 20px; /* appear after image viewport */
+    margin-top:calc(100vh + 20px); /* appear after viewport image */
+    padding:0 20px 60px 20px;
     box-sizing:border-box;
   }
 
   .s1-rail,.s2-rail,.s4-rail,.s5-rail,
   .s9-rail,.s11-rail,.s13-rail,.s14-rail{
     position:relative !important;
-    width:auto;
+    width:auto !important;
     margin:0;
     padding:0;
   }
@@ -387,7 +388,7 @@
     color:#111;
     font-size:18px;
     line-height:26px;
-    margin:0;
+    margin:0 0 40px 0;
   }
 
   /* ==== GALLERIES ==== */
@@ -411,6 +412,7 @@
     position:relative;
     padding:0 20px;
     text-align:center;
+    box-sizing:border-box;
   }
 }
 
