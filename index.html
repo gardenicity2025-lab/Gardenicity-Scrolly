@@ -325,7 +325,7 @@
     color:#00A86B;
   }
 
-/* ===== MOBILE RESPONSIVE (max-width:768px) — STEP 1: clean stack ===== */
+/* ===== MOBILE RESPONSIVE (max-width:768px) — Clean stack + delayed text ===== */
 @media (max-width:768px){
   body{
     margin:0;
@@ -367,8 +367,7 @@
     padding-left:20px;
     padding-right:20px;
     box-sizing:border-box;
-    /* start text AFTER the full image viewport */
-    margin-top:100vh;
+    margin-top:100vh; /* start text only after image fully visible */
   }
 
   .s1-rail,.s2-rail,.s4-rail,.s5-rail,
@@ -1032,15 +1031,72 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
   }
 
   async function init(){
-    if(document.fonts && document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
+    if(document.fonts && document.fonts.ready){ 
+      try{ await document.fonts.ready; }catch(e){} 
+    }
+
     measureHero();
-    measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
+    measureS1(); measureS2(); measureS4(); measureS5();
+    measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
     update();
-    addEventListener('load',  ()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15(); update(); });
-    addEventListener('resize',()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15(); update(); });
+
+    addEventListener('load', ()=>{
+      measureHero();
+      measureS1(); measureS2(); measureS4(); measureS5();
+      measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
+      update();
+    });
+
+    addEventListener('resize', ()=>{
+      measureHero();
+      measureS1(); measureS2(); measureS4(); measureS5();
+      measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
+      update();
+    });
+
+    /* ===== MOBILE PATCH: disable transforms and scroll triggers ===== */
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    if (isMobile) {
+      // Reset overlays to flow below images
+      document.querySelectorAll('.s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay, .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay')
+        .forEach(el => {
+          el.style.position = 'relative';
+          el.style.opacity = '1';
+          el.style.pointerEvents = 'auto';
+          el.style.marginTop = '100vh';   // start text after image fills viewport
+          el.style.padding = '0 20px';
+          el.style.boxSizing = 'border-box';
+        });
+
+      // Reset rails to normal flow
+      document.querySelectorAll('.s1-rail, .s2-rail, .s4-rail, .s5-rail, .s9-rail, .s11-rail, .s13-rail, .s14-rail')
+        .forEach(el => {
+          el.style.position = 'relative';
+          el.style.width = 'auto';
+          el.style.margin = '0 auto';
+          el.style.padding = '0';
+        });
+
+      // Reset text blocks
+      document.querySelectorAll('.s1-text, .s2-text, .s4-text, .s5-text, .s9-text, .s11-text, .s13-text, .s14-text')
+        .forEach(el => {
+          el.style.transform = 'none';
+          el.style.margin = '0 0 60px 0';
+          el.style.fontSize = '18px';
+          el.style.lineHeight = '26px';
+          el.style.color = '#111';
+          el.style.textAlign = 'left';
+        });
+
+      // Disable scroll-driven update loop on mobile
+      window.removeEventListener('scroll', update);
+    }
+
     addEventListener('scroll', update, {passive:true});
   }
+
   init();
+
 })();
 </script>
 </body>
