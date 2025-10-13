@@ -370,7 +370,7 @@
     max-width:calc(100% - 0px);
   }
 
-  /* ==== TEXT OVERLAYS — converted to flow ==== */
+  /* ==== TEXT OVERLAYS ==== */
   .s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,
   .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay{
     position:relative;
@@ -416,7 +416,7 @@
     text-align:center;
   }
 
-  /* ==== PATCH: Ensure section text starts below fixed image viewport ==== */
+  /* ==== PATCH: Delay section text + align in viewport grid ==== */
   .s1-overlay,
   .s2-overlay,
   .s4-overlay,
@@ -425,7 +425,11 @@
   .s11-overlay,
   .s13-overlay,
   .s14-overlay {
-    padding-top: calc(100vh - 40px); /* ensures text starts after image viewport */
+    /* text starts after image fade-in completes */
+    padding-top: calc(120vh - 40px);
+    padding-left: 20px;
+    padding-right: 20px;
+    box-sizing: border-box;
   }
 
   .s1-text, .s2-text, .s4-text, .s5-text,
@@ -433,7 +437,6 @@
     margin-bottom: 60px; /* spacing before next section */
   }
 }
-
 
 
 
