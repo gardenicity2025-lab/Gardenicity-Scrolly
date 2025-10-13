@@ -328,38 +328,33 @@
 /* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
 @media (max-width:768px){
 
-  body{
-    margin:0;
-    padding:0;
-    background:#eaeeec;
-  }
+  body{margin:0;padding:0;background:#eaeeec;}
 
-  /* ==== HERO ==== */
+  /* --- hero --- */
   .hero-media{top:20px;bottom:20px;left:20px;right:20px;}
   .hero-title{font-size:78px;line-height:1.05;}
   .hero-links{font-size:20px;line-height:26px;}
 
-  /* ==== SECTION IMAGES ==== */
+  /* --- section images --- */
   .s1-frame,.s2-frame,.s4-frame,.s5-frame,
   .s9-frame,.s11-frame,.s13-frame,.s14-frame{
     position:fixed;
-    top:20px; bottom:20px; left:20px; right:20px;
-    display:flex; align-items:center; justify-content:center;
-    z-index:1; pointer-events:none;
+    top:20px;bottom:20px;left:20px;right:20px;
+    display:flex;align-items:center;justify-content:center;
+    z-index:1;pointer-events:none;
   }
-
   .s1-frame img,.s2-frame img,.s4-frame img,.s5-frame img,
   .s9-frame img,.s11-frame img,.s13-frame img,.s14-frame img{
-    width:100%; height:auto; object-fit:contain;
+    width:100%;height:auto;object-fit:contain;
   }
 
-  /* ==== TEXT OVERLAYS ==== */
+  /* --- text overlays --- */
   .s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,
   .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay{
     position:relative;
+    margin-top:100vh;     /* text starts after image viewport */
     z-index:2;
     background:transparent;
-    margin-top:100vh;  /* appear after image */
     padding:0;
   }
 
@@ -372,41 +367,29 @@
     padding:0 20px;
   }
 
-  /* ==== TEXT STYLES (each keeps its JS-controlled transform) ==== */
-  .s1-text{transform:translateY(var(--s1Y));}
-  .s2-text{transform:translateY(var(--s2Y));}
-  .s4-text{transform:translateY(var(--s4Y));}
-  .s5-text{transform:translateY(var(--s5Y));}
-  .s9-text{transform:translateY(var(--s9Y));}
-  .s11-text{transform:translateY(var(--s11Y));}
-  .s13-text{transform:translateY(var(--s13Y));}
-  .s14-text{transform:translateY(var(--s14Y));}
-
+  /* --- text blocks (transform disabled for test) --- */
   .s1-text,.s2-text,.s4-text,.s5-text,
   .s9-text,.s11-text,.s13-text,.s14-text{
     color:#111;
     font-size:18px;
     line-height:26px;
     text-align:left;
-    will-change:transform;
-    margin:0 0 60px 0;
+    transform:none!important;   /* <— key test */
+    margin:0 0 80px;
   }
 
-  /* ==== GALLERIES ==== */
+  /* --- galleries --- */
   .galA-left-frame,.galB-center-frame,.galC-left-frame{
-    left:20px; right:20px;
+    left:20px;right:20px;
   }
 
-  /* ==== FULL BLEEDS ==== */
+  /* --- full bleeds --- */
   .frame.s3-frame,.frame.s8-frame,.frame.s12-frame,.frame.s15-frame{
-    left:0; right:0; top:0; bottom:0;
+    left:0;right:0;top:0;bottom:0;
   }
 
-  /* ==== SECTION 15 ==== */
-  .s15-overlay{
-    position:relative;
-    margin-top:100vh;
-  }
+  /* --- section 15 --- */
+  .s15-overlay{position:relative;margin-top:100vh;}
   .s15-rail{
     position:relative;
     width:100%;
@@ -420,8 +403,11 @@
     font-size:18px;
     line-height:26px;
     margin:0 auto 80px;
+    transform:none!important;  /* ensure visible */
   }
 }
+
+
 
 
 </style>
