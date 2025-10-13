@@ -434,67 +434,6 @@
   }
 }
 
-/* === MOBILE: clean viewport text alignment === */
-@media (max-width:768px){
-
-  /* give each image+text pair its own vertical space */
-  .s1-wrap,.s2-wrap,.s4-wrap,.s5-wrap,
-  .s9-wrap,.s11-wrap,.s13-wrap,.s14-wrap {
-    position:relative;
-    min-height:200vh; /* image 100vh + text 100vh */
-  }
-
-  /* make fixed images sticky in their 100vh zone */
-  .s1-frame,.s2-frame,.s4-frame,.s5-frame,
-  .s9-frame,.s11-frame,.s13-frame,.s14-frame {
-    position:sticky;
-    top:20px;
-    height:calc(100vh - 40px);
-  }
-
-  /* text enters viewport after image fade */
-  .s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,
-  .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay {
-    position:relative;
-    top:100vh;
-    padding:0 20px;
-    background:transparent;
-    display:flex;
-    justify-content:center;
-  }
-
-  /* center text column */
-  .s1-rail,.s2-rail,.s4-rail,.s5-rail,
-  .s9-rail,.s11-rail,.s13-rail,.s14-rail {
-    max-width:640px;
-    width:100%;
-    margin:0 auto;
-  }
-
-  /* typography */
-  .s1-text,.s2-text,.s4-text,.s5-text,
-  .s9-text,.s11-text,.s13-text,.s14-text {
-    color:#111;
-    font-size:18px;
-    line-height:26px;
-    text-align:left;
-    transform:none!important;
-    margin:0 0 60px 0;
-  }
-
-  /* section 15: white centered text on bleed image */
-  .s15-text {
-    color:#fff!important;
-    background:transparent!important;
-    text-align:center;
-    max-width:640px;
-    margin:0 auto 60px;
-    padding:0 20px;
-    position:relative;
-    z-index:3;
-  }
-}
-
 </style>
 
 </head>
@@ -1134,3 +1073,4 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
 </script>
 </body>
 </html>
+
