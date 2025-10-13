@@ -415,6 +415,32 @@
     box-sizing:border-box;
   }
 }
+/* === MOBILE DIAGNOSTIC TEST === */
+@media (max-width:768px){
+
+  /* Make section text blocks obvious */
+  .s1-text, .s2-text, .s4-text, .s5-text,
+  .s9-text, .s11-text, .s13-text, .s14-text {
+    background: rgba(255, 0, 0, 0.1) !important;
+    border: 2px dashed red !important;
+    color: black !important;
+    transform: none !important;
+    font-size: 20px !important;
+  }
+
+  /* Mark overlays in blue if they are still active (to confirm positioning) */
+  .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
+  .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
+    background: rgba(0, 0, 255, 0.05) !important;
+    border: 1px solid rgba(0,0,255,0.3) !important;
+  }
+
+  /* Hero sanity check */
+  .hero-title {
+    color: green !important;
+  }
+}
+
 
 </style>
 
@@ -1054,3 +1080,4 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
 </script>
 </body>
 </html>
+
