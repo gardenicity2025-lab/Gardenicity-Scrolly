@@ -327,112 +327,139 @@
 
 /* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
 @media (max-width:768px){
-  body{
-    margin:0;
-    padding:0 20px;
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: #eaeeec;
+    color: #111;
+    font-size: 18px;
+    line-height: 26px;
   }
 
   /* ==== HERO ==== */
-  .hero-media{top:20px;bottom:20px;left:20px;right:20px;}
-  .hero-title{font-size:78px;line-height:1.05;}
-  .hero-links{font-size:20px;line-height:26px;}
-
-  /* ==== SECTION IMAGE + TEXT (S1, S2, S4, S5, S9, S11, S13, S14) ==== */
-  .s1-frame,.s2-frame,.s4-frame,.s5-frame,
-  .s9-frame,.s11-frame,.s13-frame,.s14-frame{
-    position:fixed;
-    top:20px; bottom:20px; left:20px; right:20px;   /* viewport margins */
-    height:auto;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    z-index:1;
-    pointer-events:none;
+  .hero-media{
+    position: relative;
+    top: auto; bottom: auto; left: 20px; right: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 20px 0;
+  }
+  .hero-title{
+    font-size: 78px;
+    line-height: 1.05;
+    margin: 0 0 12px 0;
+  }
+  .hero-links{
+    font-size: 20px;
+    line-height: 26px;
+    margin-bottom: 40px;
   }
 
-  /* individual opacities controlled by JS */
-  .s1-frame{opacity:var(--s1ImgOpacity);}
-  .s2-frame{opacity:var(--s2ImgOpacity);}
-  .s4-frame{opacity:var(--s4ImgOpacity);}
-  .s5-frame{opacity:var(--s5ImgOpacity);}
-  .s9-frame{opacity:var(--s9ImgOpacity);}
-  .s11-frame{opacity:var(--s11ImgOpacity);}
-  .s13-frame{opacity:var(--s13ImgOpacity);}
-  .s14-frame{opacity:var(--s14ImgOpacity);}
-
-  .s1-frame img,.s2-frame img,.s4-frame img,.s5-frame img,
-  .s9-frame img,.s11-frame img,.s13-frame img,.s14-frame img{
-    width:100%;
-    height:auto;
-    object-fit:contain;
-    display:block;
-    margin:0 auto;
-    max-width:calc(100% - 0px);
+  /* ==== SECTION IMAGES (stay fixed, fade as before) ==== */
+  .s1-frame, .s2-frame, .s4-frame, .s5-frame,
+  .s9-frame, .s11-frame, .s13-frame, .s14-frame{
+    position: fixed;
+    top: 20px; bottom: 20px; left: 20px; right: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: auto;
+    z-index: 1;
+    pointer-events: none;
+  }
+  .s1-frame img, .s2-frame img, .s4-frame img, .s5-frame img,
+  .s9-frame img, .s11-frame img, .s13-frame img, .s14-frame img{
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    display: block;
   }
 
-  /* ==== TEXT OVERLAYS — converted to flow ==== */
-  .s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,
-  .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay{
-    position:relative;
-    z-index:2;
-    width:100%;
-    opacity:1!important;
-    pointer-events:auto;
-    background:transparent;
-    padding:0;
+  /* ==== TEXT OVERLAYS → FLOW BLOCKS ==== */
+  .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
+  .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    background: transparent;
+    pointer-events: auto;
+    opacity: 1!important;
+    margin-top: 100vh; /* starts after image viewport */
+    padding: 0 20px;
   }
 
-  .s1-rail,.s2-rail,.s4-rail,.s5-rail,
-  .s9-rail,.s11-rail,.s13-rail,.s14-rail{
-    position:relative;
-    width:auto;
-    margin:0;
-    padding:0;
-  }
-
-  .s1-text,.s2-text,.s4-text,.s5-text,
-  .s9-text,.s11-text,.s13-text,.s14-text{
-    transform:none!important;
-    text-align:left;
-    color:#111;
-    margin:0 0 40px 0;
-    font-size:18px;
-    line-height:26px;
-  }
-
-  /* ==== GALLERIES ==== */
-  .galA-left-frame,.galB-center-frame,.galC-left-frame{
-    left:20px;right:20px;
-  }
-
-  /* ==== FULL BLEEDS (unchanged) ==== */
-  .frame.s3-frame,.frame.s8-frame,.frame.s12-frame,.frame.s15-frame{
-    left:0;right:0;top:0;bottom:0;
-  }
-
-  /* ==== SECTION 15 TEXT ==== */
-  .s15-text{
-    padding:0 20px;
-    text-align:center;
-  }
-
-  /* ==== PATCH: Ensure section text starts below fixed image viewport ==== */
-  .s1-overlay,
-  .s2-overlay,
-  .s4-overlay,
-  .s5-overlay,
-  .s9-overlay,
-  .s11-overlay,
-  .s13-overlay,
-  .s14-overlay {
-    padding-top: calc(100vh - 40px); /* ensures text starts after image viewport */
+  .s1-rail, .s2-rail, .s4-rail, .s5-rail,
+  .s9-rail, .s11-rail, .s13-rail, .s14-rail {
+    position: relative;
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 0;
   }
 
   .s1-text, .s2-text, .s4-text, .s5-text,
   .s9-text, .s11-text, .s13-text, .s14-text {
-    margin-bottom: 60px; /* spacing before next section */
+    color: #111;
+    transform: none!important;
+    text-align: left;
+    margin: 0 0 80px 0;
+  }
+
+  /* ==== GALLERIES ==== */
+  .galA-left-frame, .galB-center-frame, .galC-left-frame{
+    position: relative;
+    left: auto; right: auto;
+    margin: 40px 0;
+  }
+  .galA-left-frame img,
+  .galB-center-frame img,
+  .galC-left-frame img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+  }
+
+  /* ==== FULL BLEEDS (S3, S8, S12, S15) ==== */
+  .frame.s3-frame, .frame.s8-frame, .frame.s12-frame, .frame.s15-frame {
+    position: relative;
+    left: 0; right: 0; top: auto; bottom: auto;
+    width: 100%;
+    margin: 60px 0 0;
+  }
+  .frame.s3-frame img,
+  .frame.s8-frame img,
+  .frame.s12-frame img,
+  .frame.s15-frame img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+
+  /* ==== SECTION 15 ==== */
+  .s15-overlay {
+    position: relative;
+    margin-top: 100vh;
+    padding: 0 20px;
+    z-index: 3;
+  }
+  .s15-rail {
+    position: relative;
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  .s15-text {
+    color: #fff;
+    text-align: center;
+    transform: none!important;
+    margin: 20px 0 80px;
   }
 }
+
 
 
 
