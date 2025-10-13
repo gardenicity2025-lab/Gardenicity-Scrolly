@@ -328,91 +328,65 @@
 /* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
 @media (max-width:768px){
 
-  body{
+  html,body{
     margin:0;
     padding:0;
     overflow-x:hidden;
   }
 
-  /* ==== HERO ==== */
+  /* --- HERO (unchanged behaviour) --- */
   .hero-media{top:20px;bottom:20px;left:20px;right:20px;}
-  .hero-title{font-size:78px;line-height:1.05;}
-  .hero-links{font-size:20px;line-height:26px;}
+  .hero-title{font-size:72px;line-height:1.05;margin:0 20px;}
+  .hero-links{font-size:20px;line-height:26px;margin:0 20px;}
 
-  /* ==== SECTION IMAGES ==== */
-  .s1-frame,.s2-frame,.s4-frame,.s5-frame,
-  .s9-frame,.s11-frame,.s13-frame,.s14-frame{
-    position:relative !important;
-    width:100%;
-    margin:0 auto;
+  /* --- SECTION TEXT RAILS --- */
+  .s1-rail,.s2-rail,.s4-rail,.s5-rail,
+  .s9-rail,.s11-rail,.s13-rail,.s14-rail{
+    position:relative!important;
+    width:auto!important;
+    margin:0;
     padding:0;
-    top:auto; bottom:auto; left:auto; right:auto;
-    display:block;
-    z-index:1;
-    opacity:1;
-    transition:opacity 0.8s ease-out;
-  }
-
-  .s1-frame img,.s2-frame img,.s4-frame img,.s5-frame img,
-  .s9-frame img,.s11-frame img,.s13-frame img,.s14-frame img{
-    width:100%;
-    height:auto;
-    display:block;
-    object-fit:contain;
-    margin:20px 0;
-  }
-
-  /* ==== TEXT BLOCKS ==== */
-  .s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,
-  .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay{
-    position:relative !important;
-    z-index:2;
-    background:transparent;
-    padding:0 20px 60px 20px;
-    margin:0 auto;
-    box-sizing:border-box;
-    max-width:100%;
-    opacity:1!important;
   }
 
   .s1-text,.s2-text,.s4-text,.s5-text,
   .s9-text,.s11-text,.s13-text,.s14-text{
     transform:none!important;
+    position:relative!important;
     text-align:left;
     color:#111;
     font-size:18px;
     line-height:26px;
-    margin:0 0 40px 0;
-  }
-
-  /* ==== SCROLL FADE (fade out image when text enters) ==== */
-  .section-inview .s1-frame,
-  .section-inview .s2-frame,
-  .section-inview .s4-frame,
-  .section-inview .s5-frame,
-  .section-inview .s9-frame,
-  .section-inview .s11-frame,
-  .section-inview .s13-frame,
-  .section-inview .s14-frame {
-    opacity:0;
-  }
-
-  /* ==== SECTION 15 ==== */
-  .s15-overlay{
-    position:relative;
-    z-index:3;
-    padding:40px 20px;
-    text-align:center;
-  }
-
-  .s15-text{
+    margin:0 auto 60px;
     padding:0 20px;
+    width:auto;
+    max-width:100%;
+    box-sizing:border-box;
+  }
+
+  /* --- SECTION OVERLAYS (containers) --- */
+  .s1-overlay,.s2-overlay,.s4-overlay,.s5-overlay,
+  .s9-overlay,.s11-overlay,.s13-overlay,.s14-overlay{
+    position:relative!important;
+    z-index:2;
+    background:transparent;
+    margin:0;
+    padding:0;
+    opacity:1!important;
+  }
+
+  /* --- S15 specific adjustment --- */
+  .s15-text{
+    position:relative!important;
+    transform:none!important;
+    margin:40px 20px;
+    padding:0;
     text-align:center;
   }
 }
 
 
 </style>
+
 </head>
 
 <body>
@@ -1048,23 +1022,5 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
   init();
 })();
 </script>
-<script>
-if (window.innerWidth <= 768) {
-  const sections = document.querySelectorAll('.s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay, .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay');
-  const observer = new IntersectionObserver((entries)=>{
-    entries.forEach(entry=>{
-      const parent = entry.target.closest('section');
-      if(entry.isIntersecting){
-        parent?.classList.add('section-inview');
-      } else {
-        parent?.classList.remove('section-inview');
-      }
-    });
-  }, {threshold:0.3});
-
-  sections.forEach(sec=>observer.observe(sec));
-}
-</script>
-
 </body>
 </html>
