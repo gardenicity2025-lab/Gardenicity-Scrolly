@@ -332,30 +332,52 @@
     margin:0;
     padding:0;
     background:#eaeeec;
+    color:#111;
   }
 
   /* ==== HERO ==== */
-  .hero-media { top:20px; bottom:20px; left:20px; right:20px; }
-  .hero-title { font-size:72px; line-height:1.05; color:#fff; }
-  .hero-links { font-size:20px; line-height:26px; color:#fff; }
+  .hero-media {
+    position:relative;
+    top:auto; bottom:auto; left:20px; right:20px;
+    margin:20px auto;
+    width:calc(100% - 40px);
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    align-items:flex-start;
+    min-height:100vh;
+  }
 
-  /* ==== SECTION WRAPS ==== */
+  .hero-title {
+    font-size:72px;
+    line-height:1.05;
+    color:#fff;
+    margin:0 0 12px;
+  }
+
+  .hero-links {
+    font-size:20px;
+    line-height:26px;
+    color:#fff;
+  }
+
+  /* ==== SECTIONS (images + text stacked) ==== */
   .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
   .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
     position:relative;
     background:#eaeeec;
-    padding-bottom:80px;
+    margin-bottom:60px;
   }
 
-  /* ==== SECTION IMAGES ==== */
   .s1-frame, .s2-frame, .s4-frame, .s5-frame,
   .s9-frame, .s11-frame, .s13-frame, .s14-frame {
     position:relative;
-    width:100%;
-    margin:0 auto 20px;
     top:auto; bottom:auto; left:auto; right:auto;
-    opacity:1!important;
-    pointer-events:none;
+    width:calc(100% - 40px);
+    margin:20px auto;
+    height:auto;
+    display:block;
+    z-index:1;
   }
 
   .s1-frame img, .s2-frame img, .s4-frame img, .s5-frame img,
@@ -366,26 +388,21 @@
     display:block;
   }
 
-  /* ==== SECTION TEXTS ==== */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
   .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
     position:relative;
-    opacity:1!important;
     z-index:2;
-    background:transparent;
-    padding:0 20px;
+    padding:0 20px 40px;
     max-width:640px;
     margin:0 auto;
+    color:#111;
+    opacity:1;
   }
 
   .s1-text, .s2-text, .s4-text, .s5-text,
   .s9-text, .s11-text, .s13-text, .s14-text {
-    color:#111;
-    text-align:left;
     font-size:18px;
     line-height:26px;
-    margin:0 0 40px 0;
-    transform:none!important;
   }
 
   /* ==== GALLERIES ==== */
@@ -396,6 +413,7 @@
   /* ==== FULL BLEEDS ==== */
   .frame.s3-frame, .frame.s8-frame, .frame.s12-frame, .frame.s15-frame {
     left:0; right:0; top:0; bottom:0;
+    width:100%;
   }
 
   /* ==== SECTION 15 ==== */
@@ -409,6 +427,7 @@
     z-index:3;
   }
 }
+
 
 </style>
 
