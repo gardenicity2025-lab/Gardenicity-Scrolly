@@ -328,50 +328,33 @@
 /* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
 @media (max-width:768px){
 
-  /* ==== PAGE BASE ==== */
   body {
     margin:0;
     padding:0;
     background:#eaeeec;
-    color:#111;
   }
 
   /* ==== HERO ==== */
-  .hero-media {
-    top:20px;
-    bottom:20px;
-    left:20px;
-    right:20px;
-  }
-  .hero-title {
-    font-size:72px;
-    line-height:1.05;
-  }
-  .hero-links {
-    font-size:20px;
-    line-height:26px;
-  }
+  .hero-media { top:20px; bottom:20px; left:20px; right:20px; }
+  .hero-title { font-size:72px; line-height:1.05; color:#fff; }
+  .hero-links { font-size:20px; line-height:26px; color:#fff; }
 
   /* ==== SECTION WRAPS ==== */
   .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
   .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
     position:relative;
-    min-height:200vh;             /* image (100vh) + text scroll (100vh) */
     background:#eaeeec;
+    padding-bottom:80px;
   }
 
-  /* ==== SECTION IMAGES (PINNED VIEWPORT) ==== */
+  /* ==== SECTION IMAGES ==== */
   .s1-frame, .s2-frame, .s4-frame, .s5-frame,
   .s9-frame, .s11-frame, .s13-frame, .s14-frame {
-    position:fixed;
-    top:20px;
-    bottom:20px;
-    left:20px;
-    right:20px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    z-index:1;
+    position:relative;
+    width:100%;
+    margin:0 auto 20px;
+    top:auto; bottom:auto; left:auto; right:auto;
+    opacity:1!important;
     pointer-events:none;
   }
 
@@ -383,60 +366,43 @@
     display:block;
   }
 
-  /* ==== SECTION TEXTS – FIXED IMAGE + SCROLLING TEXT ==== */
+  /* ==== SECTION TEXTS ==== */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
   .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
-    position:relative;            /* not sticky — allows scroll */
-    z-index:2;                    /* above fading image */
-    margin-top:100vh;             /* enters after pinned image */
-    padding:0 20px 80px;          /* 20px side gutters, 80px bottom */
-    max-width:640px;
-    box-sizing:border-box;
+    position:relative;
+    opacity:1!important;
+    z-index:2;
     background:transparent;
-    color:#111;
-  }
-
-  .s1-rail, .s2-rail, .s4-rail, .s5-rail,
-  .s9-rail, .s11-rail, .s13-rail, .s14-rail {
-    width:100%;
-    margin:0;
-    padding:0;
+    padding:0 20px;
+    max-width:640px;
+    margin:0 auto;
   }
 
   .s1-text, .s2-text, .s4-text, .s5-text,
   .s9-text, .s11-text, .s13-text, .s14-text {
-    transform:none !important;
+    color:#111;
     text-align:left;
     font-size:18px;
     line-height:26px;
     margin:0 0 40px 0;
-    color:#111;
+    transform:none!important;
   }
 
   /* ==== GALLERIES ==== */
-  .galA-left-frame,
-  .galB-center-frame,
-  .galC-left-frame {
-    left:20px;
-    right:20px;
+  .galA-left-frame, .galB-center-frame, .galC-left-frame {
+    left:20px; right:20px;
   }
 
   /* ==== FULL BLEEDS ==== */
-  .frame.s3-frame,
-  .frame.s8-frame,
-  .frame.s12-frame,
-  .frame.s15-frame {
-    left:0;
-    right:0;
-    top:0;
-    bottom:0;
+  .frame.s3-frame, .frame.s8-frame, .frame.s12-frame, .frame.s15-frame {
+    left:0; right:0; top:0; bottom:0;
   }
 
   /* ==== SECTION 15 ==== */
   .s15-text {
     color:#fff;
     text-align:center;
-    padding:0 20px 80px;          /* adjusted margins */
+    padding:0 20px 80px;
     max-width:640px;
     margin:0 auto;
     position:relative;
@@ -1066,8 +1032,9 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
     root.style.setProperty('--s13ImgOpacity', s13Alpha.toFixed(3));
     root.style.setProperty('--s14ImgOpacity', s14Alpha.toFixed(3));
     root.style.setProperty('--s15ImgOpacity', s15Group.toFixed(3));
- }
-   async function init(){
+  }  /* ✅ closes update() */
+
+  async function init(){
     if (document.fonts && document.fonts.ready) { 
       try { await document.fonts.ready; } catch(e){} 
     }
@@ -1096,16 +1063,40 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
   init();
 
   // ==== TEMPORARY MOBILE OVERRIDE (force overlays visible) ====
-  // This makes all text overlays visible on mobile until ScrollTrigger behavior is re-enabled.
-  if (window.innerWidth <= 768) {
-    const sections = ['s1','s2','s4','s5','s9','s11','s13','s14','s15'];
-    const root = document.documentElement;
-    sections.forEach(id => root.style.setProperty(`--${id}Overlay`, '1'));
-  }
-
-
-})();
+  // (You can delete this later once mobile scroll fade is re-enabled)
+})();   <!-- ✅ this closes the IIFE (function() { ... }) -->
 </script>
+
+<!-- ✅ GSAP + ScrollTrigger (must come before your matchMedia logic) -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+
+<script>
+// ===== ScrollTrigger responsive handling =====
+ScrollTrigger.matchMedia({
+
+  // ==== Desktop (>= 769px) ====
+  "(min-width: 769px)": function() {
+    // ✅ Keep your existing GSAP scroll + pin + fade code here
+  },
+
+  // ==== Mobile (<= 768px) ====
+  "(max-width: 768px)": function() {
+    // ✅ Disable scroll-pinned animations on mobile
+    gsap.set(".s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay, \
+              .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay", {
+      clearProps: "all"
+    });
+
+    gsap.set(".s1-frame, .s2-frame, .s4-frame, .s5-frame, \
+              .s9-frame, .s11-frame, .s13-frame, .s14-frame", {
+      clearProps: "all"
+    });
+  }
+});
+</script>
+
+
 
 <!-- ✅ GSAP + ScrollTrigger (must come before your matchMedia logic) -->
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
