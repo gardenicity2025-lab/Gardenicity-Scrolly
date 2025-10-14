@@ -1066,18 +1066,43 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
     root.style.setProperty('--s13ImgOpacity', s13Alpha.toFixed(3));
     root.style.setProperty('--s14ImgOpacity', s14Alpha.toFixed(3));
     root.style.setProperty('--s15ImgOpacity', s15Group.toFixed(3));
+   async function init(){
+    if (document.fonts && document.fonts.ready) { 
+      try { await document.fonts.ready; } catch(e){} 
+    }
+
+    measureHero();
+    measureS1(); measureS2(); measureS4(); measureS5();
+    measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
+    update();
+
+    addEventListener('load', ()=>{
+      measureHero(); measureS1(); measureS2(); measureS4(); measureS5();
+      measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
+      update();
+    });
+
+    addEventListener('resize', ()=>{
+      measureHero(); measureS1(); measureS2(); measureS4(); measureS5();
+      measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
+      update();
+    });
+
+    addEventListener('scroll', update, { passive:true });
   }
 
-  async function init(){
-    if(document.fonts && document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
-    measureHero();
-    measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
-    update();
-    addEventListener('load',  ()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15(); update(); });
-    addEventListener('resize',()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15(); update(); });
-    addEventListener('scroll', update, {passive:true});
-  }
+  // Initialize main scroll logic
   init();
+
+  // ==== TEMPORARY MOBILE OVERRIDE (force overlays visible) ====
+  // This makes all text overlays visible on mobile until ScrollTrigger behavior is re-enabled.
+  if (window.innerWidth <= 768) {
+    const sections = ['s1','s2','s4','s5','s9','s11','s13','s14','s15'];
+    const root = document.documentElement;
+    sections.forEach(id => root.style.setProperty(`--${id}Overlay`, '1'));
+  }
+
+
 })();
 </script>
 
@@ -1088,27 +1113,3 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
 <script>
 // ===== ScrollTrigger responsive handling =====
 ScrollTrigger.matchMedia({
-
-  // ==== Desktop (>= 769px) ====
-  "(min-width: 769px)": function() {
-    // ✅ Keep your existing GSAP scroll + pin + fade code here
-  },
-
-  // ==== Mobile (<= 768px) ====
-  "(max-width: 768px)": function() {
-    // ✅ Disable scroll-pinned animations on mobile
-    gsap.set(".s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay, \
-              .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay", {
-      clearProps: "all"
-    });
-
-    gsap.set(".s1-frame, .s2-frame, .s4-frame, .s5-frame, \
-              .s9-frame, .s11-frame, .s13-frame, .s14-frame", {
-      clearProps: "all"
-    });
-  }
-});
-</script>
-
-</body>
-</html>
