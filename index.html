@@ -328,16 +328,29 @@
 /* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
 @media (max-width:768px){
 
+  /* ==== PAGE BASE ==== */
   body {
     margin:0;
     padding:0;
     background:#eaeeec;
+    color:#111;
   }
 
   /* ==== HERO ==== */
-  .hero-media { top:20px; bottom:20px; left:20px; right:20px; }
-  .hero-title { font-size:72px; line-height:1.05; }
-  .hero-links { font-size:20px; line-height:26px; }
+  .hero-media {
+    top:20px;
+    bottom:20px;
+    left:20px;
+    right:20px;
+  }
+  .hero-title {
+    font-size:72px;
+    line-height:1.05;
+  }
+  .hero-links {
+    font-size:20px;
+    line-height:26px;
+  }
 
   /* ==== SECTION WRAPS ==== */
   .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
@@ -351,7 +364,10 @@
   .s1-frame, .s2-frame, .s4-frame, .s5-frame,
   .s9-frame, .s11-frame, .s13-frame, .s14-frame {
     position:fixed;
-    top:20px; bottom:20px; left:20px; right:20px;
+    top:20px;
+    bottom:20px;
+    left:20px;
+    right:20px;
     display:flex;
     align-items:center;
     justify-content:center;
@@ -367,48 +383,60 @@
     display:block;
   }
 
-  /* ==== TEXT OVERLAYS (ENTER AFTER IMAGE FADES) ==== */
+  /* ==== SECTION TEXTS – FIXED IMAGE + SCROLLING TEXT ==== */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
   .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
-    position:sticky;
-    top:100vh;                    /* start below pinned image */
-    z-index:2;
-    padding:0 20px;
-    margin:0 auto;
+    position:relative;            /* not sticky — allows scroll */
+    z-index:2;                    /* above fading image */
+    margin-top:100vh;             /* enters after pinned image */
+    padding:0 20px 80px;          /* 20px side gutters, 80px bottom */
     max-width:640px;
+    box-sizing:border-box;
     background:transparent;
+    color:#111;
   }
 
   .s1-rail, .s2-rail, .s4-rail, .s5-rail,
   .s9-rail, .s11-rail, .s13-rail, .s14-rail {
     width:100%;
+    margin:0;
+    padding:0;
   }
 
   .s1-text, .s2-text, .s4-text, .s5-text,
   .s9-text, .s11-text, .s13-text, .s14-text {
     transform:none !important;
-    color:#111;
     text-align:left;
     font-size:18px;
     line-height:26px;
-    margin:0 0 80px 0;
+    margin:0 0 40px 0;
+    color:#111;
   }
 
   /* ==== GALLERIES ==== */
-  .galA-left-frame, .galB-center-frame, .galC-left-frame {
-    left:20px; right:20px;
+  .galA-left-frame,
+  .galB-center-frame,
+  .galC-left-frame {
+    left:20px;
+    right:20px;
   }
 
   /* ==== FULL BLEEDS ==== */
-  .frame.s3-frame, .frame.s8-frame, .frame.s12-frame, .frame.s15-frame {
-    left:0; right:0; top:0; bottom:0;
+  .frame.s3-frame,
+  .frame.s8-frame,
+  .frame.s12-frame,
+  .frame.s15-frame {
+    left:0;
+    right:0;
+    top:0;
+    bottom:0;
   }
 
   /* ==== SECTION 15 ==== */
   .s15-text {
     color:#fff;
     text-align:center;
-    padding:0 20px 80px;
+    padding:0 20px 80px;          /* adjusted margins */
     max-width:640px;
     margin:0 auto;
     position:relative;
@@ -416,15 +444,9 @@
   }
 }
 
-
-
-
-
-
 </style>
 
 </head>
-
 <body>
 
 <!-- HERO -->
