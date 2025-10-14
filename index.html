@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en" data-baseline="stable-2025-10-01__rails-460px__galC-6-only">
 <head>
@@ -1076,7 +1075,7 @@ ScrollTrigger.matchMedia({
 
   // ==== Desktop (>= 769px) ====
   "(min-width: 769px)": function() {
-    // ✅ Your existing GSAP scroll + pin + fade code stays here
+    // ✅ Keep your existing GSAP scroll + pin + fade code here
   },
 
   // ==== Mobile (<= 768px) ====
@@ -1089,16 +1088,12 @@ ScrollTrigger.matchMedia({
     gsap.set([
       ".s1-frame", ".s2-frame", ".s4-frame", ".s5-frame",
       ".s9-frame", ".s11-frame", ".s13-frame", ".s14-frame"
-    ], {
-      clearProps: "transform,opacity"
-    });
+    ], { clearProps: "transform,opacity" });
 
     gsap.set([
       ".s1-overlay", ".s2-overlay", ".s4-overlay", ".s5-overlay",
       ".s9-overlay", ".s11-overlay", ".s13-overlay", ".s14-overlay"
-    ], {
-      clearProps: "transform,opacity"
-    });
+    ], { clearProps: "transform,opacity" });
 
     // ✅ Apply correct mobile layout & gutters
     gsap.set([
@@ -1106,16 +1101,14 @@ ScrollTrigger.matchMedia({
       ".s9-frame", ".s11-frame", ".s13-frame", ".s14-frame"
     ], {
       position: "relative",
-      top: "auto",
-      bottom: "auto",
-      left: "auto",
-      right: "auto",
+      top: "auto", bottom: "auto", left: "auto", right: "auto",
       width: "calc(100% - 40px)", // = 20px gutters
       margin: "20px auto",
       height: "auto",
       display: "block",
       zIndex: 1,
       pointerEvents: "none",
+      opacity: 1,
     });
 
     // ✅ Make text overlays visible and flow naturally
@@ -1131,10 +1124,16 @@ ScrollTrigger.matchMedia({
       margin: "0 auto",
       clearProps: "transform",
     });
+
+    // ✅ NEW: Force all section images visible (bypass CSS vars)
+    document.querySelectorAll(".frame img").forEach(img => {
+      img.style.opacity = "1";
+      img.style.transform = "none";
+      img.style.filter = "none";
+    });
   }
 });
 </script>
 
 </body>
 </html>
-
