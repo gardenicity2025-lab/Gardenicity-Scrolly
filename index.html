@@ -1080,5 +1080,35 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
   init();
 })();
 </script>
+
+<!-- ✅ GSAP + ScrollTrigger (must come before your matchMedia logic) -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+
+<script>
+// ===== ScrollTrigger responsive handling =====
+ScrollTrigger.matchMedia({
+
+  // ==== Desktop (>= 769px) ====
+  "(min-width: 769px)": function() {
+    // ✅ Keep your existing GSAP scroll + pin + fade code here
+  },
+
+  // ==== Mobile (<= 768px) ====
+  "(max-width: 768px)": function() {
+    // ✅ Disable scroll-pinned animations on mobile
+    gsap.set(".s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay, \
+              .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay", {
+      clearProps: "all"
+    });
+
+    gsap.set(".s1-frame, .s2-frame, .s4-frame, .s5-frame, \
+              .s9-frame, .s11-frame, .s13-frame, .s14-frame", {
+      clearProps: "all"
+    });
+  }
+});
+</script>
+
 </body>
 </html>
