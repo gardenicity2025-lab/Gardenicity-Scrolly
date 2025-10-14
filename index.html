@@ -332,52 +332,31 @@
     margin:0;
     padding:0;
     background:#eaeeec;
-    color:#111;
   }
 
   /* ==== HERO ==== */
-  .hero-media {
-    position:relative;
-    top:auto; bottom:auto; left:20px; right:20px;
-    margin:20px auto;
-    width:calc(100% - 40px);
-    display:flex;
-    flex-direction:column;
-    justify-content:flex-end;
-    align-items:flex-start;
-    min-height:100vh;
-  }
+  .hero-media { top:20px; bottom:20px; left:20px; right:20px; }
+  .hero-title { font-size:72px; line-height:1.05; }
+  .hero-links { font-size:20px; line-height:26px; }
 
-  .hero-title {
-    font-size:72px;
-    line-height:1.05;
-    color:#fff;
-    margin:0 0 12px;
-  }
-
-  .hero-links {
-    font-size:20px;
-    line-height:26px;
-    color:#fff;
-  }
-
-  /* ==== SECTIONS (images + text stacked) ==== */
+  /* ==== SECTION WRAPS ==== */
   .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
   .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
     position:relative;
+    min-height:200vh;             /* image (100vh) + text scroll (100vh) */
     background:#eaeeec;
-    margin-bottom:60px;
   }
 
+  /* ==== SECTION IMAGES (PINNED VIEWPORT) ==== */
   .s1-frame, .s2-frame, .s4-frame, .s5-frame,
   .s9-frame, .s11-frame, .s13-frame, .s14-frame {
-    position:relative;
-    top:auto; bottom:auto; left:auto; right:auto;
-    width:calc(100% - 40px);
-    margin:20px auto;
-    height:auto;
-    display:block;
+    position:fixed;
+    top:20px; bottom:20px; left:20px; right:20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
     z-index:1;
+    pointer-events:none;
   }
 
   .s1-frame img, .s2-frame img, .s4-frame img, .s5-frame img,
@@ -388,21 +367,31 @@
     display:block;
   }
 
+  /* ==== TEXT OVERLAYS (ENTER AFTER IMAGE FADES) ==== */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
   .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
-    position:relative;
+    position:sticky;
+    top:100vh;                    /* start below pinned image */
     z-index:2;
-    padding:0 20px 40px;
-    max-width:640px;
+    padding:0 20px;
     margin:0 auto;
-    color:#111;
-    opacity:1;
+    max-width:640px;
+    background:transparent;
+  }
+
+  .s1-rail, .s2-rail, .s4-rail, .s5-rail,
+  .s9-rail, .s11-rail, .s13-rail, .s14-rail {
+    width:100%;
   }
 
   .s1-text, .s2-text, .s4-text, .s5-text,
   .s9-text, .s11-text, .s13-text, .s14-text {
+    transform:none !important;
+    color:#111;
+    text-align:left;
     font-size:18px;
     line-height:26px;
+    margin:0 0 80px 0;
   }
 
   /* ==== GALLERIES ==== */
@@ -413,7 +402,6 @@
   /* ==== FULL BLEEDS ==== */
   .frame.s3-frame, .frame.s8-frame, .frame.s12-frame, .frame.s15-frame {
     left:0; right:0; top:0; bottom:0;
-    width:100%;
   }
 
   /* ==== SECTION 15 ==== */
@@ -429,9 +417,14 @@
 }
 
 
+
+
+
+
 </style>
 
 </head>
+
 <body>
 
 <!-- HERO -->
@@ -1051,108 +1044,19 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
     root.style.setProperty('--s13ImgOpacity', s13Alpha.toFixed(3));
     root.style.setProperty('--s14ImgOpacity', s14Alpha.toFixed(3));
     root.style.setProperty('--s15ImgOpacity', s15Group.toFixed(3));
-  }  /* ✅ closes update() */
+  }
 
   async function init(){
-    if (document.fonts && document.fonts.ready) { 
-      try { await document.fonts.ready; } catch(e){} 
-    }
-
+    if(document.fonts && document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
     measureHero();
-    measureS1(); measureS2(); measureS4(); measureS5();
-    measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
+    measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
     update();
-
-    addEventListener('load', ()=>{
-      measureHero(); measureS1(); measureS2(); measureS4(); measureS5();
-      measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
-      update();
-    });
-
-    addEventListener('resize', ()=>{
-      measureHero(); measureS1(); measureS2(); measureS4(); measureS5();
-      measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
-      update();
-    });
-
-    addEventListener('scroll', update, { passive:true });
+    addEventListener('load',  ()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15(); update(); });
+    addEventListener('resize',()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15(); update(); });
+    addEventListener('scroll', update, {passive:true});
   }
-
-  // Initialize main scroll logic
   init();
-
-})(); // ✅ closes your IIFE (function() { ... })
+})();
 </script>
-
-<!-- ✅ GSAP + ScrollTrigger -->
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
-
-<script>
-// ===== ScrollTrigger responsive handling =====
-ScrollTrigger.matchMedia({
-
-  // ==== Desktop (>= 769px) ====
-  "(min-width: 769px)": function() {
-    // ✅ Keep your existing GSAP scroll + pin + fade code here
-  },
-
-  // ==== Mobile (<= 768px) ====
-  "(max-width: 768px)": function() {
-
-    // ✅ Stop all ScrollTrigger animations
-    ScrollTrigger.getAll().forEach(t => t.kill());
-
-    // ✅ Reset transforms and opacity only (preserve layout)
-    gsap.set([
-      ".s1-frame", ".s2-frame", ".s4-frame", ".s5-frame",
-      ".s9-frame", ".s11-frame", ".s13-frame", ".s14-frame"
-    ], { clearProps: "transform,opacity" });
-
-    gsap.set([
-      ".s1-overlay", ".s2-overlay", ".s4-overlay", ".s5-overlay",
-      ".s9-overlay", ".s11-overlay", ".s13-overlay", ".s14-overlay"
-    ], { clearProps: "transform,opacity" });
-
-    // ✅ Apply correct mobile layout & gutters
-    gsap.set([
-      ".s1-frame", ".s2-frame", ".s4-frame", ".s5-frame",
-      ".s9-frame", ".s11-frame", ".s13-frame", ".s14-frame"
-    ], {
-      position: "relative",
-      top: "auto", bottom: "auto", left: "auto", right: "auto",
-      width: "calc(100% - 40px)", // = 20px gutters
-      margin: "20px auto",
-      height: "auto",
-      display: "block",
-      zIndex: 1,
-      pointerEvents: "none",
-      opacity: 1,
-    });
-
-    // ✅ Make text overlays visible and flow naturally
-    gsap.set([
-      ".s1-overlay", ".s2-overlay", ".s4-overlay", ".s5-overlay",
-      ".s9-overlay", ".s11-overlay", ".s13-overlay", ".s14-overlay"
-    ], {
-      position: "static",
-      display: "block",
-      opacity: 1,
-      padding: "0 20px 60px",
-      maxWidth: "700px",
-      margin: "0 auto",
-      clearProps: "transform",
-    });
-
-    // ✅ NEW: Force all section images visible (bypass CSS vars)
-    document.querySelectorAll(".frame img").forEach(img => {
-      img.style.opacity = "1";
-      img.style.transform = "none";
-      img.style.filter = "none";
-    });
-  }
-});
-</script>
-
 </body>
 </html>
