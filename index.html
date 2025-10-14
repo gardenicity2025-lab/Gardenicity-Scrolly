@@ -416,10 +416,37 @@
   }
 }
 
+/* ==== MOBILE TEXT FALLBACK (Behavior 2) ==== */
+@media (max-width:768px){
+  .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
+  .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
+    position:relative !important;
+    opacity:1 !important;
+    pointer-events:auto !important;
+    transform:none !important;
+    padding:0 20px 60px;
+    max-width:640px;
+    margin:0 auto;
+  }
 
+  .s1-rail, .s2-rail, .s4-rail, .s5-rail,
+  .s9-rail, .s11-rail, .s13-rail, .s14-rail {
+    position:relative !important;
+    width:auto !important;
+    margin:0;
+  }
 
-
-
+  .s1-text, .s2-text, .s4-text, .s5-text,
+  .s9-text, .s11-text, .s13-text, .s14-text {
+    display:block !important;
+    transform:none !important;
+    text-align:left;
+    color:#111;
+    font-size:18px;
+    line-height:26px;
+    margin:20px 20px 60px 20px;
+  }
+}
 
 </style>
 
