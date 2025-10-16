@@ -324,6 +324,7 @@
   .s15-text a:focus-visible{
     color:#00A86B;
   }
+
 /* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
 @media (max-width:768px){
 
@@ -334,15 +335,23 @@
   }
 
   /* ==== HERO ==== */
-  .hero-media { top:20px; bottom:20px; left:20px; right:20px; }
-  .hero-title { font-size:72px; line-height:1.05; }
-  .hero-links { font-size:20px; line-height:26px; }
+  .hero-media {
+    top:20px; bottom:20px; left:20px; right:20px;
+  }
+  .hero-title {
+    font-size:72px;
+    line-height:1.05;
+  }
+  .hero-links {
+    font-size:20px;
+    line-height:26px;
+  }
 
   /* ==== SECTION WRAPS ==== */
   .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
   .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
     position:relative;
-    min-height:200vh;   /* 100vh pinned image + 100vh text sweep */
+    min-height:200vh;   /* image (100vh) + text scroll (100vh) */
     background:#eaeeec;
   }
 
@@ -357,7 +366,6 @@
     z-index:1;
     pointer-events:none;
   }
-
   .s1-frame img, .s2-frame img, .s4-frame img, .s5-frame img,
   .s9-frame img, .s11-frame img, .s13-frame img, .s14-frame img {
     width:100%;
@@ -366,56 +374,58 @@
     display:block;
   }
 
-  /* ==== TEXT OVERLAYS (SCROLL-CONTROLLED) ==== */
+  /* ==== SINGLE COLUMN TEXT OVERLAY ==== */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
   .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
-    position:sticky;
-    top:0;
-    height:100vh;
-    background:#eaeeec;       /* fully opaque sweep */
-    display:flex;
-    align-items:flex-end;
-    justify-content:center;
+    position:relative !important;
+    opacity:1 !important;
+    pointer-events:auto !important;
+    transform:none !important;
+    padding:0 24px 80px;
+    max-width:640px;
+    margin:0 auto;
+    background:transparent;
     z-index:2;
   }
 
   .s1-rail, .s2-rail, .s4-rail, .s5-rail,
   .s9-rail, .s11-rail, .s13-rail, .s14-rail {
-    width:100%;
-    max-width:640px;
-    margin:0 auto;
-    padding:0 20px;
+    position:relative !important;
+    width:100% !important;
+    margin:0;
+    left:auto !important;
+    right:auto !important;
   }
 
   .s1-text, .s2-text, .s4-text, .s5-text,
   .s9-text, .s11-text, .s13-text, .s14-text {
+    transform:none !important;
     color:#111;
-    text-align:left;
+    text-align:center;
     font-size:18px;
     line-height:26px;
-    transform:translateY(calc(100vh * (1 - var(--s1TextProgress,0))));
-    transition:none;
+    margin:20px 0 80px 0;
+  }
+  .s1-text p, .s2-text p, .s4-text p, .s5-text p,
+  .s9-text p, .s11-text p, .s13-text p, .s14-text p {
+    margin-bottom:16px;
   }
 
-  /* dynamic transform per section variable */
-  .s2-text  { transform:translateY(calc(100vh * (1 - var(--s2TextProgress,0)))); }
-  .s4-text  { transform:translateY(calc(100vh * (1 - var(--s4TextProgress,0)))); }
-  .s5-text  { transform:translateY(calc(100vh * (1 - var(--s5TextProgress,0)))); }
-  .s9-text  { transform:translateY(calc(100vh * (1 - var(--s9TextProgress,0)))); }
-  .s11-text { transform:translateY(calc(100vh * (1 - var(--s11TextProgress,0)))); }
-  .s13-text { transform:translateY(calc(100vh * (1 - var(--s13TextProgress,0)))); }
-  .s14-text { transform:translateY(calc(100vh * (1 - var(--s14TextProgress,0)))); }
-
-  /* ==== FULL BLEEDS & GALLERIES unchanged ==== */
+  /* ==== GALLERIES ==== */
   .galA-left-frame, .galB-center-frame, .galC-left-frame {
     left:20px; right:20px;
+  }
+
+  /* ==== FULL BLEEDS ==== */
+  .frame.s3-frame, .frame.s8-frame, .frame.s12-frame, .frame.s15-frame {
+    left:0; right:0; top:0; bottom:0;
   }
 
   /* ==== SECTION 15 ==== */
   .s15-text {
     color:#fff;
     text-align:center;
-    padding:0 20px 80px;
+    padding:0 24px 80px;
     max-width:640px;
     margin:0 auto;
     position:relative;
@@ -424,6 +434,7 @@
 }
 
 </style>
+
 </head>
 
 <body>
@@ -1047,71 +1058,17 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
     root.style.setProperty('--s15ImgOpacity', s15Group.toFixed(3));
   }
 
-async function init(){
-  if(document.fonts && document.fonts.ready){
-    try{ await document.fonts.ready; }catch(e){}
+  async function init(){
+    if(document.fonts && document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
+    measureHero();
+    measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
+    update();
+    addEventListener('load',  ()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15(); update(); });
+    addEventListener('resize',()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15(); update(); });
+    addEventListener('scroll', update, {passive:true});
   }
-
-  measureHero();
-  measureS1(); measureS2(); measureS4(); measureS5();
-  measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
-  update();
-
-  addEventListener('load',()=>{
-    measureHero(); measureS1(); measureS2(); measureS4(); measureS5();
-    measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
-    update();
-  });
-  addEventListener('resize',()=>{
-    measureHero(); measureS1(); measureS2(); measureS4(); measureS5();
-    measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
-    update();
-  });
-
-  /* === Scroll handler for mobile text sweep === */
-  addEventListener('scroll',()=>{
-    update();
-
-    if(window.matchMedia("(max-width:768px)").matches){
-      const root=document.documentElement;
-
-      const sections=[
-        {wrap:'s1-wrap', var:'--s1TextProgress'},
-        {wrap:'s2-wrap', var:'--s2TextProgress'},
-        {wrap:'s4-wrap', var:'--s4TextProgress'},
-        {wrap:'s5-wrap', var:'--s5TextProgress'},
-        {wrap:'s9-wrap', var:'--s9TextProgress'},
-        {wrap:'s11-wrap',var:'--s11TextProgress'},
-        {wrap:'s13-wrap',var:'--s13TextProgress'},
-        {wrap:'s14-wrap',var:'--s14TextProgress'}
-      ];
-
-      sections.forEach(s=>{
-        const el=document.getElementById(s.wrap);
-        if(!el) return;
-        const r=el.getBoundingClientRect();
-        const vh=window.innerHeight;
-        const progress=(vh - r.top)/vh; // 0 when bottom enters, 1 when top leaves
-        const clamped=Math.min(Math.max(progress,0),1);
-        root.style.setProperty(s.var,clamped.toFixed(3));
-      });
-    }
-  },{passive:true});
-
-  /* Adjust S15 margins (redundant safety) */
-  const s15=document.querySelector('.s15-text');
-  if(s15){
-    s15.style.maxWidth='640px';
-    s15.style.margin='0 auto';
-    s15.style.padding='0 20px 80px';
-  }
-}
-init();
+  init();
 })();
-
-
-
 </script>
 </body>
 </html>
-
