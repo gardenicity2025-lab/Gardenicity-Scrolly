@@ -1056,69 +1056,71 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
   }
 
 async function init(){
-  if (document.fonts && document.fonts.ready) {
-    try { await document.fonts.ready; } catch(e){}
+  if(document.fonts && document.fonts.ready){
+    try{ await document.fonts.ready; }catch(e){}
   }
 
-  // --- Measure all sections once fonts are ready ---
+  // --- initial measurement ---
   measureHero();
   measureS1(); measureS2(); measureS4(); measureS5();
   measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
   update();
 
-  // --- Re-measure on load & resize ---
-  addEventListener('load', ()=>{
+  // --- re-measure events ---
+  addEventListener('load',()=>{
     measureHero(); measureS1(); measureS2(); measureS4(); measureS5();
     measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
     update();
   });
-  addEventListener('resize', ()=>{
+  addEventListener('resize',()=>{
     measureHero(); measureS1(); measureS2(); measureS4(); measureS5();
     measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
     update();
   });
-  addEventListener('scroll', update, {passive:true});
+  addEventListener('scroll',update,{passive:true});
 
-  /* ==== MOBILE TEXT SWEEP SEQUENCING (Option B, fixed visibility) ==== */
+  /* ==== MOBILE TEXT SWEEP SIMPLE SEQUENCER ==== */
   if (window.matchMedia("(max-width:768px)").matches) {
-    const sweepSections = [
-      {id:'s1-wrap', overlay:'s1-overlay'},
-      {id:'s2-wrap', overlay:'s2-overlay'},
-      {id:'s4-wrap', overlay:'s4-overlay'},
-      {id:'s5-wrap', overlay:'s5-overlay'},
-      {id:'s9-wrap', overlay:'s9-overlay'},
-      {id:'s11-wrap', overlay:'s11-overlay'},
-      {id:'s13-wrap', overlay:'s13-overlay'},
-      {id:'s14-wrap', overlay:'s14-overlay'}
+    const sections = [
+      {img:'s1-img', overlay:'s1-overlay'},
+      {img:'s2-img', overlay:'s2-overlay'},
+      {img:'s4-img', overlay:'s4-overlay'},
+      {img:'s5-img', overlay:'s5-overlay'},
+      {img:'s9-img', overlay:'s9-overlay'},
+      {img:'s11-img', overlay:'s11-overlay'},
+      {img:'s13-img', overlay:'s13-overlay'},
+      {img:'s14-img', overlay:'s14-overlay'}
     ];
 
-    const observer = new IntersectionObserver((entries)=>{
-      entries.forEach(entry=>{
-        const sec = sweepSections.find(s=>s.id===entry.target.id);
-        if(!sec) return;
-        const ovl = document.querySelector('.'+sec.overlay);
-        if(!ovl) return;
+    // for each section, start sweep shortly after image appears
+    sections.forEach(({img,overlay})=>{
+      const imageEl=document.getElementById(img);
+      const overlayEl=document.querySelector('.'+overlay);
+      if(!imageEl||!overlayEl) return;
 
-        if(entry.isIntersecting){
-          // wait 300 ms after section becomes visible
-          setTimeout(()=>{
-            ovl.style.pointerEvents = 'auto';
-            ovl.style.animation = 'sweepUp 1.2s ease-out forwards';
-            ovl.style.opacity = '1';
-          }, 300);
-        } else {
-          // reset when section leaves viewport
-          ovl.style.animation = 'none';
-          ovl.style.transform = 'translateY(100vh)';
-          ovl.style.opacity = '0';
-        }
-      });
-    }, {threshold:0.6}); // trigger when ~60% of section is visible
+      const startSweep=()=>{
+        setTimeout(()=>{
+          overlayEl.style.pointerEvents='auto';
+          overlayEl.style.animation='sweepUp 1.2s ease-out forwards';
+          overlayEl.style.opacity='1';
+        },300); // delay after fade-in complete
+      };
 
-    sweepSections.forEach(s=>{
-      const el = document.getElementById(s.id);
-      if(el) observer.observe(el);
+      // trigger immediately if already loaded
+      if(imageEl.complete) startSweep();
+      else imageEl.addEventListener('load',startSweep,{once:true});
+
+      // safety: also start when transition (crossfade) finishes
+      imageEl.addEventListener('transitionend',()=>{ startSweep(); },{once:true});
     });
+  }
+
+  /* ==== ADJUST S15 TEXT MARGINS ==== */
+  const s15=document.querySelector('.s15-text');
+  if(s15){
+    s15.style.maxWidth='640px';
+    s15.style.margin='0 auto';
+    s15.style.padding='0 20px 80px';
   }
 }
 
