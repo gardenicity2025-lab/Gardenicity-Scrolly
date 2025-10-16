@@ -1056,65 +1056,67 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
   }
 
 async function init(){
-  if(document.fonts && document.fonts.ready){
-    try{ await document.fonts.ready; }catch(e){}
+  if (document.fonts && document.fonts.ready) {
+    try { await document.fonts.ready; } catch(e){}
   }
 
+  // --- Measure all sections once fonts are ready ---
   measureHero();
   measureS1(); measureS2(); measureS4(); measureS5();
   measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
   update();
 
-  addEventListener('load',()=>{
+  // --- Re-measure on load & resize ---
+  addEventListener('load', ()=>{
     measureHero(); measureS1(); measureS2(); measureS4(); measureS5();
     measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
     update();
   });
-  addEventListener('resize',()=>{
+  addEventListener('resize', ()=>{
     measureHero(); measureS1(); measureS2(); measureS4(); measureS5();
     measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
     update();
   });
-  addEventListener('scroll',update,{passive:true});
+  addEventListener('scroll', update, {passive:true});
 
-  /* ==== MOBILE TEXT SWEEP SEQUENCING (Option B) ==== */
+  /* ==== MOBILE TEXT SWEEP SEQUENCING (Option B, fixed visibility) ==== */
   if (window.matchMedia("(max-width:768px)").matches) {
     const sweepSections = [
-      {id:'s1-wrap', img:'s1-img', overlay:'s1-overlay'},
-      {id:'s2-wrap', img:'s2-img', overlay:'s2-overlay'},
-      {id:'s4-wrap', img:'s4-img', overlay:'s4-overlay'},
-      {id:'s5-wrap', img:'s5-img', overlay:'s5-overlay'},
-      {id:'s9-wrap', img:'s9-img', overlay:'s9-overlay'},
-      {id:'s11-wrap', img:'s11-img', overlay:'s11-overlay'},
-      {id:'s13-wrap', img:'s13-img', overlay:'s13-overlay'},
-      {id:'s14-wrap', img:'s14-img', overlay:'s14-overlay'}
+      {id:'s1-wrap', overlay:'s1-overlay'},
+      {id:'s2-wrap', overlay:'s2-overlay'},
+      {id:'s4-wrap', overlay:'s4-overlay'},
+      {id:'s5-wrap', overlay:'s5-overlay'},
+      {id:'s9-wrap', overlay:'s9-overlay'},
+      {id:'s11-wrap', overlay:'s11-overlay'},
+      {id:'s13-wrap', overlay:'s13-overlay'},
+      {id:'s14-wrap', overlay:'s14-overlay'}
     ];
 
     const observer = new IntersectionObserver((entries)=>{
       entries.forEach(entry=>{
-        if(!entry.isIntersecting) return;
         const sec = sweepSections.find(s=>s.id===entry.target.id);
         if(!sec) return;
-        const img=document.getElementById(sec.img);
-        const ovl=document.querySelector('.'+sec.overlay);
-        if(!img||!ovl) return;
+        const ovl = document.querySelector('.'+sec.overlay);
+        if(!ovl) return;
 
-        // Wait for image to fully load and hold before sweep
-        const startSweep=()=>{
+        if(entry.isIntersecting){
+          // wait 300 ms after section becomes visible
           setTimeout(()=>{
-            ovl.style.pointerEvents='auto';
-            ovl.style.animation='sweepUp 1.2s ease-out forwards';
-            ovl.style.opacity='1';
-          },300); // 300 ms hold after fade-in
-        };
-
-        if(img.complete && img.naturalWidth>0) startSweep();
-        else img.addEventListener('load',startSweep,{once:true});
+            ovl.style.pointerEvents = 'auto';
+            ovl.style.animation = 'sweepUp 1.2s ease-out forwards';
+            ovl.style.opacity = '1';
+          }, 300);
+        } else {
+          // reset when section leaves viewport
+          ovl.style.animation = 'none';
+          ovl.style.transform = 'translateY(100vh)';
+          ovl.style.opacity = '0';
+        }
       });
-    },{threshold:0.8}); // trigger when 80 % of section in view
+    }, {threshold:0.6}); // trigger when ~60% of section is visible
 
     sweepSections.forEach(s=>{
-      const el=document.getElementById(s.id);
+      const el = document.getElementById(s.id);
       if(el) observer.observe(el);
     });
   }
