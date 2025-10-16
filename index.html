@@ -338,28 +338,23 @@
   .hero-media {
     top:20px; bottom:20px; left:20px; right:20px;
   }
-  .hero-title {
-    font-size:72px;
-    line-height:1.05;
-  }
-  .hero-links {
-    font-size:20px;
-    line-height:26px;
-  }
+  .hero-title { font-size:72px; line-height:1.05; }
+  .hero-links { font-size:20px; line-height:26px; }
 
   /* ==== SECTION WRAPS ==== */
   .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
   .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
     position:relative;
-    min-height:200vh;   /* image (100vh) + text scroll (100vh) */
+    min-height:200vh;        /* image (100vh) + text scroll (100vh) */
     background:#eaeeec;
+    overflow:hidden;
   }
 
   /* ==== SECTION IMAGES (PINNED VIEWPORT) ==== */
   .s1-frame, .s2-frame, .s4-frame, .s5-frame,
   .s9-frame, .s11-frame, .s13-frame, .s14-frame {
     position:fixed;
-    top:20px; bottom:20px; left:20px; right:20px;
+    top:0; bottom:0; left:0; right:0;
     display:flex;
     align-items:center;
     justify-content:center;
@@ -374,18 +369,24 @@
     display:block;
   }
 
-  /* ==== SINGLE COLUMN TEXT OVERLAY ==== */
+  /* ==== TEXT SWEEP OVERLAY ==== */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
   .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
     position:relative !important;
     opacity:1 !important;
     pointer-events:auto !important;
     transform:none !important;
-    padding:0 24px 80px;
+    width:100%;
     max-width:640px;
     margin:0 auto;
-    background:transparent;
+    background:#eaeeec;
     z-index:2;
+    animation: sweepIn 1s ease-out forwards;
+  }
+
+  @keyframes sweepIn {
+    from { transform:translateY(100vh); }
+    to   { transform:translateY(0); }
   }
 
   .s1-rail, .s2-rail, .s4-rail, .s5-rail,
@@ -401,10 +402,10 @@
   .s9-text, .s11-text, .s13-text, .s14-text {
     transform:none !important;
     color:#111;
-    text-align:center;
+    text-align:left;
     font-size:18px;
     line-height:26px;
-    margin:20px 0 80px 0;
+    margin:40px 24px 80px 24px;
   }
   .s1-text p, .s2-text p, .s4-text p, .s5-text p,
   .s9-text p, .s11-text p, .s13-text p, .s14-text p {
@@ -432,6 +433,8 @@
     z-index:3;
   }
 }
+
+
 
 </style>
 
@@ -1058,17 +1061,68 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
     root.style.setProperty('--s15ImgOpacity', s15Group.toFixed(3));
   }
 
-  async function init(){
-    if(document.fonts && document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
-    measureHero();
-    measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
-    update();
-    addEventListener('load',  ()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15(); update(); });
-    addEventListener('resize',()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15(); update(); });
-    addEventListener('scroll', update, {passive:true});
+ async function init(){
+  if(document.fonts && document.fonts.ready){ 
+    try{ await document.fonts.ready; }catch(e){} 
   }
-  init();
+
+  // --- Measure all sections once fonts are ready ---
+  measureHero();
+  measureS1(); measureS2(); measureS4(); measureS5();
+  measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
+  update();
+
+  // --- Re-measure on load & resize ---
+  addEventListener('load', ()=>{
+    measureHero(); measureS1(); measureS2(); measureS4(); measureS5();
+    measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
+    update();
+  });
+  addEventListener('resize',()=>{
+    measureHero(); measureS1(); measureS2(); measureS4(); measureS5();
+    measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
+    update();
+  });
+  addEventListener('scroll', update, {passive:true});
+
+  /* ==== MOBILE TEXT SWEEP TIMING (Option B) ==== */
+  if (window.matchMedia("(max-width: 768px)").matches) {
+    const sectionFrames = [
+      {img:'s1-img', overlay:'s1-overlay'},
+      {img:'s2-img', overlay:'s2-overlay'},
+      {img:'s4-img', overlay:'s4-overlay'},
+      {img:'s5-img', overlay:'s5-overlay'},
+      {img:'s9-img', overlay:'s9-overlay'},
+      {img:'s11-img', overlay:'s11-overlay'},
+      {img:'s13-img', overlay:'s13-overlay'},
+      {img:'s14-img', overlay:'s14-overlay'}
+    ];
+
+    sectionFrames.forEach(({img, overlay})=>{
+      const imageEl   = document.getElementById(img);
+      const overlayEl = document.querySelector('.' + overlay);
+      if (!imageEl || !overlayEl) return;
+
+      // Trigger sweep after image has reached full opacity or load
+      imageEl.addEventListener('transitionend', ()=>{
+        setTimeout(()=>{
+          overlayEl.style.animation = 'sweepIn 1.2s ease-out forwards';
+        },250); // delay ensures image crossfade is complete
+      });
+
+      // Fallback for static loaded images
+      imageEl.addEventListener('load', ()=>{
+        setTimeout(()=>{
+          overlayEl.style.animation = 'sweepIn 1.2s ease-out forwards';
+        },250);
+      });
+    });
+  }
+}
+
+init();
 })();
+
 </script>
 </body>
 </html>
