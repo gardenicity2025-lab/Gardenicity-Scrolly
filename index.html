@@ -335,9 +335,7 @@
   }
 
   /* ==== HERO ==== */
-  .hero-media {
-    top:20px; bottom:20px; left:20px; right:20px;
-  }
+  .hero-media { top:20px; bottom:20px; left:20px; right:20px; }
   .hero-title { font-size:72px; line-height:1.05; }
   .hero-links { font-size:20px; line-height:26px; }
 
@@ -345,16 +343,16 @@
   .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
   .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
     position:relative;
-    min-height:200vh;        /* image (100vh) + text scroll (100vh) */
+    min-height:200vh;
     background:#eaeeec;
     overflow:hidden;
   }
 
-  /* ==== SECTION IMAGES (PINNED VIEWPORT) ==== */
+  /* ==== SECTION IMAGES (PINNED VIEWPORT, WITH 20px MARGINS) ==== */
   .s1-frame, .s2-frame, .s4-frame, .s5-frame,
   .s9-frame, .s11-frame, .s13-frame, .s14-frame {
     position:fixed;
-    top:0; bottom:0; left:0; right:0;
+    top:20px; bottom:20px; left:20px; right:20px;
     display:flex;
     align-items:center;
     justify-content:center;
@@ -373,20 +371,14 @@
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
   .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
     position:relative !important;
-    opacity:1 !important;
-    pointer-events:auto !important;
-    transform:none !important;
+    opacity:0;
+    pointer-events:none;
     width:100%;
     max-width:640px;
     margin:0 auto;
     background:#eaeeec;
     z-index:2;
-    animation: sweepIn 1s ease-out forwards;
-  }
-
-  @keyframes sweepIn {
-    from { transform:translateY(100vh); }
-    to   { transform:translateY(0); }
+    transform:translateY(100vh);
   }
 
   .s1-rail, .s2-rail, .s4-rail, .s5-rail,
@@ -400,7 +392,6 @@
 
   .s1-text, .s2-text, .s4-text, .s5-text,
   .s9-text, .s11-text, .s13-text, .s14-text {
-    transform:none !important;
     color:#111;
     text-align:left;
     font-size:18px;
@@ -432,12 +423,15 @@
     position:relative;
     z-index:3;
   }
+
+  @keyframes sweepUp {
+    0%   { transform:translateY(100vh); opacity:0; }
+    20%  { opacity:1; }
+    100% { transform:translateY(0); opacity:1; }
+  }
 }
 
-
-
 </style>
-
 </head>
 
 <body>
@@ -1061,19 +1055,17 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
     root.style.setProperty('--s15ImgOpacity', s15Group.toFixed(3));
   }
 
- async function init(){
-  if(document.fonts && document.fonts.ready){ 
-    try{ await document.fonts.ready; }catch(e){} 
+async function init(){
+  if(document.fonts && document.fonts.ready){
+    try{ await document.fonts.ready; }catch(e){}
   }
 
-  // --- Measure all sections once fonts are ready ---
   measureHero();
   measureS1(); measureS2(); measureS4(); measureS5();
   measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
   update();
 
-  // --- Re-measure on load & resize ---
-  addEventListener('load', ()=>{
+  addEventListener('load',()=>{
     measureHero(); measureS1(); measureS2(); measureS4(); measureS5();
     measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
     update();
@@ -1083,39 +1075,47 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
     measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
     update();
   });
-  addEventListener('scroll', update, {passive:true});
+  addEventListener('scroll',update,{passive:true});
 
-  /* ==== MOBILE TEXT SWEEP TIMING (Option B) ==== */
-  if (window.matchMedia("(max-width: 768px)").matches) {
-    const sectionFrames = [
-      {img:'s1-img', overlay:'s1-overlay'},
-      {img:'s2-img', overlay:'s2-overlay'},
-      {img:'s4-img', overlay:'s4-overlay'},
-      {img:'s5-img', overlay:'s5-overlay'},
-      {img:'s9-img', overlay:'s9-overlay'},
-      {img:'s11-img', overlay:'s11-overlay'},
-      {img:'s13-img', overlay:'s13-overlay'},
-      {img:'s14-img', overlay:'s14-overlay'}
+  /* ==== MOBILE TEXT SWEEP SEQUENCING (Option B) ==== */
+  if (window.matchMedia("(max-width:768px)").matches) {
+    const sweepSections = [
+      {id:'s1-wrap', img:'s1-img', overlay:'s1-overlay'},
+      {id:'s2-wrap', img:'s2-img', overlay:'s2-overlay'},
+      {id:'s4-wrap', img:'s4-img', overlay:'s4-overlay'},
+      {id:'s5-wrap', img:'s5-img', overlay:'s5-overlay'},
+      {id:'s9-wrap', img:'s9-img', overlay:'s9-overlay'},
+      {id:'s11-wrap', img:'s11-img', overlay:'s11-overlay'},
+      {id:'s13-wrap', img:'s13-img', overlay:'s13-overlay'},
+      {id:'s14-wrap', img:'s14-img', overlay:'s14-overlay'}
     ];
 
-    sectionFrames.forEach(({img, overlay})=>{
-      const imageEl   = document.getElementById(img);
-      const overlayEl = document.querySelector('.' + overlay);
-      if (!imageEl || !overlayEl) return;
+    const observer = new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if(!entry.isIntersecting) return;
+        const sec = sweepSections.find(s=>s.id===entry.target.id);
+        if(!sec) return;
+        const img=document.getElementById(sec.img);
+        const ovl=document.querySelector('.'+sec.overlay);
+        if(!img||!ovl) return;
 
-      // Trigger sweep after image has reached full opacity or load
-      imageEl.addEventListener('transitionend', ()=>{
-        setTimeout(()=>{
-          overlayEl.style.animation = 'sweepIn 1.2s ease-out forwards';
-        },250); // delay ensures image crossfade is complete
-      });
+        // Wait for image to fully load and hold before sweep
+        const startSweep=()=>{
+          setTimeout(()=>{
+            ovl.style.pointerEvents='auto';
+            ovl.style.animation='sweepUp 1.2s ease-out forwards';
+            ovl.style.opacity='1';
+          },300); // 300 ms hold after fade-in
+        };
 
-      // Fallback for static loaded images
-      imageEl.addEventListener('load', ()=>{
-        setTimeout(()=>{
-          overlayEl.style.animation = 'sweepIn 1.2s ease-out forwards';
-        },250);
+        if(img.complete && img.naturalWidth>0) startSweep();
+        else img.addEventListener('load',startSweep,{once:true});
       });
+    },{threshold:0.8}); // trigger when 80 % of section in view
+
+    sweepSections.forEach(s=>{
+      const el=document.getElementById(s.id);
+      if(el) observer.observe(el);
     });
   }
 }
