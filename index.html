@@ -325,7 +325,7 @@
     color:#00A86B;
   }
 
-/* === MOBILE LAYOUT CLEAN BASE === */
+/* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
 @media (max-width:768px){
 
   body {
@@ -334,20 +334,28 @@
     background:#eaeeec;
   }
 
-  /* ---- hero ---- */
-  .hero-media { top:20px; bottom:20px; left:20px; right:20px; }
-  .hero-title { font-size:72px; line-height:1.05; }
-  .hero-links { font-size:20px; line-height:26px; }
+  /* ==== HERO ==== */
+  .hero-media {
+    top:20px; bottom:20px; left:20px; right:20px;
+  }
+  .hero-title {
+    font-size:72px;
+    line-height:1.05;
+  }
+  .hero-links {
+    font-size:20px;
+    line-height:26px;
+  }
 
-  /* ---- section wrappers ---- */
+  /* ==== SECTION WRAPS ==== */
   .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
   .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
     position:relative;
-    min-height:200vh;
+    min-height:200vh;   /* image (100vh) + text scroll (100vh) */
     background:#eaeeec;
   }
 
-  /* ---- section images ---- */
+  /* ==== SECTION IMAGES (PINNED VIEWPORT) ==== */
   .s1-frame, .s2-frame, .s4-frame, .s5-frame,
   .s9-frame, .s11-frame, .s13-frame, .s14-frame {
     position:fixed;
@@ -366,36 +374,58 @@
     display:block;
   }
 
-  /* ---- text overlays / rails ---- */
+  /* ==== SINGLE COLUMN TEXT OVERLAY ==== */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
   .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
-    position:relative;
-    background:#eaeeec;
+    position:relative !important;
+    opacity:1 !important;
+    pointer-events:auto !important;
+    transform:none !important;
+    padding:0 24px 80px;
+    max-width:640px;
+    margin:0 auto;
+    background:transparent;
     z-index:2;
   }
 
   .s1-rail, .s2-rail, .s4-rail, .s5-rail,
   .s9-rail, .s11-rail, .s13-rail, .s14-rail {
-    width:100%;
-    max-width:640px;
-    margin:0 auto;
-    padding:0 20px;
-    box-sizing:border-box;
+    position:relative !important;
+    width:100% !important;
+    margin:0;
+    left:auto !important;
+    right:auto !important;
   }
 
   .s1-text, .s2-text, .s4-text, .s5-text,
   .s9-text, .s11-text, .s13-text, .s14-text {
-    text-align:left;          /* ← left aligned text */
+    transform:none !important;
+    color:#111;
+    text-align:center;
     font-size:18px;
     line-height:26px;
-    color:#111;
+    margin:20px 0 80px 0;
+  }
+  .s1-text p, .s2-text p, .s4-text p, .s5-text p,
+  .s9-text p, .s11-text p, .s13-text p, .s14-text p {
+    margin-bottom:16px;
   }
 
-  /* ---- section 15 ---- */
+  /* ==== GALLERIES ==== */
+  .galA-left-frame, .galB-center-frame, .galC-left-frame {
+    left:20px; right:20px;
+  }
+
+  /* ==== FULL BLEEDS ==== */
+  .frame.s3-frame, .frame.s8-frame, .frame.s12-frame, .frame.s15-frame {
+    left:0; right:0; top:0; bottom:0;
+  }
+
+  /* ==== SECTION 15 ==== */
   .s15-text {
     color:#fff;
     text-align:center;
-    padding:0 20px 80px;
+    padding:0 24px 80px;
     max-width:640px;
     margin:0 auto;
     position:relative;
@@ -1028,18 +1058,17 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
     root.style.setProperty('--s15ImgOpacity', s15Group.toFixed(3));
   }
 
-async function init(){
-  if(document.fonts && document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
-  measureHero();
-  measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
-  update();
-  addEventListener('load',  ()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15(); update(); });
-  addEventListener('resize',()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15(); update(); });
-  addEventListener('scroll', update, {passive:true});
-}
-init();
+  async function init(){
+    if(document.fonts && document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
+    measureHero();
+    measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
+    update();
+    addEventListener('load',  ()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15(); update(); });
+    addEventListener('resize',()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15(); update(); });
+    addEventListener('scroll', update, {passive:true});
+  }
+  init();
 })();
-
 </script>
 </body>
 </html>
