@@ -335,7 +335,9 @@
   }
 
   /* ==== HERO ==== */
-  .hero-media { top:20px; bottom:20px; left:20px; right:20px; }
+  .hero-media {
+    top:20px; bottom:20px; left:20px; right:20px;
+  }
   .hero-title { font-size:72px; line-height:1.05; }
   .hero-links { font-size:20px; line-height:26px; }
 
@@ -343,22 +345,22 @@
   .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
   .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
     position:relative;
-    min-height:200vh;                  /* 100vh image + 100vh text sweep */
+    min-height:200vh;             /* image (100vh) + text scroll (100vh) */
     background:#eaeeec;
   }
 
-  /* ==== SECTION IMAGES (PINNED VIEWPORT) ==== */
+  /* ==== SECTION IMAGES ==== */
   .s1-frame, .s2-frame, .s4-frame, .s5-frame,
   .s9-frame, .s11-frame, .s13-frame, .s14-frame {
-    position:fixed;
-    top:20px; bottom:20px; left:20px; right:20px;
+    position:relative;            /* ← back to normal flow */
+    top:0; left:0; right:0; bottom:0;
+    width:100%;
+    padding:20px;
+    box-sizing:border-box;
     display:flex;
     align-items:center;
     justify-content:center;
     z-index:1;
-    pointer-events:none;
-    opacity:var(--imgOpacity,1);       /* inherits your existing fade logic */
-    transition:opacity 0.6s linear;
   }
   .s1-frame img, .s2-frame img, .s4-frame img, .s5-frame img,
   .s9-frame img, .s11-frame img, .s13-frame img, .s14-frame img {
@@ -368,34 +370,17 @@
     display:block;
   }
 
-  /* ==== TEXT OVERLAY (FULLY OPAQUE BG + SWEEP) ==== */
+  /* ==== SINGLE COLUMN TEXT (LEFT-ALIGNED) ==== */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
   .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
     position:relative;
-    background:#eaeeec;                /* fully opaque background */
     max-width:640px;
     margin:0 auto;
     padding:0 20px 80px;
+    background:#eaeeec;
     z-index:2;
-    opacity:0;                         /* hidden until image fade complete */
-    transform:translateY(100vh);
-    transition:opacity 0.4s linear;
   }
 
-  /* When image fully visible, show text overlay */
-  .section-active .s1-overlay,
-  .section-active .s2-overlay,
-  .section-active .s4-overlay,
-  .section-active .s5-overlay,
-  .section-active .s9-overlay,
-  .section-active .s11-overlay,
-  .section-active .s13-overlay,
-  .section-active .s14-overlay {
-    opacity:1;
-    transform:translateY(0);
-  }
-
-  /* ==== TEXT STYLING ==== */
   .s1-text, .s2-text, .s4-text, .s5-text,
   .s9-text, .s11-text, .s13-text, .s14-text {
     text-align:left;
@@ -430,6 +415,7 @@
     z-index:3;
   }
 }
+
 
 </style>
 
