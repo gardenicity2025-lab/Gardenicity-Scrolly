@@ -389,6 +389,20 @@
     transition:transform 0.8s ease-out;
   }
 
+  /* ==== RESET RAILS FOR MOBILE ==== */
+  .s1-rail, .s2-rail, .s4-rail, .s5-rail,
+  .s9-rail, .s11-rail, .s13-rail, .s14-rail, .s15-rail {
+    position: relative !important;
+    width: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: auto !important;
+    bottom: auto !important;
+    overflow: visible !important;
+    display: block !important;
+    box-sizing: border-box;
+  }
+
   /* ==== LEFT-ALIGNED TEXT ==== */
   .s1-text, .s2-text, .s4-text, .s5-text,
   .s9-text, .s11-text, .s13-text, .s14-text {
@@ -443,6 +457,7 @@
     to   { transform: translateY(-100%); }
   }
 }
+
 
 </style>
 
