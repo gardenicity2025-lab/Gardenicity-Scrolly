@@ -325,7 +325,7 @@
     color:#00A86B;
   }
 
-/* === START MOBILE === */
+/* === MOBILE LAYOUT CLEAN BASE === */
 @media (max-width:768px){
 
   body {
@@ -343,11 +343,11 @@
   .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
   .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
     position:relative;
-    min-height:200vh;     /* 100vh image + 100vh text sweep */
+    min-height:200vh;
     background:#eaeeec;
   }
 
-  /* ---- pinned section images ---- */
+  /* ---- section images ---- */
   .s1-frame, .s2-frame, .s4-frame, .s5-frame,
   .s9-frame, .s11-frame, .s13-frame, .s14-frame {
     position:fixed;
@@ -363,20 +363,15 @@
     width:100%;
     height:auto;
     object-fit:contain;
+    display:block;
   }
 
-  /* ---- text rails (single-column sweep) ---- */
+  /* ---- text overlays / rails ---- */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
   .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
-    position:sticky;
-    top:0;
-    height:100vh;
-    display:flex;
-    align-items:flex-end;
-    justify-content:center;
+    position:relative;
     background:#eaeeec;
     z-index:2;
-    overflow:hidden;
   }
 
   .s1-rail, .s2-rail, .s4-rail, .s5-rail,
@@ -385,27 +380,19 @@
     max-width:640px;
     margin:0 auto;
     padding:0 20px;
+    box-sizing:border-box;
   }
 
   .s1-text, .s2-text, .s4-text, .s5-text,
   .s9-text, .s11-text, .s13-text, .s14-text {
-    text-align:left;
+    text-align:left;          /* ← left aligned text */
     font-size:18px;
     line-height:26px;
     color:#111;
-    transform:translateY(calc(100vh * (1 - var(--s1Progress,0))));
-    transition:none;
   }
-  .s2-text  { transform:translateY(calc(100vh * (1 - var(--s2Progress,0)))); }
-  .s4-text  { transform:translateY(calc(100vh * (1 - var(--s4Progress,0)))); }
-  .s5-text  { transform:translateY(calc(100vh * (1 - var(--s5Progress,0)))); }
-  .s9-text  { transform:translateY(calc(100vh * (1 - var(--s9Progress,0)))); }
-  .s11-text { transform:translateY(calc(100vh * (1 - var(--s11Progress,0)))); }
-  .s13-text { transform:translateY(calc(100vh * (1 - var(--s13Progress,0)))); }
-  .s14-text { transform:translateY(calc(100vh * (1 - var(--s14Progress,0)))); }
 
   /* ---- section 15 ---- */
-  .s15-text{
+  .s15-text {
     color:#fff;
     text-align:center;
     padding:0 20px 80px;
@@ -415,7 +402,6 @@
     z-index:3;
   }
 }
-/* === END MOBILE === */
 
 </style>
 
@@ -1043,59 +1029,14 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
   }
 
 async function init(){
-  if(document.fonts && document.fonts.ready){
-    try{ await document.fonts.ready; }catch(e){}
-  }
-
-  // --- initial measurement ---
+  if(document.fonts && document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
   measureHero();
-  measureS1(); measureS2(); measureS4(); measureS5();
-  measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
+  measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
   update();
-
-  // --- re-measure on load & resize ---
-  addEventListener('load',()=>{
-    measureHero(); measureS1(); measureS2(); measureS4(); measureS5();
-    measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
-    update();
-  });
-  addEventListener('resize',()=>{
-    measureHero(); measureS1(); measureS2(); measureS4(); measureS5();
-    measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
-    update();
-  });
+  addEventListener('load',  ()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15(); update(); });
+  addEventListener('resize',()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15(); update(); });
   addEventListener('scroll', update, {passive:true});
-
-  /* === MOBILE TEXT SWEEP SYNCHRONIZER === */
-  if (window.matchMedia("(max-width:768px)").matches) {
-    const root = document.documentElement;
-    const sections = [
-      {id:'s1-wrap', var:'--s1Progress'},
-      {id:'s2-wrap', var:'--s2Progress'},
-      {id:'s4-wrap', var:'--s4Progress'},
-      {id:'s5-wrap', var:'--s5Progress'},
-      {id:'s9-wrap', var:'--s9Progress'},
-      {id:'s11-wrap', var:'--s11Progress'},
-      {id:'s13-wrap', var:'--s13Progress'},
-      {id:'s14-wrap', var:'--s14Progress'}
-    ];
-
-    window.addEventListener('scroll', ()=>{
-      const vh = window.innerHeight;
-      sections.forEach(s=>{
-        const el = document.getElementById(s.id);
-        if(!el) return;
-        const r = el.getBoundingClientRect();
-        /* progress = 0 when section image fully visible, 1 when section leaves viewport */
-        let progress = 1 - (r.bottom - vh) / vh;
-        progress = Math.min(Math.max(progress,0),1);
-        root.style.setProperty(s.var, progress.toFixed(3));
-      });
-    }, {passive:true});
-  }
-  /* === END MOBILE TEXT SWEEP SYNCHRONIZER === */
 }
-
 init();
 })();
 
