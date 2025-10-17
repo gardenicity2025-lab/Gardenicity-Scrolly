@@ -330,107 +330,127 @@
 
   /* ==== BASE ==== */
   body {
-    margin:0;
-    padding:0;
-    background:#eaeeec;
-    font-family:"Acumin Pro", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #eaeeec;
+    font-family: "Acumin Pro", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   }
 
   /* ==== HERO ==== */
   .hero-media {
     position: fixed;
-    top:20px; bottom:20px; left:20px; right:20px;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    z-index:1;
+    top: 20px; bottom: 20px; left: 20px; right: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
   }
-
-  .hero-title {
-    font-size:72px;
-    line-height:1.05;
-  }
-
-  .hero-links {
-    font-size:20px;
-    line-height:26px;
-  }
+  .hero-title { font-size: 72px; line-height: 1.05; }
+  .hero-links { font-size: 20px; line-height: 26px; }
 
   /* ==== SECTION WRAPS ==== */
   .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
   .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap, .s15-wrap {
     position: relative;
-    min-height: 200vh;          /* image (100vh) + text scroll (100vh) */
-    background:#eaeeec;
+    min-height: 200vh;           /* image (100vh) + text sweep (100vh) */
+    background: #eaeeec;
+    overflow: hidden;
   }
 
-  /* ==== SECTION IMAGES (PINNED VIEWPORT) ==== */
+  /* ==== SECTION IMAGES ==== */
   .s1-frame, .s2-frame, .s4-frame, .s5-frame,
   .s9-frame, .s11-frame, .s13-frame, .s14-frame, .s15-frame {
     position: fixed;
-    top:20px; bottom:20px; left:20px; right:20px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    z-index:1;
-    pointer-events:none;
+    top: 20px; bottom: 20px; left: 20px; right: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;                  /* stays behind text */
+    pointer-events: none;
   }
 
   .s1-frame img, .s2-frame img, .s4-frame img, .s5-frame img,
   .s9-frame img, .s11-frame img, .s13-frame img, .s14-frame img, .s15-frame img {
-    width:100%;
-    height:auto;
-    object-fit:contain;
-    opacity:var(--sImgOpacity,1);
-    transition:opacity .4s linear;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    opacity: var(--sImgOpacity,1);
+    transition: opacity .4s linear;
   }
 
-  /* ==== OVERLAY TEXT SWEEP ==== */
+  /* ==== TEXT OVERLAY SWEEP ==== */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
   .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay, .s15-overlay {
     position: relative;
-    z-index:2;
-    background:#eaeeec;                   /* fully opaque mask */
-    opacity: calc(var(--sImgOpacity,1));  /* visible only after image fade-in complete */
-    padding:0 20px 80px;
-    max-width:640px;
-    margin:100vh auto 0;                  /* start just below the visible image */
-    box-sizing:border-box;
+    z-index: 3;                      /* ensure on top of images */
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 80px 20px;
+    background: #eaeeec;             /* fully opaque sweep mask */
+    box-sizing: border-box;
+    transform: translateY(100vh);    /* start below viewport */
+    transition: transform 0.6s linear;
   }
 
-  /* ==== SECTION TEXT ==== */
+  /* ==== Scroll-linked movement (pure CSS) ==== */
+  [data-section="s1"] .s1-overlay,
+  [data-section="s2"] .s2-overlay,
+  [data-section="s4"] .s4-overlay,
+  [data-section="s5"] .s5-overlay,
+  [data-section="s9"] .s9-overlay,
+  [data-section="s11"] .s11-overlay,
+  [data-section="s13"] .s13-overlay,
+  [data-section="s14"] .s14-overlay,
+  [data-section="s15"] .s15-overlay {
+    /* When section image fully visible, sweep up */
+    animation: none;
+  }
+
+  /* Scroll trigger mimic: as user scrolls halfway through section */
+  .s1-wrap:has(:is(.s1-frame img[style*='opacity: 1'])) .s1-overlay,
+  .s2-wrap:has(:is(.s2-frame img[style*='opacity: 1'])) .s2-overlay,
+  .s4-wrap:has(:is(.s4-frame img[style*='opacity: 1'])) .s4-overlay,
+  .s5-wrap:has(:is(.s5-frame img[style*='opacity: 1'])) .s5-overlay,
+  .s9-wrap:has(:is(.s9-frame img[style*='opacity: 1'])) .s9-overlay,
+  .s11-wrap:has(:is(.s11-frame img[style*='opacity: 1'])) .s11-overlay,
+  .s13-wrap:has(:is(.s13-frame img[style*='opacity: 1'])) .s13-overlay,
+  .s14-wrap:has(:is(.s14-frame img[style*='opacity: 1'])) .s14-overlay,
+  .s15-wrap:has(:is(.s15-frame img[style*='opacity: 1'])) .s15-overlay {
+    transform: translateY(0);        /* bring into viewport */
+  }
+
+  /* ==== TEXT STYLE ==== */
   .s1-text, .s2-text, .s4-text, .s5-text,
   .s9-text, .s11-text, .s13-text, .s14-text, .s15-text {
-    color:#111;
-    text-align:left;
-    font-size:18px;
-    line-height:26px;
+    color: #111;
+    text-align: left;
+    font-size: 18px;
+    line-height: 26px;
   }
 
-  /* ==== OPTIONAL: LAST SECTION (S15) MARGIN FIX ==== */
+  /* ==== LAST SECTION SPACING ==== */
   .s15-overlay {
-    margin-bottom:120px;
-    padding-bottom:120px;
+    margin-bottom: 120px;
+    padding-bottom: 120px;
   }
 
-  /* ==== GALLERIES / FULL BLEEDS (UNCHANGED) ==== */
+  /* ==== GALLERIES / FULL BLEEDS ==== */
   .gallery-A, .gallery-B, .gallery-C,
   .full-bleed-A, .full-bleed-B {
-    position:relative;
-    width:100%;
-    background:#eaeeec;
-    z-index:1;
+    position: relative;
+    width: 100%;
+    background: #eaeeec;
+    z-index: 2;
   }
 
   .gallery-A img, .gallery-B img, .gallery-C img,
   .full-bleed-A img, .full-bleed-B img {
-    width:100%;
-    height:auto;
-    display:block;
+    width: 100%;
+    height: auto;
+    display: block;
   }
-
 }
-
 
 </style>
 
@@ -1071,3 +1091,4 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
 </script>
 </body>
 </html>
+
