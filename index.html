@@ -672,17 +672,17 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
 
 <script>
 (function(){
-  const root=document.documentElement;
-  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-  const easeInOutCubic=t=>t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
-  const easePow=(t,p)=>Math.pow(t,p);
+  const root = document.documentElement;
+  const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
+  const easeInOutCubic = t=>t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+  const easePow = (t,p)=>Math.pow(t,p);
 
   /* ---------- HERO ---------- */
-  const driver=document.getElementById('driver');
-  const heroMedia=document.getElementById('hero-media');
-  const heroCol=document.getElementById('hero-col');
-  const heroTitle=document.getElementById('hero-title');
-  const heroLinks=document.getElementById('hero-links');
+  const driver = document.getElementById('driver');
+  const heroMedia = document.getElementById('hero-media');
+  const heroCol = document.getElementById('hero-col');
+  const heroTitle = document.getElementById('hero-title');
+  const heroLinks = document.getElementById('hero-links');
   let startShift=0,endShift=0;
 
   function measureHero(){
@@ -711,16 +711,10 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
   /* ---------- WRAPS ---------- */
   const s1Wrap=document.getElementById('s1-wrap');
   const s2Wrap=document.getElementById('s2-wrap');
-  const galAWrap=document.getElementById('galA-wrap');
-  const s3Wrap=document.getElementById('s3-wrap');
   const s4Wrap=document.getElementById('s4-wrap');
   const s5Wrap=document.getElementById('s5-wrap');
-  const galBWrap=document.getElementById('galB-wrap');
-  const s8Wrap=document.getElementById('s8-wrap');
   const s9Wrap=document.getElementById('s9-wrap');
-  const galCWrap=document.getElementById('galC-wrap');
   const s11Wrap=document.getElementById('s11-wrap');
-  const s12Wrap=document.getElementById('s12-wrap');
   const s13Wrap=document.getElementById('s13-wrap');
   const s14Wrap=document.getElementById('s14-wrap');
   const s15Wrap=document.getElementById('s15-wrap');
@@ -755,12 +749,11 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
   function measureS14(){ const vh=window.innerHeight; const h=s14Text.scrollHeight; s14StartY=vh; s14EndY=-h; root.style.setProperty('--s14Y', s14StartY+'px'); }
   function measureS15(){ const vh=window.innerHeight; const h=s15Text.scrollHeight; s15StartY=vh; s15EndY=-h; root.style.setProperty('--s15Y', s15StartY+'px'); }
 
-  /* ---------- UPDATE (with mobile guard) ---------- */
+  /* ---------- UPDATE (smart mobile guard) ---------- */
   function update(){
     const isMobile = window.matchMedia("(max-width: 768px)").matches;
-    if (isMobile) return; // CSS handles fade + scroll on mobile
 
-    /* HERO choreography */
+    /* Always run hero logic — needed for page height and baseline */
     const p=progressOf(driver);
     const pFade=easeInOutCubic(clamp(p/0.60,0,1));
     root.style.setProperty('--titleOpacity',pFade.toFixed(3));
@@ -769,17 +762,28 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
     root.style.setProperty('--shift',shift.toFixed(1)+'px');
     root.style.setProperty('--linksOpacity',pSlide.toFixed(3));
 
-    /* === REST OF YOUR SCROLL LOGIC (unchanged) === */
-    /* ... keep all the remaining code in your current update() body ... */
+    if(isMobile) return; // stop here for mobile (CSS-only fades below)
+
+    /* === DESKTOP SCROLL ANIMATIONS === */
+    // Keep your full existing scroll choreography code here
+    // (image fades, overlay opacity, crossfades, gallery timing, etc.)
+    // This block remains unchanged from your working desktop version.
   }
 
   async function init(){
     if(document.fonts && document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
     measureHero();
-    measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
+    measureS1(); measureS2(); measureS4(); measureS5(); measureS9();
+    measureS11(); measureS13(); measureS14(); measureS15();
     update();
-    addEventListener('load',  ()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15(); update(); });
-    addEventListener('resize',()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15(); update(); });
+    addEventListener('load',  ()=>{ 
+      measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); measureS9();
+      measureS11(); measureS13(); measureS14(); measureS15(); update(); 
+    });
+    addEventListener('resize',()=>{ 
+      measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); measureS9();
+      measureS11(); measureS13(); measureS14(); measureS15(); update(); 
+    });
     addEventListener('scroll', update, {passive:true});
   }
   init();
