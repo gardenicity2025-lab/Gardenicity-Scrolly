@@ -325,84 +325,124 @@
     color:#00A86B;
   }
 
-/* ===== MOBILE (max-width:768px) — CLEAN SCROLL STACK ===== */
+/* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
 @media (max-width:768px){
 
   body {
     margin:0;
     padding:0;
     background:#eaeeec;
-    font-family:"Acumin Pro", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   }
 
-  /* ---- each section tall enough for image + text ---- */
+  /* ==== HERO ==== */
+  .hero-media {
+    top:20px; bottom:20px; left:20px; right:20px;
+  }
+  .hero-title {
+    font-size:72px;
+    line-height:1.05;
+  }
+  .hero-links {
+    font-size:20px;
+    line-height:26px;
+  }
+
+  /* ==== SECTION WRAPS ==== */
+  .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
+  .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
+    position:relative;
+    min-height:200vh;                /* 100vh image + 100vh text scroll */
+    background:#eaeeec;
+    overflow:hidden;
+  }
+
+  /* ==== SECTION IMAGES (PINNED VIEWPORT) ==== */
+  .s1-frame, .s2-frame, .s4-frame, .s5-frame,
+  .s9-frame, .s11-frame, .s13-frame, .s14-frame {
+    position:fixed;
+    top:20px; bottom:20px; left:20px; right:20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:1;
+    pointer-events:none;
+  }
+  .s1-frame img, .s2-frame img, .s4-frame img, .s5-frame img,
+  .s9-frame img, .s11-frame img, .s13-frame img, .s14-frame img {
+    width:100%;
+    height:auto;
+    object-fit:contain;
+    display:block;
+  }
+
+  /* ==== SINGLE COLUMN TEXT OVERLAY ==== */
+  .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
+  .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
+    position:relative !important;
+    pointer-events:auto !important;
+    padding:0 20px 80px;
+    max-width:640px;
+    margin:0 auto;
+    background:#eaeeec;             /* opaque background for clean swipe */
+    z-index:3;
+    transform:translateY(100%);     /* start off-screen below viewport */
+    transition:transform 0.8s ease-out;
+  }
+
+  /* ==== LEFT-ALIGNED TEXT ==== */
+  .s1-text, .s2-text, .s4-text, .s5-text,
+  .s9-text, .s11-text, .s13-text, .s14-text {
+    color:#111;
+    text-align:left;
+    font-size:18px;
+    line-height:26px;
+  }
+  .s1-text p, .s2-text p, .s4-text p, .s5-text p,
+  .s9-text p, .s11-text p, .s13-text p, .s14-text p {
+    margin-bottom:16px;
+  }
+
+  /* ==== GALLERIES ==== */
+  .galA-left-frame, .galB-center-frame, .galC-left-frame {
+    left:20px; right:20px;
+  }
+
+  /* ==== FULL BLEEDS ==== */
+  .frame.s3-frame, .frame.s8-frame, .frame.s12-frame, .frame.s15-frame {
+    left:0; right:0; top:0; bottom:0;
+  }
+
+  /* ==== SECTION 15 ==== */
+  .s15-text {
+    color:#fff;
+    text-align:center;
+    padding:0 24px 80px;
+    max-width:640px;
+    margin:0 auto;
+    position:relative;
+    z-index:3;
+  }
+
+  /* ==== SCROLL-TIMELINE FOR TEXT SWEEP ==== */
   .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
   .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap, .s15-wrap {
-    position: relative;
-    min-height: 300vh; /* gives room for fade + sweep */
-    background: #eaeeec;
-    overflow: visible;
+    scroll-timeline-name: sectionScroll;
+    scroll-timeline-axis: block;
+    overflow:hidden;
   }
 
-  /* ---- image behaves like pinned but simpler ---- */
-  .s1-frame, .s2-frame, .s4-frame, .s5-frame,
-  .s9-frame, .s11-frame, .s13-frame, .s14-frame, .s15-frame {
-    position: sticky;
-    top: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    z-index: 1;
-  }
-
-  .s1-frame img, .s2-frame img, .s4-frame img, .s5-frame img,
-  .s9-frame img, .s11-frame img, .s13-frame img, .s14-frame img, .s15-frame img {
-    width: 100%;
-    height: auto;
-    object-fit: contain;
-    opacity: var(--sImgOpacity, 1);
-    transition: opacity .6s linear;
-  }
-
-  /* ---- text overlay block ---- */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
   .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay, .s15-overlay {
-    position: relative;
-    z-index: 2;
-    background: #eaeeec; /* opaque sweep */
-    margin-top: 100vh;   /* start after full image */
-    padding: 80px 20px;
-    max-width: 640px;
-    box-sizing: border-box;
+    animation: textSweep ease-in-out both;
+    animation-timeline: sectionScroll;
+    animation-range: 60% 100%;   /* starts after image fade completes */
   }
 
-  .s1-text, .s2-text, .s4-text, .s5-text,
-  .s9-text, .s11-text, .s13-text, .s14-text, .s15-text {
-    color: #111;
-    text-align: left;
-    font-size: 18px;
-    line-height: 26px;
-  }
-
-  /* galleries and full bleeds stay as-is */
-  .gallery-A, .gallery-B, .gallery-C,
-  .full-bleed-A, .full-bleed-B {
-    position: relative;
-    width: 100%;
-    background: #eaeeec;
-    z-index: 0;
-  }
-
-  .gallery-A img, .gallery-B img, .gallery-C img,
-  .full-bleed-A img, .full-bleed-B img {
-    width: 100%;
-    height: auto;
-    display: block;
+  @keyframes textSweep {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(-100%); }
   }
 }
-
-
 
 </style>
 
