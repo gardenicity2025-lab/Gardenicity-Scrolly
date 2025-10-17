@@ -374,14 +374,14 @@
     display:block;
   }
 
-  /* ==== SINGLE COLUMN TEXT OVERLAY ==== */
+  /* ==== SINGLE COLUMN TEXT OVERLAY (LEFT-ALIGNED) ==== */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
   .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
     position:relative !important;
     opacity:1 !important;
     pointer-events:auto !important;
     transform:none !important;
-    padding:0 24px 80px;
+    padding:0 20px 80px;             /* ← 20 px viewport margins */
     max-width:640px;
     margin:0 auto;
     background:transparent;
@@ -401,7 +401,7 @@
   .s9-text, .s11-text, .s13-text, .s14-text {
     transform:none !important;
     color:#111;
-    text-align:center;
+    text-align:left;                 /* ← left-align text */
     font-size:18px;
     line-height:26px;
     margin:20px 0 80px 0;
