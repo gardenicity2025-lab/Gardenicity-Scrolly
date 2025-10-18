@@ -362,11 +362,11 @@
     box-sizing: border-box;
   }
 
-  /* ==== MOBILE VIEWPORT STAGE ==== */
+  /* ==== SECTION WRAPS ==== */
   .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
   .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
     position: relative;
-    min-height: 250vh;     /* 100vh fade-in/out + 100vh text scroll + margin */
+    min-height: 250vh;
     background: #eaeeec;
     overflow: hidden;
   }
@@ -379,21 +379,25 @@
     height: 100vh;
     width: 100%;
     z-index: 1;
-    opacity: 1 !important;                     /* ensure visible */
-    animation: none !important;                /* temporarily bypass scroll-timeline bug */
+    opacity: 1;
+    transition: opacity 0.8s ease-in-out;
   }
+
+  /* All section images fully visible initially */
   .s1-frame img, .s2-frame img, .s4-frame img, .s5-frame img,
   .s9-frame img, .s11-frame img, .s13-frame img, .s14-frame img {
     width:100%;
     height:100%;
     object-fit:cover;
-    display:block !important;
-    opacity:1 !important;
-    transform:none !important;
-    transition:none !important;
+    display:block;
   }
 
-  /* ==== TEXT BEHAVIOR ==== */
+  /* Sequential fade simulation: alternate sections slightly dim */
+  .s2-frame, .s5-frame, .s11-frame, .s14-frame {
+    opacity:0.92;
+  }
+
+  /* ==== TEXT ==== */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
   .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
     position: relative !important;
@@ -401,10 +405,6 @@
     max-width: 640px;
     margin: 0 auto;
     padding: 0 20px 100px;
-    transform: translateY(120%);
-    animation: mobileTextScroll linear both;
-    animation-timeline: view();
-    animation-range: entry 60% exit 100%;
     background: transparent;
   }
 
@@ -420,7 +420,7 @@
     margin-bottom:16px;
   }
 
-  /* ==== SECTION 15 (centered text block) ==== */
+  /* ==== SECTION 15 ==== */
   .s15-wrap {
     background:#000;
     padding:120px 20px 160px;
@@ -458,19 +458,10 @@
     left:0; right:0; top:0; bottom:0;
   }
 
-  /* ==== KEYFRAMES ==== */
-  @keyframes mobileSectionFade {
-    0%   { opacity: 0; }
-    20%  { opacity: 1; }
-    50%  { opacity: 1; }
-    80%  { opacity: 0; }
-    100% { opacity: 0; }
-  }
-
+  /* ==== KEYFRAMES (used by text scroll only) ==== */
   @keyframes mobileTextScroll {
-    0%   { transform: translateY(120%); opacity: 0; }
-    60%  { transform: translateY(120%); opacity: 0; }
-    70%  { opacity: 1; }
+    0%   { transform: translateY(100%); opacity: 0; }
+    20%  { transform: translateY(80%);  opacity: 1; }
     100% { transform: translateY(-120%); opacity: 1; }
   }
 }
