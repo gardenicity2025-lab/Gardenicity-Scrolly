@@ -437,7 +437,7 @@
     z-index:3;
   }
 
-  /* ==== SCROLL-TIMELINE FOR TEXT SWEEP ==== */
+  /* ==== SCROLL-TIMELINE FOR TEXT SWEEP (Hero→S1 delay fix) ==== */
   .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
   .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap, .s15-wrap {
     scroll-timeline-name: sectionScroll;
@@ -445,11 +445,19 @@
     overflow:hidden;
   }
 
-  .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
+  /* Section 1: delayed start so image finishes fade-in first */
+  .s1-overlay {
+    animation: textSweep ease-in-out both;
+    animation-timeline: sectionScroll;
+    animation-range: 75% 100%;   /* start later than other sections */
+  }
+
+  /* All later sections unchanged */
+  .s2-overlay, .s4-overlay, .s5-overlay,
   .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay, .s15-overlay {
     animation: textSweep ease-in-out both;
     animation-timeline: sectionScroll;
-    animation-range: 60% 100%;   /* starts after image fade completes */
+    animation-range: 60% 100%;
   }
 
   @keyframes textSweep {
@@ -457,8 +465,6 @@
     to   { transform: translateY(-100%); }
   }
 }
-
-
 </style>
 
 </head>
