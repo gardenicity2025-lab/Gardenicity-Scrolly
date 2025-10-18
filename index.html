@@ -786,25 +786,78 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
   function measureS14(){ const vh=window.innerHeight; const h=s14Text.scrollHeight; s14StartY=vh; s14EndY=-h; root.style.setProperty('--s14Y', s14StartY+'px'); }
   function measureS15(){ const vh=window.innerHeight; const h=s15Text.scrollHeight; s15StartY=vh; s15EndY=-h; root.style.setProperty('--s15Y', s15StartY+'px'); }
 
-  /* ---------- UPDATE (smart mobile guard) ---------- */
+  /* ---------- UPDATE ---------- */
   function update(){
     const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
-    /* Always run hero logic — needed for page height and baseline */
-    const p=progressOf(driver);
-    const pFade=easeInOutCubic(clamp(p/0.60,0,1));
-    root.style.setProperty('--titleOpacity',pFade.toFixed(3));
-    const pSlide=clamp((p-0.60)/0.40,0,1);
-    const shift=startShift+(endShift-startShift)*pSlide;
-    root.style.setProperty('--shift',shift.toFixed(1)+'px');
-    root.style.setProperty('--linksOpacity',pSlide.toFixed(3));
+    /* ----- HERO ----- */
+    const p = progressOf(driver);
+    const pFade = easeInOutCubic(clamp(p/0.60,0,1));
+    root.style.setProperty('--titleOpacity', pFade.toFixed(3));
+    const pSlide = clamp((p - 0.60)/0.40, 0, 1);
+    const shift = startShift + (endShift - startShift) * pSlide;
+    root.style.setProperty('--shift', shift.toFixed(1) + 'px');
+    root.style.setProperty('--linksOpacity', pSlide.toFixed(3));
 
-    if(isMobile) return; // stop here for mobile (CSS-only fades below)
+    /* ----- STOP ANIMATIONS ON MOBILE, BUT KEEP FLOW ----- */
+    if(isMobile){
+      // Maintain scroll height progression only
+      return;
+    }
 
-    /* === DESKTOP SCROLL ANIMATIONS === */
-    // Keep your full existing scroll choreography code here
-    // (image fades, overlay opacity, crossfades, gallery timing, etc.)
-    // This block remains unchanged from your working desktop version.
+    /* ---------- DESKTOP SECTION PROGRESS ---------- */
+    const s1 = progressOf(s1Wrap);
+    const s2 = progressOf(s2Wrap);
+    const s4 = progressOf(s4Wrap);
+    const s5 = progressOf(s5Wrap);
+    const s9 = progressOf(s9Wrap);
+    const s11 = progressOf(s11Wrap);
+    const s13 = progressOf(s13Wrap);
+    const s14 = progressOf(s14Wrap);
+    const s15 = progressOf(s15Wrap);
+
+    root.style.setProperty('--s1', s1.toFixed(3));
+    root.style.setProperty('--s2', s2.toFixed(3));
+    root.style.setProperty('--s4', s4.toFixed(3));
+    root.style.setProperty('--s5', s5.toFixed(3));
+    root.style.setProperty('--s9', s9.toFixed(3));
+    root.style.setProperty('--s11', s11.toFixed(3));
+    root.style.setProperty('--s13', s13.toFixed(3));
+    root.style.setProperty('--s14', s14.toFixed(3));
+    root.style.setProperty('--s15', s15.toFixed(3));
+
+    /* ----- STANDARD IMAGE FADE LOGIC ----- */
+    root.style.setProperty('--s1ImgOpacity', easeInOutCubic(clamp(s1*3, 0, 1)));
+    root.style.setProperty('--s2ImgOpacity', easeInOutCubic(clamp(s2*3, 0, 1)));
+    root.style.setProperty('--s4ImgOpacity', easeInOutCubic(clamp(s4*3, 0, 1)));
+    root.style.setProperty('--s5ImgOpacity', easeInOutCubic(clamp(s5*3, 0, 1)));
+    root.style.setProperty('--s9ImgOpacity', easeInOutCubic(clamp(s9*3, 0, 1)));
+    root.style.setProperty('--s11ImgOpacity', easeInOutCubic(clamp(s11*3, 0, 1)));
+    root.style.setProperty('--s13ImgOpacity', easeInOutCubic(clamp(s13*3, 0, 1)));
+    root.style.setProperty('--s14ImgOpacity', easeInOutCubic(clamp(s14*3, 0, 1)));
+    root.style.setProperty('--s15ImgOpacity', easeInOutCubic(clamp(s15*3, 0, 1)));
+
+    /* ----- TEXT OVERLAY MOVEMENT ----- */
+    root.style.setProperty('--s1Y', (window.innerHeight*(1-s1*2)).toFixed(1)+'px');
+    root.style.setProperty('--s2Y', (window.innerHeight*(1-s2*2)).toFixed(1)+'px');
+    root.style.setProperty('--s4Y', (window.innerHeight*(1-s4*2)).toFixed(1)+'px');
+    root.style.setProperty('--s5Y', (window.innerHeight*(1-s5*2)).toFixed(1)+'px');
+    root.style.setProperty('--s9Y', (window.innerHeight*(1-s9*2)).toFixed(1)+'px');
+    root.style.setProperty('--s11Y', (window.innerHeight*(1-s11*2)).toFixed(1)+'px');
+    root.style.setProperty('--s13Y', (window.innerHeight*(1-s13*2)).toFixed(1)+'px');
+    root.style.setProperty('--s14Y', (window.innerHeight*(1-s14*2)).toFixed(1)+'px');
+    root.style.setProperty('--s15Y', (window.innerHeight*(1-s15*2)).toFixed(1)+'px');
+
+    /* ----- OVERLAY OPACITY CROSSFADE ----- */
+    root.style.setProperty('--s1Overlay', clamp(s1*2,0,1));
+    root.style.setProperty('--s2Overlay', clamp(s2*2,0,1));
+    root.style.setProperty('--s4Overlay', clamp(s4*2,0,1));
+    root.style.setProperty('--s5Overlay', clamp(s5*2,0,1));
+    root.style.setProperty('--s9Overlay', clamp(s9*2,0,1));
+    root.style.setProperty('--s11Overlay', clamp(s11*2,0,1));
+    root.style.setProperty('--s13Overlay', clamp(s13*2,0,1));
+    root.style.setProperty('--s14Overlay', clamp(s14*2,0,1));
+    root.style.setProperty('--s15Overlay', clamp(s15*2,0,1));
   }
 
   async function init(){
