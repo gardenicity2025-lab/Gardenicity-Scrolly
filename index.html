@@ -347,49 +347,7 @@
     line-height:26px;
   }
 
-  /* ==== SECTION WRAPS ==== */
-  .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
-  .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
-    position:relative;
-    min-height:200vh;                /* 100vh image + 100vh text scroll */
-    background:#eaeeec;
-    overflow:hidden;
-  }
-
-  /* ==== SECTION IMAGES (PINNED VIEWPORT) ==== */
-  .s1-frame, .s2-frame, .s4-frame, .s5-frame,
-  .s9-frame, .s11-frame, .s13-frame, .s14-frame {
-    position:fixed;
-    top:20px; bottom:20px; left:20px; right:20px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    z-index:1;
-    pointer-events:none;
-  }
-  .s1-frame img, .s2-frame img, .s4-frame img, .s5-frame img,
-  .s9-frame img, .s11-frame img, .s13-frame img, .s14-frame img {
-    width:100%;
-    height:auto;
-    object-fit:contain;
-    display:block;
-  }
-
-  /* ==== SINGLE COLUMN TEXT OVERLAY ==== */
-  .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
-  .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
-    position:relative !important;
-    pointer-events:auto !important;
-    padding:0 20px 80px;
-    max-width:640px;
-    margin:0 auto;
-    background:#eaeeec;             /* opaque background for clean swipe */
-    z-index:3;
-    transform:translateY(100%);     /* start off-screen below viewport */
-    transition:transform 0.8s ease-out;
-  }
-
-  /* ==== RESET RAILS FOR MOBILE ==== */
+  /* ==== RESET ALL RAILS ==== */
   .s1-rail, .s2-rail, .s4-rail, .s5-rail,
   .s9-rail, .s11-rail, .s13-rail, .s14-rail, .s15-rail {
     position: relative !important;
@@ -403,7 +361,51 @@
     box-sizing: border-box;
   }
 
-  /* ==== LEFT-ALIGNED TEXT ==== */
+  /* ==== MOBILE VIEWPORT STAGE ==== */
+  .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
+  .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
+    position: relative;
+    min-height: 250vh;     /* 100vh fade-in/out + 100vh text scroll + margin */
+    background: #eaeeec;
+    overflow: hidden;
+  }
+
+  /* ==== IMAGE BEHAVIOR ==== */
+  .s1-frame, .s2-frame, .s4-frame, .s5-frame,
+  .s9-frame, .s11-frame, .s13-frame, .s14-frame {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    width: 100%;
+    z-index: 1;
+    opacity: 0;
+    animation: mobileSectionFade linear both;
+    animation-timeline: view();
+    animation-range: entry 0% exit 100%;
+  }
+  .s1-frame img, .s2-frame img, .s4-frame img, .s5-frame img,
+  .s9-frame img, .s11-frame img, .s13-frame img, .s14-frame img {
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+  }
+
+  /* ==== TEXT BEHAVIOR ==== */
+  .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
+  .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
+    position: relative !important;
+    z-index: 2;
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 0 20px 100px;
+    transform: translateY(120%);
+    animation: mobileTextScroll linear both;
+    animation-timeline: view();
+    animation-range: entry 60% exit 100%;
+    background: transparent;
+  }
+
   .s1-text, .s2-text, .s4-text, .s5-text,
   .s9-text, .s11-text, .s13-text, .s14-text {
     color:#111;
@@ -414,16 +416,6 @@
   .s1-text p, .s2-text p, .s4-text p, .s5-text p,
   .s9-text p, .s11-text p, .s13-text p, .s14-text p {
     margin-bottom:16px;
-  }
-
-  /* ==== GALLERIES ==== */
-  .galA-left-frame, .galB-center-frame, .galC-left-frame {
-    left:20px; right:20px;
-  }
-
-  /* ==== FULL BLEEDS ==== */
-  .frame.s3-frame, .frame.s8-frame, .frame.s12-frame, .frame.s15-frame {
-    left:0; right:0; top:0; bottom:0;
   }
 
   /* ==== SECTION 15 ==== */
@@ -437,32 +429,36 @@
     z-index:3;
   }
 
-  /* ==== SCROLL-TIMELINE FOR TEXT SWEEP ==== */
-  .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
-  .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap, .s15-wrap {
-    scroll-timeline-name: sectionScroll;
-    scroll-timeline-axis: block;
-    overflow:hidden;
+  /* ==== GALLERIES ==== */
+  .galA-left-frame, .galB-center-frame, .galC-left-frame {
+    left:20px; right:20px;
   }
 
-  .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
-  .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay, .s15-overlay {
-    animation: textSweep ease-in-out both;
-    animation-timeline: sectionScroll;
-    animation-range: 60% 100%;   /* starts after image fade completes */
+  /* ==== FULL BLEEDS ==== */
+  .frame.s3-frame, .frame.s8-frame, .frame.s12-frame, .frame.s15-frame {
+    left:0; right:0; top:0; bottom:0;
   }
 
-  @keyframes textSweep {
-    from { transform: translateY(100%); }
-    to   { transform: translateY(-100%); }
+  /* ==== KEYFRAMES ==== */
+  @keyframes mobileSectionFade {
+    0%   { opacity: 0; }
+    20%  { opacity: 1; }     /* fade in */
+    50%  { opacity: 1; }     /* hold visible */
+    80%  { opacity: 0; }     /* fade out */
+    100% { opacity: 0; }
+  }
+
+  @keyframes mobileTextScroll {
+    0%   { transform: translateY(120%); opacity: 0; }
+    60%  { transform: translateY(120%); opacity: 0; }
+    70%  { opacity: 1; }
+    100% { transform: translateY(-120%); opacity: 1; }
   }
 }
-
 
 </style>
 
 </head>
-
 <body>
 
 <!-- HERO -->
