@@ -336,17 +336,9 @@
   }
 
   /* ==== HERO ==== */
-  .hero-media {
-    top:20px; bottom:20px; left:20px; right:20px;
-  }
-  .hero-title {
-    font-size:72px;
-    line-height:1.05;
-  }
-  .hero-links {
-    font-size:20px;
-    line-height:26px;
-  }
+  .hero-media { top:20px; bottom:20px; left:20px; right:20px; }
+  .hero-title { font-size:72px; line-height:1.05; }
+  .hero-links { font-size:20px; line-height:26px; }
 
   /* ==== RESET ALL RAILS ==== */
   .s1-rail, .s2-rail, .s4-rail, .s5-rail,
@@ -360,27 +352,23 @@
     box-sizing:border-box;
   }
 
-  /* ==== SECTION WRAPS ==== */
+  /* ==== SIMPLE STACKED LAYOUT ==== */
   .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
   .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
     position:relative;
-    min-height:250vh;              /* 100vh fade + 100vh scroll */
     background:#eaeeec;
-    overflow:hidden;
+    padding-bottom:80px;
   }
 
-  /* ==== SECTION IMAGES (fade-in/out per viewport) ==== */
   .s1-frame, .s2-frame, .s4-frame, .s5-frame,
   .s9-frame, .s11-frame, .s13-frame, .s14-frame {
-    position:sticky;
-    top:0;
-    height:100vh;
+    position:relative;
     width:100%;
+    height:100vh;
+    overflow:hidden;
     z-index:1;
-    animation: mobileFade linear both;
-    animation-timeline:view();
-    animation-range: entry 0% exit 100%;
   }
+
   .s1-frame img, .s2-frame img, .s4-frame img, .s5-frame img,
   .s9-frame img, .s11-frame img, .s13-frame img, .s14-frame img {
     width:100%;
@@ -389,18 +377,14 @@
     display:block;
   }
 
-  /* ==== TEXT OVERLAYS (scroll after fade) ==== */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
   .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
     position:relative;
     z-index:2;
     max-width:640px;
-    margin:0 auto;
-    padding:0 20px 120px;
+    margin:40px auto 0;
+    padding:0 20px;
     background:transparent;
-    animation: mobileScroll linear both;
-    animation-timeline:view();
-    animation-range: entry 60% exit 100%;
   }
 
   .s1-text, .s2-text, .s4-text, .s5-text,
@@ -415,21 +399,6 @@
     margin-bottom:16px;
   }
 
-  /* ==== KEYFRAMES ==== */
-  @keyframes mobileFade {
-    0%   { opacity:0; }
-    15%  { opacity:1; }     /* fade in */
-    45%  { opacity:1; }     /* hold */
-    65%  { opacity:0; }     /* fade out */
-    100% { opacity:0; }
-  }
-  @keyframes mobileScroll {
-    0%   { transform:translateY(120%); opacity:0; }
-    60%  { transform:translateY(120%); opacity:0; } /* wait for image fade */
-    80%  { opacity:1; }
-    100% { transform:translateY(-120%); opacity:1; }
-  }
-
   /* ==== GALLERIES ==== */
   .galA-left-frame, .galB-center-frame, .galC-left-frame {
     left:20px; right:20px;
@@ -441,6 +410,11 @@
   }
 
   /* ==== SECTION 15 ==== */
+  .s15-rail {
+    position:relative !important;
+    width:100% !important;
+    overflow:visible !important;
+  }
   .s15-text {
     color:#fff;
     text-align:center;
@@ -455,7 +429,6 @@
 }
 
 </style>
-
 </head>
 
 <body>
