@@ -328,7 +328,6 @@
 /* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
 @media (max-width:768px){
 
-  /* --- basic reset --- */
   body {
     margin:0;
     padding:0;
@@ -336,92 +335,134 @@
   }
 
   /* ==== HERO ==== */
-  .hero-media { top:20px !important; bottom:20px !important; left:20px !important; right:20px !important; }
-  .hero-title { font-size:72px !important; line-height:1.05 !important; }
-  .hero-links { font-size:20px !important; line-height:26px !important; }
-
-  /* ==== STACKED SECTIONS ==== */
-  .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
-  .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
-    position:relative !important;
-    display:block !important;
-    min-height:auto !important;
-    background:#eaeeec !important;
+  .hero-media {
+    top:20px; bottom:20px; left:20px; right:20px;
+  }
+  .hero-title {
+    font-size:72px;
+    line-height:1.05;
+  }
+  .hero-links {
+    font-size:20px;
+    line-height:26px;
   }
 
-  /* section images become inline (stacked) */
+  /* ==== SECTION WRAPS ==== */
+  .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
+  .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
+    position:relative;
+    min-height:200vh;                /* 100vh image + 100vh text scroll */
+    background:#eaeeec;
+    overflow:hidden;
+  }
+
+  /* ==== SECTION IMAGES (PINNED VIEWPORT) ==== */
   .s1-frame, .s2-frame, .s4-frame, .s5-frame,
   .s9-frame, .s11-frame, .s13-frame, .s14-frame {
-    position:relative !important;
-    inset:auto !important;
-    width:100% !important;
-    height:100vh !important;
-    display:block !important;
-    z-index:1 !important;
+    position:fixed;
+    top:20px; bottom:20px; left:20px; right:20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:1;
+    pointer-events:none;
   }
   .s1-frame img, .s2-frame img, .s4-frame img, .s5-frame img,
   .s9-frame img, .s11-frame img, .s13-frame img, .s14-frame img {
-    width:100% !important;
-    height:100% !important;
-    object-fit:cover !important;
-    display:block !important;
+    width:100%;
+    height:auto;
+    object-fit:contain;
+    display:block;
   }
 
-  /* text area under image */
+  /* ==== SINGLE COLUMN TEXT OVERLAY ==== */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
   .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
     position:relative !important;
-    inset:auto !important;
-    opacity:1 !important;
     pointer-events:auto !important;
-    background:#eaeeec !important;
-    padding:60px 20px 80px !important;
-    max-width:640px !important;
-    margin:0 auto !important;
-    z-index:2 !important;
-    transform:none !important;
+    padding:0 20px 80px;
+    max-width:640px;
+    margin:0 auto;
+    background:#eaeeec;             /* opaque background for clean swipe */
+    z-index:3;
+    transform:translateY(100%);     /* start off-screen below viewport */
+    transition:transform 0.8s ease-out;
   }
 
-  /* rails reset */
+  /* ==== RESET RAILS FOR MOBILE ==== */
   .s1-rail, .s2-rail, .s4-rail, .s5-rail,
-  .s9-rail, .s11-rail, .s13-rail, .s14-rail {
-    position:relative !important;
-    width:100% !important;
-    left:auto !important;
-    right:auto !important;
-    top:auto !important;
-    bottom:auto !important;
-    overflow:visible !important;
-    display:block !important;
-    box-sizing:border-box !important;
+  .s9-rail, .s11-rail, .s13-rail, .s14-rail, .s15-rail {
+    position: relative !important;
+    width: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: auto !important;
+    bottom: auto !important;
+    overflow: visible !important;
+    display: block !important;
+    box-sizing: border-box;
   }
 
+  /* ==== LEFT-ALIGNED TEXT ==== */
   .s1-text, .s2-text, .s4-text, .s5-text,
   .s9-text, .s11-text, .s13-text, .s14-text {
-    color:#111 !important;
-    text-align:left !important;
-    font-size:18px !important;
-    line-height:26px !important;
+    color:#111;
+    text-align:left;
+    font-size:18px;
+    line-height:26px;
   }
   .s1-text p, .s2-text p, .s4-text p, .s5-text p,
   .s9-text p, .s11-text p, .s13-text p, .s14-text p {
-    margin-bottom:16px !important;
+    margin-bottom:16px;
   }
 
-  /* section 15 unchanged visually */
+  /* ==== GALLERIES ==== */
+  .galA-left-frame, .galB-center-frame, .galC-left-frame {
+    left:20px; right:20px;
+  }
+
+  /* ==== FULL BLEEDS ==== */
+  .frame.s3-frame, .frame.s8-frame, .frame.s12-frame, .frame.s15-frame {
+    left:0; right:0; top:0; bottom:0;
+  }
+
+  /* ==== SECTION 15 ==== */
   .s15-text {
-    color:#fff !important;
-    text-align:center !important;
-    padding:80px 24px !important;
-    max-width:640px !important;
-    margin:0 auto !important;
-    position:relative !important;
-    z-index:3 !important;
+    color:#fff;
+    text-align:center;
+    padding:0 24px 80px;
+    max-width:640px;
+    margin:0 auto;
+    position:relative;
+    z-index:3;
+  }
+
+  /* ==== SCROLL-TIMELINE FOR TEXT SWEEP ==== */
+  .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
+  .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap, .s15-wrap {
+    scroll-timeline-name: sectionScroll;
+    scroll-timeline-axis: block;
+    overflow:hidden;
+  }
+
+  .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
+  .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay, .s15-overlay {
+    animation: textSweep ease-in-out both;
+    animation-timeline: sectionScroll;
+    animation-range: 60% 100%;   /* starts after image fade completes */
+  }
+
+  @keyframes textSweep {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(-100%); }
   }
 }
+
+
 </style>
 
 </head>
+
 <body>
 
 <!-- HERO -->
