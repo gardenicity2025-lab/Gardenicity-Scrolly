@@ -437,22 +437,49 @@
     z-index:3;
   }
 
-  /* ==== SCROLL-TIMELINE FOR TEXT SWEEP (Hero→S1 delay fix) ==== */
-  .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
-  .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap, .s15-wrap {
-    scroll-timeline-name: sectionScroll;
-    scroll-timeline-axis: block;
-    overflow:hidden;
+  /* ==== SEQUENCED HERO→S1 TIMELINE FIX ==== */
+
+  /* Independent scroll timelines */
+  .s1-wrap { scroll-timeline-name: s1Scroll; scroll-timeline-axis: block; overflow:hidden; }
+  .s2-wrap { scroll-timeline-name: s2Scroll; scroll-timeline-axis: block; overflow:hidden; }
+  .s4-wrap { scroll-timeline-name: s4Scroll; scroll-timeline-axis: block; overflow:hidden; }
+  .s5-wrap { scroll-timeline-name: s5Scroll; scroll-timeline-axis: block; overflow:hidden; }
+  .s9-wrap { scroll-timeline-name: s9Scroll; scroll-timeline-axis: block; overflow:hidden; }
+  .s11-wrap { scroll-timeline-name: s11Scroll; scroll-timeline-axis: block; overflow:hidden; }
+  .s13-wrap { scroll-timeline-name: s13Scroll; scroll-timeline-axis: block; overflow:hidden; }
+  .s14-wrap { scroll-timeline-name: s14Scroll; scroll-timeline-axis: block; overflow:hidden; }
+  .s15-wrap { scroll-timeline-name: s15Scroll; scroll-timeline-axis: block; overflow:hidden; }
+
+  /* Section 1 image fade-in/out */
+  .s1-frame img {
+    animation: s1ImageFade linear both;
+    animation-timeline: s1Scroll;
+    animation-range: entry 0% exit 60%;
   }
 
-  /* Section 1: delayed start so image finishes fade-in first */
+  @keyframes s1ImageFade {
+    0%   { opacity: 0; }
+    15%  { opacity: 1; }   /* fade in */
+    50%  { opacity: 1; }   /* hold */
+    80%  { opacity: 0; }   /* fade out */
+    100% { opacity: 0; }
+  }
+
+  /* Section 1 text starts only after image complete */
   .s1-overlay {
-    animation: textSweep ease-in-out both;
-    animation-timeline: sectionScroll;
-    animation-range: 75% 100%;   /* start later than other sections */
+    animation: s1TextScroll ease-in-out both;
+    animation-timeline: s1Scroll;
+    animation-range: entry 60% exit 100%;
   }
 
-  /* All later sections unchanged */
+  @keyframes s1TextScroll {
+    from { transform: translateY(100%); opacity: 0; }
+    10%  { transform: translateY(100%); opacity: 0; }
+    20%  { opacity: 1; }
+    to   { transform: translateY(-100%); opacity: 1; }
+  }
+
+  /* Remaining sections unchanged */
   .s2-overlay, .s4-overlay, .s5-overlay,
   .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay, .s15-overlay {
     animation: textSweep ease-in-out both;
@@ -461,8 +488,8 @@
   }
 
   @keyframes textSweep {
-    from { transform: translateY(100%); }
-    to   { transform: translateY(-100%); }
+    from { transform: translateY(100%); opacity: 0; }
+    to   { transform: translateY(-100%); opacity: 1; }
   }
 }
 </style>
