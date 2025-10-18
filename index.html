@@ -325,100 +325,41 @@
     color:#00A86B;
   }
 
-/* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
-@media (max-width:768px){
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  if (window.innerWidth <= 768) {
+    const sections = document.querySelectorAll(
+      ".s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap, .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap"
+    );
 
-  body {
-    margin:0;
-    padding:0;
-    background:#eaeeec;
-    overflow-x:hidden;
-  }
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const frame = entry.target.querySelector('.frame');
+        const overlay = entry.target.querySelector('.s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay, .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay');
 
-  /* ==== HERO ==== */
-  .hero-media {
-    top:20px; bottom:20px; left:20px; right:20px;
-  }
-  .hero-title {
-    font-size:72px;
-    line-height:1.05;
-  }
-  .hero-links {
-    font-size:20px;
-    line-height:26px;
-  }
+        if (entry.isIntersecting) {
+          // Fade in image
+          if (frame) frame.style.opacity = 1;
 
-  /* ==== RESET ALL RAILS ==== */
-  .s1-rail, .s2-rail, .s4-rail, .s5-rail,
-  .s9-rail, .s11-rail, .s13-rail, .s14-rail, .s15-rail {
-    position: relative !important;
-    width: 100% !important;
-    left: 0 !important;
-    right: 0 !important;
-    top: auto !important;
-    bottom: auto !important;
-    overflow: visible !important;
-    display: block !important;
-    box-sizing: border-box;
-  }
+          // Fade out image after 1.2s, then scroll text
+          setTimeout(() => {
+            if (frame) frame.style.opacity = 0;
+            if (overlay) overlay.style.opacity = 1;
+          }, 1200);
+        } else {
+          // Reset when leaving viewport
+          if (frame) frame.style.opacity = 0;
+          if (overlay) overlay.style.opacity = 0;
+        }
+      });
+    }, { threshold: 0.3 });
 
-  /* ==== SECTION WRAPS ==== */
-  .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
-  .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
-    position: relative;
-    min-height: 250vh;
-    background: #eaeeec;
-    overflow: hidden;
+    sections.forEach(section => observer.observe(section));
   }
+});
+</script>
 
-  /* ==== IMAGE BEHAVIOR ==== */
-  .s1-frame, .s2-frame, .s4-frame, .s5-frame,
-  .s9-frame, .s11-frame, .s13-frame, .s14-frame {
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    width: 100%;
-    z-index: 1;
-    opacity: 1;
-    transition: opacity 0.8s ease-in-out;
-  }
 
-  /* All section images fully visible initially */
-  .s1-frame img, .s2-frame img, .s4-frame img, .s5-frame img,
-  .s9-frame img, .s11-frame img, .s13-frame img, .s14-frame img {
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    display:block;
-  }
-
-  /* Sequential fade simulation: alternate sections slightly dim */
-  .s2-frame, .s5-frame, .s11-frame, .s14-frame {
-    opacity:0.92;
-  }
-
-  /* ==== TEXT ==== */
-  .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
-  .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
-    position: relative !important;
-    z-index: 2;
-    max-width: 640px;
-    margin: 0 auto;
-    padding: 0 20px 100px;
-    background: transparent;
-  }
-
-  .s1-text, .s2-text, .s4-text, .s5-text,
-  .s9-text, .s11-text, .s13-text, .s14-text {
-    color:#111;
-    text-align:left;
-    font-size:18px;
-    line-height:26px;
-  }
-  .s1-text p, .s2-text p, .s4-text p, .s5-text p,
-  .s9-text p, .s11-text p, .s13-text p, .s14-text p {
-    margin-bottom:16px;
-  }
 
   /* ==== SECTION 15 ==== */
   .s15-wrap {
@@ -1103,5 +1044,39 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
   init();
 })();
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  if (window.innerWidth <= 768) {
+    const sections = document.querySelectorAll(
+      ".s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap, .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap"
+    );
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const frame = entry.target.querySelector('.frame');
+        const overlay = entry.target.querySelector('.s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay, .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay');
+
+        if (entry.isIntersecting) {
+          // Fade in image
+          if (frame) frame.style.opacity = 1;
+
+          // Fade out image after 1.2s, then scroll text
+          setTimeout(() => {
+            if (frame) frame.style.opacity = 0;
+            if (overlay) overlay.style.opacity = 1;
+          }, 1200);
+        } else {
+          // Reset when leaving viewport
+          if (frame) frame.style.opacity = 0;
+          if (overlay) overlay.style.opacity = 0;
+        }
+      });
+    }, { threshold: 0.3 });
+
+    sections.forEach(section => observer.observe(section));
+  }
+});
+</script>
+
 </body>
 </html>
