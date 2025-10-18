@@ -325,67 +325,94 @@
     color:#00A86B;
   }
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  if (window.innerWidth <= 768) {
-    const sections = document.querySelectorAll(
-      ".s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap, .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap"
-    );
+/* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
+@media (max-width:768px){
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        const frame = entry.target.querySelector('.frame');
-        const overlay = entry.target.querySelector('.s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay, .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay');
-
-        if (entry.isIntersecting) {
-          // Fade in image
-          if (frame) frame.style.opacity = 1;
-
-          // Fade out image after 1.2s, then scroll text
-          setTimeout(() => {
-            if (frame) frame.style.opacity = 0;
-            if (overlay) overlay.style.opacity = 1;
-          }, 1200);
-        } else {
-          // Reset when leaving viewport
-          if (frame) frame.style.opacity = 0;
-          if (overlay) overlay.style.opacity = 0;
-        }
-      });
-    }, { threshold: 0.3 });
-
-    sections.forEach(section => observer.observe(section));
-  }
-});
-</script>
-
-
-
-  /* ==== SECTION 15 ==== */
-  .s15-wrap {
-    background:#000;
-    padding:120px 20px 160px;
-  }
-  .s15-rail {
-    position:relative !important;
-    left:0 !important; right:0 !important;
-    transform:none !important;
-    width:auto !important;
-    max-width:640px;
-    margin:0 auto;
-    box-sizing:border-box;
-    padding:0 20px;
-    text-align:center;
-  }
-  .s15-text {
-    color:#fff !important;
-    text-align:center !important;
-    margin:0 auto;
+  body {
+    margin:0;
     padding:0;
-    line-height:1.4;
-    max-width:640px;
+    background:#eaeeec;
   }
-  .s15-text p {
+
+  /* ==== HERO ==== */
+  .hero-media {
+    top:20px; bottom:20px; left:20px; right:20px;
+  }
+  .hero-title {
+    font-size:72px;
+    line-height:1.05;
+  }
+  .hero-links {
+    font-size:20px;
+    line-height:26px;
+  }
+
+  /* ==== SECTION WRAPS ==== */
+  .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
+  .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
+    position:relative;
+    min-height:200vh;                /* 100vh image + 100vh text scroll */
+    background:#eaeeec;
+    overflow:hidden;
+  }
+
+  /* ==== SECTION IMAGES (PINNED VIEWPORT) ==== */
+  .s1-frame, .s2-frame, .s4-frame, .s5-frame,
+  .s9-frame, .s11-frame, .s13-frame, .s14-frame {
+    position:fixed;
+    top:20px; bottom:20px; left:20px; right:20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:1;
+    pointer-events:none;
+  }
+  .s1-frame img, .s2-frame img, .s4-frame img, .s5-frame img,
+  .s9-frame img, .s11-frame img, .s13-frame img, .s14-frame img {
+    width:100%;
+    height:auto;
+    object-fit:contain;
+    display:block;
+  }
+
+  /* ==== SINGLE COLUMN TEXT OVERLAY ==== */
+  .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
+  .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
+    position:relative !important;
+    pointer-events:auto !important;
+    padding:0 20px 80px;
+    max-width:640px;
+    margin:0 auto;
+    background:#eaeeec;             /* opaque background for clean swipe */
+    z-index:3;
+    transform:translateY(100%);     /* start off-screen below viewport */
+    transition:transform 0.8s ease-out;
+  }
+
+  /* ==== RESET RAILS FOR MOBILE ==== */
+  .s1-rail, .s2-rail, .s4-rail, .s5-rail,
+  .s9-rail, .s11-rail, .s13-rail, .s14-rail, .s15-rail {
+    position: relative !important;
+    width: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: auto !important;
+    bottom: auto !important;
+    overflow: visible !important;
+    display: block !important;
+    box-sizing: border-box;
+  }
+
+  /* ==== LEFT-ALIGNED TEXT ==== */
+  .s1-text, .s2-text, .s4-text, .s5-text,
+  .s9-text, .s11-text, .s13-text, .s14-text {
+    color:#111;
+    text-align:left;
+    font-size:18px;
+    line-height:26px;
+  }
+  .s1-text p, .s2-text p, .s4-text p, .s5-text p,
+  .s9-text p, .s11-text p, .s13-text p, .s14-text p {
     margin-bottom:16px;
   }
 
@@ -399,11 +426,35 @@ document.addEventListener("DOMContentLoaded", () => {
     left:0; right:0; top:0; bottom:0;
   }
 
-  /* ==== KEYFRAMES (used by text scroll only) ==== */
-  @keyframes mobileTextScroll {
-    0%   { transform: translateY(100%); opacity: 0; }
-    20%  { transform: translateY(80%);  opacity: 1; }
-    100% { transform: translateY(-120%); opacity: 1; }
+  /* ==== SECTION 15 ==== */
+  .s15-text {
+    color:#fff;
+    text-align:center;
+    padding:0 24px 80px;
+    max-width:640px;
+    margin:0 auto;
+    position:relative;
+    z-index:3;
+  }
+
+  /* ==== SCROLL-TIMELINE FOR TEXT SWEEP ==== */
+  .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
+  .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap, .s15-wrap {
+    scroll-timeline-name: sectionScroll;
+    scroll-timeline-axis: block;
+    overflow:hidden;
+  }
+
+  .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
+  .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay, .s15-overlay {
+    animation: textSweep ease-in-out both;
+    animation-timeline: sectionScroll;
+    animation-range: 60% 100%;   /* starts after image fade completes */
+  }
+
+  @keyframes textSweep {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(-100%); }
   }
 }
 
@@ -411,6 +462,7 @@ document.addEventListener("DOMContentLoaded", () => {
 </style>
 
 </head>
+
 <body>
 
 <!-- HERO -->
@@ -1044,39 +1096,5 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
   init();
 })();
 </script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  if (window.innerWidth <= 768) {
-    const sections = document.querySelectorAll(
-      ".s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap, .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap"
-    );
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        const frame = entry.target.querySelector('.frame');
-        const overlay = entry.target.querySelector('.s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay, .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay');
-
-        if (entry.isIntersecting) {
-          // Fade in image
-          if (frame) frame.style.opacity = 1;
-
-          // Fade out image after 1.2s, then scroll text
-          setTimeout(() => {
-            if (frame) frame.style.opacity = 0;
-            if (overlay) overlay.style.opacity = 1;
-          }, 1200);
-        } else {
-          // Reset when leaving viewport
-          if (frame) frame.style.opacity = 0;
-          if (overlay) overlay.style.opacity = 0;
-        }
-      });
-    }, { threshold: 0.3 });
-
-    sections.forEach(section => observer.observe(section));
-  }
-});
-</script>
-
 </body>
 </html>
