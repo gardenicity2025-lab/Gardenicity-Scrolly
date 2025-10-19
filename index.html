@@ -325,7 +325,7 @@
     color:#00A86B;
   }
 
-/* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
+/* ===== MOBILE REBUILD — robust image→text scroll ===== */
 @media (max-width:768px){
 
   body {
@@ -334,70 +334,65 @@
     background:#eaeeec;
   }
 
-  /* ==== HERO (unchanged) ==== */
+  /* --- HERO (unchanged) --- */
   .hero-media {
     top:20px; bottom:20px; left:20px; right:20px;
   }
-  .hero-title {
-    font-size:72px;
-    line-height:1.05;
-  }
-  .hero-links {
-    font-size:20px;
-    line-height:26px;
-  }
+  .hero-title { font-size:72px; line-height:1.05; }
+  .hero-links { font-size:20px; line-height:26px; }
 
-  /* ==== IMAGE+TEXT SECTIONS (S1,S2,S4,S5,S9,S11,S13,S14) ==== */
+  /* --- IMAGE + TEXT SECTIONS --- */
   .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
   .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
     position:relative;
-    overflow:hidden;
+    height:200vh;             /* full image (100vh) + text (100vh) */
     background:#eaeeec;
   }
 
-  /* sticky image fills viewport */
+  /* viewport image container */
   .s1-frame, .s2-frame, .s4-frame, .s5-frame,
   .s9-frame, .s11-frame, .s13-frame, .s14-frame {
     position:sticky;
     top:0;
+    width:100%;
     height:100vh;
-    inset:auto 0 0 0;
     z-index:1;
+    overflow:hidden;
   }
   .s1-frame img, .s2-frame img, .s4-frame img, .s5-frame img,
   .s9-frame img, .s11-frame img, .s13-frame img, .s14-frame img {
     width:100%;
     height:100%;
-    object-fit:contain;
+    object-fit:cover;
     display:block;
   }
 
-  /* text fades in below sticky image */
+  /* text container (fills lower viewport) */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
   .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
-    position:relative;
-    z-index:2;
-    background:#eaeeec;
-    padding:32px 20px 80px;
-    max-width:640px;
-    margin:0 auto;
-    animation: fadeInText 1s ease forwards;
-    animation-timeline:view();
-    animation-range: entry 70% cover 30%;
-  }
-  .s1-rail, .s2-rail, .s4-rail, .s5-rail,
-  .s9-rail, .s11-rail, .s13-rail, .s14-rail {
-    position:relative;
+    position:absolute;
+    top:100vh;                /* start below the image */
     width:100%;
-    left:0;
-    right:0;
+    min-height:100vh;
+    background:#eaeeec;
+    z-index:2;
+    padding:48px 20px 80px;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-start;
+    align-items:center;
+    animation:fadeInText 1s ease forwards;
+    animation-timeline:view();
+    animation-range:entry 70% cover 30%;
   }
+
   .s1-text, .s2-text, .s4-text, .s5-text,
   .s9-text, .s11-text, .s13-text, .s14-text {
     color:#111;
     text-align:left;
     font-size:18px;
     line-height:26px;
+    max-width:640px;
   }
   .s1-text p, .s2-text p, .s4-text p, .s5-text p,
   .s9-text p, .s11-text p, .s13-text p, .s14-text p {
@@ -409,17 +404,26 @@
     to   { opacity:1; transform:none; }
   }
 
-  /* ==== GALLERIES (unchanged) ==== */
+  /* --- GALLERIES --- */
   .galA-left-frame, .galB-center-frame, .galC-left-frame {
-    left:20px; right:20px;
+    position:relative;
+    width:calc(100% - 40px);
+    margin:40px 20px;
+  }
+  .galA-left-frame img, .galB-center-frame img, .galC-left-frame img {
+    width:100%;
+    height:auto;
+    object-fit:contain;
   }
 
-  /* ==== FULL BLEEDS (unchanged) ==== */
+  /* --- FULL BLEEDS --- */
   .frame.s3-frame, .frame.s8-frame, .frame.s12-frame, .frame.s15-frame {
-    left:0; right:0; top:0; bottom:0;
+    position:relative;
+    width:100%;
+    height:auto;
   }
 
-  /* ==== SECTION 15 (unchanged) ==== */
+  /* --- SECTION 15 --- */
   .s15-text {
     color:#fff;
     text-align:center;
@@ -430,9 +434,6 @@
     z-index:3;
   }
 }
-
-
-
 </style>
 
 </head>
