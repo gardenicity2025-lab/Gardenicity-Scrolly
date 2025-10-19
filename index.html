@@ -325,173 +325,57 @@
     color:#00A86B;
   }
 
-/* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
-@media (max-width:768px){
-
-  body {
-    margin:0;
-    padding:0;
-    background:#eaeeec;
-  }
-
-  /* ==== HERO ==== */
-  .hero-media {
-    top:20px; bottom:20px; left:20px; right:20px;
-  }
-  .hero-title {
-    font-size:72px;
-    line-height:1.05;
-  }
-  .hero-links {
-    font-size:20px;
-    line-height:26px;
-  }
-
-  /* ==== SECTION WRAPS ==== */
+/* ===== MOBILE COMPANION (fade → scroll, no scroll-timeline) ===== */
+@media (max-width:768px) {
   .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
-  .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
-    position:relative;
-    min-height:200vh;                /* 100vh image + 100vh text scroll */
+  .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap, .s15-wrap {
+    min-height:200vh;
     background:#eaeeec;
     overflow:hidden;
   }
 
-  /* ==== SECTION IMAGES (PINNED VIEWPORT) ==== */
   .s1-frame, .s2-frame, .s4-frame, .s5-frame,
   .s9-frame, .s11-frame, .s13-frame, .s14-frame {
     position:fixed;
     top:20px; bottom:20px; left:20px; right:20px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
     z-index:1;
+    display:flex; align-items:center; justify-content:center;
     pointer-events:none;
-  }
-  .s1-frame img, .s2-frame img, .s4-frame img, .s5-frame img,
-  .s9-frame img, .s11-frame img, .s13-frame img, .s14-frame img {
-    width:100%;
-    height:auto;
-    object-fit:contain;
-    display:block;
+    opacity:var(--s1ImgOpacity);
   }
 
-  /* ==== SINGLE COLUMN TEXT OVERLAY ==== */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
-  .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
-    position:relative !important;
-    pointer-events:auto !important;
+  .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay, .s15-overlay {
+    position:relative;
+    z-index:2;
+    background:#eaeeec;
     padding:0 20px 80px;
     max-width:640px;
     margin:0 auto;
-    background:#eaeeec;             /* opaque background for clean swipe */
-    z-index:3;
-    transform:translateY(100%);     /* start off-screen below viewport */
-    transition:transform 0.8s ease-out;
   }
 
-  /* ==== RESET RAILS FOR MOBILE ==== */
-  .s1-rail, .s2-rail, .s4-rail, .s5-rail,
-  .s9-rail, .s11-rail, .s13-rail, .s14-rail, .s15-rail {
-    position: relative !important;
-    width: 100% !important;
-    left: 0 !important;
-    right: 0 !important;
-    top: auto !important;
-    bottom: auto !important;
-    overflow: visible !important;
-    display: block !important;
-    box-sizing: border-box;
-  }
-
-  /* ==== LEFT-ALIGNED TEXT ==== */
   .s1-text, .s2-text, .s4-text, .s5-text,
   .s9-text, .s11-text, .s13-text, .s14-text {
-    color:#111;
-    text-align:left;
     font-size:18px;
     line-height:26px;
+    color:#111;
+    transform:translateY(var(--s1Y));
   }
+
   .s1-text p, .s2-text p, .s4-text p, .s5-text p,
   .s9-text p, .s11-text p, .s13-text p, .s14-text p {
     margin-bottom:16px;
   }
 
-  /* ==== GALLERIES ==== */
-  .galA-left-frame, .galB-center-frame, .galC-left-frame {
-    left:20px; right:20px;
-  }
-
-  /* ==== FULL BLEEDS ==== */
-  .frame.s3-frame, .frame.s8-frame, .frame.s12-frame, .frame.s15-frame {
-    left:0; right:0; top:0; bottom:0;
-  }
-
-  /* ==== SECTION 15 ==== */
   .s15-text {
     color:#fff;
     text-align:center;
-    padding:0 24px 80px;
-    max-width:640px;
-    margin:0 auto;
-    position:relative;
-    z-index:3;
-  }
-
-  /* ==== SEQUENCED HERO→S1 TIMELINE FIX ==== */
-
-  /* Independent scroll timelines */
-  .s1-wrap { scroll-timeline-name: s1Scroll; scroll-timeline-axis: block; overflow:hidden; }
-  .s2-wrap { scroll-timeline-name: s2Scroll; scroll-timeline-axis: block; overflow:hidden; }
-  .s4-wrap { scroll-timeline-name: s4Scroll; scroll-timeline-axis: block; overflow:hidden; }
-  .s5-wrap { scroll-timeline-name: s5Scroll; scroll-timeline-axis: block; overflow:hidden; }
-  .s9-wrap { scroll-timeline-name: s9Scroll; scroll-timeline-axis: block; overflow:hidden; }
-  .s11-wrap { scroll-timeline-name: s11Scroll; scroll-timeline-axis: block; overflow:hidden; }
-  .s13-wrap { scroll-timeline-name: s13Scroll; scroll-timeline-axis: block; overflow:hidden; }
-  .s14-wrap { scroll-timeline-name: s14Scroll; scroll-timeline-axis: block; overflow:hidden; }
-  .s15-wrap { scroll-timeline-name: s15Scroll; scroll-timeline-axis: block; overflow:hidden; }
-
-  /* Section 1 image fade-in/out */
-  .s1-frame img {
-    animation: s1ImageFade linear both;
-    animation-timeline: s1Scroll;
-    animation-range: entry 0% exit 60%;
-  }
-
-  @keyframes s1ImageFade {
-    0%   { opacity: 0; }
-    15%  { opacity: 1; }   /* fade in */
-    50%  { opacity: 1; }   /* hold */
-    80%  { opacity: 0; }   /* fade out */
-    100% { opacity: 0; }
-  }
-
-  /* Section 1 text starts only after image complete */
-  .s1-overlay {
-    animation: s1TextScroll ease-in-out both;
-    animation-timeline: s1Scroll;
-    animation-range: entry 60% exit 100%;
-  }
-
-  @keyframes s1TextScroll {
-    from { transform: translateY(100%); opacity: 0; }
-    10%  { transform: translateY(100%); opacity: 0; }
-    20%  { opacity: 1; }
-    to   { transform: translateY(-100%); opacity: 1; }
-  }
-
-  /* Remaining sections unchanged */
-  .s2-overlay, .s4-overlay, .s5-overlay,
-  .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay, .s15-overlay {
-    animation: textSweep ease-in-out both;
-    animation-timeline: sectionScroll;
-    animation-range: 60% 100%;
-  }
-
-  @keyframes textSweep {
-    from { transform: translateY(100%); opacity: 0; }
-    to   { transform: translateY(-100%); opacity: 1; }
+    transform:translateY(var(--s15Y));
   }
 }
+
+
+
 </style>
 
 </head>
@@ -757,6 +641,32 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
   const easeInOutCubic=t=>t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
   const easePow=(t,p)=>Math.pow(t,p);
 
+  /* ==== MOBILE MODE OVERRIDE (Step 1) ==== */
+  const isMobile = window.matchMedia("(max-width: 768px)").matches;
+
+  // In update(), this will drive simple fade→scroll behaviour
+  function mobileFadeAndScroll(root, progressMap) {
+    const fadeInThreshold = 0.3;
+    const textStartThreshold = 0.6;
+
+    function fadeAndScroll(imgVar, textVar, progress, startY, endY) {
+      const fade = clamp(progress / fadeInThreshold, 0, 1);
+      const textProg = clamp((progress - textStartThreshold) / (1 - textStartThreshold), 0, 1);
+      root.style.setProperty(imgVar, fade.toFixed(3));
+      root.style.setProperty(textVar, (startY + (endY - startY) * easeInOutCubic(textProg)) + "px");
+    }
+
+    fadeAndScroll("--s1ImgOpacity", "--s1Y", progressMap.s1, progressMap.s1StartY, progressMap.s1EndY);
+    fadeAndScroll("--s2ImgOpacity", "--s2Y", progressMap.s2, progressMap.s2StartY, progressMap.s2EndY);
+    fadeAndScroll("--s4ImgOpacity", "--s4Y", progressMap.s4, progressMap.s4StartY, progressMap.s4EndY);
+    fadeAndScroll("--s5ImgOpacity", "--s5Y", progressMap.s5, progressMap.s5StartY, progressMap.s5EndY);
+    fadeAndScroll("--s9ImgOpacity", "--s9Y", progressMap.s9, progressMap.s9StartY, progressMap.s9EndY);
+    fadeAndScroll("--s11ImgOpacity", "--s11Y", progressMap.s11, progressMap.s11StartY, progressMap.s11EndY);
+    fadeAndScroll("--s13ImgOpacity", "--s13Y", progressMap.s13, progressMap.s13StartY, progressMap.s13EndY);
+    fadeAndScroll("--s14ImgOpacity", "--s14Y", progressMap.s14, progressMap.s14StartY, progressMap.s14EndY);
+    fadeAndScroll("--s15ImgOpacity", "--s15Y", progressMap.s15, progressMap.s15StartY, progressMap.s15EndY);
+  }
+
   /* ---------- HERO ---------- */
   const driver=document.getElementById('driver');
   const heroMedia=document.getElementById('hero-media');
@@ -908,6 +818,17 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
     root.style.setProperty('--s13',s13.toFixed(3));
     root.style.setProperty('--s14',s14.toFixed(3));
     root.style.setProperty('--s15',s15.toFixed(3));
+
+/* ==== MOBILE-ONLY BEHAVIOUR ==== */
+    if (isMobile) {
+      mobileFadeAndScroll(root, {
+        s1, s2, s4, s5, s9, s11, s13, s14, s15,
+        s1StartY, s1EndY, s2StartY, s2EndY, s4StartY, s4EndY,
+        s5StartY, s5EndY, s9StartY, s9EndY, s11StartY, s11EndY,
+        s13StartY, s13EndY, s14StartY, s14EndY, s15StartY, s15EndY
+      });
+      return; // Skip desktop logic entirely
+    }
 
     /* Overlays & hero */
     root.style.setProperty('--s1Overlay',(s1>0 && s1<1)?1:0);
