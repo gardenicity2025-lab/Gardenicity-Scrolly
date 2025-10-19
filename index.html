@@ -325,8 +325,8 @@
     color:#00A86B;
   }
 
-/* ===== MOBILE (safe stacked layout, preserves desktop logic) ===== */
-@media (max-width:768px) {
+/* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
+@media (max-width:768px){
 
   body {
     margin:0;
@@ -334,38 +334,37 @@
     background:#eaeeec;
   }
 
-  /* --- HERO --- */
+  /* ==== HERO ==== */
   .hero-media {
-    top:24px; bottom:24px; left:20px; right:20px;
+    top:20px; bottom:20px; left:20px; right:20px;
   }
   .hero-title {
-    font-size:64px;
+    font-size:72px;
     line-height:1.05;
-    word-break:break-word;
   }
   .hero-links {
     font-size:20px;
     line-height:26px;
   }
 
-  /* --- SECTION WRAPS --- */
+  /* ==== SECTION WRAPS ==== */
   .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
   .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
     position:relative;
-    min-height:auto;
+    min-height:200vh;   /* image (100vh) + text scroll (100vh) */
     background:#eaeeec;
   }
 
-  /* --- SECTION FRAMES (stacked images) --- */
+  /* ==== SECTION IMAGES (PINNED VIEWPORT) ==== */
   .s1-frame, .s2-frame, .s4-frame, .s5-frame,
   .s9-frame, .s11-frame, .s13-frame, .s14-frame {
-    position:relative;
-    top:auto; bottom:auto; left:auto; right:auto;
-    margin:20px;
-    width:calc(100% - 40px);
-    height:auto;
-    display:block;
+    position:fixed;
+    top:20px; bottom:20px; left:20px; right:20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
     z-index:1;
+    pointer-events:none;
   }
   .s1-frame img, .s2-frame img, .s4-frame img, .s5-frame img,
   .s9-frame img, .s11-frame img, .s13-frame img, .s14-frame img {
@@ -375,60 +374,54 @@
     display:block;
   }
 
-  /* --- TEXT (single column below image) --- */
+  /* ==== SINGLE COLUMN TEXT OVERLAY (LEFT-ALIGNED) ==== */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
   .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
-    position:relative;
-    z-index:2;
-    padding:0 20px 60px;
+    position:relative !important;
+    opacity:1 !important;
+    pointer-events:auto !important;
+    transform:none !important;
+    padding:0 20px 80px;             /* ← 20 px viewport margins */
     max-width:640px;
     margin:0 auto;
-    background:#eaeeec;
+    background:transparent;
+    z-index:2;
+  }
+
+  .s1-rail, .s2-rail, .s4-rail, .s5-rail,
+  .s9-rail, .s11-rail, .s13-rail, .s14-rail {
+    position:relative !important;
+    width:100% !important;
+    margin:0;
+    left:auto !important;
+    right:auto !important;
   }
 
   .s1-text, .s2-text, .s4-text, .s5-text,
   .s9-text, .s11-text, .s13-text, .s14-text {
+    transform:none !important;
+    color:#111;
+    text-align:left;                 /* ← left-align text */
     font-size:18px;
     line-height:26px;
-    color:#111;
-    text-align:left;
+    margin:20px 0 80px 0;
   }
   .s1-text p, .s2-text p, .s4-text p, .s5-text p,
   .s9-text p, .s11-text p, .s13-text p, .s14-text p {
     margin-bottom:16px;
   }
 
-  /* --- GALLERIES --- */
+  /* ==== GALLERIES ==== */
   .galA-left-frame, .galB-center-frame, .galC-left-frame {
-    position:relative;
     left:20px; right:20px;
-    width:calc(100% - 40px);
-    height:auto;
-    margin:40px 0;
-  }
-  .galA-left-frame img, .galB-center-frame img, .galC-left-frame img {
-    width:100%;
-    height:auto;
-    object-fit:contain;
   }
 
-  /* --- FULL BLEEDS --- */
+  /* ==== FULL BLEEDS ==== */
   .frame.s3-frame, .frame.s8-frame, .frame.s12-frame, .frame.s15-frame {
-    position:relative;
     left:0; right:0; top:0; bottom:0;
-    width:100%;
-    height:auto;
-  }
-  .frame.s3-frame img,
-  .frame.s8-frame img,
-  .frame.s12-frame img,
-  .frame.s15-frame img {
-    width:100%;
-    height:auto;
-    object-fit:cover;
   }
 
-  /* --- S15 --- */
+  /* ==== SECTION 15 ==== */
   .s15-text {
     color:#fff;
     text-align:center;
@@ -1079,4 +1072,3 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
 </script>
 </body>
 </html>
-
