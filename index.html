@@ -889,13 +889,12 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
-   /* ===== TEXT SWEEPS (consistent curves, with mobile delay) ===== */
+/* ===== TEXT SWEEPS — Decoupled for mobile (image → then text) ===== */
 const E = 0.8;
 const isMobile = window.innerWidth <= 768;
 
 if (isMobile) {
-  // On mobile, delay text motion until image fade completes (~35% scroll)
-  const fadeGap = 0.35;
+  const fadeGap = 0.35; // 35% scroll for image fade before text starts
   const sections = [
     ['s1', s1, s1StartY, s1EndY],
     ['s2', s2, s2StartY, s2EndY],
@@ -908,19 +907,25 @@ if (isMobile) {
   ];
 
   for (const [id, prog, startY, endY] of sections) {
-    const imgProgress = clamp(prog / fadeGap, 0, 1);
-    if (imgProgress < 1) {
-      // keep text fixed until image fully visible
+    // --- Phase 1: Image fade
+    const imgPhase = clamp(prog / fadeGap, 0, 1);
+    root.style.setProperty(`--${id}ImgOpacity`, imgPhase.toFixed(3));
+
+    // --- Phase 2: Text scroll (starts only after image fully visible)
+    if (prog < fadeGap) {
+      // lock text at base position
       root.style.setProperty(`--${id}Y`, startY + 'px');
     } else {
+      // normalize text progress after fadeGap
       const local = clamp((prog - fadeGap) / (1 - fadeGap), 0, 1);
       const eased = easePow(local, E);
-      const y = startY + (endY - startY) * eased;
-      root.style.setProperty(`--${id}Y`, y.toFixed(1) + 'px');
+      const textY = startY + (endY - startY) * eased;
+      root.style.setProperty(`--${id}Y`, textY.toFixed(1) + 'px');
     }
   }
-} else {
-  // ===== Desktop (unchanged) =====
+} 
+else {
+  // ===== Desktop — untouched cinematic behavior =====
   const s1Raw=clamp((s1-0.75)/0.25,0,1); root.style.setProperty('--s1Y',(s1StartY+(s1EndY-s1StartY)*easePow(s1Raw,E))+'px');
   const s2Raw=clamp((s2-0.25)/0.75,0,1); root.style.setProperty('--s2Y',(s2StartY+(s2EndY-s2StartY)*easePow(s2Raw,E))+'px');
   const s4Raw=clamp((s4-0.75)/0.25,0,1); root.style.setProperty('--s4Y',(s4StartY+(s4EndY-s4StartY)*easePow(s4Raw,E))+'px');
@@ -930,6 +935,8 @@ if (isMobile) {
   const s13Raw=clamp((s13-0.75)/0.25,0,1); root.style.setProperty('--s13Y',(s13StartY+(s13EndY-s13StartY)*easePow(s13Raw,E))+'px');
   const s14Raw=clamp((s14-0.25)/0.75,0,1); root.style.setProperty('--s14Y',(s14StartY+(s14EndY-s14StartY)*easePow(s14Raw,E))+'px');
 }
+
+
 
     /* S15 timing */
     const s15Raw=clamp((s15-0.25)/0.75,0,1);
@@ -1129,3 +1136,4 @@ if (isMobile) {
 </script>
 </body>
 </html>
+
