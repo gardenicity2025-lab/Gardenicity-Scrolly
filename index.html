@@ -863,16 +863,52 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
-    /* Text sweeps (consistent curves) */
-    const E=0.8;
-    const s1Raw=clamp((s1-0.75)/0.25,0,1); root.style.setProperty('--s1Y',  (s1StartY +(s1EndY -s1StartY )*easePow(s1Raw,E))+'px');
-    const s2Raw=clamp((s2-0.25)/0.75,0,1); root.style.setProperty('--s2Y',  (s2StartY +(s2EndY -s2StartY )*easePow(s2Raw,E))+'px');
-    const s4Raw=clamp((s4-0.75)/0.25,0,1); root.style.setProperty('--s4Y',  (s4StartY +(s4EndY -s4StartY )*easePow(s4Raw,E))+'px');
-    const s5Raw=clamp((s5-0.25)/0.75,0,1); root.style.setProperty('--s5Y',  (s5StartY +(s5EndY -s5StartY )*easePow(s5Raw,E))+'px');
-    const s9Raw=clamp((s9-0.75)/0.25,0,1); root.style.setProperty('--s9Y',  (s9StartY +(s9EndY -s9StartY )*easePow(s9Raw,E))+'px');
-    const s11Raw=clamp((s11-0.75)/0.25,0,1); root.style.setProperty('--s11Y',(s11StartY+(s11EndY-s11StartY)*easePow(s11Raw,E))+'px');
-    const s13Raw=clamp((s13-0.75)/0.25,0,1); root.style.setProperty('--s13Y',(s13StartY+(s13EndY-s13StartY)*easePow(s13Raw,E))+'px');
-    const s14Raw=clamp((s14-0.25)/0.75,0,1); root.style.setProperty('--s14Y',(s14StartY+(s14EndY-s14StartY)*easePow(s14Raw,E))+'px');
+ /* ===== TEXT SWEEPS — Desktop default + Mobile Option 1 (sequential image→text) ===== */
+const E = 0.8;
+const isMobile = window.innerWidth <= 768;
+
+if (isMobile) {
+  // sequential: image fully in before text scroll begins
+  const fadeGap = 0.4; // fraction of scroll reserved for image fade
+
+  const seqSections = [
+    ['s1', s1, s1StartY, s1EndY],
+    ['s2', s2, s2StartY, s2EndY],
+    ['s4', s4, s4StartY, s4EndY],
+    ['s5', s5, s5StartY, s5EndY],
+    ['s9', s9, s9StartY, s9EndY],
+    ['s11', s11, s11StartY, s11EndY],
+    ['s13', s13, s13StartY, s13EndY],
+    ['s14', s14, s14StartY, s14EndY]
+  ];
+
+  for (const [id, prog, startY, endY] of seqSections) {
+    // 0 → fadeGap : only image opacity grows 0→1
+    const imgAlpha = clamp(prog / fadeGap, 0, 1);
+
+    // fadeGap → 1 : text scrolls upward
+    let textY = startY;
+    if (prog > fadeGap) {
+      const local = (prog - fadeGap) / (1 - fadeGap);
+      const eased = easePow(local, E);
+      textY = startY + (endY - startY) * eased;
+    }
+
+    root.style.setProperty(`--${id}ImgOpacity`, imgAlpha.toFixed(3));
+    root.style.setProperty(`--${id}Y`, textY.toFixed(1) + 'px');
+  }
+} 
+else {
+  // ===== Desktop original behaviour =====
+  const s1Raw=clamp((s1-0.75)/0.25,0,1); root.style.setProperty('--s1Y',(s1StartY+(s1EndY-s1StartY)*easePow(s1Raw,E))+'px');
+  const s2Raw=clamp((s2-0.25)/0.75,0,1); root.style.setProperty('--s2Y',(s2StartY+(s2EndY-s2StartY)*easePow(s2Raw,E))+'px');
+  const s4Raw=clamp((s4-0.75)/0.25,0,1); root.style.setProperty('--s4Y',(s4StartY+(s4EndY-s4StartY)*easePow(s4Raw,E))+'px');
+  const s5Raw=clamp((s5-0.25)/0.75,0,1); root.style.setProperty('--s5Y',(s5StartY+(s5EndY-s5StartY)*easePow(s5Raw,E))+'px');
+  const s9Raw=clamp((s9-0.75)/0.25,0,1); root.style.setProperty('--s9Y',(s9StartY+(s9EndY-s9StartY)*easePow(s9Raw,E))+'px');
+  const s11Raw=clamp((s11-0.75)/0.25,0,1); root.style.setProperty('--s11Y',(s11StartY+(s11EndY-s11StartY)*easePow(s11Raw,E))+'px');
+  const s13Raw=clamp((s13-0.75)/0.25,0,1); root.style.setProperty('--s13Y',(s13StartY+(s13EndY-s13StartY)*easePow(s13Raw,E))+'px');
+  const s14Raw=clamp((s14-0.25)/0.75,0,1); root.style.setProperty('--s14Y',(s14StartY+(s14EndY-s14StartY)*easePow(s14Raw,E))+'px');
+}
 
     /* S15 timing */
     const s15Raw=clamp((s15-0.25)/0.75,0,1);
@@ -1072,3 +1108,4 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
 </script>
 </body>
 </html>
+
