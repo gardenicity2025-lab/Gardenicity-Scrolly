@@ -863,13 +863,14 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
-/* ===== TEXT SWEEPS — Desktop default + Mobile Option 1 (sequential image→text) ===== */
+/* ===== TEXT SWEEPS — Desktop cinematic + Mobile synced (simultaneous image↔text) ===== */
 const E = 0.8;
 const isMobile = window.innerWidth <= 768;
 
 if (isMobile) {
-  // Sequential: image fades in fully first, then text scrolls independently.
-  const fadeGap = 0.35; // fraction of scroll reserved for image fade
+  // Mobile: image fade + text move simultaneously (no independent scroll phases)
+  const fadeStart = 0.1; // small buffer before motion starts
+  const fadeEnd   = 0.85; // end of fade/text sweep sync
   const seqSections = [
     ['s1', s1, s1StartY, s1EndY],
     ['s2', s2, s2StartY, s2EndY],
@@ -882,26 +883,18 @@ if (isMobile) {
   ];
 
   for (const [id, prog, startY, endY] of seqSections) {
-    // --- Phase 1: Image fade (0 → fadeGap)
-    const imgAlpha = clamp(prog / fadeGap, 0, 1);
-    root.style.setProperty(`--${id}ImgOpacity`, imgAlpha.toFixed(3));
-
-    // --- Phase 2: Text scroll (after image fully visible)
-    if (imgAlpha < 1) {
-      // keep text locked offscreen until image fade completes
-      root.style.setProperty(`--${id}Y`, startY + 'px');
-      continue;
-    }
-
-    // start scrolling text only after image is fully visible
-    const local = clamp((prog - fadeGap) / (1 - fadeGap), 0, 1);
+    // unified progress for both fade and text scroll
+    const local = clamp((prog - fadeStart) / (fadeEnd - fadeStart), 0, 1);
     const eased = easePow(local, E);
+
+    // fade + move together
+    root.style.setProperty(`--${id}ImgOpacity`, eased.toFixed(3));
     const textY = startY + (endY - startY) * eased;
     root.style.setProperty(`--${id}Y`, textY.toFixed(1) + 'px');
   }
 } 
 else {
-  // ===== Desktop original behaviour (unchanged cinematic flow) =====
+  // ===== Desktop: keep cinematic staggered scroll =====
   const s1Raw=clamp((s1-0.75)/0.25,0,1); root.style.setProperty('--s1Y',(s1StartY+(s1EndY-s1StartY)*easePow(s1Raw,E))+'px');
   const s2Raw=clamp((s2-0.25)/0.75,0,1); root.style.setProperty('--s2Y',(s2StartY+(s2EndY-s2StartY)*easePow(s2Raw,E))+'px');
   const s4Raw=clamp((s4-0.75)/0.25,0,1); root.style.setProperty('--s4Y',(s4StartY+(s4EndY-s4StartY)*easePow(s4Raw,E))+'px');
@@ -911,6 +904,8 @@ else {
   const s13Raw=clamp((s13-0.75)/0.25,0,1); root.style.setProperty('--s13Y',(s13StartY+(s13EndY-s13StartY)*easePow(s13Raw,E))+'px');
   const s14Raw=clamp((s14-0.25)/0.75,0,1); root.style.setProperty('--s14Y',(s14StartY+(s14EndY-s14StartY)*easePow(s14Raw,E))+'px');
 }
+
+
 
 
 
@@ -1112,4 +1107,3 @@ else {
 </script>
 </body>
 </html>
-
