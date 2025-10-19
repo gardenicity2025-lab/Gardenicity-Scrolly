@@ -327,6 +327,22 @@
 
 /* ===== MOBILE COMPANION (fade → scroll, no scroll-timeline) ===== */
 @media (max-width:768px) {
+
+  /* === HERO === */
+  .hero-media {
+    top:40px; bottom:40px; left:20px; right:20px;
+  }
+  .hero-title {
+    font-size:64px;
+    line-height:1.05;
+    word-break:break-word;
+  }
+  .hero-links {
+    font-size:20px;
+    line-height:26px;
+  }
+
+  /* === WRAPS === */
   .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
   .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap, .s15-wrap {
     min-height:200vh;
@@ -334,6 +350,7 @@
     overflow:hidden;
   }
 
+  /* === FIXED FRAMES (section images) === */
   .s1-frame, .s2-frame, .s4-frame, .s5-frame,
   .s9-frame, .s11-frame, .s13-frame, .s14-frame {
     position:fixed;
@@ -341,9 +358,17 @@
     z-index:1;
     display:flex; align-items:center; justify-content:center;
     pointer-events:none;
-    opacity:var(--s1ImgOpacity);
   }
+  .s1-frame { opacity:var(--s1ImgOpacity); }
+  .s2-frame { opacity:var(--s2ImgOpacity); }
+  .s4-frame { opacity:var(--s4ImgOpacity); }
+  .s5-frame { opacity:var(--s5ImgOpacity); }
+  .s9-frame { opacity:var(--s9ImgOpacity); }
+  .s11-frame { opacity:var(--s11ImgOpacity); }
+  .s13-frame { opacity:var(--s13ImgOpacity); }
+  .s14-frame { opacity:var(--s14ImgOpacity); }
 
+  /* === OVERLAYS (text blocks) === */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
   .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay, .s15-overlay {
     position:relative;
@@ -354,6 +379,7 @@
     margin:0 auto;
   }
 
+  /* === TEXT === */
   .s1-text, .s2-text, .s4-text, .s5-text,
   .s9-text, .s11-text, .s13-text, .s14-text {
     font-size:18px;
@@ -367,14 +393,13 @@
     margin-bottom:16px;
   }
 
+  /* === S15 special (white text center) === */
   .s15-text {
     color:#fff;
     text-align:center;
     transform:translateY(var(--s15Y));
   }
 }
-
-
 
 </style>
 
@@ -820,15 +845,29 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
     root.style.setProperty('--s15',s15.toFixed(3));
 
 /* ==== MOBILE-ONLY BEHAVIOUR ==== */
-    if (isMobile) {
-      mobileFadeAndScroll(root, {
-        s1, s2, s4, s5, s9, s11, s13, s14, s15,
-        s1StartY, s1EndY, s2StartY, s2EndY, s4StartY, s4EndY,
-        s5StartY, s5EndY, s9StartY, s9EndY, s11StartY, s11EndY,
-        s13StartY, s13EndY, s14StartY, s14EndY, s15StartY, s15EndY
-      });
-      return; // Skip desktop logic entirely
-    }
+if (isMobile) {
+  mobileFadeAndScroll(root, {
+    s1, s2, s4, s5, s9, s11, s13, s14, s15,
+    s1StartY, s1EndY, s2StartY, s2EndY, s4StartY, s4EndY,
+    s5StartY, s5EndY, s9StartY, s9EndY, s11StartY, s11EndY,
+    s13StartY, s13EndY, s14StartY, s14EndY, s15StartY, s15EndY
+  });
+} else {
+  /* Overlays & hero */
+  root.style.setProperty('--s1Overlay',(s1>0 && s1<1)?1:0);
+  root.style.setProperty('--s2Overlay',(s2>0 && s2<1)?1:0);
+  root.style.setProperty('--s4Overlay',(s4>0 && s4<1)?1:0);
+  root.style.setProperty('--s5Overlay',(s5>0 && s5<1)?1:0);
+  root.style.setProperty('--s9Overlay',(s9>0 && s9<1)?1:0);
+  root.style.setProperty('--s11Overlay',(s11>0 && s11<1)?1:0);
+  root.style.setProperty('--s13Overlay',(s13>0 && s13<1)?1:0);
+  root.style.setProperty('--s14Overlay',(s14>0 && s14<1)?1:0);
+  root.style.setProperty('--s15Overlay',(s15>0 && s15<1)?1:0);
+  root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
+  root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
+
+  /* ... the rest of your desktop crossfade logic stays exactly as-is ... */
+}
 
     /* Overlays & hero */
     root.style.setProperty('--s1Overlay',(s1>0 && s1<1)?1:0);
