@@ -325,79 +325,111 @@
     color:#00A86B;
   }
 
-/* ===== MOBILE COMPANION (fade → scroll, no scroll-timeline) ===== */
-@media (max-width:768px) {
+/* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
+@media (max-width:768px){
 
-  /* === HERO === */
+  body {
+    margin:0;
+    padding:0;
+    background:#eaeeec;
+  }
+
+  /* ==== HERO ==== */
   .hero-media {
-    top:40px; bottom:40px; left:20px; right:20px;
+    top:20px; bottom:20px; left:20px; right:20px;
   }
   .hero-title {
-    font-size:64px;
+    font-size:72px;
     line-height:1.05;
-    word-break:break-word;
   }
   .hero-links {
     font-size:20px;
     line-height:26px;
   }
 
-  /* === WRAPS === */
+  /* ==== SECTION WRAPS ==== */
   .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
-  .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap, .s15-wrap {
-    min-height:200vh;
+  .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
+    position:relative;
+    min-height:200vh;   /* image (100vh) + text scroll (100vh) */
     background:#eaeeec;
-    overflow:hidden;
   }
 
-  /* === FIXED FRAMES (section images) === */
+  /* ==== SECTION IMAGES (PINNED VIEWPORT) ==== */
   .s1-frame, .s2-frame, .s4-frame, .s5-frame,
   .s9-frame, .s11-frame, .s13-frame, .s14-frame {
     position:fixed;
     top:20px; bottom:20px; left:20px; right:20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
     z-index:1;
-    display:flex; align-items:center; justify-content:center;
     pointer-events:none;
   }
-  .s1-frame { opacity:var(--s1ImgOpacity); }
-  .s2-frame { opacity:var(--s2ImgOpacity); }
-  .s4-frame { opacity:var(--s4ImgOpacity); }
-  .s5-frame { opacity:var(--s5ImgOpacity); }
-  .s9-frame { opacity:var(--s9ImgOpacity); }
-  .s11-frame { opacity:var(--s11ImgOpacity); }
-  .s13-frame { opacity:var(--s13ImgOpacity); }
-  .s14-frame { opacity:var(--s14ImgOpacity); }
+  .s1-frame img, .s2-frame img, .s4-frame img, .s5-frame img,
+  .s9-frame img, .s11-frame img, .s13-frame img, .s14-frame img {
+    width:100%;
+    height:auto;
+    object-fit:contain;
+    display:block;
+  }
 
-  /* === OVERLAYS (text blocks) === */
+  /* ==== SINGLE COLUMN TEXT OVERLAY (LEFT-ALIGNED) ==== */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
-  .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay, .s15-overlay {
-    position:relative;
-    z-index:2;
-    background:#eaeeec;
-    padding:0 20px 80px;
+  .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
+    position:relative !important;
+    opacity:1 !important;
+    pointer-events:auto !important;
+    transform:none !important;
+    padding:0 20px 80px;             /* ← 20 px viewport margins */
     max-width:640px;
     margin:0 auto;
+    background:transparent;
+    z-index:2;
   }
 
-  /* === TEXT === */
+  .s1-rail, .s2-rail, .s4-rail, .s5-rail,
+  .s9-rail, .s11-rail, .s13-rail, .s14-rail {
+    position:relative !important;
+    width:100% !important;
+    margin:0;
+    left:auto !important;
+    right:auto !important;
+  }
+
   .s1-text, .s2-text, .s4-text, .s5-text,
   .s9-text, .s11-text, .s13-text, .s14-text {
+    transform:none !important;
+    color:#111;
+    text-align:left;                 /* ← left-align text */
     font-size:18px;
     line-height:26px;
-    color:#111;
-    transform:translateY(var(--s1Y));
+    margin:20px 0 80px 0;
   }
-
   .s1-text p, .s2-text p, .s4-text p, .s5-text p,
   .s9-text p, .s11-text p, .s13-text p, .s14-text p {
     margin-bottom:16px;
   }
 
-  /* === S15 special (white text center) === */
+  /* ==== GALLERIES ==== */
+  .galA-left-frame, .galB-center-frame, .galC-left-frame {
+    left:20px; right:20px;
+  }
+
+  /* ==== FULL BLEEDS ==== */
+  .frame.s3-frame, .frame.s8-frame, .frame.s12-frame, .frame.s15-frame {
+    left:0; right:0; top:0; bottom:0;
+  }
+
+  /* ==== SECTION 15 ==== */
   .s15-text {
     color:#fff;
     text-align:center;
-    transform:translateY(var(--s15Y));
+    padding:0 24px 80px;
+    max-width:640px;
+    margin:0 auto;
+    position:relative;
+    z-index:3;
   }
 }
 
@@ -666,32 +698,6 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
   const easeInOutCubic=t=>t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
   const easePow=(t,p)=>Math.pow(t,p);
 
-  /* ==== MOBILE MODE OVERRIDE (Step 1) ==== */
-  const isMobile = window.matchMedia("(max-width: 768px)").matches;
-
-  // In update(), this will drive simple fade→scroll behaviour
-  function mobileFadeAndScroll(root, progressMap) {
-    const fadeInThreshold = 0.3;
-    const textStartThreshold = 0.6;
-
-    function fadeAndScroll(imgVar, textVar, progress, startY, endY) {
-      const fade = clamp(progress / fadeInThreshold, 0, 1);
-      const textProg = clamp((progress - textStartThreshold) / (1 - textStartThreshold), 0, 1);
-      root.style.setProperty(imgVar, fade.toFixed(3));
-      root.style.setProperty(textVar, (startY + (endY - startY) * easeInOutCubic(textProg)) + "px");
-    }
-
-    fadeAndScroll("--s1ImgOpacity", "--s1Y", progressMap.s1, progressMap.s1StartY, progressMap.s1EndY);
-    fadeAndScroll("--s2ImgOpacity", "--s2Y", progressMap.s2, progressMap.s2StartY, progressMap.s2EndY);
-    fadeAndScroll("--s4ImgOpacity", "--s4Y", progressMap.s4, progressMap.s4StartY, progressMap.s4EndY);
-    fadeAndScroll("--s5ImgOpacity", "--s5Y", progressMap.s5, progressMap.s5StartY, progressMap.s5EndY);
-    fadeAndScroll("--s9ImgOpacity", "--s9Y", progressMap.s9, progressMap.s9StartY, progressMap.s9EndY);
-    fadeAndScroll("--s11ImgOpacity", "--s11Y", progressMap.s11, progressMap.s11StartY, progressMap.s11EndY);
-    fadeAndScroll("--s13ImgOpacity", "--s13Y", progressMap.s13, progressMap.s13StartY, progressMap.s13EndY);
-    fadeAndScroll("--s14ImgOpacity", "--s14Y", progressMap.s14, progressMap.s14StartY, progressMap.s14EndY);
-    fadeAndScroll("--s15ImgOpacity", "--s15Y", progressMap.s15, progressMap.s15StartY, progressMap.s15EndY);
-  }
-
   /* ---------- HERO ---------- */
   const driver=document.getElementById('driver');
   const heroMedia=document.getElementById('hero-media');
@@ -843,31 +849,6 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
     root.style.setProperty('--s13',s13.toFixed(3));
     root.style.setProperty('--s14',s14.toFixed(3));
     root.style.setProperty('--s15',s15.toFixed(3));
-
-/* ==== MOBILE-ONLY BEHAVIOUR ==== */
-if (isMobile) {
-  mobileFadeAndScroll(root, {
-    s1, s2, s4, s5, s9, s11, s13, s14, s15,
-    s1StartY, s1EndY, s2StartY, s2EndY, s4StartY, s4EndY,
-    s5StartY, s5EndY, s9StartY, s9EndY, s11StartY, s11EndY,
-    s13StartY, s13EndY, s14StartY, s14EndY, s15StartY, s15EndY
-  });
-} else {
-  /* Overlays & hero */
-  root.style.setProperty('--s1Overlay',(s1>0 && s1<1)?1:0);
-  root.style.setProperty('--s2Overlay',(s2>0 && s2<1)?1:0);
-  root.style.setProperty('--s4Overlay',(s4>0 && s4<1)?1:0);
-  root.style.setProperty('--s5Overlay',(s5>0 && s5<1)?1:0);
-  root.style.setProperty('--s9Overlay',(s9>0 && s9<1)?1:0);
-  root.style.setProperty('--s11Overlay',(s11>0 && s11<1)?1:0);
-  root.style.setProperty('--s13Overlay',(s13>0 && s13<1)?1:0);
-  root.style.setProperty('--s14Overlay',(s14>0 && s14<1)?1:0);
-  root.style.setProperty('--s15Overlay',(s15>0 && s15<1)?1:0);
-  root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
-  root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
-
-  /* ... the rest of your desktop crossfade logic stays exactly as-is ... */
-}
 
     /* Overlays & hero */
     root.style.setProperty('--s1Overlay',(s1>0 && s1<1)?1:0);
@@ -1091,3 +1072,4 @@ if (isMobile) {
 </script>
 </body>
 </html>
+
