@@ -351,8 +351,9 @@
   .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
   .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
     position:relative;
-    min-height:200vh;   /* image (100vh) + text scroll (100vh) */
+    min-height:200vh;                /* 100vh image + 100vh text scroll */
     background:#eaeeec;
+    overflow:hidden;
   }
 
   /* ==== SECTION IMAGES (PINNED VIEWPORT) ==== */
@@ -374,37 +375,41 @@
     display:block;
   }
 
-  /* ==== SINGLE COLUMN TEXT OVERLAY (LEFT-ALIGNED) ==== */
+  /* ==== SINGLE COLUMN TEXT OVERLAY ==== */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
   .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
     position:relative !important;
-    opacity:1 !important;
     pointer-events:auto !important;
-    transform:none !important;
-    padding:0 20px 80px;             /* ← 20 px viewport margins */
+    padding:0 20px 80px;
     max-width:640px;
     margin:0 auto;
-    background:transparent;
-    z-index:2;
+    background:#eaeeec;             /* opaque background for clean swipe */
+    z-index:3;
+    transform:translateY(100%);     /* start off-screen below viewport */
+    transition:transform 0.8s ease-out;
   }
 
+  /* ==== RESET RAILS FOR MOBILE ==== */
   .s1-rail, .s2-rail, .s4-rail, .s5-rail,
-  .s9-rail, .s11-rail, .s13-rail, .s14-rail {
-    position:relative !important;
-    width:100% !important;
-    margin:0;
-    left:auto !important;
-    right:auto !important;
+  .s9-rail, .s11-rail, .s13-rail, .s14-rail, .s15-rail {
+    position: relative !important;
+    width: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: auto !important;
+    bottom: auto !important;
+    overflow: visible !important;
+    display: block !important;
+    box-sizing: border-box;
   }
 
+  /* ==== LEFT-ALIGNED TEXT ==== */
   .s1-text, .s2-text, .s4-text, .s5-text,
   .s9-text, .s11-text, .s13-text, .s14-text {
-    transform:none !important;
     color:#111;
-    text-align:left;                 /* ← left-align text */
+    text-align:left;
     font-size:18px;
     line-height:26px;
-    margin:20px 0 80px 0;
   }
   .s1-text p, .s2-text p, .s4-text p, .s5-text p,
   .s9-text p, .s11-text p, .s13-text p, .s14-text p {
@@ -431,7 +436,28 @@
     position:relative;
     z-index:3;
   }
+
+  /* ==== SCROLL-TIMELINE FOR TEXT SWEEP ==== */
+  .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
+  .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap, .s15-wrap {
+    scroll-timeline-name: sectionScroll;
+    scroll-timeline-axis: block;
+    overflow:hidden;
+  }
+
+  .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
+  .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay, .s15-overlay {
+    animation: textSweep ease-in-out both;
+    animation-timeline: sectionScroll;
+    animation-range: 60% 100%;   /* starts after image fade completes */
+  }
+
+  @keyframes textSweep {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(-100%); }
+  }
 }
+
 
 </style>
 
@@ -863,51 +889,16 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
-/* ===== TEXT SWEEPS — Desktop cinematic + Mobile synced (simultaneous image↔text) ===== */
-const E = 0.8;
-const isMobile = window.innerWidth <= 768;
-
-if (isMobile) {
-  // Mobile: image fade + text move simultaneously (no independent scroll phases)
-  const fadeStart = 0.1; // small buffer before motion starts
-  const fadeEnd   = 0.85; // end of fade/text sweep sync
-  const seqSections = [
-    ['s1', s1, s1StartY, s1EndY],
-    ['s2', s2, s2StartY, s2EndY],
-    ['s4', s4, s4StartY, s4EndY],
-    ['s5', s5, s5StartY, s5EndY],
-    ['s9', s9, s9StartY, s9EndY],
-    ['s11', s11, s11StartY, s11EndY],
-    ['s13', s13, s13StartY, s13EndY],
-    ['s14', s14, s14StartY, s14EndY]
-  ];
-
-  for (const [id, prog, startY, endY] of seqSections) {
-    // unified progress for both fade and text scroll
-    const local = clamp((prog - fadeStart) / (fadeEnd - fadeStart), 0, 1);
-    const eased = easePow(local, E);
-
-    // fade + move together
-    root.style.setProperty(`--${id}ImgOpacity`, eased.toFixed(3));
-    const textY = startY + (endY - startY) * eased;
-    root.style.setProperty(`--${id}Y`, textY.toFixed(1) + 'px');
-  }
-} 
-else {
-  // ===== Desktop: keep cinematic staggered scroll =====
-  const s1Raw=clamp((s1-0.75)/0.25,0,1); root.style.setProperty('--s1Y',(s1StartY+(s1EndY-s1StartY)*easePow(s1Raw,E))+'px');
-  const s2Raw=clamp((s2-0.25)/0.75,0,1); root.style.setProperty('--s2Y',(s2StartY+(s2EndY-s2StartY)*easePow(s2Raw,E))+'px');
-  const s4Raw=clamp((s4-0.75)/0.25,0,1); root.style.setProperty('--s4Y',(s4StartY+(s4EndY-s4StartY)*easePow(s4Raw,E))+'px');
-  const s5Raw=clamp((s5-0.25)/0.75,0,1); root.style.setProperty('--s5Y',(s5StartY+(s5EndY-s5StartY)*easePow(s5Raw,E))+'px');
-  const s9Raw=clamp((s9-0.75)/0.25,0,1); root.style.setProperty('--s9Y',(s9StartY+(s9EndY-s9StartY)*easePow(s9Raw,E))+'px');
-  const s11Raw=clamp((s11-0.75)/0.25,0,1); root.style.setProperty('--s11Y',(s11StartY+(s11EndY-s11StartY)*easePow(s11Raw,E))+'px');
-  const s13Raw=clamp((s13-0.75)/0.25,0,1); root.style.setProperty('--s13Y',(s13StartY+(s13EndY-s13StartY)*easePow(s13Raw,E))+'px');
-  const s14Raw=clamp((s14-0.25)/0.75,0,1); root.style.setProperty('--s14Y',(s14StartY+(s14EndY-s14StartY)*easePow(s14Raw,E))+'px');
-}
-
-
-
-
+    /* Text sweeps (consistent curves) */
+    const E=0.8;
+    const s1Raw=clamp((s1-0.75)/0.25,0,1); root.style.setProperty('--s1Y',  (s1StartY +(s1EndY -s1StartY )*easePow(s1Raw,E))+'px');
+    const s2Raw=clamp((s2-0.25)/0.75,0,1); root.style.setProperty('--s2Y',  (s2StartY +(s2EndY -s2StartY )*easePow(s2Raw,E))+'px');
+    const s4Raw=clamp((s4-0.75)/0.25,0,1); root.style.setProperty('--s4Y',  (s4StartY +(s4EndY -s4StartY )*easePow(s4Raw,E))+'px');
+    const s5Raw=clamp((s5-0.25)/0.75,0,1); root.style.setProperty('--s5Y',  (s5StartY +(s5EndY -s5StartY )*easePow(s5Raw,E))+'px');
+    const s9Raw=clamp((s9-0.75)/0.25,0,1); root.style.setProperty('--s9Y',  (s9StartY +(s9EndY -s9StartY )*easePow(s9Raw,E))+'px');
+    const s11Raw=clamp((s11-0.75)/0.25,0,1); root.style.setProperty('--s11Y',(s11StartY+(s11EndY-s11StartY)*easePow(s11Raw,E))+'px');
+    const s13Raw=clamp((s13-0.75)/0.25,0,1); root.style.setProperty('--s13Y',(s13StartY+(s13EndY-s13StartY)*easePow(s13Raw,E))+'px');
+    const s14Raw=clamp((s14-0.25)/0.75,0,1); root.style.setProperty('--s14Y',(s14StartY+(s14EndY-s14StartY)*easePow(s14Raw,E))+'px');
 
     /* S15 timing */
     const s15Raw=clamp((s15-0.25)/0.75,0,1);
