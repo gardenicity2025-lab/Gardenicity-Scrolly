@@ -422,15 +422,40 @@
   }
 
   /* ==== SECTION 15 ==== */
-  .s15-text {
-    color:#fff;
-    text-align:center;
-    padding:0 24px 80px;
+  .s15-overlay {
+    position:relative !important;
+    opacity:1 !important;
+    pointer-events:auto !important;
+    transform:none !important;
+    padding:0 20px 80px;         /* ← same 20px margins as other sections */
     max-width:640px;
     margin:0 auto;
-    position:relative;
-    z-index:3;
+    background:transparent;
+    z-index:2;
   }
+
+  .s15-rail {
+    position:relative !important;
+    width:100% !important;
+    margin:0;
+    left:auto !important;
+    right:auto !important;
+  }
+
+  .s15-text {
+    transform:none !important;
+    color:#fff;
+    text-align:center;
+    font-size:18px;
+    line-height:26px;
+    margin:20px 0 80px 0;       /* ← identical geometry to .s1-text */
+  }
+
+  .s15-text p {
+    margin-bottom:16px;
+  }
+
+
 }
 </style>
 
