@@ -1,4 +1,3 @@
- 
 <!doctype html>
 <html lang="en" data-baseline="stable-2025-10-01__rails-460px__galC-6-only">
 <head>
@@ -423,36 +422,22 @@
   }
  
 /* ==== SECTION 15 FIX (Rail Reset and Margin Correction) ==== */
-
-/* Reset the rail from its desktop absolute column positioning */
-.s15-rail {
-    /* Override desktop positioning and size */
+  /* FIX 2A: Reset the rail from its desktop absolute column positioning */
+  .s15-rail {
     position: relative !important;
     top: auto !important;
     bottom: auto !important;
     right: auto !important;
     width: 100% !important;
     
-    /* Ensure content takes scroll height to display over the fixed full-bleed image */
+    /* Ensure content takes scroll height for display */
     min-height: 100vh;
     
     /* Reset flex properties */
     display: block !important; 
     align-items: unset !important;
     justify-content: unset !important;
-}
-
-/* Correct the text block margins */
-.s15-text {
-    color:#fff;
-    text-align:center;
-    /* FIX: Changed 24px to 20px to respect the viewport margin */
-    padding:0 20px 80px;
-    max-width:640px;
-    margin:0 auto !important; /* Use !important to ensure centering override */
-    position:relative;
-    z-index:3;
-}
+  }
 }
 
  
