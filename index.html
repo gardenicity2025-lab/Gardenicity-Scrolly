@@ -1,4 +1,3 @@
- 
 <!doctype html>
 <html lang="en" data-baseline="stable-2025-10-01__rails-460px__galC-6-only">
 <head>
@@ -326,8 +325,7 @@
 	color:#00A86B;
   }
  
-/* ===== MOBILE RESPONSIVE (max-width:768px) - PHASE 1: VISUALS ONLY (IMAGES) ===== */
-/* ===== MOBILE RESPONSIVE (max-width:768px) - FINAL CINEMATIC FIX ===== */
+/* ===== MOBILE RESPONSIVE (max-width:768px) - FIXED IMAGE WINDOW + STACKED TEXT ===== */
 @media (max-width:768px){
 
   body {
@@ -349,25 +347,26 @@
     line-height:26px;
   }
 
-  /* ==== SECTION WRAPS (200VH TOTAL SCROLL SPACE) ==== */
+  /* ==== SECTION WRAPS (100VH IMAGE PINNING WINDOW) ==== */
   .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
   .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
     position:relative;
-    /* Wrapper provides the full 200vh scroll space for pinning and scrolling */
-    min-height:200vh; 
-    background:#eaeeec;
+    /* FIX 1: Dedicated 100vh scroll window for image cross-fade/pinning */
+    min-height:100vh; 
+    background:#eaeeec; /* Background color of the scroll window */
+    z-index: 1; 
   }
 
-  /* ==== SECTION IMAGES (PINNED VIEWPORT - REQUIRED FOR VISIBILITY/FADE) ==== */
+  /* ==== SECTION IMAGES (PINNED for CROSS-FADE - CONFIRMED WORKING) ==== */
   .s1-frame, .s2-frame, .s4-frame, .s5-frame,
   .s9-frame, .s11-frame, .s13-frame, .s14-frame {
-    /* position:fixed is confirmed necessary for image to display correctly */
+    /* position:fixed is essential for image visibility and the fade animation */
     position:fixed;
     top:20px; bottom:20px; left:20px; right:20px;
     display:flex;
     align-items:center;
     justify-content:center;
-    z-index:1;
+    z-index:2; 
     pointer-events:none;
   }
   .s1-frame img, .s2-frame img, .s4-frame img, .s5-frame img,
@@ -378,24 +377,20 @@
     display:block;
   }
 
-  /* ==== SINGLE COLUMN TEXT OVERLAY (CRITICAL: 100VH SPACER) ==== */
+  /* ==== TEXT OVERLAYS (STACKED BLOCK - CRITICAL CHANGE) ==== */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
   .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
-    position:relative !important;
+    position:relative !important; 
     opacity:1 !important;
-    pointer-events:auto !important;
-    transform:none !important;
-    /* FIX: 100vh SPACER to ensure text appears AFTER the image fade window */
-    padding-top: 100vh;
-    /* Must maintain 200vh height to contain spacer and push out image */
-    min-height: 200vh;
-    padding-bottom: 80px;    
-    padding-left: 20px;
-    padding-right: 20px;   
+    display:block !important; 
+    /* FIX 3: COLLAPSED HEIGHT. It follows the 100vh image window immediately. */
+    min-height:0; 
+    padding:40px 20px 80px;             
     max-width:640px;
     margin:0 auto;
-    background:#eaeeec;
-    z-index:2;
+    background:#eaeeec; 
+    z-index:3; /* Text appears on top of everything */
+    pointer-events:auto !important;
   }
 
   .s1-rail, .s2-rail, .s4-rail, .s5-rail,
@@ -421,12 +416,10 @@
     margin-bottom:16px;
   }
 
-  /* ==== GALLERIES ==== */
+  /* ==== GALLERIES & FULL BLEEDS (KEEPING AS IS) ==== */
   .galA-left-frame, .galB-center-frame, .galC-left-frame {
     left:20px; right:20px;
   }
-
-  /* ==== FULL BLEEDS ==== */
   .frame.s3-frame, .frame.s8-frame, .frame.s12-frame, .frame.s15-frame {
     left:0; right:0; top:0; bottom:0;
   }
@@ -454,8 +447,6 @@
     z-index:3;
   }
 }
-
-
 
 </style>
  
