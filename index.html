@@ -325,133 +325,111 @@
 	color:#00A86B;
   }
  
-/* ===== MOBILE RESPONSIVE (max-width:768px) - BASELINE REVERT + FINAL FIXES ===== */
+/* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
 @media (max-width:768px){
-
+ 
   body {
-    margin:0;
-    padding:0;
-    background:#eaeeec;
+	margin:0;
+	padding:0;
+	background:#eaeeec;
   }
-
+ 
   /* ==== HERO ==== */
   .hero-media {
-    top:20px; bottom:20px; left:20px; right:20px;
+	top:20px; bottom:20px; left:20px; right:20px;
   }
   .hero-title {
-    font-size:72px;
-    line-height:1.05;
+	font-size:72px;
+	line-height:1.05;
   }
   .hero-links {
-    font-size:20px;
-    line-height:26px;
+	font-size:20px;
+	line-height:26px;
   }
-
-  /* ==== SECTION WRAPS (200VH TOTAL SCROLL SPACE - REVERTED) ==== */
+ 
+  /* ==== SECTION WRAPS ==== */
   .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
   .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
-    position:relative;
-    /* Wrapper provides the full 200vh scroll space */
-    min-height:200vh; 
-    background:#eaeeec;
+	position:relative;
+	min-height:200vh;   /* image (100vh) + text scroll (100vh) */
+	background:#eaeeec;
   }
-
-  /* ==== SECTION IMAGES (PINNED VIEWPORT - STANDARD FIXED) ==== */
+ 
+  /* ==== SECTION IMAGES (PINNED VIEWPORT) ==== */
   .s1-frame, .s2-frame, .s4-frame, .s5-frame,
   .s9-frame, .s11-frame, .s13-frame, .s14-frame {
-    /* Standard position:fixed for image visibility */
-    position:fixed;
-    top:20px; bottom:20px; left:20px; right:20px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    z-index:1;
-    pointer-events:none;
+	position:fixed;
+	top:20px; bottom:20px; left:20px; right:20px;
+	display:flex;
+	align-items:center;
+	justify-content:center;
+	z-index:1;
+	pointer-events:none;
   }
   .s1-frame img, .s2-frame img, .s4-frame img, .s5-frame img,
   .s9-frame img, .s11-frame img, .s13-frame img, .s14-frame img {
-    width:100%;
-    height:auto;
-    object-fit:contain;
-    display:block;
+	width:100%;
+	height:auto;
+	object-fit:contain;
+	display:block;
   }
-
-  /* ==== SINGLE COLUMN TEXT OVERLAY (LEFT-ALIGNED) - ADDING 100VH SPACER (TIMING FIX) ==== */
+ 
+  /* ==== SINGLE COLUMN TEXT OVERLAY (LEFT-ALIGNED) ==== */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
   .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
-    position:relative !important;
-    opacity:1 !important;
-    pointer-events:auto !important;
-    transform:none !important;
-    /* FIX: Add 100vh spacer at the top to delay text appearance past image fade-in */
-    padding-top: 100vh;
-    /* Ensure the overlay is tall enough to contain the spacer and scroll content */
-    min-height: 200vh;
-    padding-bottom: 80px;    
-    padding-left: 20px;
-    padding-right: 20px;   /* ← 20 px viewport margins */
-    max-width:640px;
-    margin:0 auto;
-    background:#eaeeec;
-    z-index:2;
+	position:relative !important;
+	opacity:1 !important;
+	pointer-events:auto !important;
+	transform:none !important;
+	padding:0 20px 80px;         	/* ← 20 px viewport margins */
+	max-width:640px;
+	margin:0 auto;
+	background:transparent;
+	z-index:2;
   }
-
+ 
   .s1-rail, .s2-rail, .s4-rail, .s5-rail,
   .s9-rail, .s11-rail, .s13-rail, .s14-rail {
-    position:relative !important;
-    width:100% !important;
-    margin:0;
-    left:auto !important;
-    right:auto !important;
+	position:relative !important;
+	width:100% !important;
+	margin:0;
+	left:auto !important;
+	right:auto !important;
   }
-
+ 
   .s1-text, .s2-text, .s4-text, .s5-text,
   .s9-text, .s11-text, .s13-text, .s14-text {
-    transform:none !important;
-    color:#111;
-    text-align:left;                 /* ← left-align text */
-    font-size:18px;
-    line-height:26px;
-    margin:20px 0 80px 0;
+	transform:none !important;
+	color:#111;
+	text-align:left;             	/* ← left-align text */
+	font-size:18px;
+	line-height:26px;
+	margin:20px 0 80px 0;
   }
   .s1-text p, .s2-text p, .s4-text p, .s5-text p,
   .s9-text p, .s11-text p, .s13-text p, .s14-text p {
-    margin-bottom:16px;
+	margin-bottom:16px;
   }
-
+ 
   /* ==== GALLERIES ==== */
   .galA-left-frame, .galB-center-frame, .galC-left-frame {
-    left:20px; right:20px;
+	left:20px; right:20px;
   }
-
+ 
   /* ==== FULL BLEEDS ==== */
   .frame.s3-frame, .frame.s8-frame, .frame.s12-frame, .frame.s15-frame {
-    left:0; right:0; top:0; bottom:0;
+	left:0; right:0; top:0; bottom:0;
   }
-
-  /* ==== SECTION 15 FIX (MAINTAINED) ==== */
-  .s15-rail {
-    /* Ensures S15 rail is a normal block for mobile scrolling */
-    position: relative !important;
-    top: auto !important;
-    bottom: auto !important;
-    right: auto !important;
-    width: 100% !important;
-    min-height: 100vh;
-    display: block !important; 
-    align-items: unset !important;
-    justify-content: unset !important;
-  }
-  
+ 
+  /* ==== SECTION 15 ==== */
   .s15-text {
-    color:#fff;
-    text-align:center;
-    /* Corrected padding for mobile margins */
-    padding:0 20px 80px; 
-    max-width:640px;
-    margin:0 auto !important;
-    position:relative;
-    z-index:3;
+	color:#fff;
+	text-align:center;
+	padding:0 24px 80px;
+	max-width:640px;
+	margin:0 auto;
+	position:relative;
+	z-index:3;
   }
 }
  
@@ -1094,4 +1072,3 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
 </script>
 </body>
 </html>
- 
