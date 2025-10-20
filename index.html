@@ -1,3 +1,4 @@
+20-10-25 Single Column Section Text Left Aligned-test scrolly section
 <!doctype html>
 <html lang="en" data-baseline="stable-2025-10-01__rails-460px__galC-6-only">
 <head>
@@ -421,26 +422,33 @@
     left:0; right:0; top:0; bottom:0;
   }
 
-  /* ==== SECTION 15 ==== */
-  .s15-text {
-    color: #fff;
-    text-align: center;
-    padding: 0 20px 80px;          /* ← 20 px viewport margins, 80 bottom */
-    width: calc(100vw - 40px);     /* ← fills full viewport minus margins */
-    max-width: none;               /* ← remove artificial 640px limit */
-    margin: 0 auto;
-    position: relative;
-    z-index: 3;
-    box-sizing: border-box;        /* ensures padding doesn’t add overflow */
-  }
+/* ==== SECTION 15 ==== */
+.s15-overlay,
+.s15-rail,
+.s15-text {
+  position: relative !important;
+  width: 100% !important;
+  max-width: none !important;
+  left: 0 !important;
+  right: 0 !important;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-
-
+.s15-text {
+  color: #fff;
+  text-align: center;
+  font-size: 18px;
+  line-height: 26px;
+  padding: 20px 20px 80px 20px; /* ← 20 px all sides, 80 px bottom breathing space */
+  background: transparent;
+  z-index: 3;
+}
+}
 </style>
 
 </head>
-
 <body>
 
 <!-- HERO -->
