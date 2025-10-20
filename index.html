@@ -422,52 +422,14 @@
   }
 
   /* ==== SECTION 15 ==== */
-  .s15-overlay {
-    position: relative !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
-    transform: none !important;
-    background: transparent;
-    padding: 0 20px 80px;        /* ← equal 20 px margins left/right */
-    max-width: 640px;
-    margin: 0 auto;
-    z-index: 2;
-  }
-
-  .s15-rail {
-    position: relative !important;
-    width: 100% !important;
-    left: auto !important;
-    right: auto !important;
-    transform: none !important;
-    margin: 0;
-  }
-
   .s15-text {
     color: #fff;
-    text-align: center;          /* ← center-aligned text */
-    font-size: 18px;
-    line-height: 26px;
-    padding: 0 20px 80px;        /* ← 20 px margins left/right */
-    margin: 0 auto;
+    text-align: center;
+    padding: 0 20px 80px;   /* ← 20 px left/right instead of 24 px */
     max-width: 640px;
+    margin: 0 auto;
     position: relative;
     z-index: 3;
-  }
-
-  .s15-text p {
-    margin-bottom: 16px;
-  }
-
-  .s15-text a {
-    color: #fff;
-    text-decoration: none;
-    transition: color 0.2s ease;
-  }
-
-  .s15-text a:hover,
-  .s15-text a:focus-visible {
-    color: #00A86B;
   }
 }
 
