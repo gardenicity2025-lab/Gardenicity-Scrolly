@@ -325,7 +325,7 @@
     color:#00A86B;
   }
 
-/* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
+/* ===== MOBILE RESPONSIVE (max-width:768px) - WITH TIMING FIXES ===== */
 @media (max-width:768px){
 
   body {
@@ -347,11 +347,12 @@
     line-height:26px;
   }
 
-  /* ==== SECTION WRAPS ==== */
+  /* ==== SECTION WRAPS (HEIGHT INCREASED FOR 100VH SPACER) ==== */
   .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
   .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
     position:relative;
-    min-height:200vh;   /* image (100vh) + text scroll (100vh) */
+    /* FIX 1A: Increased height from 200vh to 300vh to allow for 100vh spacer at top */
+    min-height:300vh; 
     background:#eaeeec;
   }
 
@@ -374,19 +375,23 @@
     display:block;
   }
 
-  /* ==== SINGLE COLUMN TEXT OVERLAY (LEFT-ALIGNED) - FIXED MIN-HEIGHT and BACKGROUND ==== */
+  /* ==== SINGLE COLUMN TEXT OVERLAY (LEFT-ALIGNED) - FIXED TIMING and HEIGHT ==== */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
   .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
     position:relative !important;
     opacity:1 !important;
     pointer-events:auto !important;
     transform:none !important;
-    /* FIX 1A: Ensures content spans 200vh to correctly push fixed image out */
-    min-height:200vh; 
-    padding:0 20px 80px;             /* ← 20 px viewport margins */
+    /* FIX 1B: Add 100vh padding to create the spacer. This delays text appearance. */
+    padding-top: 100vh; 
+    /* Set min-height to 100vh for the actual text content scroll area */
+    min-height:100vh; 
+    padding-bottom: 80px;    
+    padding-left: 20px;
+    padding-right: 20px;   /* ← 20 px viewport margins */
     max-width:640px;
     margin:0 auto;
-    /* FIX 1B: Set background to match page background for consistency */
+    /* Background set to match scrollytelling background */
     background:#eaeeec;
     z-index:2;
   }
@@ -425,8 +430,8 @@
   }
 
   /* ==== SECTION 15 FIX (Rail Reset and Margin Correction) ==== */
-  /* FIX 2A: Reset the rail from its desktop absolute column positioning */
   .s15-rail {
+    /* FIX 2A: Reset the rail from its desktop absolute column positioning */
     position: relative !important;
     top: auto !important;
     bottom: auto !important;
@@ -442,11 +447,10 @@
     justify-content: unset !important;
   }
   
-  /* FIX 2B: Correct the text block margins */
   .s15-text {
     color:#fff;
     text-align:center;
-    /* FIX: Changed 24px to 20px to respect the viewport margin */
+    /* FIX 2B: Corrected padding to 20px */
     padding:0 20px 80px; 
     max-width:640px;
     margin:0 auto !important;
@@ -454,6 +458,7 @@
     z-index:3;
   }
 }
+
 
 </style>
 
