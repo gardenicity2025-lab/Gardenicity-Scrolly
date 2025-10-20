@@ -889,18 +889,16 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
     root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
     root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
 
-//* ===== TEXT SWEEPS — Localized per section (mobile sequencing fixed) ===== */
+/* ===== TEXT SWEEPS — True per-section mobile sequencing ===== */
 const E = 0.8;
 const isMobile = window.innerWidth <= 768;
 
-function localProgress(scrollY, start, end) {
-  return clamp((scrollY - start) / (end - start), 0, 1);
-}
-
 if (isMobile) {
-  const fadeGap = 0.35; // image fade share of section scroll
+  const fadeGap = 0.35; // fraction of section scroll used for image fade
+  const scrollY = window.scrollY;
+  const viewportH = window.innerHeight;
 
-  const sections = [
+  const seqSections = [
     ['s1', s1StartY, s1EndY],
     ['s2', s2StartY, s2EndY],
     ['s4', s4StartY, s4EndY],
@@ -911,10 +909,10 @@ if (isMobile) {
     ['s14', s14StartY, s14EndY]
   ];
 
-  const scrollY = window.scrollY;
-
-  for (const [id, startY, endY] of sections) {
-    const prog = localProgress(scrollY, startY, endY);
+  for (const [id, startY, endY] of seqSections) {
+    const sectionLength = endY - startY;
+    const localScroll = scrollY - startY;
+    const prog = clamp(localScroll / sectionLength, 0, 1);
 
     // --- Phase 1: image fade (0–fadeGap)
     const imgAlpha = clamp(prog / fadeGap, 0, 1);
@@ -922,18 +920,18 @@ if (isMobile) {
 
     // --- Phase 2: text scroll (fadeGap–1)
     if (prog < fadeGap) {
-      // hold text steady during image fade
+      // keep text pinned until image fully visible
       root.style.setProperty(`--${id}Y`, startY + 'px');
     } else {
       const local = clamp((prog - fadeGap) / (1 - fadeGap), 0, 1);
       const eased = easePow(local, E);
-      const textY = startY + (endY - startY) * eased;
+      const textY = startY + viewportH * eased; // move text over one viewport height
       root.style.setProperty(`--${id}Y`, textY.toFixed(1) + 'px');
     }
   }
-}
+} 
 else {
-  // ===== Desktop (unchanged cinematic flow) =====
+  // ===== Desktop — unchanged =====
   const s1Raw=clamp((s1-0.75)/0.25,0,1); root.style.setProperty('--s1Y',(s1StartY+(s1EndY-s1StartY)*easePow(s1Raw,E))+'px');
   const s2Raw=clamp((s2-0.25)/0.75,0,1); root.style.setProperty('--s2Y',(s2StartY+(s2EndY-s2StartY)*easePow(s2Raw,E))+'px');
   const s4Raw=clamp((s4-0.75)/0.25,0,1); root.style.setProperty('--s4Y',(s4StartY+(s4EndY-s4StartY)*easePow(s4Raw,E))+'px');
@@ -943,6 +941,7 @@ else {
   const s13Raw=clamp((s13-0.75)/0.25,0,1); root.style.setProperty('--s13Y',(s13StartY+(s13EndY-s13StartY)*easePow(s13Raw,E))+'px');
   const s14Raw=clamp((s14-0.25)/0.75,0,1); root.style.setProperty('--s14Y',(s14StartY+(s14EndY-s14StartY)*easePow(s14Raw,E))+'px');
 }
+
 
     /* S15 timing */
     const s15Raw=clamp((s15-0.25)/0.75,0,1);
