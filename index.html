@@ -351,11 +351,9 @@
   .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
   .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
     position:relative;
-    min-height:200vh;                 /* 100vh image + 100vh text scroll */
+    min-height:200vh;                /* 100vh image + 100vh text scroll */
     background:#eaeeec;
     overflow:hidden;
-    scroll-timeline-name: sectionScroll;
-    scroll-timeline-axis: block;
   }
 
   /* ==== SECTION IMAGES (PINNED VIEWPORT) ==== */
@@ -368,9 +366,6 @@
     justify-content:center;
     z-index:1;
     pointer-events:none;
-    animation: fadeIn ease-out both;
-    animation-timeline: sectionScroll;
-    animation-range: 0% 60%;
   }
   .s1-frame img, .s2-frame img, .s4-frame img, .s5-frame img,
   .s9-frame img, .s11-frame img, .s13-frame img, .s14-frame img {
@@ -378,11 +373,6 @@
     height:auto;
     object-fit:contain;
     display:block;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: scale(1.05); }
-    to   { opacity: 1; transform: scale(1); }
   }
 
   /* ==== SINGLE COLUMN TEXT OVERLAY ==== */
@@ -393,17 +383,10 @@
     padding:0 20px 80px;
     max-width:640px;
     margin:0 auto;
-    background:#eaeeec;              /* opaque bg for swipe-above effect */
+    background:#eaeeec;             /* opaque background for clean swipe */
     z-index:3;
-    transform:translateY(100%);
-    animation: textSweep ease-in-out both;
-    animation-timeline: sectionScroll;
-    animation-range: 60% 100%;        /* starts after image fade completes */
-  }
-
-  @keyframes textSweep {
-    from { transform: translateY(100%); }
-    to   { transform: translateY(-100%); }
+    transform:translateY(100%);     /* start off-screen below viewport */
+    transition:transform 0.8s ease-out;
   }
 
   /* ==== RESET RAILS FOR MOBILE ==== */
@@ -454,38 +437,32 @@
     z-index:3;
   }
 
-  /* ==== OPTIONAL: SMOOTH IN/OUT OPACITY ON OVERLAY ==== */
+  /* ==== SCROLL-TIMELINE FOR TEXT SWEEP ==== */
+  .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
+  .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap, .s15-wrap {
+    scroll-timeline-name: sectionScroll;
+    scroll-timeline-axis: block;
+    overflow:hidden;
+  }
+
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
-  .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
-    animation-composition: add; /* allows both translate + opacity */
-  }
-
-  .s1-overlay::before,
-  .s2-overlay::before,
-  .s4-overlay::before,
-  .s5-overlay::before,
-  .s9-overlay::before,
-  .s11-overlay::before,
-  .s13-overlay::before,
-  .s14-overlay::before {
-    content:"";
-    position:absolute;
-    inset:0;
-    background:#eaeeec;
-    opacity:0;
-    animation: overlayFade ease-in both;
+  .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay, .s15-overlay {
+    animation: textSweep ease-in-out both;
     animation-timeline: sectionScroll;
-    animation-range: 55% 65%;
+    animation-range: 60% 100%;   /* starts after image fade completes */
   }
 
-  @keyframes overlayFade {
-    from { opacity:0; }
-    to { opacity:1; }
+  @keyframes textSweep {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(-100%); }
   }
 }
+
+
 </style>
 
 </head>
+
 <body>
 
 <!-- HERO -->
