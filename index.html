@@ -1,3 +1,4 @@
+ 
 <!doctype html>
 <html lang="en" data-baseline="stable-2025-10-01__rails-460px__galC-6-only">
 <head>
@@ -326,7 +327,7 @@
   }
  
 /* ===== MOBILE RESPONSIVE (max-width:768px) - PHASE 1: VISUALS ONLY (IMAGES) ===== */
-/* ===== MOBILE RESPONSIVE (max-width:768px) - PHASE 2: HYBRID STACK MODEL (FINAL) ===== */
+/* ===== MOBILE RESPONSIVE (max-width:768px) - FINAL CINEMATIC FIX ===== */
 @media (max-width:768px){
 
   body {
@@ -348,19 +349,19 @@
     line-height:26px;
   }
 
-  /* ==== SECTION WRAPS (IMAGE PINNING WINDOW) ==== */
+  /* ==== SECTION WRAPS (200VH TOTAL SCROLL SPACE) ==== */
   .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
   .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
     position:relative;
-    /* FIX 1: 100vh scroll window dedicated ONLY to image cross-fade/pinning */
-    min-height:100vh; 
-    background:transparent; 
+    /* Wrapper provides the full 200vh scroll space for pinning and scrolling */
+    min-height:200vh; 
+    background:#eaeeec;
   }
 
-  /* ==== SECTION IMAGES (PINNED for CROSS-FADE) ==== */
+  /* ==== SECTION IMAGES (PINNED VIEWPORT - REQUIRED FOR VISIBILITY/FADE) ==== */
   .s1-frame, .s2-frame, .s4-frame, .s5-frame,
   .s9-frame, .s11-frame, .s13-frame, .s14-frame {
-    /* FIX 2: Fixed position is essential for the fade animation */
+    /* position:fixed is confirmed necessary for image to display correctly */
     position:fixed;
     top:20px; bottom:20px; left:20px; right:20px;
     display:flex;
@@ -377,53 +378,24 @@
     display:block;
   }
 
-  /* ==== TEXT OVERLAYS (STACKED AFTER IMAGE WINDOW) ==== */
-  /* This MUST be a separate element following the .sX-wrap in the HTML,
-     or we must introduce a new element after .sX-wrap for the text content. 
-     Assuming the .sX-overlay is placed immediately after the closing </div> of .sX-wrap in the HTML structure.
-     If the overlay is a child of the wrap, this will not work.
-  */
-  
-  /* Assuming the HTML structure is: <section> <div class="s1-wrap">...</div> <div class="s1-overlay">...</div> </section> */
-  /* If the text is a sibling, the previous Simple Stack CSS is better.
-     We will now revert to the working Simple Stack (no image pinning) but ensure the text is stacked cleanly.
-  */
-
-  /* --- Reverting to Simple Stack Model for Text, as Fixed Image conflicts are too high --- */
-  
-  /* ==== SECTION WRAPS (SIMPLE STACK) ==== */
-  .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
-  .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
-    min-height:0; /* Collapse wrapper height */
-    padding-bottom: 20px; 
-    background:#eaeeec;
-  }
-
-  /* ==== SECTION IMAGES (SIMPLE STACK - Scrolls Normally) ==== */
-  .s1-frame, .s2-frame, .s4-frame, .s5-frame,
-  .s9-frame, .s11-frame, .s13-frame, .s14-frame {
-    position: relative; /* Image scrolls with the page */
-    height: 100vh; /* Image takes up one screen height when visible */
-    top: auto; 
-    bottom: auto; 
-    left:20px; 
-    right:20px;
-  }
-  .s1-frame img, .s2-frame img, .s4-frame img, .s5-frame img,
-  .s9-frame img, .s11-frame img, .s13-frame img, .s14-frame img {
-    height:100%; /* Fill the 100vh frame */
-    object-fit:contain;
-  }
-
-  /* ==== TEXT OVERLAYS (COLLAPSED STACK) ==== */
+  /* ==== SINGLE COLUMN TEXT OVERLAY (CRITICAL: 100VH SPACER) ==== */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
   .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
     position:relative !important;
     opacity:1 !important;
-    display:block !important; /* Make sure text appears */
-    min-height:0; 
-    padding:0 20px 80px;             
-    background:#eaeeec; 
+    pointer-events:auto !important;
+    transform:none !important;
+    /* FIX: 100vh SPACER to ensure text appears AFTER the image fade window */
+    padding-top: 100vh;
+    /* Must maintain 200vh height to contain spacer and push out image */
+    min-height: 200vh;
+    padding-bottom: 80px;    
+    padding-left: 20px;
+    padding-right: 20px;   
+    max-width:640px;
+    margin:0 auto;
+    background:#eaeeec;
+    z-index:2;
   }
 
   .s1-rail, .s2-rail, .s4-rail, .s5-rail,
@@ -436,7 +408,7 @@
   }
 
   .s1-text, .s2-text, .s4-text, .s5-text,
-  .s9-text, .s11-rail, .s13-rail, .s14-rail {
+  .s9-text, .s11-text, .s13-text, .s14-text {
     transform:none !important;
     color:#111;
     text-align:left;                 
@@ -449,15 +421,17 @@
     margin-bottom:16px;
   }
 
-  /* ==== GALLERIES & FULL BLEEDS (KEEPING AS IS) ==== */
+  /* ==== GALLERIES ==== */
   .galA-left-frame, .galB-center-frame, .galC-left-frame {
     left:20px; right:20px;
   }
+
+  /* ==== FULL BLEEDS ==== */
   .frame.s3-frame, .frame.s8-frame, .frame.s12-frame, .frame.s15-frame {
     left:0; right:0; top:0; bottom:0;
   }
 
-  /* ==== SECTION 15 FIXES (INCLUDED) ==== */
+  /* ==== SECTION 15 FIXES (MAINTAINED) ==== */
   .s15-rail {
     position: relative !important;
     top: auto !important;
@@ -480,6 +454,7 @@
     z-index:3;
   }
 }
+
 
 
 </style>
