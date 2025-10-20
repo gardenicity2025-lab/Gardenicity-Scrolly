@@ -351,9 +351,8 @@
   .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
   .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
     position:relative;
-    min-height:200vh;                /* 100vh image + 100vh text scroll */
+    min-height:200vh;   /* image (100vh) + text scroll (100vh) */
     background:#eaeeec;
-    overflow:hidden;
   }
 
   /* ==== SECTION IMAGES (PINNED VIEWPORT) ==== */
@@ -375,41 +374,37 @@
     display:block;
   }
 
-  /* ==== SINGLE COLUMN TEXT OVERLAY ==== */
+  /* ==== SINGLE COLUMN TEXT OVERLAY (LEFT-ALIGNED) ==== */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
   .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
     position:relative !important;
+    opacity:1 !important;
     pointer-events:auto !important;
-    padding:0 20px 80px;
+    transform:none !important;
+    padding:0 20px 80px;             /* ← 20 px viewport margins */
     max-width:640px;
     margin:0 auto;
-    background:#eaeeec;             /* opaque background for clean swipe */
-    z-index:3;
-    transform:translateY(100%);     /* start off-screen below viewport */
-    transition:transform 0.8s ease-out;
+    background:transparent;
+    z-index:2;
   }
 
-  /* ==== RESET RAILS FOR MOBILE ==== */
   .s1-rail, .s2-rail, .s4-rail, .s5-rail,
-  .s9-rail, .s11-rail, .s13-rail, .s14-rail, .s15-rail {
-    position: relative !important;
-    width: 100% !important;
-    left: 0 !important;
-    right: 0 !important;
-    top: auto !important;
-    bottom: auto !important;
-    overflow: visible !important;
-    display: block !important;
-    box-sizing: border-box;
+  .s9-rail, .s11-rail, .s13-rail, .s14-rail {
+    position:relative !important;
+    width:100% !important;
+    margin:0;
+    left:auto !important;
+    right:auto !important;
   }
 
-  /* ==== LEFT-ALIGNED TEXT ==== */
   .s1-text, .s2-text, .s4-text, .s5-text,
   .s9-text, .s11-text, .s13-text, .s14-text {
+    transform:none !important;
     color:#111;
-    text-align:left;
+    text-align:left;                 /* ← left-align text */
     font-size:18px;
     line-height:26px;
+    margin:20px 0 80px 0;
   }
   .s1-text p, .s2-text p, .s4-text p, .s5-text p,
   .s9-text p, .s11-text p, .s13-text p, .s14-text p {
@@ -436,28 +431,7 @@
     position:relative;
     z-index:3;
   }
-
-  /* ==== SCROLL-TIMELINE FOR TEXT SWEEP ==== */
-  .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
-  .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap, .s15-wrap {
-    scroll-timeline-name: sectionScroll;
-    scroll-timeline-axis: block;
-    overflow:hidden;
-  }
-
-  .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
-  .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay, .s15-overlay {
-    animation: textSweep ease-in-out both;
-    animation-timeline: sectionScroll;
-    animation-range: 60% 100%;   /* starts after image fade completes */
-  }
-
-  @keyframes textSweep {
-    from { transform: translateY(100%); }
-    to   { transform: translateY(-100%); }
-  }
 }
-
 
 </style>
 
@@ -1098,3 +1072,4 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
 </script>
 </body>
 </html>
+
