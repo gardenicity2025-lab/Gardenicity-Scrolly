@@ -421,16 +421,20 @@
     left:0; right:0; top:0; bottom:0;
   }
 
-  /* ==== SECTION 15 ==== */
-  .s15-text {
-    color:#fff;
-    text-align:center;
-    padding:0 24px 80px;
-    max-width:640px;
-    margin:0 auto;
-    position:relative;
-    z-index:3;
-  }
+/* ==== SECTION 15 ==== */
+.s15-text {
+  color:#fff;
+  text-align:center;
+  padding:0 20px 80px;       /* ← 20 px side gutters like all others */
+  width:calc(100vw - 40px);  /* ← fill viewport minus 20 px on each side */
+  max-width:none;            /* ← remove 640 px limit */
+  margin:0 auto;
+  position:relative;
+  z-index:3;
+  box-sizing:border-box;     /* ← keeps padding inside width */
+}
+
+
 }
 
 </style>
