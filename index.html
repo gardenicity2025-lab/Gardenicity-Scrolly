@@ -325,132 +325,89 @@
 	color:#00A86B;
   }
  
-/* ===== MOBILE RESPONSIVE (max-width:768px) - FINAL CINEMATIC FIX (NO HTML CHANGE) ===== */
+/* ===== MOBILE RESPONSIVE (max-width:768px) - FINAL SIMPLE STACK (NO PINNING) ===== */
 @media (max-width:768px){
 
-  body {
-    margin:0;
-    padding:0;
-    background:#eaeeec;
-  }
+  /* --- General / Hero styles unchanged --- */
+  body { margin:0; padding:0; background:#eaeeec; }
+  .hero-media { top:20px; bottom:20px; left:20px; right:20px; }
+  .hero-title { font-size:72px; line-height:1.05; }
+  .hero-links { font-size:20px; line-height:26px; }
 
-  /* ==== HERO ==== */
-  .hero-media {
-    top:20px; bottom:20px; left:20px; right:20px;
-  }
-  .hero-title {
-    font-size:72px;
-    line-height:1.05;
-  }
-  .hero-links {
-    font-size:20px;
-    line-height:26px;
-  }
-
-  /* ==== SECTION WRAPS (200VH TOTAL SCROLL SPACE - Required for Text to scroll over Image) ==== */
+  /* ==== SECTION WRAPS (CONTAINER COLLAPSES) ==== */
   .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
   .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
     position:relative;
-    /* Wrapper provides the full 200vh scroll space for pinning and scrolling */
-    min-height:200vh; 
+    /* FIX 1: Wrapper height collapses to contain only its content */
+    min-height:0; 
+    padding-bottom: 20px; /* Space between sections */
     background:#eaeeec;
-    z-index: 1; /* Low Z-index */
+    z-index: 1; 
   }
 
-  /* ==== SECTION IMAGES (PINNED VIEWPORT - REQUIRED FOR VISIBILITY/FADE) ==== */
+  /* ==== SECTION IMAGES (RELATIVE POSITIONING - SCROLLS NORMALLY) ==== */
   .s1-frame, .s2-frame, .s4-frame, .s5-frame,
   .s9-frame, .s11-frame, .s13-frame, .s14-frame {
-    /* position:fixed is confirmed necessary for image to display correctly (Phase 1) */
-    position:fixed;
-    top:20px; bottom:20px; left:20px; right:20px;
+    /* FIX 2: Image is relative and scrolls with the page */
+    position: relative; 
+    height: 100vh; /* Image takes up one screen height when visible */
+    top: auto; 
+    bottom: auto; 
+    left:20px; 
+    right:20px;
     display:flex;
     align-items:center;
     justify-content:center;
-    z-index:2; /* Image is behind the scrolling text */
+    z-index:1;
     pointer-events:none;
   }
   .s1-frame img, .s2-frame img, .s4-frame img, .s5-frame img,
   .s9-frame img, .s11-frame img, .s13-frame img, .s14-frame img {
     width:100%;
-    height:auto;
+    height:100%; /* Fill the 100vh frame */
     object-fit:contain;
     display:block;
   }
 
-  /* ==== SINGLE COLUMN TEXT OVERLAY (CRITICAL: 100VH SPACER) ==== */
+  /* ==== TEXT OVERLAYS (STACKED BLOCK - COLLAPSES) ==== */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
   .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
-    position:relative !important;
+    position:relative !important; 
     opacity:1 !important;
-    pointer-events:auto !important;
-    transform:none !important;
-    /* FIX: 100vh SPACER to ensure text appears AFTER the image fade window */
-    padding-top: 100vh;
-    /* Must maintain 200vh height to contain spacer and push out image */
-    min-height: 200vh;
-    padding-bottom: 80px;    
-    padding-left: 20px;
-    padding-right: 20px;   
+    display:block !important; 
+    /* FIX 3: Text content follows image immediately and scrolls normally */
+    min-height:0; 
+    padding:40px 20px 80px;             
     max-width:640px;
     margin:0 auto;
-    background:#eaeeec;
-    z-index:3; /* Text is on top of the fixed image */
+    background:#eaeeec; 
+    z-index:3;
+    pointer-events:auto !important;
   }
 
-  .s1-rail, .s2-rail, .s4-rail, .s5-rail,
-  .s9-rail, .s11-rail, .s13-rail, .s14-rail {
-    position:relative !important;
-    width:100% !important;
-    margin:0;
-    left:auto !important;
-    right:auto !important;
+  /* --- Text rail/text block styles unchanged --- */
+  .s1-rail, .s2-rail, .s4-rail, .s5-rail, .s9-rail, .s11-rail, .s13-rail, .s14-rail {
+    position:relative !important; width:100% !important; margin:0; left:auto !important; right:auto !important;
   }
-
-  .s1-text, .s2-text, .s4-text, .s5-text,
-  .s9-text, .s11-text, .s13-text, .s14-text {
-    transform:none !important;
-    color:#111;
-    text-align:left;                 
-    font-size:18px;
-    line-height:26px;
-    margin:20px 0 80px 0;
+  .s1-text, .s2-text, .s4-text, .s5-text, .s9-text, .s11-text, .s13-text, .s14-text {
+    transform:none !important; color:#111; text-align:left; font-size:18px; line-height:26px; margin:20px 0 80px 0;
   }
-  .s1-text p, .s2-text p, .s4-text p, .s5-text p,
-  .s9-text p, .s11-text p, .s13-text p, .s14-text p {
+  .s1-text p, .s2-text p, .s4-text p, .s5-text p, .s9-text p, .s11-text p, .s13-text p, .s14-text p {
     margin-bottom:16px;
   }
 
-  /* ==== GALLERIES & FULL BLEEDS ==== */
-  .galA-left-frame, .galB-center-frame, .galC-left-frame {
-    left:20px; right:20px;
-  }
-  .frame.s3-frame, .frame.s8-frame, .frame.s12-frame, .frame.s15-frame {
-    left:0; right:0; top:0; bottom:0;
-  }
-
-  /* ==== SECTION 15 FIXES (MAINTAINED) ==== */
+  /* --- Galleries / Full Bleeds / S15 Fixes unchanged --- */
+  .galA-left-frame, .galB-center-frame, .galC-left-frame { left:20px; right:20px; }
+  .frame.s3-frame, .frame.s8-frame, .frame.s12-frame, .frame.s15-frame { left:0; right:0; top:0; bottom:0; }
   .s15-rail {
-    position: relative !important;
-    top: auto !important;
-    bottom: auto !important;
-    right: auto !important;
-    width: 100% !important;
-    min-height: 100vh;
-    display: block !important; 
-    align-items: unset !important;
-    justify-content: unset !important;
+    position: relative !important; top: auto !important; bottom: auto !important; right: auto !important; width: 100% !important; min-height: 100vh; display: block !important; align-items: unset !important; justify-content: unset !important;
   }
-  
   .s15-text {
-    color:#fff;
-    text-align:center;
-    padding:0 20px 80px; 
-    max-width:640px;
-    margin:0 auto !important;
-    position:relative;
-    z-index:3;
+    color:#fff; text-align:center; padding:0 20px 80px; max-width:640px; margin:0 auto !important; position:relative; z-index:3;
   }
 }
+
+
 
 </style>
  
@@ -1090,3 +1047,4 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
 </script>
 </body>
 </html>
+
