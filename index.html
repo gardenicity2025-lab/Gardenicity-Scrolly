@@ -374,13 +374,15 @@
     display:block;
   }
 
-  /* ==== SINGLE COLUMN TEXT OVERLAY (LEFT-ALIGNED) ==== */
+  /* ==== SINGLE COLUMN TEXT OVERLAY (LEFT-ALIGNED) - FIXED MIN-HEIGHT ==== */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
   .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
     position:relative !important;
     opacity:1 !important;
     pointer-events:auto !important;
     transform:none !important;
+    /* FIX 1: Ensures content spans 200vh to correctly push fixed image out */
+    min-height:200vh; 
     padding:0 20px 80px;             /* ← 20 px viewport margins */
     max-width:640px;
     margin:0 auto;
@@ -421,17 +423,37 @@
     left:0; right:0; top:0; bottom:0;
   }
 
-  /* ==== SECTION 15 ==== */
+  /* ==== SECTION 15 FIX (Rail Reset and Margin Correction) ==== */
+  /* FIX 2A: Reset the rail from its desktop absolute column positioning */
+  .s15-rail {
+    position: relative !important;
+    top: auto !important;
+    bottom: auto !important;
+    right: auto !important;
+    width: 100% !important;
+    
+    /* Ensure content takes scroll height for display */
+    min-height: 100vh;
+    
+    /* Reset flex properties */
+    display: block !important; 
+    align-items: unset !important;
+    justify-content: unset !important;
+  }
+  
+  /* FIX 2B: Correct the text block margins */
   .s15-text {
     color:#fff;
     text-align:center;
-    padding:0 24px 80px;
+    /* FIX: Changed 24px to 20px to respect the viewport margin */
+    padding:0 20px 80px; 
     max-width:640px;
-    margin:0 auto;
+    margin:0 auto !important;
     position:relative;
     z-index:3;
   }
 }
+
 
 </style>
 
