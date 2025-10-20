@@ -456,34 +456,9 @@
     from { transform: translateY(100%); }
     to   { transform: translateY(-100%); }
   }
-
-  /* ==== RESTORE MOBILE-MODE LAYOUT (from applyMobileLayout) ==== */
-  body.mobile-mode{
-    background:#eaeeec;
-  }
-
-  body.mobile-mode .frame img{
-    width:100%;
-    height:auto;
-    object-fit:contain;
-    display:block;
-  }
-
-  body.mobile-mode .hero-fixed{
-    position:relative;
-    filter:none;
-    margin-bottom:60px;
-  }
-
-  body.mobile-mode .s15-text{
-    max-width:640px;
-    margin:0 auto;
-    text-align:center;
-    padding:0 20px 80px;
-    position:relative;
-    z-index:3;
-  }
 }
+
+
 </style>
 
 </head>
@@ -1120,115 +1095,6 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
   }
   init();
 })();
-/* ---- MOBILE GEOMETRY + RESTORE LAYOUT (non-destructive) ---- */
-function applyMobileLayout() {
-  if (window.innerWidth >= 769) return; // desktop untouched
-
-  document.body.classList.add("mobile-mode");
-
-  /* ===== SECTION WRAPS ===== */
-  const sections = document.querySelectorAll(
-    ".s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap, .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap"
-  );
-  sections.forEach(sec => {
-    sec.style.minHeight = "180vh";          // shorter for natural scroll
-    sec.style.background = "#eaeeec";
-    sec.style.overflow = "visible";
-    sec.style.position = "relative";
-  });
-
-  /* ===== HERO + GALLERIES + BLEEDS ===== */
-  const hero = document.querySelector(".hero-fixed");
-  if (hero) {
-    hero.style.position = "relative";
-    hero.style.filter = "none";
-    hero.style.marginBottom = "60px";
-    hero.style.zIndex = "1";
-  }
-
-  const fullBleeds = document.querySelectorAll(
-    ".frame.s3-frame, .frame.s8-frame, .frame.s12-frame, .frame.s15-frame"
-  );
-  fullBleeds.forEach(fb => {
-    fb.style.position = "relative";
-    fb.style.left = "0";
-    fb.style.right = "0";
-    fb.style.top = "0";
-    fb.style.bottom = "0";
-    fb.style.margin = "0 auto 60px";
-    fb.style.width = "100%";
-  });
-
-  /* ===== RE-CENTER RAILS ===== */
-  const rails = document.querySelectorAll(
-    ".s1-rail, .s2-rail, .s4-rail, .s5-rail, .s9-rail, .s11-rail, .s13-rail, .s14-rail, .s15-rail"
-  );
-  rails.forEach(rail => {
-    rail.style.position = "relative";
-    rail.style.width = "100%";
-    rail.style.left = "0";
-    rail.style.right = "0";
-    rail.style.margin = "0 auto";
-    rail.style.maxWidth = "640px";
-    rail.style.boxSizing = "border-box";
-  });
-
-  /* ===== RELAX TEXT STYLES ===== */
-  const texts = document.querySelectorAll(
-    ".s1-text, .s2-text, .s4-text, .s5-text, .s9-text, .s11-text, .s13-text, .s14-text, .s15-text"
-  );
-  texts.forEach(txt => {
-    txt.style.transform = "none";
-    txt.style.fontSize = "18px";
-    txt.style.lineHeight = "26px";
-    txt.style.color = "#111";
-    txt.style.textAlign = "left";
-    txt.style.maxWidth = "640px";
-    txt.style.margin = "0 auto";
-    txt.style.padding = "0 20px 80px";
-  });
-
-  /* ===== UNPIN SECTION IMAGES ===== */
-  const frames = document.querySelectorAll(
-    ".s1-frame, .s2-frame, .s4-frame, .s5-frame, .s9-frame, .s11-frame, .s13-frame, .s14-frame"
-  );
-  frames.forEach(frame => {
-    frame.style.position = "relative";
-    frame.style.inset = "0";
-    frame.style.margin = "0 auto 40px auto";
-    frame.style.display = "block";
-    frame.style.opacity = "1";
-    frame.style.transform = "none";
-    frame.style.width = "100%";
-    frame.style.maxWidth = "900px";
-    frame.style.zIndex = "1";
-  });
-
-  /* ===== OVERLAYS (CENTERED, OPAQUE) ===== */
-  const overlays = document.querySelectorAll(
-    ".s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay, .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay, .s15-overlay"
-  );
-  overlays.forEach(o => {
-    o.style.position = "relative";
-    o.style.transform = "none";
-    o.style.padding = "0 20px 80px";
-    o.style.maxWidth = "640px";
-    o.style.margin = "0 auto";
-    o.style.background = "#eaeeec";
-    o.style.textAlign = "left";
-  });
-
-  /* ===== HERO VARIABLES RESET ===== */
-  const root = document.documentElement;
-  ["--heroBlur", "--heroAlpha", "--s1Y", "--s2Y", "--s4Y", "--s5Y", "--s9Y", "--s11Y", "--s13Y", "--s14Y"].forEach(v =>
-    root.style.removeProperty(v)
-  );
-
-  console.log("✅ Mobile layout restored without disrupting desktop choreography");
-}
-applyMobileLayout();
-
-
 </script>
 </body>
 </html>
