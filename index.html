@@ -325,7 +325,7 @@
 	color:#00A86B;
   }
  
-/* ===== MOBILE RESPONSIVE (max-width:768px) - S15 FIXES ONLY (BASELINE) ===== */
+/* ===== MOBILE RESPONSIVE (max-width:768px) - PHASE 1: VISUALS ONLY (IMAGES) ===== */
 @media (max-width:768px){
 
   body {
@@ -347,17 +347,19 @@
     line-height:26px;
   }
 
-  /* ==== SECTION WRAPS (STANDARD 200VH) ==== */
+  /* ==== SECTION WRAPS (100VH FOR TRANSITION SCROLL WINDOW) ==== */
   .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
   .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
     position:relative;
-    min-height:200vh; 
+    /* FIX 1: Set scroll window to 100vh for cross-fade transition */
+    min-height:100vh; 
     background:#eaeeec;
   }
 
-  /* ==== SECTION IMAGES (STANDARD FIXED) ==== */
+  /* ==== SECTION IMAGES (FIXED FOR PINNING) ==== */
   .s1-frame, .s2-frame, .s4-frame, .s5-frame,
   .s9-frame, .s11-frame, .s13-frame, .s14-frame {
+    /* FIX 2: Standard fixed position to allow image-over-image cross-fades */
     position:fixed;
     top:20px; bottom:20px; left:20px; right:20px;
     display:flex;
@@ -374,44 +376,14 @@
     display:block;
   }
 
-  /* ==== SINGLE COLUMN TEXT OVERLAY (STANDARD 200VH, NO TIMING SPACER) ==== */
+  /* ==== TEXT OVERLAYS (HIDDEN FOR PHASE 1) ==== */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
   .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
-    position:relative !important;
-    opacity:1 !important;
-    pointer-events:auto !important;
-    transform:none !important;
-    /* Reverted to 200vh and removed padding-top spacer */
-    min-height:200vh; 
-    padding:0 20px 80px;             /* Using 20px margin assumption */
-    max-width:640px;
-    margin:0 auto;
-    background:transparent; /* Assuming original was transparent */
-    z-index:2;
+    /* CRITICAL FIX 3: HIDE ALL TEXT CONTENT to isolate image transitions */
+    display: none !important;
   }
 
-  .s1-rail, .s2-rail, .s4-rail, .s5-rail,
-  .s9-rail, .s11-rail, .s13-rail, .s14-rail {
-    position:relative !important;
-    width:100% !important;
-    margin:0;
-    left:auto !important;
-    right:auto !important;
-  }
-
-  .s1-text, .s2-text, .s4-text, .s5-text,
-  .s9-text, .s11-text, .s13-text, .s14-text {
-    transform:none !important;
-    color:#111;
-    text-align:left;                 
-    font-size:18px;
-    line-height:26px;
-    margin:20px 0 80px 0;
-  }
-  .s1-text p, .s2-text p, .s4-text p, .s5-text p,
-  .s9-text p, .s11-text p, .s13-text p, .s14-text p {
-    margin-bottom:16px;
-  }
+  /* --- Galleries, Full Bleeds, and S15 fixes remain for continuity --- */
 
   /* ==== GALLERIES ==== */
   .galA-left-frame, .galB-center-frame, .galC-left-frame {
@@ -423,9 +395,8 @@
     left:0; right:0; top:0; bottom:0;
   }
 
-  /* ==== SECTION 15 FIXES (INCLUDED) ==== */
+  /* ==== SECTION 15 FIXES (MAINTAINED) ==== */
   .s15-rail {
-    /* FIX: Ensures S15 rail is a normal block for mobile scrolling */
     position: relative !important;
     top: auto !important;
     bottom: auto !important;
@@ -440,7 +411,6 @@
   .s15-text {
     color:#fff;
     text-align:center;
-    /* FIX: Corrected padding for mobile margins (20px) */
     padding:0 20px 80px; 
     max-width:640px;
     margin:0 auto !important;
@@ -448,6 +418,7 @@
     z-index:3;
   }
 }
+
 
 </style>
  
@@ -1088,3 +1059,4 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
 </script>
 </body>
 </html>
+
