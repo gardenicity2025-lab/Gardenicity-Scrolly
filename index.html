@@ -233,15 +233,30 @@
     opacity: var(--s14ImgOpacity);
   }
 
-  /* S15 full-bleed */
-  .s15-frame{ top:0; right:0; bottom:0; left:0; opacity:var(--s15ImgOpacity); }
-  .frame.s15-frame>img{
-    width:100%; height:100%;
-    object-fit:cover !important; object-position:center;
-    transform: scale(var(--s15Scale));
-    transform-origin: center center;
-    will-change: transform;
+  /* ==== SECTION 15 FIX (MAINTAINED) ==== */
+  .s15-rail {
+    position: relative !important;
+    top: auto !important;
+    bottom: auto !important;
+    right: auto !important;
+    width: 100% !important;
+    min-height: 100vh;
+    display: block !important; 
+    align-items: unset !important;
+    justify-content: unset !important;
   }
+  
+  .s15-text {
+    color:#fff;
+    text-align:center;
+    padding:0 20px 80px; 
+    max-width:640px;
+    margin:0 auto !important;
+    position:relative;
+    z-index:3;
+  }
+
+
 
   /* ===== SECTION DRIVERS ===== */
   .s1-wrap, .s2-wrap, .galA-left-wrap, .s3-wrap, .s4-wrap, .s5-wrap,
@@ -325,7 +340,7 @@
     color:#00A86B;
   }
 
-/* ===== MOBILE RESPONSIVE (max-width:768px) - FINAL FIXED IMAGE WITH 100VH SPACER ===== */
+/* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
 @media (max-width:768px){
 
   body {
@@ -347,12 +362,11 @@
     line-height:26px;
   }
 
-  /* ==== SECTION WRAPS (200VH TOTAL SCROLL SPACE) ==== */
+  /* ==== SECTION WRAPS ==== */
   .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
   .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
     position:relative;
-    /* Wrapper provides the full 200vh scroll space */
-    min-height:200vh; 
+    min-height:200vh;   /* image (100vh) + text scroll (100vh) */
     background:#eaeeec;
   }
 
@@ -375,23 +389,17 @@
     display:block;
   }
 
-  /* ==== SINGLE COLUMN TEXT OVERLAY (LEFT-ALIGNED) - ADDING 100VH SPACER (CRUCIAL FIX) ==== */
+  /* ==== SINGLE COLUMN TEXT OVERLAY (LEFT-ALIGNED) ==== */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
   .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
     position:relative !important;
     opacity:1 !important;
     pointer-events:auto !important;
     transform:none !important;
-    /* FIX: Add 100vh spacer at the top to delay text appearance */
-    padding-top: 100vh;
-    /* Ensure the overlay is tall enough to contain the spacer and scroll content */
-    min-height: 200vh;
-    padding-bottom: 80px;    
-    padding-left: 20px;
-    padding-right: 20px;   /* ← 20 px viewport margins */
+    padding:0 20px 80px;             /* ← 20 px viewport margins */
     max-width:640px;
     margin:0 auto;
-    background:#eaeeec;
+    background:transparent;
     z-index:2;
   }
 
@@ -428,25 +436,13 @@
     left:0; right:0; top:0; bottom:0;
   }
 
-  /* ==== SECTION 15 FIX (MAINTAINED) ==== */
-  .s15-rail {
-    position: relative !important;
-    top: auto !important;
-    bottom: auto !important;
-    right: auto !important;
-    width: 100% !important;
-    min-height: 100vh;
-    display: block !important; 
-    align-items: unset !important;
-    justify-content: unset !important;
-  }
-  
+  /* ==== SECTION 15 ==== */
   .s15-text {
     color:#fff;
     text-align:center;
-    padding:0 20px 80px; 
+    padding:0 24px 80px;
     max-width:640px;
-    margin:0 auto !important;
+    margin:0 auto;
     position:relative;
     z-index:3;
   }
@@ -455,6 +451,7 @@
 </style>
 
 </head>
+
 <body>
 
 <!-- HERO -->
