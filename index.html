@@ -1095,6 +1095,65 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
   }
   init();
 })();
+/* ---- MOBILE GEOMETRY ADAPTATION (non-destructive) ---- */
+function applyMobileLayout() {
+  if (window.innerWidth >= 769) return;  // desktop untouched
+
+  document.body.classList.add("mobile-mode");
+
+  // Simplify section layout for mobile readability
+  const sections = document.querySelectorAll(
+    ".s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap, .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap"
+  );
+  sections.forEach(sec => {
+    sec.style.height = "180vh"; // shorten long drivers
+    sec.style.background = "#eaeeec";
+  });
+
+  // Recenter text into one column
+  const rails = document.querySelectorAll(
+    ".s1-rail, .s2-rail, .s4-rail, .s5-rail, .s9-rail, .s11-rail, .s13-rail, .s14-rail"
+  );
+  rails.forEach(rail => {
+    rail.style.position = "relative";
+    rail.style.width = "100%";
+    rail.style.left = "0";
+    rail.style.right = "0";
+    rail.style.margin = "0 auto";
+    rail.style.maxWidth = "640px";
+  });
+
+  // Relax text transforms (prevent long sweeps out of viewport)
+  const texts = document.querySelectorAll(
+    ".s1-text, .s2-text, .s4-text, .s5-text, .s9-text, .s11-text, .s13-text, .s14-text"
+  );
+  texts.forEach(txt => {
+    txt.style.transform = "none";
+    txt.style.fontSize = "18px";
+    txt.style.lineHeight = "26px";
+    txt.style.color = "#111";
+  });
+
+  // Allow images to scroll in naturally instead of pinned stacking
+  const frames = document.querySelectorAll(
+    ".s1-frame, .s2-frame, .s4-frame, .s5-frame, .s9-frame, .s11-frame, .s13-frame, .s14-frame"
+  );
+  frames.forEach(frame => {
+    frame.style.position = "relative";
+    frame.style.top = "0";
+    frame.style.bottom = "0";
+    frame.style.left = "0";
+    frame.style.right = "0";
+    frame.style.margin = "0 auto 40px auto";
+    frame.style.zIndex = "1";
+  });
+
+  // Ensure hero scroll transition still triggers
+  document.documentElement.style.setProperty("--heroBlur", "0");
+  document.documentElement.style.setProperty("--heroAlpha", "1");
+}
+applyMobileLayout();
+
 </script>
 </body>
 </html>
