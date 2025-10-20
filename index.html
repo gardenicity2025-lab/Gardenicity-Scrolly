@@ -325,7 +325,7 @@
     color:#00A86B;
   }
 
-/* ===== MOBILE RESPONSIVE (max-width:768px) - FINAL SEQUENTIAL FIX ===== */
+/* ===== MOBILE RESPONSIVE (max-width:768px) - FINAL FIXED IMAGE WITH 100VH SPACER ===== */
 @media (max-width:768px){
 
   body {
@@ -347,24 +347,20 @@
     line-height:26px;
   }
 
-  /* ==== SECTION WRAPS (IMAGE VIEW BLOCK - 100VH) ==== */
+  /* ==== SECTION WRAPS (200VH TOTAL SCROLL SPACE) ==== */
   .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
   .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
     position:relative;
-    /* Wrapper height is 100vh. This is where the image is pinned. */
-    min-height:100vh; 
+    /* Wrapper provides the full 200vh scroll space */
+    min-height:200vh; 
     background:#eaeeec;
   }
 
-  /* ==== SECTION IMAGES (PINNED VIEWPORT - Using position: fixed) ==== */
+  /* ==== SECTION IMAGES (PINNED VIEWPORT) ==== */
   .s1-frame, .s2-frame, .s4-frame, .s5-frame,
   .s9-frame, .s11-frame, .s13-frame, .s14-frame {
-    /* FIX 2A: Using position: fixed for reliable pinning */
-    position: fixed; 
-    top:20px; 
-    bottom:20px; 
-    left:20px; 
-    right:20px;
+    position:fixed;
+    top:20px; bottom:20px; left:20px; right:20px;
     display:flex;
     align-items:center;
     justify-content:center;
@@ -374,22 +370,25 @@
   .s1-frame img, .s2-frame img, .s4-frame img, .s5-frame img,
   .s9-frame img, .s11-frame img, .s13-frame img, .s14-frame img {
     width:100%;
-    height:auto; 
+    height:auto;
     object-fit:contain;
     display:block;
   }
 
-  /* ==== SINGLE COLUMN TEXT OVERLAY (INDEPENDENT SCROLLING TEXT BLOCK - 100VH) ==== */
+  /* ==== SINGLE COLUMN TEXT OVERLAY (LEFT-ALIGNED) - ADDING 100VH SPACER (CRUCIAL FIX) ==== */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
   .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
-    /* Reset positioning/transforms to be a normal block element */
-    position:relative;
-    opacity:1;
-    pointer-events:auto;
-    transform:none;
-    /* Set min-height to 100vh for a full-screen scroll of text */
-    min-height:100vh; 
-    padding:0 20px 80px;             /* ← 20 px viewport margins */
+    position:relative !important;
+    opacity:1 !important;
+    pointer-events:auto !important;
+    transform:none !important;
+    /* FIX: Add 100vh spacer at the top to delay text appearance */
+    padding-top: 100vh;
+    /* Ensure the overlay is tall enough to contain the spacer and scroll content */
+    min-height: 200vh;
+    padding-bottom: 80px;    
+    padding-left: 20px;
+    padding-right: 20px;   /* ← 20 px viewport margins */
     max-width:640px;
     margin:0 auto;
     background:#eaeeec;
