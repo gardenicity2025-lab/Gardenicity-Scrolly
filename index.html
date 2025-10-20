@@ -325,35 +325,22 @@
 	color:#00A86B;
   }
  
-/* ===== MOBILE RESPONSIVE (max-width:768px) - FIXED IMAGE WINDOW + STACKED TEXT ===== */
+/* ===== MOBILE RESPONSIVE (max-width:768px) - FINAL FIXED IMAGE + HTML SPACER FIX ===== */
 @media (max-width:768px){
 
-  body {
-    margin:0;
-    padding:0;
-    background:#eaeeec;
-  }
+  /* --- General / Hero styles unchanged --- */
+  body { margin:0; padding:0; background:#eaeeec; }
+  .hero-media { top:20px; bottom:20px; left:20px; right:20px; }
+  .hero-title { font-size:72px; line-height:1.05; }
+  .hero-links { font-size:20px; line-height:26px; }
 
-  /* ==== HERO ==== */
-  .hero-media {
-    top:20px; bottom:20px; left:20px; right:20px;
-  }
-  .hero-title {
-    font-size:72px;
-    line-height:1.05;
-  }
-  .hero-links {
-    font-size:20px;
-    line-height:26px;
-  }
-
-  /* ==== SECTION WRAPS (100VH IMAGE PINNING WINDOW) ==== */
+  /* ==== SECTION WRAPS (CONTAINER FOR ALL SCROLLING CONTENT) ==== */
   .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
   .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
     position:relative;
-    /* FIX 1: Dedicated 100vh scroll window for image cross-fade/pinning */
-    min-height:100vh; 
-    background:#eaeeec; /* Background color of the scroll window */
+    /* Wrapper height is now the height of the Spacer + height of the Text */
+    min-height: calc(100vh + 400px); /* Arbitrary large height for text content */
+    background:#eaeeec; 
     z-index: 1; 
   }
 
@@ -371,82 +358,59 @@
   }
   .s1-frame img, .s2-frame img, .s4-frame img, .s5-frame img,
   .s9-frame img, .s11-frame img, .s13-frame img, .s14-frame img {
-    width:100%;
-    height:auto;
-    object-fit:contain;
-    display:block;
+    width:100%; height:auto; object-fit:contain; display:block;
   }
 
-  /* ==== TEXT OVERLAYS (STACKED BLOCK - CRITICAL CHANGE) ==== */
+  /* ==== NEW: INVISIBLE SPACER (CRITICAL FOR SEQUENCING) ==== */
+  .s1-spacer, .s2-spacer, .s4-spacer, .s5-spacer,
+  .s9-spacer, .s11-spacer, .s13-spacer, .s14-spacer {
+    /* FIX: This element consumes the 100vh of scroll space for the image fade */
+    display: block;
+    height: 100vh;
+    width: 100%;
+    background: transparent; /* Must be invisible */
+    pointer-events: none;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ==== TEXT OVERLAYS (SCROLLING NORMALLY, APPEARS AFTER SPACER) ==== */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
   .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
     position:relative !important; 
     opacity:1 !important;
     display:block !important; 
-    /* FIX 3: COLLAPSED HEIGHT. It follows the 100vh image window immediately. */
-    min-height:0; 
+    min-height:0; /* Only as tall as its content */
     padding:40px 20px 80px;             
     max-width:640px;
     margin:0 auto;
     background:#eaeeec; 
-    z-index:3; /* Text appears on top of everything */
+    z-index:3; /* Text scrolls over the fixed image */
     pointer-events:auto !important;
   }
 
-  .s1-rail, .s2-rail, .s4-rail, .s5-rail,
-  .s9-rail, .s11-rail, .s13-rail, .s14-rail {
-    position:relative !important;
-    width:100% !important;
-    margin:0;
-    left:auto !important;
-    right:auto !important;
+  /* --- Text rail/text block styles unchanged --- */
+  .s1-rail, .s2-rail, .s4-rail, .s5-rail, .s9-rail, .s11-rail, .s13-rail, .s14-rail {
+    position:relative !important; width:100% !important; margin:0; left:auto !important; right:auto !important;
   }
-
-  .s1-text, .s2-text, .s4-text, .s5-text,
-  .s9-text, .s11-text, .s13-text, .s14-text {
-    transform:none !important;
-    color:#111;
-    text-align:left;                 
-    font-size:18px;
-    line-height:26px;
-    margin:20px 0 80px 0;
+  .s1-text, .s2-text, .s4-text, .s5-text, .s9-text, .s11-text, .s13-text, .s14-text {
+    transform:none !important; color:#111; text-align:left; font-size:18px; line-height:26px; margin:20px 0 80px 0;
   }
-  .s1-text p, .s2-text p, .s4-text p, .s5-text p,
-  .s9-text p, .s11-text p, .s13-text p, .s14-text p {
+  .s1-text p, .s2-text p, .s4-text p, .s5-text p, .s9-text p, .s11-text p, .s13-text p, .s14-text p {
     margin-bottom:16px;
   }
 
-  /* ==== GALLERIES & FULL BLEEDS (KEEPING AS IS) ==== */
-  .galA-left-frame, .galB-center-frame, .galC-left-frame {
-    left:20px; right:20px;
-  }
-  .frame.s3-frame, .frame.s8-frame, .frame.s12-frame, .frame.s15-frame {
-    left:0; right:0; top:0; bottom:0;
-  }
-
-  /* ==== SECTION 15 FIXES (MAINTAINED) ==== */
+  /* --- Galleries / Full Bleeds / S15 Fixes unchanged --- */
+  .galA-left-frame, .galB-center-frame, .galC-left-frame { left:20px; right:20px; }
+  .frame.s3-frame, .frame.s8-frame, .frame.s12-frame, .frame.s15-frame { left:0; right:0; top:0; bottom:0; }
   .s15-rail {
-    position: relative !important;
-    top: auto !important;
-    bottom: auto !important;
-    right: auto !important;
-    width: 100% !important;
-    min-height: 100vh;
-    display: block !important; 
-    align-items: unset !important;
-    justify-content: unset !important;
+    position: relative !important; top: auto !important; bottom: auto !important; right: auto !important; width: 100% !important; min-height: 100vh; display: block !important; align-items: unset !important; justify-content: unset !important;
   }
-  
   .s15-text {
-    color:#fff;
-    text-align:center;
-    padding:0 20px 80px; 
-    max-width:640px;
-    margin:0 auto !important;
-    position:relative;
-    z-index:3;
+    color:#fff; text-align:center; padding:0 20px 80px; max-width:640px; margin:0 auto !important; position:relative; z-index:3;
   }
 }
+
 
 </style>
  
@@ -1087,3 +1051,4 @@ Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non
 </script>
 </body>
 </html>
+
