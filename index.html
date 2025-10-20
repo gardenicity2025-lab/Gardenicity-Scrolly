@@ -425,13 +425,17 @@
   .s15-text {
     color: #fff;
     text-align: center;
-    padding: 0 20px 80px;   /* ← 20 px left/right instead of 24 px */
-    max-width: 640px;
+    padding: 0 20px 80px;          /* ← 20 px viewport margins, 80 bottom */
+    width: calc(100vw - 40px);     /* ← fills full viewport minus margins */
+    max-width: none;               /* ← remove artificial 640px limit */
     margin: 0 auto;
     position: relative;
     z-index: 3;
+    box-sizing: border-box;        /* ensures padding doesn’t add overflow */
   }
 }
+
+
 
 </style>
 
