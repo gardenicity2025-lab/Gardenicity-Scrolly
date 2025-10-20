@@ -374,19 +374,20 @@
     display:block;
   }
 
-  /* ==== SINGLE COLUMN TEXT OVERLAY (LEFT-ALIGNED) - FIXED MIN-HEIGHT ==== */
+  /* ==== SINGLE COLUMN TEXT OVERLAY (LEFT-ALIGNED) - FIXED MIN-HEIGHT and BACKGROUND ==== */
   .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
   .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
     position:relative !important;
     opacity:1 !important;
     pointer-events:auto !important;
     transform:none !important;
-    /* FIX 1: Ensures content spans 200vh to correctly push fixed image out */
+    /* FIX 1A: Ensures content spans 200vh to correctly push fixed image out */
     min-height:200vh; 
     padding:0 20px 80px;             /* ← 20 px viewport margins */
     max-width:640px;
     margin:0 auto;
-    background:transparent;
+    /* FIX 1B: Set background to match page background for consistency */
+    background:#eaeeec;
     z-index:2;
   }
 
@@ -432,7 +433,7 @@
     right: auto !important;
     width: 100% !important;
     
-    /* Ensure content takes scroll height for display */
+    /* Ensure content takes scroll height for display over the fixed image */
     min-height: 100vh;
     
     /* Reset flex properties */
@@ -453,7 +454,6 @@
     z-index:3;
   }
 }
-
 
 </style>
 
