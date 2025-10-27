@@ -394,10 +394,10 @@ z-index:2;
     background: #eaeeec !important; /* ONLY THESE SECTIONS GET THE BACKGROUND */
 }
 
-/* FIX 2: S15 Overlay Overrides (Full Width, No Background, Correct Spacing) */
+/* FIX 2: S15 Overlay Overrides (Full Viewport Width, No Background, Correct Spacing) */
 .s15-overlay {
     background: transparent !important; /* Explicitly ensure no background */
-    max-width: 100% !important; /* FIX: Forces full viewport width */
+    max-width: 100% !important; /* FIX: Forces full viewport width (removes 640px constraint) */
     padding: 80px 20px 80px; /* Enforces 80px Top, 20px Left/Right, 80px Bottom */
 }
 
@@ -417,7 +417,7 @@ z-index:2;
 .s9-text, .s11-text, .s13-text, .s14-text, .s15-text {
 transform:none !important;
 color:#111;
-text-align:left;
+text-align:left; /* Base is left-aligned */
 font-size:18px;
 line-height:26px;
 margin:80px 0 80px 0; /* Top margin is 80px for all rails */
@@ -430,9 +430,10 @@ margin-bottom:16px;
 /* FIX 3: S15 Text Color and alignment adjustments */
 .s15-text {
     color:#fff !important; /* Set Text to White */
-    text-align:center !important; /* Center Alignment */
+    text-align:center !important; /* FIX: Center Alignment */
     padding:0 !important;
-    margin:80px auto 80px auto !important; /* Margin remains 80px top/bottom, auto centers */
+    margin:80px auto 80px auto !important; /* Margin remains 80px top/bottom, auto centers the content block */
+    width: 100% !important; /* Ensures the text container fills the full overlay width */
 }
 
 /* FIX 4: S15 Links (White Default, Green Flyover, No Underline) */
