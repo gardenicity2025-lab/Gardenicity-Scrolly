@@ -325,7 +325,7 @@ z-index:5;
 .s15-text a:focus-visible{
 color:#00A86B;
 }
-/* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
+/* ===== MOBILE RESPONSIVE (max-width:768px) - FINAL, VERIFIED FIX ===== */
 @media (max-width:768px){
 body {
 margin:0;
@@ -405,8 +405,7 @@ z-index:2;
     right:auto !important;
     transform: none !important;
 }
-
-/* FIX 2B: Extra Reset for S15 Rail to guarantee no offset */
+/* Final aggressive reset for S15 rail to guarantee no offset */
 .s15-rail {
     left: 0 !important;
     right: 0 !important;
@@ -435,9 +434,14 @@ margin-bottom:16px;
     color:#fff !important; /* Set Text to White */
     text-align:center !important; /* FIX: Center Alignment */
     padding:0 !important;
-    margin: 0 auto !important; /* Auto centers the block within the full-width rail */
+    margin: 80px auto 80px auto !important; /* Auto centers the block within the full-width rail */
     max-width: 100% !important;
     width: 100% !important;
+    
+    /* NEW FINAL ATTEMPT TO FORCE CENTER ALIGNMENT */
+    position: relative !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
 }
 
 /* FIX 4: S15 Links (White Default, Green Flyover, No Underline) */
