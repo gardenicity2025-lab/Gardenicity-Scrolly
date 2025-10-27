@@ -326,8 +326,7 @@ z-index:5;
 color:#00A86B;
 }
 
-/* ===== MOBILE RESPONSIVE (max-width:768px) - FINAL, VERIFIED FIX ===== */
-/* ===== MOBILE RESPONSIVE (max-width:768px) - FINAL, VERIFIED FIX ===== */
+/* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
 @media (max-width:768px){
 body {
 margin:0;
@@ -416,7 +415,7 @@ color:#111;
 text-align:left; /* Base is left-aligned */
 font-size:18px;
 line-height:26px;
-margin: 0; /* Base margin removed, spacing handled by padding */
+margin: 80px 0 80px 0; /* Ensures 80px top/bottom spacing for S1-S14 */
 }
 .s1-text p, .s2-text p, .s4-text p, .s5-text p,
 .s9-text p, .s11-text p, .s13-text p, .s14-text p, .s15-text p {
@@ -428,16 +427,22 @@ margin-bottom:16px;
     color:#fff !important; /* Set Text to White */
     text-align:center !important; /* FIX: Center Alignment */
     padding:0 !important;
-    margin: 0 auto !important; 
+    /* This margin combination is the absolute final attempt to force centering */
+    margin: 80px auto 80px auto !important; 
+    width: 100% !important; /* Ensure content container fills the width */
     max-width: 100% !important; 
-    width: 100% !important; /* Ensures the container fills the full overlay width */
 }
 
 /* FIX 3: S15 Links (White Default, Green Flyover, No Underline) */
+/* NOTE: You MUST ensure your HTML links have the href attribute, e.g., <a href="www.megama.net">Link Text</a> */
 .s15-text a {
     color:#fff !important; /* Set Links to White by Default */
     text-decoration: none !important; /* Remove underline decoration */
     transition: color .2s ease; /* Enables the flyover effect */
+    /* This rule explicitly targets links with the desired href to ensure styling */
+    &[href*="megama.net"] {
+        color: #fff !important; 
+    }
 }
 .s15-text a:hover,
 .s15-text a:focus-visible {
