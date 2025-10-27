@@ -326,7 +326,7 @@ z-index:5;
 color:#00A86B;
 }
 
-/* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
+/* ===== MOBILE RESPONSIVE (max-width:768px) - FINAL, VERIFIED FIX ===== */
 @media (max-width:768px){
 body {
 margin:0;
@@ -334,7 +334,7 @@ padding:0;
 background:#eaeeec;
 }
 
-/* ==== HERO ==== */
+/* ==== HERO (No changes) ==== */
 .hero-media {
 top:20px; bottom:20px; left:20px; right:20px;
 }
@@ -347,15 +347,15 @@ font-size:20px;
 line-height:26px;
 }
 
-/* ==== SECTION WRAPS ==== */
+/* ==== SECTION WRAPS (No changes) ==== */
 .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
 .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
 position:relative;
-min-height:200vh; /* image (100vh) + text scroll (100vh) */
+min-height:200vh;
 background:#eaeeec;
 }
 
-/* ==== SECTION IMAGES (PINNED VIEWPORT) ==== */
+/* ==== SECTION IMAGES (No changes) ==== */
 .s1-frame, .s2-frame, .s4-frame, .s5-frame,
 .s9-frame, .s11-frame, .s13-frame, .s14-frame {
 position:fixed;
@@ -374,21 +374,40 @@ object-fit:contain;
 display:block;
 }
 
-/* ==== SINGLE COLUMN TEXT OVERLAY (LEFT-ALIGNED) ==== */
+/* ==== TEXT OVERLAY (Base Structure) ==== */
+/* S15 IS REMOVED FROM THIS LIST TO ALLOW FULL WIDTH */
 .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
-.s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay, .s15-overlay { /* S15 added here for full mobile scroll behavior */
+.s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay { 
 position:relative !important;
 opacity:1 !important;
 pointer-events:auto !important;
 transform:none !important;
-padding:0 20px 80px; /* ← 20 px viewport margins */
-max-width:640px;
+padding:0 20px 80px;
+max-width:640px; 
 margin:0 auto;
 background:transparent;
 z-index:2;
 }
+/* S15 Text Overlay - FULL WIDTH AND CORRECT SPACING */
+.s15-overlay {
+    position:relative !important;
+    opacity:1 !important;
+    pointer-events:auto !important;
+    transform:none !important;
+    max-width: 100% !important; /* FIX: Forces full viewport width */
+    padding: 80px 20px 80px !important; /* Enforces 80px Top/Bottom, 20px Left/Right */
+    margin: 0 auto !important;
+    background: transparent !important; /* FIX: No background */
+    z-index:2;
+}
 
+/* FIX 1: Add Background Color ONLY to Rail Sections (Excluding S15) */
+.s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
+.s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
+    background: #eaeeec !important; 
+}
 
+/* ==== TEXT RAIL (No Background Here) ==== */
 .s1-rail, .s2-rail, .s4-rail, .s5-rail,
 .s9-rail, .s11-rail, .s13-rail, .s14-rail, .s15-rail {
     position:relative !important;
@@ -397,45 +416,61 @@ z-index:2;
     left:auto !important;
     right:auto !important;
     transform: none !important;
-    
-    /* FIX 1: Add the background color directly to the rail for legibility */
-    background: #eaeeec !important; 
 }
 
-
+/* ==== TEXT (Margins & Color) - S15 IS REMOVED FROM THIS LIST */
 .s1-text, .s2-text, .s4-text, .s5-text,
-.s9-text, .s11-text, .s13-text, .s14-text, .s15-text { /* S15 text added */
+.s9-text, .s11-text, .s13-text, .s14-text {
 transform:none !important;
 color:#111;
-text-align:left; /* ← left-align text */
+text-align:left; 
 font-size:18px;
 line-height:26px;
-margin:80px 0 80px 0; /* FIX: Top margin changed from 20px to 80px. Bottom margin remains 80px. */
+margin: 80px 0 80px 0; /* Ensures 80px top/bottom spacing */
 }
-
 
 .s1-text p, .s2-text p, .s4-text p, .s5-text p,
 .s9-text p, .s11-text p, .s13-text p, .s14-text p, .s15-text p {
 margin-bottom:16px;
 }
-/* S15 Text Color and alignment adjustments for mobile */
+
+/* FIX 3: S15 Text Color and alignment adjustments (CRITICAL FIX) */
 .s15-text {
-color:#111 !important; /* change color from white to black on mobile */
-text-align:center !important; /* keep center alignment for S15 content */
-padding:0 !important; /* remove padding to let overlay handle it */
-margin:20px auto 80px auto !important; /* center block */
+    transform: none !important;
+    font-size:18px;
+    line-height:26px;
+    color:#fff !important; /* Set Text to White */
+    text-align:center !important; /* FIX: Center Alignment */
+    padding:0 !important;
+    /* This margin combined with the full-width overlay ensures content is centered */
+    margin: 0 auto !important; 
+    width: 100% !important;
+    max-width: 100% !important; 
 }
 
-/* ==== GALLERIES ==== */
+/* FIX 4: S15 Links (White Default, Green Flyover, No Underline) */
+.s15-text a {
+    color:#fff !important; /* Set Links to White by Default */
+    text-decoration: none !important; /* Remove underline decoration */
+    transition: color .2s ease; /* Enables the flyover effect */
+}
+.s15-text a:hover,
+.s15-text a:focus-visible {
+    color: #00A86B !important; /* Green color on hover/flyover */
+    text-decoration: none !important; 
+}
+
+/* ==== GALLERIES (No changes) ==== */
 .galA-left-frame, .galB-center-frame, .galC-left-frame {
 left:20px; right:20px;
 }
 
-/* ==== FULL BLEEDS ==== */
+/* ==== FULL BLEEDS (No changes) ==== */
 .frame.s3-frame, .frame.s8-frame, .frame.s12-frame, .frame.s15-frame {
 left:0; right:0; top:0; bottom:0;
 }
 }
+
 </style>
 </head>
 <body>
@@ -1043,3 +1078,4 @@ init();
 </script>
 </body>
 </html>
+
