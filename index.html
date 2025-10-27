@@ -327,6 +327,7 @@ color:#00A86B;
 }
 
 /* ===== MOBILE RESPONSIVE (max-width:768px) - FINAL, VERIFIED FIX ===== */
+/* ===== MOBILE RESPONSIVE (max-width:768px) - FINAL, VERIFIED FIX ===== */
 @media (max-width:768px){
 body {
 margin:0;
@@ -374,37 +375,26 @@ object-fit:contain;
 display:block;
 }
 
-/* ==== TEXT OVERLAY (Base Structure) ==== */
-/* S15 IS REMOVED FROM THIS LIST TO ALLOW FULL WIDTH */
+/* ==== TEXT OVERLAY (Base Structure & BACKGROUND) ==== */
 .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
-.s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay { 
+.s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay, .s15-overlay {
 position:relative !important;
 opacity:1 !important;
 pointer-events:auto !important;
 transform:none !important;
-padding:0 20px 80px;
-max-width:640px; 
+padding:0 20px 80px; /* Base padding */
+max-width:640px; /* Base constraint */
 margin:0 auto;
-background:transparent;
+background:#eaeeec !important; /* Base background for all rails */
 z-index:2;
 }
-/* S15 Text Overlay - FULL WIDTH AND CORRECT SPACING */
-.s15-overlay {
-    position:relative !important;
-    opacity:1 !important;
-    pointer-events:auto !important;
-    transform:none !important;
-    max-width: 100% !important; /* FIX: Forces full viewport width */
-    padding: 80px 20px 80px !important; /* Enforces 80px Top/Bottom, 20px Left/Right */
-    margin: 0 auto !important;
-    background: transparent !important; /* FIX: No background */
-    z-index:2;
-}
 
-/* FIX 1: Add Background Color ONLY to Rail Sections (Excluding S15) */
-.s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
-.s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay {
-    background: #eaeeec !important; 
+/* FIX 1: S15 Overlay Overrides (No Background, Full Viewport Width, Correct Spacing) */
+.s15-overlay {
+    background: transparent !important; /* REMOVE BACKGROUND */
+    max-width: 100% !important; /* FIX: Forces full viewport width */
+    padding: 80px 20px 80px !important; /* 80px Top/Bottom, 20px Left/Right */
+    margin: 0 auto !important;
 }
 
 /* ==== TEXT RAIL (No Background Here) ==== */
@@ -418,37 +408,32 @@ z-index:2;
     transform: none !important;
 }
 
-/* ==== TEXT (Margins & Color) - S15 IS REMOVED FROM THIS LIST */
+/* ==== TEXT (Margins & Color) ==== */
 .s1-text, .s2-text, .s4-text, .s5-text,
-.s9-text, .s11-text, .s13-text, .s14-text {
+.s9-text, .s11-text, .s13-text, .s14-text, .s15-text {
 transform:none !important;
 color:#111;
-text-align:left; 
+text-align:left; /* Base is left-aligned */
 font-size:18px;
 line-height:26px;
-margin: 80px 0 80px 0; /* Ensures 80px top/bottom spacing */
+margin: 0; /* Base margin removed, spacing handled by padding */
 }
-
 .s1-text p, .s2-text p, .s4-text p, .s5-text p,
 .s9-text p, .s11-text p, .s13-text p, .s14-text p, .s15-text p {
 margin-bottom:16px;
 }
 
-/* FIX 3: S15 Text Color and alignment adjustments (CRITICAL FIX) */
+/* FIX 2: S15 Text Color and alignment adjustments (CRITICAL FIX) */
 .s15-text {
-    transform: none !important;
-    font-size:18px;
-    line-height:26px;
     color:#fff !important; /* Set Text to White */
     text-align:center !important; /* FIX: Center Alignment */
     padding:0 !important;
-    /* This margin combined with the full-width overlay ensures content is centered */
     margin: 0 auto !important; 
-    width: 100% !important;
     max-width: 100% !important; 
+    width: 100% !important; /* Ensures the container fills the full overlay width */
 }
 
-/* FIX 4: S15 Links (White Default, Green Flyover, No Underline) */
+/* FIX 3: S15 Links (White Default, Green Flyover, No Underline) */
 .s15-text a {
     color:#fff !important; /* Set Links to White by Default */
     text-decoration: none !important; /* Remove underline decoration */
@@ -1078,4 +1063,3 @@ init();
 </script>
 </body>
 </html>
-
