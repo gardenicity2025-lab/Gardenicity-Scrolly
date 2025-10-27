@@ -396,10 +396,11 @@ z-index:2;
 
 /* FIX 2: S15 Overlay Overrides (Full Viewport Width, No Background, Correct Spacing) */
 .s15-overlay {
-    background: transparent !important;
-    max-width: 100% !important; /* Forces full viewport width */
-    padding: 80px 20px 80px; /* Enforces 80px Top, 20px Left/Right, 80px Bottom */
-    margin: 0 auto; /* Ensures centering of the overlay itself */
+    background: transparent !important; /* Explicitly ensure no background */
+    max-width: 100% !important; /* Forces full viewport width (removes 640px constraint) */
+    /* FIX: Set all spacing on the overlay, which is the full-width parent */
+    padding: 80px 20px 80px !important; 
+    margin: 0 auto !important; /* Ensures centering of the overlay itself */
 }
 
 /* ==== TEXT RAIL (No Background Here) ==== */
@@ -421,21 +422,21 @@ color:#111;
 text-align:left; /* Base is left-aligned */
 font-size:18px;
 line-height:26px;
-margin:80px 0 80px 0; /* Top margin is 80px for all rails */
+margin:80px 0 80px 0; /* Original 80px spacing for S1-S14, since S15 is handled by padding */
 }
 .s1-text p, .s2-text p, .s4-text p, .s5-text p,
 .s9-text p, .s11-text p, .s13-text p, .s14-text p, .s15-text p {
 margin-bottom:16px;
 }
 
-/* FIX 3: S15 Text Color and alignment adjustments */
+/* FIX 3: S15 Text Color and alignment adjustments (Critical Fix) */
 .s15-text {
     color:#fff !important; /* Set Text to White */
     text-align:center !important; /* Center Alignment */
     padding:0 !important;
-    /* FIX: Set both top/bottom margin to 80px, and use auto for full width centering */
-    margin:80px auto 80px auto !important; 
-    width: auto !important; /* Allow the content to determine width for centering */
+    /* FIX: Remove all margin to let the S15-overlay padding (80px) handle spacing */
+    margin:0 auto !important; 
+    width: 100% !important; /* Ensures the container fills the full overlay width */
     max-width: 100% !important; 
 }
 
@@ -1070,3 +1071,5 @@ init();
 </script>
 </body>
 </html>
+
+
