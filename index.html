@@ -389,14 +389,18 @@ z-index:2;
 }
 
 .s1-rail, .s2-rail, .s4-rail, .s5-rail,
-.s9-rail, .s11-rail, .s13-rail, .s14-rail, .s15-rail { /* S15 rail added */
-position:relative !important;
-width:100% !important;
-margin:0;
-left:auto !important;
-right:auto !important;
-transform: none !important; /* Reset transform on s15-rail */
+.s9-rail, .s11-rail, .s13-rail, .s14-rail, .s15-rail {
+    position:relative !important;
+    width:100% !important;
+    margin:0;
+    left:auto !important;
+    right:auto !important;
+    transform: none !important;
+    
+    /* FIX 1: Add the background color directly to the rail for legibility */
+    background: #eaeeec !important; 
 }
+
 
 .s1-text, .s2-text, .s4-text, .s5-text,
 .s9-text, .s11-text, .s13-text, .s14-text, .s15-text { /* S15 text added */
@@ -1037,4 +1041,5 @@ init();
 </script>
 </body>
 </html>
+
 
