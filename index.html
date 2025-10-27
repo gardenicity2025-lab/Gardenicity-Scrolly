@@ -432,19 +432,21 @@ margin-bottom:16px;
     color:#fff !important; /* Set Text to White */
     text-align:center !important; /* FIX: Center Alignment */
     padding:0 !important;
-    margin:80px auto 80px auto !important; /* Margin remains 80px top/bottom, auto centers the content block */
-    width: 100% !important; /* Ensures the text container fills the full overlay width */
+    /* This margin combination is the key to centering */
+    margin:80px auto 80px auto !important;
+    width: 100% !important; /* FIX: Ensures the container fills the full overlay width */
+    max-width: 100% !important; /* NEW FIX: Remove any remaining width constraints */
 }
 
 /* FIX 4: S15 Links (White Default, Green Flyover, No Underline) */
 .s15-text a {
     color:#fff !important; /* Set Links to White by Default */
-    text-decoration: none !important; /* FIX: Remove underline decoration */
-    transition: color .2s ease;
+    text-decoration: none !important; /* Remove underline decoration */
+    transition: color .2s ease; /* Enables the flyover effect */
 }
 .s15-text a:hover,
 .s15-text a:focus-visible {
-    color: #00A86B !important; /* FIX: Green color on hover/flyover */
+    color: #00A86B !important; /* Green color on hover/flyover */
     text-decoration: none !important; /* Ensure no underline on hover */
 }
 
@@ -458,6 +460,7 @@ left:20px; right:20px;
 left:0; right:0; top:0; bottom:0;
 }
 }
+
 
 </style>
 
@@ -1067,3 +1070,5 @@ init();
 </script>
 </body>
 </html>
+
+
