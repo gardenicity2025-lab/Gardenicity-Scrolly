@@ -325,7 +325,7 @@ z-index:5;
 .s15-text a:focus-visible{
 color:#00A86B;
 }
-/* ===== MOBILE RESPONSIVE (max-width:768px) - FINAL, VERIFIED FIX ===== */
+/* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
 @media (max-width:768px){
 body {
 margin:0;
@@ -383,11 +383,11 @@ transform:none !important;
 padding:0 20px 80px; /* Base padding */
 max-width:640px; /* Base constraint for S1-S14 */
 margin:0 auto;
-background:#eaeeec !important; /* Base background for all rails */
+background:#eaeeec !important; /* Base background for S1-S14 */
 z-index:2;
 }
 
-/* FIX 1: Overrides for S15 (Removes BG, sets Full Width) */
+/* FIX 1: Overrides for S15 Overlay (Removes BG, sets Full Width) */
 .s15-overlay {
     background: transparent !important; /* REMOVE BACKGROUND */
     max-width: 100% !important; /* Forces full viewport width */
@@ -395,25 +395,25 @@ z-index:2;
     margin: 0 auto !important;
 }
 
-/* FIX 2: S15 Rail Structural Reset (DECOUPLES FROM DESKTOP CENTER) */
-.s15-rail {
-    position:relative !important;
-    width:100% !important;
-    margin:0 !important; /* Crucial margin reset */
-    left:0 !important; /* FIX: Resetting the desktop left:50% */
-    right:auto !important;
-    transform: none !important; /* FIX: Resetting the desktop transform:translateX(-50%) */
-}
-/* Ensure other rails keep their standard behavior */
+/* FIX 2: S15 Rail Structural Reset (CRITICAL DECOUPLING FROM DESKTOP) */
 .s1-rail, .s2-rail, .s4-rail, .s5-rail,
-.s9-rail, .s11-rail, .s13-rail, .s14-rail {
+.s9-rail, .s11-rail, .s13-rail, .s14-rail, .s15-rail {
     position:relative !important;
     width:100% !important;
-    margin:0;
+    margin:0 !important;
     left:auto !important;
     right:auto !important;
     transform: none !important;
 }
+
+/* FIX 2B: Extra Reset for S15 Rail to guarantee no offset */
+.s15-rail {
+    left: 0 !important;
+    right: 0 !important;
+    transform: none !important;
+    margin: 0 auto !important;
+}
+
 
 /* ==== TEXT (Margins & Color) ==== */
 .s1-text, .s2-text, .s4-text, .s5-text,
@@ -435,9 +435,9 @@ margin-bottom:16px;
     color:#fff !important; /* Set Text to White */
     text-align:center !important; /* FIX: Center Alignment */
     padding:0 !important;
-    margin: 80px auto 80px auto !important; /* Auto centers the block within the full-width rail */
-    width: 100% !important;
+    margin: 0 auto !important; /* Auto centers the block within the full-width rail */
     max-width: 100% !important;
+    width: 100% !important;
 }
 
 /* FIX 4: S15 Links (White Default, Green Flyover, No Underline) */
@@ -1070,4 +1070,3 @@ init();
 </script>
 </body>
 </html>
-
