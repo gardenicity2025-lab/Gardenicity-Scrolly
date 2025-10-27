@@ -325,7 +325,7 @@ z-index:5;
 .s15-text a:focus-visible{
 color:#00A86B;
 }
-/* ===== MOBILE RESPONSIVE (max-width:768px) - FINAL, VERIFIED FIX ===== */
+/* ===== MOBILE RESPONSIVE (max-width:768px) - FINAL, VERIFIED FIX (Includes Link Fix) ===== */
 @media (max-width:768px){
 body {
 margin:0;
@@ -393,6 +393,8 @@ z-index:2;
     max-width: 100% !important; /* Forces full viewport width */
     padding: 80px 20px 80px !important; /* 80px Top/Bottom, 20px Left/Right */
     margin: 0 auto !important;
+    position: relative !important; /* Ensures it establishes a stacking context for Z-index */
+    z-index: 5 !important; /* Ensures the whole block is above the fixed image */
 }
 
 /* FIX 2: S15 Rail Structural Reset (CRITICAL DECOUPLING FROM DESKTOP) */
@@ -429,7 +431,7 @@ margin:80px 0 80px 0; /* Ensures 80px top/bottom spacing for all rails */
 margin-bottom:16px;
 }
 
-/* FIX 3 & 4: S15 Text and Link Styling (Final Merged Fix) */
+/* FIX 3 & 4: S15 Text and Link Styling (Final Merged Fix - Alignment and Links) */
 .s15-text {
     color:#fff !important; /* Set Text to White */
     text-align:center !important; /* Center Alignment */
@@ -456,17 +458,17 @@ margin-bottom:16px;
     z-index: 100 !important; /* Guarantees the link is on top of any blocking element */
 }
 
-/* Ensure link is white in all non-hover states */
+/* Ensure link is white in all resting states */
 .s15-text a:link,
-.s15-text a:visited,
-.s15-text a:active {
+.s15-text a:visited {
     color: #fff !important; 
 }
 
 /* Hover/Focus/Tap State (The Flyover) */
 .s15-text a:hover,
 .s15-text a:focus,
-.s15-text a:focus-visible {
+.s15-text a:focus-visible,
+.s15-text a:active { /* Targets the active/tapped state for mobile */
     color: #00A86B !important; /* Force green color on hover/tap */
     opacity: 1 !important; 
 }
@@ -480,9 +482,11 @@ left:20px; right:20px;
 /* ==== FULL BLEEDS (No changes) ==== */
 .frame.s3-frame, .frame.s8-frame, .frame.s12-frame, .frame.s15-frame {
 left:0; right:0; top:0; bottom:0;
+/* Assuming z-index here is 1 or less */
+}
+}
 
-}
-}
+
 
 </style>
 </head>
