@@ -326,7 +326,7 @@ z-index:5;
 color:#00A86B;
 }
 
-/* ===== MOBILE RESPONSIVE (max-width:768px) - FINAL, VERIFIED FIX ===== */
+/* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
 @media (max-width:768px){
 body {
 margin:0;
@@ -381,10 +381,10 @@ position:relative !important;
 opacity:1 !important;
 pointer-events:auto !important;
 transform:none !important;
-padding:0 20px 80px; /* Base padding */
-max-width:640px;
+padding:0 20px 80px;
+max-width:640px; /* Constrains all except S15 */
 margin:0 auto;
-background:transparent; /* Ensures S15 can be transparent by default */
+background:transparent;
 z-index:2;
 }
 
@@ -394,9 +394,10 @@ z-index:2;
     background: #eaeeec !important; /* ONLY THESE SECTIONS GET THE BACKGROUND */
 }
 
-/* FIX 2: S15 Overlay Padding Override (No Background, Keep 80px Spacing) */
+/* FIX 2: S15 Overlay Overrides (Full Width, No Background, Correct Spacing) */
 .s15-overlay {
     background: transparent !important; /* Explicitly ensure no background */
+    max-width: 100% !important; /* FIX: Forces full viewport width */
     padding: 80px 20px 80px; /* Enforces 80px Top, 20px Left/Right, 80px Bottom */
 }
 
@@ -416,17 +417,17 @@ z-index:2;
 .s9-text, .s11-text, .s13-text, .s14-text, .s15-text {
 transform:none !important;
 color:#111;
-text-align:left; /* Base is left-aligned */
+text-align:left;
 font-size:18px;
 line-height:26px;
-margin:80px 0 80px 0; /* FIX 3: Top margin is 80px for all rails */
+margin:80px 0 80px 0; /* Top margin is 80px for all rails */
 }
 .s1-text p, .s2-text p, .s4-text p, .s5-text p,
 .s9-text p, .s11-text p, .s13-text p, .s14-text p, .s15-text p {
 margin-bottom:16px;
 }
 
-/* FIX 4: S15 Text Color and alignment adjustments */
+/* FIX 3: S15 Text Color and alignment adjustments */
 .s15-text {
     color:#fff !important; /* Set Text to White */
     text-align:center !important; /* Center Alignment */
@@ -434,15 +435,16 @@ margin-bottom:16px;
     margin:80px auto 80px auto !important; /* Margin remains 80px top/bottom, auto centers */
 }
 
-/* FIX 5: S15 Links (White Default, Green Hover) */
+/* FIX 4: S15 Links (White Default, Green Flyover, No Underline) */
 .s15-text a {
     color:#fff !important; /* Set Links to White by Default */
-    text-decoration: underline; /* Ensures links are visible */
+    text-decoration: none !important; /* FIX: Remove underline decoration */
     transition: color .2s ease;
 }
 .s15-text a:hover,
 .s15-text a:focus-visible {
-    color: #00A86B !important; /* Green color on hover/flyover */
+    color: #00A86B !important; /* FIX: Green color on hover/flyover */
+    text-decoration: none !important; /* Ensure no underline on hover */
 }
 
 /* ==== GALLERIES (No changes) ==== */
@@ -455,8 +457,6 @@ left:20px; right:20px;
 left:0; right:0; top:0; bottom:0;
 }
 }
-
-
 
 </style>
 
