@@ -396,9 +396,10 @@ z-index:2;
 
 /* FIX 2: S15 Overlay Overrides (Full Viewport Width, No Background, Correct Spacing) */
 .s15-overlay {
-    background: transparent !important; /* Explicitly ensure no background */
-    max-width: 100% !important; /* FIX: Forces full viewport width (removes 640px constraint) */
+    background: transparent !important;
+    max-width: 100% !important; /* Forces full viewport width */
     padding: 80px 20px 80px; /* Enforces 80px Top, 20px Left/Right, 80px Bottom */
+    margin: 0 auto; /* Ensures centering of the overlay itself */
 }
 
 /* ==== TEXT RAIL (No Background Here) ==== */
@@ -430,12 +431,12 @@ margin-bottom:16px;
 /* FIX 3: S15 Text Color and alignment adjustments */
 .s15-text {
     color:#fff !important; /* Set Text to White */
-    text-align:center !important; /* FIX: Center Alignment */
+    text-align:center !important; /* Center Alignment */
     padding:0 !important;
-    /* This margin combination is the key to centering */
-    margin:80px auto 80px auto !important;
-    width: 100% !important; /* FIX: Ensures the container fills the full overlay width */
-    max-width: 100% !important; /* NEW FIX: Remove any remaining width constraints */
+    /* FIX: Set both top/bottom margin to 80px, and use auto for full width centering */
+    margin:80px auto 80px auto !important; 
+    width: auto !important; /* Allow the content to determine width for centering */
+    max-width: 100% !important; 
 }
 
 /* FIX 4: S15 Links (White Default, Green Flyover, No Underline) */
@@ -460,7 +461,6 @@ left:20px; right:20px;
 left:0; right:0; top:0; bottom:0;
 }
 }
-
 
 </style>
 
@@ -1070,5 +1070,3 @@ init();
 </script>
 </body>
 </html>
-
-
