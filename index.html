@@ -464,6 +464,23 @@ left:20px; right:20px;
 /* ==== FULL BLEEDS (No changes) ==== */
 .frame.s3-frame, .frame.s8-frame, .frame.s12-frame, .frame.s15-frame {
 left:0; right:0; top:0; bottom:0;
+
+/* FINAL LINK FIX: Aggressive override to ensure links are active and change color */
+.s15-text a:link,
+.s15-text a:visited,
+.s15-text a:active {
+    color: #fff !important; /* Ensure the link is white in all non-hover states */
+    text-decoration: none !important;
+}
+
+.s15-text a:hover,
+.s15-text a:focus,
+.s15-text a:focus-visible {
+    color: #00A86B !important; /* Force green color on hover/tap */
+    text-decoration: none !important;
+    opacity: 1 !important; /* Ensures opacity isn't hiding the hover effect */
+    z-index: 10 !important; /* Ensures the link is "above" any blocker elements */
+    background: transparent !important; /* Neutralize any inherited background color */
 }
 }
 
