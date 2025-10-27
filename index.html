@@ -1,4 +1,3 @@
-26-10-25 Mobile Responsive - Mobile Text BG+80px margin. 
 <!doctype html>
 <html lang="en" data-baseline="stable-2025-10-01__rails-460px__galC-6-only">
 <head>
@@ -389,6 +388,11 @@ background:transparent;
 z-index:2;
 }
 
+/* FIX 1: S15 Specific Overlays (Remove Background, Force 80px Spacing for container) */
+.s15-overlay {
+    background: transparent !important; /* Removes background */
+    padding: 80px 20px 80px; /* Force 80px Top, 20px Left/Right, 80px Bottom */
+}
 
 .s1-rail, .s2-rail, .s4-rail, .s5-rail,
 .s9-rail, .s11-rail, .s13-rail, .s14-rail, .s15-rail {
@@ -399,7 +403,7 @@ z-index:2;
     right:auto !important;
     transform: none !important;
     
-    /* FIX 1: Add the background color directly to the rail for legibility */
+    /* FIX 2: Add the background color directly to the rail for legibility */
     background: #eaeeec !important; 
 }
 
@@ -411,7 +415,7 @@ color:#111;
 text-align:left; /* ← left-align text */
 font-size:18px;
 line-height:26px;
-margin:80px 0 80px 0; /* FIX: Top margin changed from 20px to 80px. Bottom margin remains 80px. */
+margin:80px 0 80px 0; /* FIX 3: Top margin changed to 80px for symmetry. */
 }
 
 
@@ -419,12 +423,22 @@ margin:80px 0 80px 0; /* FIX: Top margin changed from 20px to 80px. Bottom margi
 .s9-text p, .s11-text p, .s13-text p, .s14-text p, .s15-text p {
 margin-bottom:16px;
 }
-/* S15 Text Color and alignment adjustments for mobile */
+
+/* S15 Text Color and alignment adjustments for mobile (FINAL FIX) */
 .s15-text {
-color:#111 !important; /* change color from white to black on mobile */
-text-align:center !important; /* keep center alignment for S15 content */
-padding:0 !important; /* remove padding to let overlay handle it */
-margin:20px auto 80px auto !important; /* center block */
+    color:#fff !important; /* FIX 4A: Set Text to White */
+    text-align:center !important; /* FIX 4B: Set to Center Alignment */
+    padding:0 !important;
+    margin:80px auto 80px auto !important; /* Keep 80px top/bottom margin */
+}
+.s15-text a {
+    color:#fff !important; /* FIX 4C: Set Links to White by Default */
+    text-decoration: underline;
+    transition: color .2s ease;
+}
+.s15-text a:hover,
+.s15-text a:focus-visible {
+    color: #00A86B !important; /* FIX 4D: Green color on hover/flyover */
 }
 
 /* ==== GALLERIES ==== */
@@ -437,7 +451,10 @@ left:20px; right:20px;
 left:0; right:0; top:0; bottom:0;
 }
 }
+
+
 </style>
+
 </head>
 <body>
 <div class="hero-fixed" id="hero">
@@ -1044,5 +1061,3 @@ init();
 </script>
 </body>
 </html>
-
-
