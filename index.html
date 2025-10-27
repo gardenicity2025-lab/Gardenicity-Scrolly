@@ -1,4 +1,3 @@
-26-10-25 Scrolly, Responsive, Nobg 
 <!doctype html>
 <html lang="en" data-baseline="stable-2025-10-01__rails-460px__galC-6-only">
 <head>
@@ -7,6 +6,7 @@
 <title>Gardenicity — Hero → S1 → S2 → gallery-A-Left → S3 → S4 → S5 → gallery-B-Center → S8 → S9 → gallery-C-Right → S11 → S12 → S13 → S14 → S15</title>
 
 <style>
+
 /* ===== Base ===== */
 html,body{
 margin:0; padding:0; height:100%;
@@ -79,7 +79,7 @@ display:flex; align-items:flex-end; justify-content:flex-start; overflow:hidden;
 .hero-links a:hover,.hero-links a:focus-visible{ color:#00A86B; }
 .driver{ height:200vh; }
 
-/* ===== PINNED FRAMES ===== */
+/* ===== PINNED FRAMES (Desktop) ===== */
 figure.frame{ margin:0; }
 .frame{
 position:fixed; z-index:1; pointer-events:none;
@@ -246,14 +246,14 @@ transform-origin: center center;
 will-change: transform;
 }
 
-/* ===== SECTION DRIVERS ===== */
+/* ===== SECTION DRIVERS (Desktop) ===== */
 .s1-wrap, .s2-wrap, .galA-left-wrap, .s3-wrap, .s4-wrap, .s5-wrap,
 .galB-center-wrap, .s8-wrap, .s9-wrap, .galC-left-wrap, .s11-wrap, .s12-wrap,
 .s13-wrap, .s14-wrap, .s15-wrap{
 position:relative; height:280vh; background:#eaeeec;
 }
 
-/* ===== TEXT OVERLAYS (rails) ===== */
+/* ===== TEXT OVERLAYS (Desktop) ===== */
 .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay, .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay, .s15-overlay{
 position:fixed; inset:0; z-index:2; pointer-events:none;
 }
@@ -327,7 +327,9 @@ z-index:5;
 color:#00A86B;
 }
 
+/* ================================================= */
 /* ===== MOBILE RESPONSIVE (max-width:768px) ===== */
+/* ================================================= */
 @media (max-width:768px){
 body {
 margin:0;
@@ -348,11 +350,12 @@ font-size:20px;
 line-height:26px;
 }
 
-/* ==== SECTION WRAPS ==== */
+/* CRITICAL FIX: SECTION WRAPS MUST USE AUTO HEIGHT ON MOBILE */
 .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
 .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
-position:relative;
-min-height:200vh; /* image (100vh) + text scroll (100vh) */
+position:relative !important;
+min-height:100vh;
+height: auto !important; /* Forces the section to be based on content, not fixed height */
 background:#eaeeec;
 }
 
@@ -366,6 +369,7 @@ align-items:center;
 justify-content:center;
 z-index:1;
 pointer-events:none;
+height: 100vh;
 }
 .s1-frame img, .s2-frame img, .s4-frame img, .s5-frame img,
 .s9-frame img, .s11-frame img, .s13-frame img, .s14-frame img {
@@ -375,35 +379,37 @@ object-fit:contain;
 display:block;
 }
 
-/* ==== SINGLE COLUMN TEXT OVERLAY (LEFT-ALIGNED) ==== */
+/* ==== SINGLE COLUMN TEXT OVERLAY (Restores fixed/relative structure) ==== */
 .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
-.s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay, .s15-overlay { /* S15 added here for full mobile scroll behavior */
-position:relative !important;
-opacity:1 !important;
+.s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay, .s15-overlay {
+position:relative !important; /* Change from fixed (desktop) to relative (mobile) */
+opacity:1 !important; /* Ensures it's always visible */
 pointer-events:auto !important;
 transform:none !important;
-padding:0 20px 80px; /* ← 20 px viewport margins */
+padding:0 20px 80px;
 max-width:640px;
 margin:0 auto;
-background:transparent;
+/* FIX 1: Add light gray background for legibility over pinned images */
+background:#eaeeec !important;
 z-index:2;
 }
 
 .s1-rail, .s2-rail, .s4-rail, .s5-rail,
-.s9-rail, .s11-rail, .s13-rail, .s14-rail, .s15-rail { /* S15 rail added */
+.s9-rail, .s11-rail, .s13-rail, .s14-rail, .s15-rail {
 position:relative !important;
 width:100% !important;
 margin:0;
 left:auto !important;
 right:auto !important;
-transform: none !important; /* Reset transform on s15-rail */
+transform: none !important;
 }
 
 .s1-text, .s2-text, .s4-text, .s5-text,
-.s9-text, .s11-text, .s13-text, .s14-text, .s15-text { /* S15 text added */
+.s9-text, .s11-text, .s13-text, .s14-text, .s15-text {
 transform:none !important;
-color:#111;
-text-align:left; /* ← left-align text */
+/* Default mobile text color for most sections */
+color:#111; 
+text-align:left;
 font-size:18px;
 line-height:26px;
 margin:20px 0 80px 0;
@@ -413,13 +419,21 @@ margin:20px 0 80px 0;
 .s9-text p, .s11-text p, .s13-text p, .s14-text p, .s15-text p {
 margin-bottom:16px;
 }
-/* S15 Text Color and alignment adjustments for mobile */
+
+/* FIX 2: S15 Mobile-Specific Styling (Override previous text styles) */
 .s15-text {
-color:#111 !important; /* change color from white to black on mobile */
-text-align:center !important; /* keep center alignment for S15 content */
-padding:0 !important; /* remove padding to let overlay handle it */
-margin:20px auto 80px auto !important; /* center block */
+/* Override the previous mobile color to white */
+color:#fff !important; 
+/* Force center alignment */
+text-align:center !important; 
+padding:0 !important;
+margin:20px auto 80px auto !important;
 }
+/* FIX 2: S15 Mobile Link Color */
+.s15-text a {
+color:#00A86B !important; /* Link Green */
+}
+
 
 /* ==== GALLERIES ==== */
 .galA-left-frame, .galB-center-frame, .galC-left-frame {
@@ -432,6 +446,7 @@ left:0; right:0; top:0; bottom:0;
 }
 }
 </style>
+
 </head>
 <body>
 <div class="hero-fixed" id="hero">
