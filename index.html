@@ -429,32 +429,48 @@ margin:80px 0 80px 0; /* Ensures 80px top/bottom spacing for all rails */
 margin-bottom:16px;
 }
 
-/* FIX 3: S15 Text Color and alignment adjustments (Aesthetic Fix) */
+/* FIX 3 & 4: S15 Text and Link Styling (Final Merged Fix) */
 .s15-text {
     color:#fff !important; /* Set Text to White */
-    text-align:center !important; /* FIX: Center Alignment */
+    text-align:center !important; /* Center Alignment */
     padding:0 !important;
     margin: 80px auto 80px auto !important; /* Auto centers the block within the full-width rail */
     max-width: 100% !important;
     width: 100% !important;
     
-    /* NEW FINAL ATTEMPT TO FORCE CENTER ALIGNMENT */
+    /* Alignment Override */
     position: relative !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
 }
 
-/* FIX 4: S15 Links (White Default, Green Flyover, No Underline) */
+/* Base Link Style (Critical for Mobile Tap/Hover) */
 .s15-text a {
-    color:#fff !important; /* Set Links to White by Default */
+    color:#fff !important; /* White Links by Default */
     text-decoration: none !important; /* Remove underline decoration */
     transition: color .2s ease; /* Enables the flyover effect */
+    
+    /* CRITICAL FIXES for Mobile Interactivity */
+    display: inline-block !important; /* Ensures element can receive Z-index */
+    position: relative !important; /* Establishes a stacking context */
+    z-index: 100 !important; /* Guarantees the link is on top of any blocking element */
 }
+
+/* Ensure link is white in all non-hover states */
+.s15-text a:link,
+.s15-text a:visited,
+.s15-text a:active {
+    color: #fff !important; 
+}
+
+/* Hover/Focus/Tap State (The Flyover) */
 .s15-text a:hover,
+.s15-text a:focus,
 .s15-text a:focus-visible {
-    color: #00A86B !important; /* Green color on hover/flyover */
-    text-decoration: none !important;
+    color: #00A86B !important; /* Force green color on hover/tap */
+    opacity: 1 !important; 
 }
+
 
 /* ==== GALLERIES (No changes) ==== */
 .galA-left-frame, .galB-center-frame, .galC-left-frame {
@@ -465,22 +481,6 @@ left:20px; right:20px;
 .frame.s3-frame, .frame.s8-frame, .frame.s12-frame, .frame.s15-frame {
 left:0; right:0; top:0; bottom:0;
 
-/* FINAL LINK FIX: Aggressive override to ensure links are active and change color */
-.s15-text a:link,
-.s15-text a:visited,
-.s15-text a:active {
-    color: #fff !important; /* Ensure the link is white in all non-hover states */
-    text-decoration: none !important;
-}
-
-.s15-text a:hover,
-.s15-text a:focus,
-.s15-text a:focus-visible {
-    color: #00A86B !important; /* Force green color on hover/tap */
-    text-decoration: none !important;
-    opacity: 1 !important; /* Ensures opacity isn't hiding the hover effect */
-    z-index: 10 !important; /* Ensures the link is "above" any blocker elements */
-    background: transparent !important; /* Neutralize any inherited background color */
 }
 }
 
