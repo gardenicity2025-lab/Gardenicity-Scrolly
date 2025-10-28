@@ -1,4 +1,3 @@
-28-10-25 Responsive Desktop-Mobile
 <!doctype html>
 <html lang="en" data-baseline="stable-2025-10-01__rails-460px__galC-6-only">
 <head>
@@ -326,8 +325,13 @@ z-index:5;
 .s15-text a:focus-visible{
 color:#00A86B;
 }
-/* ===== MOBILE RESPONSIVE (max-width:768px) - FINAL, VERIFIED FIX (Includes Link Fix) ===== */
-@media (max-width:768px){
+/*
+=====================================================
+    MOBILE RESPONSIVE (max-width:600px) - DEDICATED MOBILE VIEW
+    (Your original working mobile code)
+=====================================================
+*/
+@media (max-width:600px){
 body {
 margin:0;
 padding:0;
@@ -382,23 +386,23 @@ opacity:1 !important;
 pointer-events:auto !important;
 transform:none !important;
 padding:0 20px 80px; /* Base padding */
-max-width:640px; /* Base constraint for S1-S14 */
+max-width:100% !important; /* Full width */
 margin:0 auto;
 background:#eaeeec !important; /* Base background for S1-S14 */
 z-index:2;
 }
 
-/* FIX 1: Overrides for S15 Overlay (Removes BG, sets Full Width) */
+/* S15 Overlay Overrides */
 .s15-overlay {
-    background: transparent !important; /* REMOVE BACKGROUND */
-    max-width: 100% !important; /* Forces full viewport width */
+    background: transparent !important; 
+    max-width: 100% !important; 
     padding: 80px 20px 80px !important; /* 80px Top/Bottom, 20px Left/Right */
     margin: 0 auto !important;
-    position: relative !important; /* Ensures it establishes a stacking context for Z-index */
-    z-index: 5 !important; /* Ensures the whole block is above the fixed image */
+    position: relative !important; 
+    z-index: 5 !important; 
 }
 
-/* FIX 2: S15 Rail Structural Reset (CRITICAL DECOUPLING FROM DESKTOP) */
+/* S15 Rail Structural Reset */
 .s1-rail, .s2-rail, .s4-rail, .s5-rail,
 .s9-rail, .s11-rail, .s13-rail, .s14-rail, .s15-rail {
     position:relative !important;
@@ -408,7 +412,6 @@ z-index:2;
     right:auto !important;
     transform: none !important;
 }
-/* Final aggressive reset for S15 rail to guarantee no offset */
 .s15-rail {
     left: 0 !important;
     right: 0 !important;
@@ -425,69 +428,79 @@ color:#111;
 text-align:left;
 font-size:18px;
 line-height:26px;
-margin:80px 0 80px 0; /* Ensures 80px top/bottom spacing for all rails */
-}
-.s1-text p, .s2-text p, .s4-text p, .s5-text p,
-.s9-text p, .s11-text p, .s13-text p, .s14-text p, .s15-text p {
-margin-bottom:16px;
+margin:80px 0 80px 0; 
 }
 
-/* FIX 3 & 4: S15 Text and Link Styling (Final Merged Fix - Alignment and Links) */
+/* S15 Text and Link Styling */
 .s15-text {
-    color:#fff !important; /* Set Text to White */
-    text-align:center !important; /* Center Alignment */
+    color:#fff !important; 
+    text-align:center !important; 
     padding:0 !important;
-    margin: 80px auto 80px auto !important; /* Auto centers the block within the full-width rail */
+    margin: 80px auto 80px auto !important; 
     max-width: 100% !important;
     width: 100% !important;
     
-    /* Alignment Override */
     position: relative !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
 }
 
-/* Base Link Style (Critical for Mobile Tap/Hover) */
+/* S15 Link Fixes */
 .s15-text a {
-    color:#fff !important; /* White Links by Default */
-    text-decoration: none !important; /* Remove underline decoration */
-    transition: color .2s ease; /* Enables the flyover effect */
-    
-    /* CRITICAL FIXES for Mobile Interactivity */
-    display: inline-block !important; /* Ensures element can receive Z-index */
-    position: relative !important; /* Establishes a stacking context */
-    z-index: 100 !important; /* Guarantees the link is on top of any blocking element */
+    color:#fff !important; 
+    text-decoration: none !important;
+    transition: color .2s ease; 
+    display: inline-block !important; 
+    position: relative !important; 
+    z-index: 100 !important; 
 }
-
-/* Ensure link is white in all resting states */
-.s15-text a:link,
-.s15-text a:visited {
-    color: #fff !important; 
-}
-
-/* Hover/Focus/Tap State (The Flyover) */
-.s15-text a:hover,
-.s15-text a:focus,
-.s15-text a:focus-visible,
-.s15-text a:active { /* Targets the active/tapped state for mobile */
-    color: #00A86B !important; /* Force green color on hover/tap */
+.s15-text a:hover, .s15-text a:focus, .s15-text a:focus-visible, .s15-text a:active { 
+    color: #00A86B !important; 
     opacity: 1 !important; 
 }
 
 
-/* ==== GALLERIES (No changes) ==== */
+/* ==== GALLERIES & FULL BLEEDS (No changes) ==== */
 .galA-left-frame, .galB-center-frame, .galC-left-frame {
 left:20px; right:20px;
 }
-
-/* ==== FULL BLEEDS (No changes) ==== */
 .frame.s3-frame, .frame.s8-frame, .frame.s12-frame, .frame.s15-frame {
 left:0; right:0; top:0; bottom:0;
-/* Assuming z-index here is 1 or less */
 }
 }
+/*
+=====================================================
+    TABLET RESPONSIVE (min-width:601px and max-width:1023px) - NEW CENTERED COLUMN
+    This block overrides the default desktop styles to create the 600px centered column.
+=====================================================
+*/
+@media (min-width:601px) and (max-width:1023px) {
+/* 1. Base content wrappers are restricted and centered */
+.s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
+.s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay, .s15-overlay {
+    max-width: 600px !important; 
+    padding:0 !important; 
+    margin:0 auto !important; /* Auto-centering */
+    background:#eaeeec !important; /* Base background for safety */
+}
+.s15-overlay {
+    background: transparent !important; /* S15 stays transparent */
+    padding: 80px 0 80px 0 !important; /* Remove horizontal padding, keep vertical */
+}
 
-
+/* 2. Inner text container creates the 20px margins */
+.s1-text, .s2-text, .s4-text, .s5-text,
+.s9-text, .s11-text, .s13-text, .s14-text, .s15-text {
+    padding: 0 20px !important; /* 20px left/right margins inside 600px column */
+    margin: 80px auto 80px auto !important; 
+    
+    /* Resets for Tablet View */
+    left: auto !important;
+    transform: none !important;
+    max-width: 100% !important;
+    width: auto !important;
+}
+}
 
 </style>
 </head>
