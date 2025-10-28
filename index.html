@@ -324,80 +324,65 @@ z-index:5;
 .s15-text a:hover,
 .s15-text a:focus-visible{
 color:#00A86B;
-}
-/* ===== MOBILE RESPONSIVE (max-width:768px) - FINAL, VERIFIED FIX (Includes Link Fix) ===== */
-@media (max-width:768px){
+/*
+=====================================================
+    TABLET RESPONSIVE (max-width:1023px)
+    Covers screens from 1023px down to 601px. 
+    This implements the single-column, 600px centered layout.
+=====================================================
+*/
+@media (max-width:1023px){
 body {
-margin:0;
-padding:0;
-background:#eaeeec;
+    margin:0;
+    padding:0;
+    background:#eaeeec;
 }
 
-/* ==== HERO (No changes) ==== */
+/* ==== HERO (No changes from previous mobile fixes) ==== */
 .hero-media {
-top:20px; bottom:20px; left:20px; right:20px;
+    top:20px; bottom:20px; left:20px; right:20px;
 }
 .hero-title {
-font-size:72px;
-line-height:1.05;
+    font-size:72px;
+    line-height:1.05;
 }
 .hero-links {
-font-size:20px;
-line-height:26px;
+    font-size:20px;
+    line-height:26px;
 }
 
-/* ==== SECTION WRAPS (No changes) ==== */
+/* ==== SECTION WRAPS & CONTENT WIDTHS ==== */
 .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
 .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
-position:relative;
-min-height:200vh;
-background:#eaeeec;
+    position:relative;
+    min-height:200vh;
+    background:#eaeeec;
 }
 
-/* ==== SECTION IMAGES (No changes) ==== */
-.s1-frame, .s2-frame, .s4-frame, .s5-frame,
-.s9-frame, .s11-frame, .s13-frame, .s14-frame {
-position:fixed;
-top:20px; bottom:20px; left:20px; right:20px;
-display:flex;
-align-items:center;
-justify-content:center;
-z-index:1;
-pointer-events:none;
-}
-.s1-frame img, .s2-frame img, .s4-frame img, .s5-frame img,
-.s9-frame img, .s11-frame img, .s13-frame img, .s14-frame img {
-width:100%;
-height:auto;
-object-fit:contain;
-display:block;
-}
-
-/* ==== TEXT OVERLAY (Base Structure & BACKGROUND) ==== */
+/* Base style for all text overlays in this range (Tablets) */
 .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
 .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay, .s15-overlay {
-position:relative !important;
-opacity:1 !important;
-pointer-events:auto !important;
-transform:none !important;
-padding:0 20px 80px; /* Base padding */
-max-width:640px; /* Base constraint for S1-S14 */
-margin:0 auto;
-background:#eaeeec !important; /* Base background for S1-S14 */
-z-index:2;
+    /* FIX: Force max-width 600px and center it with dynamic margins */
+    max-width: 600px !important; 
+    padding:0; 
+    margin:0 auto; /* Auto-centering */
+    position:relative !important; 
+    z-index:2;
+    background:#eaeeec !important; /* Base background */
 }
 
-/* FIX 1: Overrides for S15 Overlay (Removes BG, sets Full Width) */
+/* S15 Overlay Overrides (Customized for Tablet) */
 .s15-overlay {
-    background: transparent !important; /* REMOVE BACKGROUND */
-    max-width: 100% !important; /* Forces full viewport width */
-    padding: 80px 20px 80px !important; /* 80px Top/Bottom, 20px Left/Right */
+    background: transparent !important; 
+    max-width: 600px !important; /* Must adhere to the 600px column width */
+    padding: 80px 0 80px 0 !important; /* Vertical spacing only */
     margin: 0 auto !important;
-    position: relative !important; /* Ensures it establishes a stacking context for Z-index */
-    z-index: 5 !important; /* Ensures the whole block is above the fixed image */
+    position: relative !important;
+    z-index: 5 !important; 
 }
 
-/* FIX 2: S15 Rail Structural Reset (CRITICAL DECOUPLING FROM DESKTOP) */
+
+/* ==== TEXT RAIL & IMAGES (Structure resets) ==== */
 .s1-rail, .s2-rail, .s4-rail, .s5-rail,
 .s9-rail, .s11-rail, .s13-rail, .s14-rail, .s15-rail {
     position:relative !important;
@@ -407,82 +392,125 @@ z-index:2;
     right:auto !important;
     transform: none !important;
 }
-/* Final aggressive reset for S15 rail to guarantee no offset */
-.s15-rail {
-    left: 0 !important;
-    right: 0 !important;
-    transform: none !important;
-    margin: 0 auto !important;
+
+.s1-frame, .s2-frame, .s4-frame, .s5-frame,
+.s9-frame, .s11-frame, .s13-frame, .s14-frame {
+    position:fixed;
+    top:20px; bottom:20px; left:20px; right:20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:1;
+    pointer-events:none;
 }
 
 
 /* ==== TEXT (Margins & Color) ==== */
+/* Text content should be contained by the 600px max-width of the overlay, but we need inner padding */
 .s1-text, .s2-text, .s4-text, .s5-text,
 .s9-text, .s11-text, .s13-text, .s14-text, .s15-text {
-transform:none !important;
-color:#111;
-text-align:left;
-font-size:18px;
-line-height:26px;
-margin:80px 0 80px 0; /* Ensures 80px top/bottom spacing for all rails */
+    /* FIX: Inner padding to create 20px left/right margin within the 600px column */
+    padding: 0 20px; 
+    margin: 80px 0 80px 0; /* Ensures 80px top/bottom spacing */
+    
+    transform: none !important;
+    color:#111;
+    text-align:left;
+    font-size:18px;
+    line-height:26px;
 }
+
 .s1-text p, .s2-text p, .s4-text p, .s5-text p,
 .s9-text p, .s11-text p, .s13-text p, .s14-text p, .s15-text p {
-margin-bottom:16px;
+    margin-bottom:16px;
 }
 
-/* FIX 3 & 4: S15 Text and Link Styling (Final Merged Fix - Alignment and Links) */
+/* S15 Text Overrides (Tablet View - Center within 600px) */
 .s15-text {
-    color:#fff !important; /* Set Text to White */
-    text-align:center !important; /* Center Alignment */
-    padding:0 !important;
-    margin: 80px auto 80px auto !important; /* Auto centers the block within the full-width rail */
-    max-width: 100% !important;
-    width: 100% !important;
+    color:#fff !important; 
+    text-align:center !important;
+    padding: 0 20px !important; /* Retain 20px inner padding */
+    margin: 80px auto 80px auto !important;
     
-    /* Alignment Override */
+    /* Alignment Override - Keep centered within the 600px column */
     position: relative !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
+    left: 0 !important;
+    transform: none !important;
+    width: auto !important;
 }
 
-/* Base Link Style (Critical for Mobile Tap/Hover) */
+/* S15 Link Fixes (Applied across all mobile sizes for consistency) */
 .s15-text a {
-    color:#fff !important; /* White Links by Default */
-    text-decoration: none !important; /* Remove underline decoration */
-    transition: color .2s ease; /* Enables the flyover effect */
-    
-    /* CRITICAL FIXES for Mobile Interactivity */
-    display: inline-block !important; /* Ensures element can receive Z-index */
-    position: relative !important; /* Establishes a stacking context */
-    z-index: 100 !important; /* Guarantees the link is on top of any blocking element */
+    color:#fff !important; 
+    text-decoration: none !important;
+    transition: color .2s ease; 
+    display: inline-block !important; 
+    position: relative !important; 
+    z-index: 100 !important; 
 }
-
-/* Ensure link is white in all resting states */
-.s15-text a:link,
-.s15-text a:visited {
-    color: #fff !important; 
-}
-
-/* Hover/Focus/Tap State (The Flyover) */
-.s15-text a:hover,
-.s15-text a:focus,
-.s15-text a:focus-visible,
-.s15-text a:active { /* Targets the active/tapped state for mobile */
-    color: #00A86B !important; /* Force green color on hover/tap */
+.s15-text a:hover, .s15-text a:focus, .s15-text a:focus-visible, .s15-text a:active {
+    color: #00A86B !important; 
     opacity: 1 !important; 
 }
 
 
-/* ==== GALLERIES (No changes) ==== */
+/* ==== GALLERIES & FULL BLEEDS (No changes) ==== */
 .galA-left-frame, .galB-center-frame, .galC-left-frame {
 left:20px; right:20px;
 }
-
-/* ==== FULL BLEEDS (No changes) ==== */
 .frame.s3-frame, .frame.s8-frame, .frame.s12-frame, .frame.s15-frame {
 left:0; right:0; top:0; bottom:0;
-/* Assuming z-index here is 1 or less */
+}
+}
+
+
+/*
+=====================================================
+    MOBILE RESPONSIVE (max-width:600px)
+    Covers screens up to 600px. Overrides Tablet layout to use full viewport width.
+=====================================================
+*/
+@media (max-width:600px){
+/* Text overlays now take up 100% of the viewport width */
+.s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
+.s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay, .s15-overlay {
+    max-width: 100% !important; /* Full width */
+    padding: 0; 
+    margin: 0; 
+    background:#eaeeec !important;
+}
+.s15-overlay {
+    background: transparent !important; /* S15 stays transparent */
+    padding: 80px 20px 80px !important; /* Set margins on overlay for full-width S15 */
+}
+
+/* Inner text container uses padding for viewport margins */
+.s1-text, .s2-text, .s4-text, .s5-text,
+.s9-text, .s11-text, .s13-text, .s14-text {
+    padding: 0 20px; /* 20px viewport margins */
+    margin: 80px 0 80px 0; /* Keeps 80px vertical margins */
+}
+.s15-text {
+    /* Full-width S15 text block */
+    padding: 0 0 !important; /* No extra padding inside the text block */
+    margin: 80px auto 80px auto !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    
+    /* Re-introducing the final successful centering fix */
+    left: 50% !important; 
+    transform: translateX(-50%) !important;
+    position: relative !important;
+}
+
+
+/* Images and other elements that need tight margins */
+.hero-media,
+.s1-frame, .s2-frame, .s4-frame, .s5-frame,
+.s9-frame, .s11-frame, .s13-frame, .s14-frame,
+.galA-left-frame, .galB-center-frame, .galC-left-frame {
+    /* Reverts these fixed image containers to use the 20px viewport margin */
+    top:20px; bottom:20px; left:20px; right:20px;
 }
 }
 
