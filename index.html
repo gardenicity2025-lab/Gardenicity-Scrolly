@@ -470,10 +470,25 @@ left:0; right:0; top:0; bottom:0;
 }
 /*
 =====================================================
-    TABLET RESPONSIVE (min-width:601px and max-width:1023px) - FIXED IMAGE CONTAINMENT
+    TABLET RESPONSIVE (min-width:601px and max-width:1023px) - FINAL FIXES + DYNAMIC HERO TEXT
 =====================================================
 */
 @media (min-width:601px) and (max-width:1023px) {
+
+/* Hero Text Scaling (New Addition) */
+.hero-title {
+    /* Clamps font size between 80px (at 601px width) and 100px (at 1023px width) */
+    font-size: clamp(80px, 12vw, 100px) !important;
+    line-height: 1.05 !important;
+}
+.hero-links {
+    /* Clamps font size between 22px (at 601px width) and 28px (at 1023px width) */
+    font-size: clamp(22px, 3.5vw, 28px) !important;
+    line-height: 26px !important;
+}
+
+
+/* Structural & Containment Fixes (From previous successful steps) */
 
 /* 1. Ensure sections are scrollable and have background */
 .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
@@ -487,7 +502,7 @@ left:0; right:0; top:0; bottom:0;
 .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay, .s15-overlay {
     max-width: 600px !important; 
     padding:0 !important; 
-    margin:0 auto !important; /* Auto-centering: This centers the 600px column */
+    margin:0 auto !important; 
     background:#eaeeec !important; 
     position: relative !important; 
     opacity: 1 !important;
@@ -500,46 +515,24 @@ left:0; right:0; top:0; bottom:0;
     z-index: 5 !important;
 }
 
-/* 3. FIX: Section Images - Constrain them to the 600px column */
+/* 3. Section Images - Constrain them to the 600px column */
 .s1-frame, .s2-frame, .s4-frame, .s5-frame,
 .s9-frame, .s11-frame, .s13-frame, .s14-frame {
-    /* CRITICAL CHANGE: Remove fixed position relative to viewport */
     position: absolute !important; 
-    /* The frame is now positioned relative to the centered 600px overlay's parent (or the wrapper) 
-       We must force it into the 600px width */
-    left: auto !important;
-    right: auto !important;
-    
-    /* Center it within the wrapper and set its width */
-    width: 600px !important; 
-    margin: 0 auto !important;
-    
-    top: 0 !important;
-    bottom: 0 !important; 
-    
-    /* Re-center horizontally */
     left: 50% !important;
     transform: translateX(-50%) !important;
-    
-    padding: 20px !important; /* Retain inner 20px padding for content */
+    width: 600px !important; 
+    margin: 0 auto !important;
+    top: 0 !important;
+    bottom: 0 !important; 
+    padding: 20px !important; 
 }
 
 /* 4. Text Rail and Inner Text */
-.s1-rail, .s2-rail, .s4-rail, .s5-rail,
-.s9-rail, .s11-rail, .s13-rail, .s14-rail, .s15-rail {
-    position: relative !important;
-    width: 100% !important;
-    left: auto !important;
-    right: auto !important;
-    transform: none !important;
-    margin: 0 !important;
-}
-
 .s1-text, .s2-text, .s4-text, .s5-text,
 .s9-text, .s11-text, .s13-text, .s14-text, .s15-text {
     padding: 0 20px !important; 
     margin: 80px auto 80px auto !important; 
-    
     left: auto !important;
     transform: none !important;
     max-width: 100% !important;
@@ -547,7 +540,7 @@ left:0; right:0; top:0; bottom:0;
     text-align: left !important;
 }
 
-/* S15 Text (Re-using the successful centering) */
+/* S15 Text (Centering Fix) */
 .s15-text {
     text-align: center !important;
     color: #fff !important;
@@ -555,18 +548,14 @@ left:0; right:0; top:0; bottom:0;
     transform: translateX(-50%) !important;
 }
 
-/* 5. Gallery Frames: Constrain them to the 600px column */
+/* 5. Gallery Frames: Constrain them to the 600px column (for future proofing) */
 .galA-left-frame, .galB-center-frame, .galC-left-frame {
-    /* This should already be relative to the 600px overlay parent, 
-       but setting the width and centering is safer */
     width: 600px !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
-    /* Retain inner padding for content spacing */
     padding: 0 20px !important;
 }
 }
-
 
 </style>
 </head>
