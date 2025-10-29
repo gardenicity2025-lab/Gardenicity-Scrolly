@@ -470,37 +470,74 @@ left:0; right:0; top:0; bottom:0;
 }
 /*
 =====================================================
-    TABLET RESPONSIVE (min-width:601px and max-width:1023px) - NEW CENTERED COLUMN
-    This block overrides the default desktop styles to create the 600px centered column.
+    TABLET RESPONSIVE (min-width:601px and max-width:1023px) - FIXED
 =====================================================
 */
 @media (min-width:601px) and (max-width:1023px) {
-/* 1. Base content wrappers are restricted and centered */
+
+/* 1. Base content wrappers are restricted and centered (Text Column) */
 .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
 .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay, .s15-overlay {
     max-width: 600px !important; 
     padding:0 !important; 
     margin:0 auto !important; /* Auto-centering */
     background:#eaeeec !important; /* Base background for safety */
+    position: relative !important; /* Ensure text scrolls correctly */
 }
 .s15-overlay {
     background: transparent !important; /* S15 stays transparent */
     padding: 80px 0 80px 0 !important; /* Remove horizontal padding, keep vertical */
+    z-index: 5 !important;
 }
 
-/* 2. Inner text container creates the 20px margins */
+/* 2. Fix Section Images: Force fixed images to be full viewport width */
+.s1-frame, .s2-frame, .s4-frame, .s5-frame,
+.s9-frame, .s11-frame, .s13-frame, .s14-frame {
+    /* Override desktop scaling */
+    left: 0 !important;
+    right: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    padding: 20px !important; /* Add padding inside the full-width fixed container */
+}
+.s1-frame img, .s2-frame img, .s4-frame img, .s5-frame img,
+.s9-frame img, .s11-frame img, .s13-frame img, .s14-frame img {
+    /* Ensure image fits within the padding */
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* 3. Inner text container and S15 Rail Fixes */
 .s1-text, .s2-text, .s4-text, .s5-text,
 .s9-text, .s11-text, .s13-text, .s14-text, .s15-text {
     padding: 0 20px !important; /* 20px left/right margins inside 600px column */
     margin: 80px auto 80px auto !important; 
     
-    /* Resets for Tablet View */
+    /* Rail/Text resets for Tablet View */
+    position: relative !important;
     left: auto !important;
     transform: none !important;
     max-width: 100% !important;
     width: auto !important;
 }
+
+/* 4. Gallery Fix: Constrain galleries to the 600px column */
+.galA-left-frame, .galB-center-frame, .galC-left-frame {
+    /* The gallery frames need to be contained by the 600px overlay */
+    left: 20px !important;
+    right: 20px !important;
 }
+
+/* S15 specific text alignment fix (to prevent scroll issues) */
+.s15-text {
+    /* Re-apply the centering that was working on mobile */
+    left: 50% !important; 
+    transform: translateX(-50%) !important;
+}
+
+}
+
 
 </style>
 </head>
