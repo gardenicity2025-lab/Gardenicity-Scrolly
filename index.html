@@ -481,12 +481,17 @@ left:0; right:0; top:0; bottom:0;
     font-size: clamp(80px, 12vw, 100px) !important;
     line-height: 1.05 !important;
 }
-.hero-links {
-    /* Clamps font size between 22px (at 601px width) and 28px (at 1023px width) */
-    font-size: clamp(22px, 3.5vw, 28px) !important;
-    line-height: 26px !important;
+/* Hero Text Scaling (Updated Addition) */
+.hero-title {
+    /* Title remains Dynamic and scales smoothly */
+    font-size: clamp(80px, 12vw, 100px) !important;
+    line-height: 1.05 !important;
 }
-
+.hero-links {
+    /* Links are now Static (Fixed Jump) for predictability */
+    font-size: 24px !important; 
+    line-height: 28px !important; 
+}
 
 /* Structural & Containment Fixes (From previous successful steps) */
 
