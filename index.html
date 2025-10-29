@@ -470,40 +470,61 @@ left:0; right:0; top:0; bottom:0;
 }
 /*
 =====================================================
-    TABLET RESPONSIVE (min-width:601px and max-width:1023px) - FIXED TEXT VISIBILITY
+    TABLET RESPONSIVE (min-width:601px and max-width:1023px) - FIXED IMAGE CONTAINMENT
 =====================================================
 */
 @media (min-width:601px) and (max-width:1023px) {
 
-/* CRITICAL FIX 1: Ensure sections are tall enough to scroll and background is visible */
+/* 1. Ensure sections are scrollable and have background */
 .s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
 .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
-    min-height: 200vh !important; /* Ensure scroll space exists */
+    min-height: 200vh !important; 
     background: #eaeeec !important;
 }
 
-
-/* 2. Base content wrappers are restricted and centered (Text Column) */
+/* 2. Base content wrappers are restricted and centered (Text/Overlay Column) */
 .s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
 .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay, .s15-overlay {
     max-width: 600px !important; 
     padding:0 !important; 
-    margin:0 auto !important; /* Auto-centering */
-    background:#eaeeec !important; /* Ensure background is set for non-S15 */
+    margin:0 auto !important; /* Auto-centering: This centers the 600px column */
+    background:#eaeeec !important; 
     position: relative !important; 
-    
-    /* CRITICAL FIX 2: Ensure the overlays are fully visible and active */
     opacity: 1 !important;
     pointer-events: auto !important;
     transform: none !important;
 }
 .s15-overlay {
-    background: transparent !important; /* S15 stays transparent */
-    padding: 80px 0 80px 0 !important; /* Remove horizontal padding, keep vertical */
+    background: transparent !important; 
+    padding: 80px 0 80px 0 !important;
     z-index: 5 !important;
 }
 
-/* 3. Text Rail Fix: Ensure it's full width within the 600px overlay and positionally neutral */
+/* 3. FIX: Section Images - Constrain them to the 600px column */
+.s1-frame, .s2-frame, .s4-frame, .s5-frame,
+.s9-frame, .s11-frame, .s13-frame, .s14-frame {
+    /* CRITICAL CHANGE: Remove fixed position relative to viewport */
+    position: absolute !important; 
+    /* The frame is now positioned relative to the centered 600px overlay's parent (or the wrapper) 
+       We must force it into the 600px width */
+    left: auto !important;
+    right: auto !important;
+    
+    /* Center it within the wrapper and set its width */
+    width: 600px !important; 
+    margin: 0 auto !important;
+    
+    top: 0 !important;
+    bottom: 0 !important; 
+    
+    /* Re-center horizontally */
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    
+    padding: 20px !important; /* Retain inner 20px padding for content */
+}
+
+/* 4. Text Rail and Inner Text */
 .s1-rail, .s2-rail, .s4-rail, .s5-rail,
 .s9-rail, .s11-rail, .s13-rail, .s14-rail, .s15-rail {
     position: relative !important;
@@ -514,13 +535,11 @@ left:0; right:0; top:0; bottom:0;
     margin: 0 !important;
 }
 
-/* 4. Inner text container creates the 20px margins */
 .s1-text, .s2-text, .s4-text, .s5-text,
 .s9-text, .s11-text, .s13-text, .s14-text, .s15-text {
-    padding: 0 20px !important; /* 20px left/right margins inside 600px column */
+    padding: 0 20px !important; 
     margin: 80px auto 80px auto !important; 
     
-    /* Reset text alignment/positioning from potential desktop defaults */
     left: auto !important;
     transform: none !important;
     max-width: 100% !important;
@@ -528,7 +547,7 @@ left:0; right:0; top:0; bottom:0;
     text-align: left !important;
 }
 
-/* S15 specific text alignment fix (re-using the successful mobile centering) */
+/* S15 Text (Re-using the successful centering) */
 .s15-text {
     text-align: center !important;
     color: #fff !important;
@@ -536,24 +555,17 @@ left:0; right:0; top:0; bottom:0;
     transform: translateX(-50%) !important;
 }
 
-
-/* 5. Image/Gallery Resets (We can refine these later, but ensure basic visibility for now) */
-/* Section Images: Keeping them full width for now, as you noted, to isolate text issue */
-.s1-frame, .s2-frame, .s4-frame, .s5-frame,
-.s9-frame, .s11-frame, .s13-frame, .s14-frame {
-    left: 20px !important;
-    right: 20px !important;
-}
-/* Gallery Fix: Constrain galleries to the 600px column */
+/* 5. Gallery Frames: Constrain them to the 600px column */
 .galA-left-frame, .galB-center-frame, .galC-left-frame {
-    left: 20px !important;
-    right: 20px !important;
-    /* These need to be centered. Adding margin auto to their parent could help, 
-       but for now, we leave them pinned to the inner 20px margin of the 600px column, 
-       which should be correct if the text overlay is the immediate container. */
+    /* This should already be relative to the 600px overlay parent, 
+       but setting the width and centering is safer */
+    width: 600px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    /* Retain inner padding for content spacing */
+    padding: 0 20px !important;
 }
 }
-
 
 
 </style>
