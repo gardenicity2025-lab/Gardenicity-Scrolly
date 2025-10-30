@@ -1,5 +1,3 @@
-30-10-25 Gardenicity: W Color images. 
-
 <!doctype html>
 <html lang="en" data-baseline="stable-2025-10-01__rails-460px__galC-6-only">
 <head>
@@ -1068,12 +1066,11 @@ const s8Base = s8Group; // keep gating consistent
 const s8Primary = (1 - s8Fade) * s8Base;
 const s8Now     = s8Fade * s8Base;
 
-/* apply section-8 internal fade AND global scroll fade-out */
-const s8AlphaOut = 1 - clamp(s9 / FADE_FRAC, 0, 1);   // fades to 0 as next section enters
+// ✅ Safe fade-out matching other bleed sections
+const s8Out = (1 - clamp(s8 / FADE_FRAC, 0, 1));
 
-root.style.setProperty('--s8ImgOpacity', (s8Primary * s8AlphaOut).toFixed(3));
-root.style.setProperty('--s8NowImgOpacity', (s8Now * s8AlphaOut).toFixed(3));
-
+root.style.setProperty('--s8ImgOpacity', (s8Primary * s8Out).toFixed(3));
+root.style.setProperty('--s8NowImgOpacity', (s8Now * s8Out).toFixed(3));
 
 /* S8 → S9 */
 const x89 = clamp(s9/FADE_FRAC, 0, 1);
