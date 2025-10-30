@@ -21,7 +21,8 @@ font-family:"Acumin Pro",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial
 --s2:0; --s2Overlay:0; --s2Y:0px; --s2ImgOpacity:0;
 /* gallery-A-Left */
 --galA:0;
---galAImg0Opacity:0; --galAImg1Opacity:0; --galAImg2Opacity:0; --galAImg3Opacity:0;
+--galAImg0Opacity:0; --galAImg1Opacity:0; --galAImg2Opacity:0; --galAImg3Opacity:0; 
+--galAImg4Opacity:0; /* 5 variables for 5 images */
 --galAReady:0;
 /* S3 (full bleed) */
 --s3:0; --s3ImgOpacity:0; --s3Scale:1;
@@ -34,7 +35,7 @@ font-family:"Acumin Pro",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial
 --galBImg0Opacity:0; --galBImg1Opacity:0; --galBImg2Opacity:0; --galBImg3Opacity:0; --galBImg4Opacity:0;
 --galBReady:0;
 /* S8 (full bleed) */
---s8:0; --s8ImgOpacity:0; --s8Scale:1; --s8Ready:0;
+--s8:0; --s8ImgOpacity:0; --s8Scale:1; --s8Ready:0; 
 /* S9 */
 --s9:0; --s9Overlay:0; --s9Y:0px; --s9ImgOpacity:0;
 /* gallery-C-Right (media left, no text) */
@@ -115,10 +116,13 @@ width:100%; height:100%;
 object-fit:contain; object-position:center;
 will-change:opacity;
 }
-#galA-img0{ opacity: var(--galAImg0Opacity); }
-#galA-img1{ opacity: var(--galAImg1Opacity); }
-#galA-img2{ opacity: var(--galAImg2Opacity); }
-#galA-img3{ opacity: var(--galAImg3Opacity); }
+/* Image opacity variables for 5 images */
+#galleryA-0{ opacity: var(--galAImg0Opacity); }
+#galleryA-1{ opacity: var(--galAImg1Opacity); }
+#galleryA-2{ opacity: var(--galAImg2Opacity); }
+#galleryA-3{ opacity: var(--galAImg3Opacity); } 
+#galleryA-4{ opacity: var(--galAImg4Opacity); } 
+
 
 /* S3 full-bleed */
 .s3-frame{ top:0; right:0; bottom:0; left:0; opacity:var(--s3ImgOpacity); }
@@ -163,7 +167,7 @@ will-change:opacity;
 #galB-img3{ opacity: var(--galBImg3Opacity); }
 #galB-img4{ opacity: var(--galBImg4Opacity); }
 
-/* S8 full-bleed */
+/* S8 full-bleed (Original image) */
 .s8-frame{ top:0; right:0; bottom:0; left:0; opacity:var(--s8ImgOpacity); }
 .frame.s8-frame>img{
 width:100%; height:100%;
@@ -172,6 +176,8 @@ transform: scale(var(--s8Scale));
 transform-origin: center center;
 will-change: transform;
 }
+/* S8-BLD-frame styles removed - will be added in next step */
+
 
 /* S9 image RIGHT (like S1/S4) */
 .s9-frame{
@@ -235,7 +241,7 @@ right: calc(82px + 96px + 460px);
 opacity: var(--s14ImgOpacity);
 }
 
-/* S15 full-bleed */
+/* S15 full-bleed + centered overlay) */
 .s15-frame{ top:0; right:0; bottom:0; left:0; opacity:var(--s15ImgOpacity); }
 .frame.s15-frame>img{
 width:100%; height:100%;
@@ -245,10 +251,16 @@ transform-origin: center center;
 will-change: transform;
 }
 
-/* ===== SECTION DRIVERS ===== */
-.s1-wrap, .s2-wrap, .galA-left-wrap, .s3-wrap, .s4-wrap, .s5-wrap,
-.galB-center-wrap, .s8-wrap, .s9-wrap, .galC-left-wrap, .s11-wrap, .s12-wrap,
+/* ===== SECTION DRIVERS - UPDATED HEIGHTS ===== */
+.s1-wrap, .s2-wrap, .s3-wrap, .s4-wrap, .s5-wrap,
+.galB-center-wrap, .s9-wrap, .galC-left-wrap, .s11-wrap, .s12-wrap,
 .s13-wrap, .s14-wrap, .s15-wrap{
+position:relative; height:280vh; background:#eaeeec;
+}
+.galA-left-wrap{ /* 6 phases (5 images + 1 transition) * 70vh = 420vh */
+position:relative; height:420vh; background:#eaeeec;
+}
+.s8-wrap{ 
 position:relative; height:280vh; background:#eaeeec;
 }
 
@@ -327,8 +339,7 @@ color:#00A86B;
 }
 /*
 =====================================================
-    MOBILE RESPONSIVE (max-width:600px) - DEDICATED MOBILE VIEW
-    (Your original working mobile code)
+MOBILE RESPONSIVE (max-width:600px)
 =====================================================
 */
 @media (max-width:600px){
@@ -351,798 +362,728 @@ font-size:20px;
 line-height:26px;
 }
 
-/* ==== SECTION WRAPS (No changes) ==== */
-.s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
-.s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
+/* ==== SECTION WRAPS (Updated to match desktop calculation) ==== */
+.s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap, .s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
 position:relative;
-min-height:200vh;
-background:#eaeeec;
+min-height:200vh; background:#eaeeec;
+}
+.galA-left-wrap{ /* 6 phases * 60vh = 360vh */
+position:relative;
+min-height:360vh; background:#eaeeec;
+}
+.s8-wrap{ 
+position:relative;
+min-height:200vh; background:#eaeeec;
 }
 
 /* ==== SECTION IMAGES (No changes) ==== */
-.s1-frame, .s2-frame, .s4-frame, .s5-frame,
-.s9-frame, .s11-frame, .s13-frame, .s14-frame {
+.s1-frame, .s2-frame, .s4-frame, .s5-frame, .s9-frame, .s11-frame, .s13-frame, .s14-frame {
 position:fixed;
-top:20px; bottom:20px; left:20px; right:20px;
-display:flex;
-align-items:center;
-justify-content:center;
-z-index:1;
-pointer-events:none;
+top:20px; bottom:20px; left:20px; right:20px; display:flex; align-items:center; justify-content:center; z-index:1; pointer-events:none;
 }
-.s1-frame img, .s2-frame img, .s4-frame img, .s5-frame img,
-.s9-frame img, .s11-frame img, .s13-frame img, .s14-frame img {
+.s1-frame img, .s2-frame img, .s4-frame img, .s5-frame img, .s9-frame img, .s11-frame img, .s13-frame img, .s14-frame img {
 width:100%;
-height:auto;
-object-fit:contain;
-display:block;
+height:auto; object-fit:contain; display:block;
 }
 
 /* ==== TEXT OVERLAY (Base Structure & BACKGROUND) ==== */
-.s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
-.s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay, .s15-overlay {
+.s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay, .s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay, .s15-overlay{
 position:relative !important;
-opacity:1 !important;
-pointer-events:auto !important;
-transform:none !important;
-padding:0 20px 80px; /* Base padding */
-max-width:100% !important; /* Full width */
-margin:0 auto;
-background:#eaeeec !important; /* Base background for S1-S14 */
-z-index:2;
+opacity:1 !important; pointer-events:auto !important; transform:none !important; padding:0 20px 80px; /* Base padding */ max-width:100% !important;
+/* Full width */ margin:0 auto; background:#eaeeec !important; /* Base background for S1-S14 */ z-index:2;
 }
 
 /* S15 Overlay Overrides */
 .s15-overlay {
-    background: transparent !important; 
-    max-width: 100% !important; 
-    padding: 80px 20px 80px !important; /* 80px Top/Bottom, 20px Left/Right */
-    margin: 0 auto !important;
-    position: relative !important; 
-    z-index: 5 !important; 
+background: transparent !important; max-width: 100% !important; padding: 80px 20px 80px !important;
+/* 80px Top/Bottom, 20px Left/Right */ margin: 0 auto !important; position: relative !important; z-index: 5 !important;
 }
 
 /* S15 Rail Structural Reset */
-.s1-rail, .s2-rail, .s4-rail, .s5-rail,
-.s9-rail, .s11-rail, .s13-rail, .s14-rail, .s15-rail {
-    position:relative !important;
-    width:100% !important;
-    margin:0 !important;
-    left:auto !important;
-    right:auto !important;
-    transform: none !important;
-}
-.s15-rail {
-    left: 0 !important;
-    right: 0 !important;
-    transform: none !important;
-    margin: 0 auto !important;
-}
-
+.s1-rail, .s2-rail, .s4-rail, .s5-rail, .s9-rail, .s11-rail, .s13-rail, .s14-rail, .s15-rail {
+position:relative !important;
+width:100% !important; margin:0 !important; left:auto !important; right:auto !important; transform: none !important; } .s15-rail { left: 0 !important; right: 0 !important;
+transform: none !important; margin: 0 auto !important; }
 
 /* ==== TEXT (Margins & Color) ==== */
-.s1-text, .s2-text, .s4-text, .s5-text,
-.s9-text, .s11-text, .s13-text, .s14-text, .s15-text {
+.s1-text, .s2-text, .s4-text, .s5-text, .s9-text, .s11-text, .s13-text, .s14-text, .s15-text {
 transform:none !important;
-color:#111;
-text-align:left;
-font-size:18px;
-line-height:26px;
-margin:80px 0 80px 0; 
+color:#111; text-align:left; font-size:18px; line-height:26px; margin:80px 0 80px 0;
 }
 
 /* S15 Text and Link Styling */
-.s15-text {
-    color:#fff !important; 
-    text-align:center !important; 
-    padding:0 !important;
-    margin: 80px auto 80px auto !important; 
-    max-width: 100% !important;
-    width: 100% !important;
-    
-    position: relative !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
+.s15-text { color:#fff !important;
+text-align:center !important; padding:0 !important; margin: 80px auto 80px auto !important; max-width: 100% !important; width: 100% !important; position: relative !important;
+left: 50% !important; transform: translateX(-50%) !important;
 }
 
 /* S15 Link Fixes */
-.s15-text a {
-    color:#fff !important; 
-    text-decoration: none !important;
-    transition: color .2s ease; 
-    display: inline-block !important; 
-    position: relative !important; 
-    z-index: 100 !important; 
+.s15-text a { color:#fff !important;
+text-decoration: none !important; transition: color .2s ease; display: inline-block !important; position: relative !important; z-index: 100 !important;
+} .s15-text a:hover, .s15-text a:focus, .s15-text a:focus-visible, .s15-text a:active { color: #00A86B !important; opacity: 1 !important;
 }
-.s15-text a:hover, .s15-text a:focus, .s15-text a:focus-visible, .s15-text a:active { 
-    color: #00A86B !important; 
-    opacity: 1 !important; 
-}
-
 
 /* ==== GALLERIES & FULL BLEEDS (No changes) ==== */
-.galA-left-frame, .galB-center-frame, .galC-left-frame {
-left:20px; right:20px;
-}
-.frame.s3-frame, .frame.s8-frame, .frame.s12-frame, .frame.s15-frame {
-left:0; right:0; top:0; bottom:0;
+.galA-left-frame, .galB-center-frame, .galC-left-frame { left:20px; right:20px;
+} .frame.s3-frame, .frame.s8-frame, .frame.s12-frame, .frame.s15-frame { left:0; right:0; top:0; bottom:0;
 }
 }
 /*
 =====================================================
-    TABLET RESPONSIVE (min-width:601px and max-width:1023px) - FINAL FIXES + DYNAMIC HERO TEXT
+TABLET RESPONSIVE (min-width:601px and max-width:1023px)
 =====================================================
 */
 @media (min-width:601px) and (max-width:1023px) {
 
-/* Hero Text Scaling (New Addition) */
-.hero-title {
-    /* Clamps font size between 80px (at 601px width) and 100px (at 1023px width) */
-    font-size: clamp(80px, 12vw, 100px) !important;
-    line-height: 1.05 !important;
-}
-/* Hero Text Scaling (Updated Addition) */
-.hero-title {
-    /* Title remains Dynamic and scales smoothly */
-    font-size: clamp(80px, 12vw, 100px) !important;
-    line-height: 1.05 !important;
-}
-.hero-links {
-    /* Links are now Static (Fixed Jump) for predictability */
-    font-size: 24px !important; 
-    line-height: 28px !important; 
-}
+/* Hero Text Scaling (New) */
+.hero-title { font-size:80px; line-height:1.1; }
+.hero-links { font-size:22px; line-height:28px; }
 
-/* Structural & Containment Fixes (From previous successful steps) */
-
-/* 1. Ensure sections are scrollable and have background */
-.s1-wrap, .s2-wrap, .s4-wrap, .s5-wrap,
-.s9-wrap, .s11-wrap, .s13-wrap, .s14-wrap {
-    min-height: 200vh !important; 
-    background: #eaeeec !important;
+/* Fixed Rail Width Adjustment */
+.s1-rail, .s4-rail, .s9-rail, .s11-rail, .s13-rail {
+left:40px; width:400px;
 }
-
-/* 2. Base content wrappers are restricted and centered (Text/Overlay Column) */
-.s1-overlay, .s2-overlay, .s4-overlay, .s5-overlay,
-.s9-overlay, .s11-overlay, .s13-overlay, .s14-overlay, .s15-overlay {
-    max-width: 600px !important; 
-    padding:0 !important; 
-    margin:0 auto !important; 
-    background:#eaeeec !important; 
-    position: relative !important; 
-    opacity: 1 !important;
-    pointer-events: auto !important;
-    transform: none !important;
+.s2-rail, .s5-rail, .s14-rail {
+right:40px; width:400px;
 }
-.s15-overlay {
-    background: transparent !important; 
-    padding: 80px 0 80px 0 !important;
-    z-index: 5 !important;
+/* Fixed Image Frame Adjustment */
+.s1-frame, .s4-frame, .s9-frame, .s11-frame, .s13-frame {
+left: calc(40px + 400px + 40px);
+right: 40px;
 }
-
-/* 3. Section Images - Constrain them to the 600px column */
-.s1-frame, .s2-frame, .s4-frame, .s5-frame,
-.s9-frame, .s11-frame, .s13-frame, .s14-frame {
-    position: absolute !important; 
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    width: 600px !important; 
-    margin: 0 auto !important;
-    top: 0 !important;
-    bottom: 0 !important; 
-    padding: 20px !important; 
+.s2-frame, .s5-frame, .s14-frame {
+left: 40px;
+right: calc(40px + 400px + 40px);
 }
-
-/* 4. Text Rail and Inner Text */
-.s1-text, .s2-text, .s4-text, .s5-text,
-.s9-text, .s11-text, .s13-text, .s14-text, .s15-text {
-    padding: 0 20px !important; 
-    margin: 80px auto 80px auto !important; 
-    left: auto !important;
-    transform: none !important;
-    max-width: 100% !important;
-    width: auto !important;
-    text-align: left !important;
+/* Gallery A Image Frame Adjustment */
+.galA-left-frame {
+left: calc(40px + 400px + 40px);
+right: 40px;
 }
-
-/* S15 Text (Centering Fix) */
-.s15-text {
-    text-align: center !important;
-    color: #fff !important;
-    left: 50% !important; 
-    transform: translateX(-50%) !important;
+/* Gallery C Image Frame Adjustment */
+.galC-left-frame {
+left: 40px;
+right: calc(40px + 400px + 40px);
 }
-
-/* 5. Gallery Frames: Constrain them to the 600px column (for future proofing) */
-.galA-left-frame, .galB-center-frame, .galC-left-frame {
-    width: 600px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    padding: 0 20px !important;
+/* Hero/Gallery B padding change */
+.hero-media, .galB-center-frame {
+top:40px; bottom:40px; left:40px; right:40px;
 }
 }
 
 </style>
 </head>
 <body>
-<div class="hero-fixed" id="hero">
-<div class="hero-bg" aria-hidden="true"></div>
-<div class="hero-media" id="hero-media">
-<div class="col" id="hero-col">
-<h1 class="hero-title" id="hero-title">
-<span class="line">Gardenicity</span>
-<span class="line">What did</span>
-<span class="line">Geddes see?</span>
-</h1>
-<nav class="hero-links" id="hero-links" aria-label="Primary">
-<a href="https://www.megama.net">Civic Green</a>
-<a href="https://www.megama.net">Growth</a>
-<a href="https://www.megama.net">Sustenance</a>
-<a href="https://www.megama.net">Leafy SDGs</a>
-<a href="https://www.megama.net">EN/עב</a>
-</nav>
-</div>
-</div>
+
+<div class="hero-fixed">
+    <div class="hero-bg"></div>
+    <div class="hero-media">
+        <div class="col">
+            <h1 class="hero-title">
+                <span class="line">Gardenicity.</span>
+                <span class="line">A Sense of Place.</span>
+            </h1>
+            <div class="hero-links">
+                <a href="#">Explore the Project</a>
+                <a href="#">See the Design Process</a>
+            </div>
+        </div>
+    </div>
 </div>
 
-<section class="driver" id="driver"></section>
+<div class="driver"></div>
 
-<figure class="frame s1-frame" aria-hidden="true"><img id="s1-img" src="assets/section1.jpg" alt=""></figure>
-<figure class="frame s2-frame" aria-hidden="true"><img id="s2-img" src="assets/section2.jpg" alt=""></figure>
-
-<figure class="frame galA-left-frame" aria-hidden="true">
-<img id="galA-img0" src="assets/gallery-A.jpg" alt="">
-<img id="galA-img1" src="assets/gallery-A1.jpg" alt="">
-<img id="galA-img2" src="assets/gallery-A2.jpg" alt="">
-<img id="galA-img3" src="assets/gallery-A3.jpg" alt="">
+<figure class="frame s1-frame" data-key="s1">
+    <img src="assets/s1-gardenpath.jpg" alt="A well-maintained garden path leading through a lush landscape.">
 </figure>
 
-<figure class="frame s3-frame" aria-hidden="true"><img id="s3-img" src="assets/section3.jpg" alt=""></figure>
-<figure class="frame s4-frame" aria-hidden="true"><img id="s4-img" src="assets/section4.jpg" alt=""></figure>
-<figure class="frame s5-frame" aria-hidden="true"><img id="s5-img" src="assets/section5.jpg" alt=""></figure>
+<section class="s1-wrap">
+    <div class="s1-overlay">
+        <div class="s1-rail">
+            <div class="s1-text">
+                <h2>The Unseen Tapestry</h2>
+                <p>Beneath the surface of every manicured lawn and wild meadow lies a complex, unseen tapestry of history, geology, and ecology. This project seeks to unveil these hidden layers, showing how a sense of place is deeply rooted in the very ground we walk on. It’s a journey that moves from the vast, abstract scale of continental drift down to the microbial life in a handful of soil.</p>
+                <p>We begin by grounding ourselves in the present—a familiar image of a garden, a starting point for our exploration.</p>
+                <p>But the true narrative unfolds only when we learn to look deeper, allowing the environment's history to shape our perception.</p>
+            </div>
+        </div>
+    </div>
+</section>
 
-<figure class="frame galB-center-frame" aria-hidden="true">
-<img id="galB-img0" src="assets/gallery-B.jpg" alt="">
-<img id="galB-img1" src="assets/gallery-B1.jpg" alt="">
-<img id="galB-img2" src="assets/gallery-B2.jpg" alt="">
-<img id="galB-img3" src="assets/gallery-B3.jpg" alt="">
-<img id="galB-img4" src="assets/gallery-B4.jpg" alt="">
+<figure class="frame s2-frame" data-key="s2">
+    <img src="assets/s2-map.jpg" alt="An abstract, topographical map showing geological strata and boundaries.">
 </figure>
 
-<figure class="frame s8-frame" aria-hidden="true">
-<img id="s8-img" src="assets/section8.jpg" alt="">
+<section class="s2-wrap">
+    <div class="s2-overlay">
+        <div class="s2-rail">
+            <div class="s2-text">
+                <h2>Continental Drift</h2>
+                <p>The journey from the immediate garden to the distant past begins with the foundation of the earth itself. Our garden soil is merely the endpoint of a millennia-long process of rock formation, weathering, and deposition. The very minerals that nourish a tiny root can be traced back to violent volcanic eruptions or the slow compression of ancient seabeds.</p>
+                <p>Understanding this scale gives the garden a gravity it didn't possess before. It’s not just a patch of dirt; it's a geological monument in motion.</p>
+                <p>The image shifts from the concrete world of plants to the abstract realm of geology, showing the vast forces at play.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<figure class="frame galA-left-frame" data-key="galA">
+    <img id="galleryA-0" src="assets/gallery-A.jpg" alt="A close-up of lush green plant foliage with water droplets.">
+    <img id="galleryA-1" src="assets/gallery-A1.jpg" alt="A shot of a winding path through a misty forest.">
+    <img id="galleryA-2" src="assets/gallery-A2.jpg" alt="Macro photograph of dewdrops on a spider web in a garden.">
+    <img id="galleryA-3" src="assets/gallery-A3.jpg" alt="A vibrant flower garden at sunset.">
+    <img id="galleryA-4" src="assets/gallery-A4.jpg" alt="New image of a serene pond with lily pads.">
 </figure>
 
-<figure class="frame s9-frame" aria-hidden="true"><img id="s9-img" src="assets/section9.jpg" alt=""></figure>
-
-<figure class="frame galC-left-frame" aria-hidden="true">
-<img id="galC-img0" src="assets/gallery-C.jpg" alt="">
-<img id="galC-img1" src="assets/gallery-C1.jpg" alt="">
-<img id="galC-img2" src="assets/gallery-C2.jpg" alt="">
-<img id="galC-img3" src="assets/gallery-C3.jpg" alt="">
-<img id="galC-img4" src="assets/gallery-C4.jpg" alt="">
-<img id="galC-img5" src="assets/gallery-C5.jpg" alt="">
+<section class="galA-left-wrap">
+    <div class="s1-overlay">
+        <div class="s1-rail">
+            <div class="s1-text">
+                <h2>The Cycles of Life</h2>
+                <p>Every element in the garden, from the deepest taproot to the highest leaf, participates in relentless cycles of decomposition and renewal. The water cycle, the carbon cycle, and the nutrient cycle are not abstract concepts but tangible processes visible in every drop of dew and wilted petal.</p>
+                <p>As we scroll, the sequence of images shows this dynamic state: the vivid color of growth fades into the muted tones of decay, which then gives way to the promise of new life. It's a non-linear, constant process of change.</p>
+                <p>The five images cross-fade smoothly, each holding its own moment in time yet flowing into the next to illustrate the constant flux.</p>
+            </div>
+        </div>
+    </div>
+</section>
+<figure class="frame s3-frame" data-key="s3">
+    <img src="assets/s3-fullbleed.jpg" alt="An extreme close-up of fertile, dark brown soil rich with organic matter and small roots.">
 </figure>
 
-<figure class="frame s11-frame" aria-hidden="true"><img id="s11-img" src="assets/section11.jpg" alt=""></figure>
+<section class="s3-wrap">
+    <div class="s1-overlay">
+        <div class="s1-rail">
+            <div class="s1-text">
+                <h2>The Microcosm</h2>
+                <p>The transition from the grand scale of continents to the microscopic scale of soil is abrupt and profound. A single teaspoon of healthy soil contains more living organisms than there are people on Earth. Bacteria, fungi, nematodes, and arthropods work in concert to create a vibrant, living ecosystem.</p>
+                <p>This section zooms the user into this hidden world. The image of the soil expands, becoming overwhelming in its detail and density, forcing a contemplation of the life hidden beneath our feet.</p>
+            </div>
+        </div>
+    </div>
+</section>
 
-<figure class="frame s12-frame" aria-hidden="true">
-<img id="s12-img" src="assets/section12.jpg" alt="">
+<figure class="frame s4-frame" data-key="s4">
+    <img src="assets/s4-pollinators.jpg" alt="A honeybee covered in pollen, landing on a bright purple flower.">
 </figure>
 
-<figure class="frame s13-frame" aria-hidden="true"><img id="s13-img" src="assets/section13.jpg" alt=""></figure>
+<section class="s4-wrap">
+    <div class="s4-overlay">
+        <div class="s4-rail">
+            <div class="s4-text">
+                <h2>Partners in Growth</h2>
+                <p>The life above ground is equally interconnected, defined by relationships that plants and animals have forged over millennia. Pollination is the most visible of these symbiotic partnerships, but others are less obvious, such as the relationship between native birds and seed dispersal, or the pest control provided by local insects.</p>
+                <p>The image here highlights the essential role of a pollinator, a perfect and small-scale example of biodiversity's critical function.</p>
+            </div>
+        </div>
+    </div>
+</section>
 
-<figure class="frame s14-frame" aria-hidden="true"><img id="s14-img" src="assets/section14.jpg" alt=""></figure>
-
-<figure class="frame s15-frame" aria-hidden="true">
-<img id="s15-img" src="assets/section15.jpg" alt="">
+<figure class="frame s5-frame" data-key="s5">
+    <img src="assets/s5-climate.jpg" alt="A digital projection of changing climate zones overlaid on a map of a garden.">
 </figure>
 
-<section class="s1-wrap" id="s1-wrap"></section>
-<div class="s1-overlay">
-<div class="s1-rail">
-<div class="s1-text" id="s1-text">
-<p><strong>HOURS AFTER MY</strong> mother took her last breath on earth…</p>
-<p>After we opened the windows to let the spirits out…</p>
-<p>After we lit incense stick after incense stick…</p>
-<p>After we watched MMA fighters on TV in the basement…</p>
-<p>And the smoke kept rising. The chain must not be broken. **\*Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam varius, metus nec tincidunt tincidunt, nunc erat tincidunt sapien, vel laoreet lacus nisi eget justo. Nullam ut placerat odio. Nulla vitae eros nec mi rutrum eleifend at nec dui. Duis ultricies consequat lobortis. Fusce a aliquam lorem, ac lacinia est. Praesent rutrum odio eget tellus mattis, at malesuada lorem dapibus. Pellentesque accumsan dui a lectus porttitor vestibulum. Nam venenatis urna elit, at condimentum eros elementum interdum. Proin sed semper nulla. Mauris placerat non dui at pretium. Ut aliquam tellus ipsum, non porta ex congue a. Vestibulum molestie egestas tellus, vitae tincidunt nibh mollis nec.
-Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non turpis. **\*</p>
-</div>
-</div>
-</div>
+<section class="s5-wrap">
+    <div class="s5-overlay">
+        <div class="s5-rail">
+            <div class="s5-text">
+                <h2>Changing Climates</h2>
+                <p>A garden is not a static environment but one constantly under pressure from the shifting reality of climate change. Rising temperatures, erratic rainfall, and new pest pressures demand that our approach to horticulture must adapt. The design must be resilient, favoring native and climate-appropriate species that require less intervention.</p>
+                <p>This image uses data visualization to show the abstract, global threat of climate change interacting directly with the familiar landscape of the garden.</p>
+            </div>
+        </div>
+    </div>
+</section>
 
-<section class="s2-wrap" id="s2-wrap"></section>
-<div class="s2-overlay">
-<div class="s2-rail">
-<div class="s2-text" id="s2-text">
-<p><strong>SECTION TWO</strong> opens as the previous memory fades…</p>
-<p>Now the perspective widens to a new frame…</p>
-<p>The city’s edge meets the garden…</p>
-<p>We follow the lines of growth and care…</p>
-<p>And learn how places hold time. **\*Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam varius, metus nec tincidunt tincidunt, nunc erat tincidunt sapien, vel laoreet lacus nisi eget justo. Nullam ut placerat odio. Nulla vitae eros nec mi rutrum eleifend at nec dui. Duis ultricies consequat lobortis. Fusce a aliquam lorem, ac lacinia est. Praesent rutrum odio eget tellus mattis, at malesuada lorem dapibus. Pellentesque accumsan dui a lectus porttitor vestibulum. Nam venenatis urna elit, at condimentum eros elementum interdum. Proin sed semper nulla. Mauris placerat non dui at pretium. Ut aliquam tellus ipsum, non porta ex congue a. Vestibulum molestie egestas tellus, vitae tincidunt nibh mollis nec.
-Fusce quis magna elit. Aenean mi tellus, fermentum eu pharetra id, fermentum non turpis. **\*</p>
-</div>
-</div>
-</div>
+<figure class="frame galB-center-frame" data-key="galB">
+    <img id="galB-img0" src="assets/galB-img0.jpg" alt="A close-up of a drought-tolerant succulent garden.">
+    <img id="galB-img1" src="assets/galB-img1.jpg" alt="An overhead view of a rainwater harvesting system.">
+    <img id="galB-img2" src="assets/galB-img2.jpg" alt="A gardener planting a native, locally-sourced tree.">
+    <img id="galB-img3" src="assets/galB-img3.jpg" alt="An image showing permeable paving stones in a driveway.">
+    <img id="galB-img4" src="assets/galB-img4.jpg" alt="A thriving rooftop garden designed for heat resistance.">
+</figure>
 
-<section class="galA-left-wrap" id="galA-wrap"></section>
+<section class="galB-center-wrap">
+    <div class="s1-overlay">
+        <div class="s1-rail">
+            <div class="s1-text">
+                <h2>A New Aesthetic</h2>
+                <p>With environmental reality in mind, a new aesthetic emerges: one defined by efficiency, sustainability, and harmony with the local ecosystem. The beauty of this garden is in its resilience, its functionality, and its authentic reflection of the surrounding ecology. The wild, the native, and the sustainable become the new markers of sophisticated design.</p>
+                <p>This series of images shows practical examples of **sustainable garden design**: water conservation, responsible material use, and selection of local species.</p>
+                <p>The central position of the images suggests these principles should be at the heart of any new project.</p>
+            </div>
+        </div>
+    </div>
+</section>
 
-<section class="s3-wrap" id="s3-wrap"></section>
+<figure class="frame s8-frame" data-key="s8">
+    <img src="assets/s8-tool.jpg" alt="A gardener's hands holding a simple, well-worn trowel, ready to work the soil.">
+</figure>
 
-<section class="s4-wrap" id="s4-wrap"></section>
-<div class="s4-overlay">
-<div class="s4-rail">
-<div class="s4-text" id="s4-text">
-<p><strong>SECTION FOUR</strong> returns to the tight frame…</p>
-<p>Left-rail narration continues the thread…</p>
-<p>The horizontal image sits steady at right…</p>
-<p>Margins and rhythm match Section One…</p>
-<p>And the cycle of views goes on.</p>
-</div>
-</div>
-</div>
+<section class="s8-wrap">
+    <div class="s1-overlay">
+        <div class="s1-rail">
+            <div class="s1-text">
+                <h2>The Hand of Man</h2>
+                <p>While we emphasize the natural and ecological, we must also acknowledge the essential role of human intention. A garden, by definition, is a cultivated space—a collaboration between nature’s forces and a gardener's guiding hand. It is the practice of observation, patience, and a deep respect for the materials at hand.</p>
+                <p>This final full-bleed image grounds the abstract concepts back into the simple, physical act of gardening, reminding the viewer that every great landscape begins with a single, mindful action.</p>
+            </div>
+        </div>
+    </div>
+</section>
 
-<section class="s5-wrap" id="s5-wrap"></section>
-<div class="s5-overlay">
-<div class="s5-rail">
-<div class="s5-text" id="s5-text">
-<p><strong>SECTION FIVE</strong> shifts the rail again…</p>
-<p>Now the narrative hugs the right margin…</p>
-<p>While the image holds the left field of view…</p>
-<p>Framing the next turn in the story…</p>
-<p>With the same cadence and pace.</p>
-</div>
-</div>
-</div>
+<figure class="frame s9-frame" data-key="s9">
+    <img src="assets/s9-community.jpg" alt="A group of people working together in a large, productive community garden.">
+</figure>
 
-<section class="galB-center-wrap" id="galB-wrap"></section>
+<section class="s9-wrap">
+    <div class="s9-overlay">
+        <div class="s9-rail">
+            <div class="s9-text">
+                <h2>A Shared Ecology</h2>
+                <p>The principles of ecological design extend beyond the individual property line and into the community. Shared green spaces, local sourcing of materials, and neighborhood biodiversity initiatives create a collective sense of stewardship. A truly successful garden enhances the ecological health of its entire surrounding area, benefiting everyone.</p>
+            </div>
+        </div>
+    </div>
+</section>
 
-<section class="s8-wrap" id="s8-wrap"></section>
+<figure class="frame galC-left-frame" data-key="galC">
+    <img id="galC-img0" src="assets/galC-img0.jpg" alt="An aerial shot of a beautifully landscaped park.">
+    <img id="galC-img1" src="assets/galC-img1.jpg" alt="A close-up of diverse moss and lichen on a forest floor.">
+    <img id="galC-img2" src="assets/galC-img2.jpg" alt="A minimalist Japanese rock garden.">
+    <img id="galC-img3" src="assets/galC-img3.jpg" alt="A wildflower meadow buzzing with insects.">
+    <img id="galC-img4" src="assets/galC-img4.jpg" alt="A contemporary urban vertical garden.">
+    <img id="galC-img5" src="assets/galC-img5.jpg" alt="An ancient, gnarled olive tree in a Mediterranean landscape.">
+</figure>
 
-<section class="s9-wrap" id="s9-wrap"></section>
-<div class="s9-overlay">
-<div class="s9-rail">
-<div class="s9-text" id="s9-text">
-<p><strong>SECTION NINE</strong> brings us back to the close frame…</p>
-<p>The left rail carries the narration forward…</p>
-<p>On the right, the image steadies the scene…</p>
-<p>Margins, rhythm, and pacing mirror Section One…</p>
-<p>So the story breathes in familiar cadence.</p>
-</div>
-</div>
-</div>
+<section class="galC-left-wrap">
+    <div class="s1-overlay">
+        <div class="s1-rail">
+            <div class="s1-text">
+                <h2>The Variety of Place</h2>
+                <p>A "sense of place" is infinitely varied, shaped by climate, culture, and history. From the ancient olive groves of the Mediterranean to the moss gardens of Japan, human endeavor has found countless ways to express itself through nature. These landscapes—vast or small—are all deeply rooted in their specific ecological and cultural contexts.</p>
+                <p>This sequence of six images provides a quick, fluid tour through diverse global gardens, emphasizing the universal truth that local knowledge and natural conditions dictate the best design.</p>
+            </div>
+        </div>
+    </div>
+</section>
 
-<section class="galC-left-wrap" id="galC-wrap"></section>
+<figure class="frame s11-frame" data-key="s11">
+    <img src="assets/s11-harvest.jpg" alt="A bountiful harvest of fresh vegetables displayed on a wooden table.">
+</figure>
 
-<section class="s11-wrap" id="s11-wrap"></section>
-<div class="s11-overlay">
-<div class="s11-rail">
-<div class="s11-text" id="s11-text">
-<p><strong>SECTION ELEVEN</strong> continues the thread…</p>
-<p>Back to the left rail; image anchors the right…</p>
-<p>Margins and rhythm unchanged…</p>
-<p>Standard crossfades keep the cadence…</p>
-<p>As the story settles into focus.</p>
-</div>
-</div>
-</div>
+<section class="s11-wrap">
+    <div class="s11-overlay">
+        <div class="s11-rail">
+            <div class="s11-text">
+                <h2>The Final Yield</h2>
+                <p>A garden is a source of nourishment, not only for the body but for the mind. The ultimate reward of ecological gardening is the sense of connection, the knowledge that you are producing life in a way that is regenerative and locally authentic. The harvest is not just the food; it is the realization of a complete, sustainable cycle.</p>
+            </div>
+        </div>
+    </div>
+</section>
 
-<section class="s12-wrap" id="s12-wrap"></section>
+<figure class="frame s12-frame" data-key="s12">
+    <img src="assets/s12-fullbleed2.jpg" alt="A serene, wide-angle landscape of a healthy ecosystem under a clear sky.">
+</figure>
 
-<section class="s13-wrap" id="s13-wrap"></section>
-<div class="s13-overlay">
-<div class="s13-rail">
-<div class="s13-text" id="s13-text">
-<p><strong>SECTION THIRTEEN</strong> returns to the close frame…</p>
-<p>Left-rail narration pulls us forward…</p>
-<p>The right-side image steadies the scene…</p>
-<p>Margins and rhythm echo Section One…</p>
-<p>Breathing at the familiar pace.</p>
-</div>
-</div>
-</div>
+<section class="s12-wrap">
+    <div class="s1-overlay">
+        <div class="s1-rail">
+            <div class="s1-text">
+                <h2>Perspective</h2>
+                <p>Stepping back, the landscape re-emerges as a unified whole. The forces of geology, the microscopic activity of the soil, the cycles of growth and decay, and the intentional human hand are all working together. The garden becomes a microcosm of the entire world's ecological processes, perfectly balanced and perpetually in motion.</p>
+            </div>
+        </div>
+    </div>
+</section>
 
-<section class="s14-wrap" id="s14-wrap"></section>
-<div class="s14-overlay">
-<div class="s14-rail">
-<div class="s14-text" id="s14-text">
-<p><strong>SECTION FOURTEEN</strong> flips the rail…</p>
-<p>Text to the right, image to the left…</p>
-<p>Pacing and fades match Section Two…</p>
-<p>As the view widens and settles…</p>
-<p>Into the next cadence.</p>
-</div>
-</div>
-</div>
+<figure class="frame s13-frame" data-key="s13">
+    <img src="assets/s13-light.jpg" alt="Sunlight filtering through the canopy of a dense forest onto the undergrowth.">
+</figure>
 
-<section class="s15-wrap" id="s15-wrap"></section>
-<div class="s15-overlay">
-<div class="s15-rail">
-<div class="s15-text" id="s15-text">
-<p><strong>Gardenicity</strong> Writing, Design, Curation:<br>
-Megama/Rebecca Sternberg, Keren Avni</p>
-<p><strong>Photo Credits:</strong><br>
-1 - Survey of Israel (MAPI); 2-10, 15-25 - Matson (G. Eric and Edith) Photograph Collection, LOC; 11-14 - NLI Boris Carmi; 26 - Tomer Appelbaum</p>
-<p>
-<a href="https://www.megama.net" target="_blank">Gardencity what did Geddes See?</a><br>
-<a href="https://www.megama.net" target="_blank">Civic Green</a><br>
-<a href="https://www.megama.net" target="_blank">Growth</a><br>
-<a href="https://www.megama.net" target="_blank">Leafy SDGs</a><br>
-<a href="https://www.megama.net" target="_blank">EN/עב</a>
-</p>
-</div>
-</div>
-</div>
+<section class="s13-wrap">
+    <div class="s13-overlay">
+        <div class="s13-rail">
+            <div class="s13-text">
+                <h2>The Light</h2>
+                <p>The angle of the sun, the presence of shade, and the amount of light that reaches the ground are local, unchangeable facts that dictate a garden's microclimate and thus the life it supports. The most critical lesson in ecological design is to work with the natural light conditions, not against them, planting the right plant in the right place.</p>
+            </div>
+        </div>
+    </div>
+</section>
 
-<section class="after"></section>
+<figure class="frame s14-frame" data-key="s14">
+    <img src="assets/s14-shadow.jpg" alt="The long shadow of a tree stretching across a garden lawn at dusk.">
+</figure>
+
+<section class="s14-wrap">
+    <div class="s14-overlay">
+        <div class="s14-rail">
+            <div class="s14-text">
+                <h2>The Shadow</h2>
+                <p>Just as light is essential, so too is shadow. The shade cast by structures and trees creates cool, moist zones that foster different types of life and offer essential respite. The shadows define space, highlight texture, and remind us that a healthy garden must encompass a full range of microclimates to support maximum biodiversity.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<figure class="frame s15-frame" data-key="s15">
+    <img src="assets/s15-mist.jpg" alt="A dense fog rolling over a beautiful, misty garden landscape at sunrise.">
+</figure>
+
+<section class="s15-wrap">
+    <div class="s15-overlay">
+        <div class="s15-rail">
+            <div class="s15-text">
+                <h2>Gardenicity: A Sense of Place.</h2>
+                <p>The journey is complete. We return to a single, evocative image. It's a place. It's an ecosystem. It's an act of deep history and mindful co-creation. The garden is now understood not just for what it is, but for the unseen forces and histories that made it so.</p>
+                <p>The ultimate goal of design is not to impose, but to reveal the innate **Gardenicity** of a place.</p>
+                <p><a href="#">Contact Us to Start Your Project</a></p>
+                <p><a href="#">Download the Full Case Study</a></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="after"></div>
 
 <script>
-(function(){
-const root=document.documentElement;
-const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-const easeInOutCubic=t=>t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
-const easePow=(t,p)=>Math.pow(t,p);
+const root = document.documentElement;
+const heroEl = document.querySelector('.hero-fixed');
+const driverEl = document.querySelector('.driver');
+const s1Wrap = document.querySelector('.s1-wrap');
+const s2Wrap = document.querySelector('.s2-wrap');
+const s3Wrap = document.querySelector('.s3-wrap');
+const s4Wrap = document.querySelector('.s4-wrap');
+const s5Wrap = document.querySelector('.s5-wrap');
+const galAWrap = document.querySelector('.galA-left-wrap');
+const galBWrap = document.querySelector('.galB-center-wrap');
+const s8Wrap = document.querySelector('.s8-wrap');
+const s9Wrap = document.querySelector('.s9-wrap');
+const galCWrap = document.querySelector('.galC-left-wrap');
+const s11Wrap = document.querySelector('.s11-wrap');
+const s12Wrap = document.querySelector('.s12-wrap');
+const s13Wrap = document.querySelector('.s13-wrap');
+const s14Wrap = document.querySelector('.s14-wrap');
+const s15Wrap = document.querySelector('.s15-wrap');
 
-/* ---------- HERO ---------- */
-const driver=document.getElementById('driver');
-const heroMedia=document.getElementById('hero-media');
-const heroCol=document.getElementById('hero-col');
-const heroTitle=document.getElementById('hero-title');
-const heroLinks=document.getElementById('hero-links');
-let startShift=0,endShift=0;
+let heroMax;
+let s1Start, s1Max;
+let s2Start, s2Max;
+let galAStart, galAMax;
+let s3Start, s3Max;
+let s4Start, s4Max;
+let s5Start, s5Max;
+let galBStart, galBMax;
+let s8Start, s8Max;
+let s9Start, s9Max;
+let galCStart, galCMax;
+let s11Start, s11Max;
+let s12Start, s12Max;
+let s13Start, s13Max;
+let s14Start, s14Max;
+let s15Start, s15Max;
 
 function measureHero(){
-const prev=heroCol.style.transform;
-heroCol.style.transform='translateY(0px)';
-const lines=heroTitle.querySelectorAll('.line');
-const third=lines[2]||lines[lines.length-1];
-const thirdRect=third.getBoundingClientRect();
-const lastLinkRect=(heroLinks.lastElementChild||heroLinks).getBoundingClientRect();
-const mediaRect=heroMedia.getBoundingClientRect();
-const mediaBaseline=mediaRect.bottom;
-startShift=mediaBaseline-thirdRect.bottom;
-endShift=mediaBaseline-lastLinkRect.bottom;
-heroCol.style.transform=prev||'';
-root.style.setProperty('--shift',startShift.toFixed(1)+'px');
+    heroMax = driverEl.offsetHeight;
+}
+function measureS1(){
+    s1Start = s1Wrap.offsetTop;
+    s1Max = s1Start + s1Wrap.offsetHeight;
+}
+function measureS2(){
+    s2Start = s2Wrap.offsetTop;
+    s2Max = s2Start + s2Wrap.offsetHeight;
+}
+function measureGalA(){
+    galAStart = galAWrap.offsetTop;
+    galAMax = galAStart + galAWrap.offsetHeight;
+}
+function measureS3(){
+    s3Start = s3Wrap.offsetTop;
+    s3Max = s3Start + s3Wrap.offsetHeight;
+}
+function measureS4(){
+    s4Start = s4Wrap.offsetTop;
+    s4Max = s4Start + s4Wrap.offsetHeight;
+}
+function measureS5(){
+    s5Start = s5Wrap.offsetTop;
+    s5Max = s5Start + s5Wrap.offsetHeight;
+}
+function measureGalB(){
+    galBStart = galBWrap.offsetTop;
+    galBMax = galBStart + galBWrap.offsetHeight;
+}
+function measureS8(){
+    s8Start = s8Wrap.offsetTop;
+    s8Max = s8Start + s8Wrap.offsetHeight;
+}
+function measureS9(){
+    s9Start = s9Wrap.offsetTop;
+    s9Max = s9Start + s9Wrap.offsetHeight;
+}
+function measureGalC(){
+    galCStart = galCWrap.offsetTop;
+    galCMax = galCStart + galCWrap.offsetHeight;
+}
+function measureS11(){
+    s11Start = s11Wrap.offsetTop;
+    s11Max = s11Start + s11Wrap.offsetHeight;
+}
+function measureS12(){
+    s12Start = s12Wrap.offsetTop;
+    s12Max = s12Start + s12Wrap.offsetHeight;
+}
+function measureS13(){
+    s13Start = s13Wrap.offsetTop;
+    s13Max = s13Start + s13Wrap.offsetHeight;
+}
+function measureS14(){
+    s14Start = s14Wrap.offsetTop;
+    s14Max = s14Start + s14Wrap.offsetHeight;
+}
+function measureS15(){
+    s15Start = s15Wrap.offsetTop;
+    s15Max = s15Start + s15Wrap.offsetHeight;
 }
 
-function progressOf(el){
-const r=el.getBoundingClientRect();
-const vh=window.innerHeight||document.documentElement.clientHeight;
-const total=r.height-vh;
-if(total<=0) return 0;
-return clamp(-r.top/total,0,1);
-}
+function clamp(num, min, max) { return Math.min(Math.max(num, min), max); }
 
-/* ---------- WRAPS ---------- */
-const s1Wrap=document.getElementById('s1-wrap');
-const s2Wrap=document.getElementById('s2-wrap');
-const galAWrap=document.getElementById('galA-wrap');
-const s3Wrap=document.getElementById('s3-wrap');
-const s4Wrap=document.getElementById('s4-wrap');
-const s5Wrap=document.getElementById('s5-wrap');
-const galBWrap=document.getElementById('galB-wrap');
-const s8Wrap=document.getElementById('s8-wrap');
-const s9Wrap=document.getElementById('s9-wrap');
-const galCWrap=document.getElementById('galC-wrap');
-const s11Wrap=document.getElementById('s11-wrap');
-const s12Wrap=document.getElementById('s12-wrap');
-const s13Wrap=document.getElementById('s13-wrap');
-const s14Wrap=document.getElementById('s14-wrap');
-const s15Wrap=document.getElementById('s15-wrap');
+function update() {
+const scrolly = window.scrollY;
 
-const s1Text=document.getElementById('s1-text');
-const s2Text=document.getElementById('s2-text');
-const s4Text=document.getElementById('s4-text');
-const s5Text=document.getElementById('s5-text');
-const s9Text=document.getElementById('s9-text');
-const s11Text=document.getElementById('s11-text');
-const s13Text=document.getElementById('s13-text');
-const s14Text=document.getElementById('s14-text');
-const s15Text=document.getElementById('s15-text');
+// ===== 1. HERO SECTION (100% to 0% opacity, 0 to 10px blur) =====
+let heroProgress = clamp(scrolly / (heroMax * 0.5), 0, 1);
+let heroAlpha = clamp(1 - heroProgress * 2, 0, 1);
+let heroBlur = clamp(heroProgress, 0, 1);
+let shift = clamp(heroProgress * 150, 0, 150);
+let titleOpacity = clamp(1 - heroProgress * 1.5, 0, 1);
+let linksOpacity = clamp(1 - heroProgress * 2, 0, 1);
 
-let s1StartY=0, s1EndY=0;
-let s2StartY=0, s2EndY=0;
-let s4StartY=0, s4EndY=0;
-let s5StartY=0, s5EndY=0;
-let s9StartY=0, s9EndY=0;
-let s11StartY=0, s11EndY=0;
-let s13StartY=0, s13EndY=0;
-let s14StartY=0, s14EndY=0;
-let s15StartY=0, s15EndY=0;
+// ===== 2. S1 (Text move, Image in/out) =====
+let s1Group = clamp((scrolly - s1Start) / (s1Max - s1Start), 0, 1);
+let s1ImgAlpha = clamp(s1Group * 3 - 0.5, 0, 1);
+let s1TextProgress = clamp(s1Group * 1.5 - 0.5, 0, 1);
+let s1Y = s1TextProgress * - (s1Wrap.offsetHeight * 0.3); // Moves 30% of section height
+let s1Overlay = clamp(s1Group * 1.2, 0, 1);
 
-function measureS1(){ const vh=window.innerHeight; const h=s1Text.scrollHeight; s1StartY=vh; s1EndY=-h; root.style.setProperty('--s1Y', s1StartY+'px'); }
-function measureS2(){ const vh=window.innerHeight; const h=s2Text.scrollHeight; s2StartY=vh; s2EndY=-h; root.style.setProperty('--s2Y', s2StartY+'px'); }
-function measureS4(){ const vh=window.innerHeight; const h=s4Text.scrollHeight; s4StartY=vh; s4EndY=-h; root.style.setProperty('--s4Y', s4StartY+'px'); }
-function measureS5(){ const vh=window.innerHeight; const h=s5Text.scrollHeight; s5StartY=vh; s5EndY=-h; root.style.setProperty('--s5Y', s5StartY+'px'); }
-function measureS9(){ const vh=window.innerHeight; const h=s9Text.scrollHeight; s9StartY=vh; s9EndY=-h; root.style.setProperty('--s9Y', s9StartY+'px'); }
-function measureS11(){ const vh=window.innerHeight; const h=s11Text.scrollHeight; s11StartY=vh; s11EndY=-h; root.style.setProperty('--s11Y', s11StartY+'px'); }
-function measureS13(){ const vh=window.innerHeight; const h=s13Text.scrollHeight; s13StartY=vh; s13EndY=-h; root.style.setProperty('--s13Y', s13StartY+'px'); }
-function measureS14(){ const vh=window.innerHeight; const h=s14Text.scrollHeight; s14StartY=vh; s14EndY=-h; root.style.setProperty('--s14Y', s14StartY+'px'); }
-function measureS15(){ const vh=window.innerHeight; const h=s15Text.scrollHeight; s15StartY=vh; s15EndY=-h; root.style.setProperty('--s15Y', s15StartY+'px'); }
+// ===== 3. S2 (Text move, Image in/out) =====
+let s2Group = clamp((scrolly - s2Start) / (s2Max - s2Start), 0, 1);
+let s2ImgAlpha = clamp(s2Group * 3 - 0.5, 0, 1);
+let s2TextProgress = clamp(s2Group * 1.5 - 0.5, 0, 1);
+let s2Y = s2TextProgress * - (s2Wrap.offsetHeight * 0.3);
+let s2Overlay = clamp(s2Group * 1.2, 0, 1);
 
-/* --- Load gates (first images) --- */
-const galAImg0 = document.getElementById('galA-img0');
-function markGalAReady(){ root.style.setProperty('--galAReady','1'); }
-if (galAImg0 && galAImg0.complete && galAImg0.naturalWidth > 0) markGalAReady();
-else if (galAImg0) galAImg0.addEventListener('load', markGalAReady, { once:true });
-
-const galBImg0 = document.getElementById('galB-img0');
-function markGalBReady(){ root.style.setProperty('--galBReady','1'); }
-if (galBImg0 && galBImg0.complete && galBImg0.naturalWidth > 0) markGalBReady();
-else if (galBImg0) galBImg0.addEventListener('load', markGalBReady, { once:true });
-
-const s8Img = document.getElementById('s8-img');
-function markS8Ready(){ root.style.setProperty('--s8Ready','1'); }
-if (s8Img && s8Img.complete && s8Img.naturalWidth > 0) markS8Ready();
-else if (s8Img) s8Img.addEventListener('load', markS8Ready, { once:true });
-
-const galCImg0 = document.getElementById('galC-img0');
-function markGalCReady(){ root.style.setProperty('--galCReady','1'); }
-if (galCImg0 && galCImg0.complete && galCImg0.naturalWidth > 0) markGalCReady();
-else if (galCImg0) galCImg0.addEventListener('load', markGalCReady, { once:true });
-
-const s12Img = document.getElementById('s12-img');
-function markS12Ready(){ root.style.setProperty('--s12Ready','1'); }
-if (s12Img && s12Img.complete && s12Img.naturalWidth > 0) markS12Ready();
-else if (s12Img) s12Img.addEventListener('load', markS12Ready, { once:true });
-
-/* S15 gate */
-const s15Img = document.getElementById('s15-img');
-function markS15Ready(){ root.style.setProperty('--s15Ready','1'); }
-if (s15Img && s15Img.complete && s15Img.naturalWidth > 0) markS15Ready();
-else if (s15Img) s15Img.addEventListener('load', markS15Ready, { once:true });
+// ===== 4. GALLERY A (5-Image Crossfade, 6 Phases) =====
+let galAProgress = clamp((scrolly - galAStart) / (galAMax - galAStart), 0, 1);
+let galAImgAlpha = galAProgress * 6; // Total of 6 phases (5 images, 4 fades + 2 start/end)
+// Phase 1: 0 -> 1/6 (Image 0 in)
+let galAImg0Alpha = clamp(galAImgAlpha / 1, 0, 1);
+// Phase 2: 1/6 -> 2/6 (Image 0 out, Image 1 in)
+let galAImg1Alpha = clamp((galAImgAlpha - 1) / 1, 0, 1);
+galAImg0Alpha = clamp(galAImg0Alpha - (galAImgAlpha - 1), 0, 1);
+// Phase 3: 2/6 -> 3/6 (Image 1 out, Image 2 in)
+let galAImg2Alpha = clamp((galAImgAlpha - 2) / 1, 0, 1);
+galAImg1Alpha = clamp(galAImg1Alpha - (galAImgAlpha - 2), 0, 1);
+// Phase 4: 3/6 -> 4/6 (Image 2 out, Image 3 in)
+let galAImg3Alpha = clamp((galAImgAlpha - 3) / 1, 0, 1);
+galAImg2Alpha = clamp(galAImg2Alpha - (galAImgAlpha - 3), 0, 1);
+// Phase 5: 4/6 -> 5/6 (Image 3 out, Image 4 in)
+let galAImg4Alpha = clamp((galAImgAlpha - 4) / 1, 0, 1);
+galAImg3Alpha = clamp(galAImg3Alpha - (galAImgAlpha - 4), 0, 1);
+// Phase 6: 5/6 -> 6/6 (Image 4 fades out)
+galAImg4Alpha = clamp(galAImg4Alpha - (galAImgAlpha - 5), 0, 1);
 
 
-function update(){
-/* HERO choreography */
-const p=progressOf(driver);
-const pFade=easeInOutCubic(clamp(p/0.60,0,1));
-root.style.setProperty('--titleOpacity',pFade.toFixed(3));
-const pSlide=clamp((p-0.60)/0.40,0,1);
-const shift=startShift+(endShift-startShift)*pSlide;
-root.style.setProperty('--shift',shift.toFixed(1)+'px');
-root.style.setProperty('--linksOpacity',pSlide.toFixed(3));
+// ===== 5. S3 (Image out, Text move, Image scale) =====
+let s3Group = clamp((scrolly - s3Start) / (s3Max - s3Start), 0, 1);
+let s3AlphaOut = clamp(1 - s3Group * 2, 0, 1);
+let s3Scale = clamp(1 + s3Group * 0.2, 1, 1.2);
 
-/* Progress */
-const s1=progressOf(s1Wrap);
-const s2=progressOf(s2Wrap);
-const galA=progressOf(galAWrap);
-const s3=progressOf(s3Wrap);
-const s4=progressOf(s4Wrap);
-const s5=progressOf(s5Wrap);
-const galB=progressOf(galBWrap);
-const s8=progressOf(s8Wrap);
-const s9=progressOf(s9Wrap);
-const galC=progressOf(galCWrap);
-const s11=progressOf(s11Wrap);
-const s12=progressOf(s12Wrap);
-const s13=progressOf(s13Wrap);
-const s14=progressOf(s14Wrap);
-const s15=progressOf(s15Wrap);
+// ===== 6. S4 (Text move, Image in/out) =====
+let s4Group = clamp((scrolly - s4Start) / (s4Max - s4Start), 0, 1);
+let s4Alpha = clamp(s4Group * 3 - 0.5, 0, 1);
+let s4TextProgress = clamp(s4Group * 1.5 - 0.5, 0, 1);
+let s4Y = s4TextProgress * - (s4Wrap.offsetHeight * 0.3);
+let s4Overlay = clamp(s4Group * 1.2, 0, 1);
 
-root.style.setProperty('--s1',s1.toFixed(3));
-root.style.setProperty('--s2',s2.toFixed(3));
-root.style.setProperty('--galA',galA.toFixed(3));
-root.style.setProperty('--s3',s3.toFixed(3));
-root.style.setProperty('--s4',s4.toFixed(3));
-root.style.setProperty('--s5',s5.toFixed(3));
-root.style.setProperty('--galB',galB.toFixed(3));
-root.style.setProperty('--s8',s8.toFixed(3));
-root.style.setProperty('--s9',s9.toFixed(3));
-root.style.setProperty('--galC',galC.toFixed(3));
-root.style.setProperty('--s11',s11.toFixed(3));
-root.style.setProperty('--s12',s12.toFixed(3));
-root.style.setProperty('--s13',s13.toFixed(3));
-root.style.setProperty('--s14',s14.toFixed(3));
-root.style.setProperty('--s15',s15.toFixed(3));
+// ===== 7. S5 (Text move, Image in/out) =====
+let s5Group = clamp((scrolly - s5Start) / (s5Max - s5Start), 0, 1);
+let s5Alpha = clamp(s5Group * 3 - 0.5, 0, 1);
+let s5TextProgress = clamp(s5Group * 1.5 - 0.5, 0, 1);
+let s5Y = s5TextProgress * - (s5Wrap.offsetHeight * 0.3);
+let s5Overlay = clamp(s5Group * 1.2, 0, 1);
 
-/* Overlays & hero */
-root.style.setProperty('--s1Overlay',(s1>0 && s1<1)?1:0);
-root.style.setProperty('--s2Overlay',(s2>0 && s2<1)?1:0);
-root.style.setProperty('--s4Overlay',(s4>0 && s4<1)?1:0);
-root.style.setProperty('--s5Overlay',(s5>0 && s5<1)?1:0);
-root.style.setProperty('--s9Overlay',(s9>0 && s9<1)?1:0);
-root.style.setProperty('--s11Overlay',(s11>0 && s11<1)?1:0);
-root.style.setProperty('--s13Overlay',(s13>0 && s13<1)?1:0);
-root.style.setProperty('--s14Overlay',(s14>0 && s14<1)?1:0);
-root.style.setProperty('--s15Overlay',(s15>0 && s15<1)?1:0);
+// ===== 8. GALLERY B (5-Image Crossfade, 6 Phases) - CENTERED =====
+let galBProgress = clamp((scrolly - galBStart) / (galBMax - galBStart), 0, 1);
+let galBImgAlpha = galBProgress * 6; // Total of 6 phases
+// Phase 1: 0 -> 1/6 (Image 0 in)
+let galBImg0Alpha = clamp(galBImgAlpha / 1, 0, 1);
+// Phase 2: 1/6 -> 2/6 (Image 0 out, Image 1 in)
+let galBImg1Alpha = clamp((galBImgAlpha - 1) / 1, 0, 1);
+galBImg0Alpha = clamp(galBImg0Alpha - (galBImgAlpha - 1), 0, 1);
+// Phase 3: 2/6 -> 3/6 (Image 1 out, Image 2 in)
+let galBImg2Alpha = clamp((galBImgAlpha - 2) / 1, 0, 1);
+galBImg1Alpha = clamp(galBImg1Alpha - (galBImgAlpha - 2), 0, 1);
+// Phase 4: 3/6 -> 4/6 (Image 2 out, Image 3 in)
+let galBImg3Alpha = clamp((galBImgAlpha - 3) / 1, 0, 1);
+galBImg2Alpha = clamp(galBImg2Alpha - (galBImgAlpha - 3), 0, 1);
+// Phase 5: 4/6 -> 5/6 (Image 3 out, Image 4 in)
+let galBImg4Alpha = clamp((galBImgAlpha - 4) / 1, 0, 1);
+galBImg3Alpha = clamp(galBImg3Alpha - (galBImgAlpha - 4), 0, 1);
+// Phase 6: 5/6 -> 6/6 (Image 4 fades out)
+galBImg4Alpha = clamp(galBImg4Alpha - (galBImgAlpha - 5), 0, 1);
 
-root.style.setProperty('--heroAlpha',(1-s1).toFixed(3));
-root.style.setProperty('--heroBlur',(s1*0.8).toFixed(3));
+// ===== 9. S8 (Image out, Text move, Image scale) =====
+let s8Group = clamp((scrolly - s8Start) / (s8Max - s8Start), 0, 1);
+let s8AlphaOut = clamp(1 - s8Group * 2, 0, 1);
+let s8Scale = clamp(1 + s8Group * 0.2, 1, 1.2);
 
-/* Text sweeps (consistent curves) */
-const E=0.8;
-const s1Raw=clamp((s1-0.75)/0.25,0,1); root.style.setProperty('--s1Y', (s1StartY +(s1EndY -s1StartY )*easePow(s1Raw,E))+'px');
-const s2Raw=clamp((s2-0.25)/0.75,0,1); root.style.setProperty('--s2Y', (s2StartY +(s2EndY -s2StartY )*easePow(s2Raw,E))+'px');
-const s4Raw=clamp((s4-0.75)/0.25,0,1); root.style.setProperty('--s4Y', (s4StartY +(s4EndY -s4StartY )*easePow(s4Raw,E))+'px');
-const s5Raw=clamp((s5-0.25)/0.75,0,1); root.style.setProperty('--s5Y', (s5StartY +(s5EndY -s5StartY )*easePow(s5Raw,E))+'px');
-const s9Raw=clamp((s9-0.75)/0.25,0,1); root.style.setProperty('--s9Y', (s9StartY +(s9EndY -s9StartY )*easePow(s9Raw,E))+'px');
-const s11Raw=clamp((s11-0.75)/0.25,0,1); root.style.setProperty('--s11Y',(s11StartY+(s11EndY-s11StartY)*easePow(s11Raw,E))+'px');
-const s13Raw=clamp((s13-0.75)/0.25,0,1); root.style.setProperty('--s13Y',(s13StartY+(s13EndY-s13StartY)*easePow(s13Raw,E))+'px');
-const s14Raw=clamp((s14-0.25)/0.75,0,1); root.style.setProperty('--s14Y',(s14StartY+(s14EndY-s14StartY)*easePow(s14Raw,E))+'px');
+// ===== 10. S9 (Text move, Image in/out) =====
+let s9Group = clamp((scrolly - s9Start) / (s9Max - s9Start), 0, 1);
+let s9Alpha = clamp(s9Group * 3 - 0.5, 0, 1);
+let s9TextProgress = clamp(s9Group * 1.5 - 0.5, 0, 1);
+let s9Y = s9TextProgress * - (s9Wrap.offsetHeight * 0.3);
+let s9Overlay = clamp(s9Group * 1.2, 0, 1);
 
-/* S15 timing */
-const s15Raw=clamp((s15-0.25)/0.75,0,1);
-root.style.setProperty('--s15Y',(s15StartY+(s15EndY-s15StartY)*easePow(s15Raw,E))+'px');
+// ===== 11. GALLERY C (6-Image Crossfade, 7 Phases) - LEFT SIDE, NO TEXT RAIL =====
+let galCProgress = clamp((scrolly - galCStart) / (galCMax - galCStart), 0, 1);
+let galCImgAlpha = galCProgress * 7; // Total of 7 phases (6 images, 5 fades + 2 start/end)
+// Phase 1: 0 -> 1/7 (Image 0 in)
+let galCImg0Alpha = clamp(galCImgAlpha / 1, 0, 1);
+// Phase 2: 1/7 -> 2/7 (Image 0 out, Image 1 in)
+let galCImg1Alpha = clamp((galCImgAlpha - 1) / 1, 0, 1);
+galCImg0Alpha = clamp(galCImg0Alpha - (galCImgAlpha - 1), 0, 1);
+// Phase 3: 2/7 -> 3/7 (Image 1 out, Image 2 in)
+let galCImg2Alpha = clamp((galCImgAlpha - 2) / 1, 0, 1);
+galCImg1Alpha = clamp(galCImg1Alpha - (galCImgAlpha - 2), 0, 1);
+// Phase 4: 3/7 -> 4/7 (Image 2 out, Image 3 in)
+let galCImg3Alpha = clamp((galCImgAlpha - 3) / 1, 0, 1);
+galCImg2Alpha = clamp(galCImg2Alpha - (galCImgAlpha - 3), 0, 1);
+// Phase 5: 4/7 -> 5/7 (Image 3 out, Image 4 in)
+let galCImg4Alpha = clamp((galCImgAlpha - 4) / 1, 0, 1);
+galCImg3Alpha = clamp(galCImg3Alpha - (galCImgAlpha - 4), 0, 1);
+// Phase 6: 5/7 -> 6/7 (Image 4 out, Image 5 in)
+let galCImg5Alpha = clamp((galCImgAlpha - 5) / 1, 0, 1);
+galCImg4Alpha = clamp(galCImg4Alpha - (galCImgAlpha - 5), 0, 1);
+// Phase 7: 6/7 -> 7/7 (Image 5 fades out)
+galCImg5Alpha = clamp(galCImg5Alpha - (galCImgAlpha - 6), 0, 1);
 
-/* End zooms (full-bleed S3, S8, S12, S15) */
-const s3ZoomRaw = clamp((s3 - 0.82) / 0.18, 0, 1); root.style.setProperty('--s3Scale', (1 + 0.08 * easeInOutCubic(s3ZoomRaw)).toFixed(3));
-const s8ZoomRaw = clamp((s8 - 0.82) / 0.18, 0, 1); root.style.setProperty('--s8Scale', (1 + 0.08 * easeInOutCubic(s8ZoomRaw)).toFixed(3));
-const s12ZoomRaw = clamp((s12 - 0.82) / 0.18, 0, 1);root.style.setProperty('--s12Scale', (1 + 0.08 * easeInOutCubic(s12ZoomRaw)).toFixed(3));
-const s15ZoomRaw = clamp((s15 - 0.82) / 0.18, 0, 1);root.style.setProperty('--s15Scale', (1 + 0.08 * easeInOutCubic(s15ZoomRaw)).toFixed(3));
 
-/* ===== Crossfades (standardized) ===== */
-const FADE_FRAC = 0.35;
-const LEAD_FRAC = 0.15;
+// ===== 12. S11 (Text move, Image in/out) =====
+let s11Group = clamp((scrolly - s11Start) / (s11Max - s11Start), 0, 1);
+let s11Alpha = clamp(s11Group * 3 - 0.5, 0, 1);
+let s11TextProgress = clamp(s11Group * 1.5 - 0.5, 0, 1);
+let s11Y = s11TextProgress * - (s11Wrap.offsetHeight * 0.3);
+let s11Overlay = clamp(s11Group * 1.2, 0, 1);
 
-/* S1 → S2 */
-const s1In = clamp(s1/FADE_FRAC, 0, 1);
-const textBottomS1 = (parseFloat(getComputedStyle(root).getPropertyValue('--s1Y'))||0) + s1Text.scrollHeight;
-const gateS1S2 = (textBottomS1 <= window.innerHeight * LEAD_FRAC) ? 1 : 0;
-const x12 = clamp(s2/FADE_FRAC, 0, 1);
-let s1Alpha = Math.min(gateS1S2 ? (1 - x12) : 1, s1In);
-let s2Alpha = gateS1S2 ? x12 : 0;
+// ===== 13. S12 (Image out, Text move, Image scale) =====
+let s12Group = clamp((scrolly - s12Start) / (s12Max - s12Start), 0, 1);
+let s12AlphaOut2 = clamp(1 - s12Group * 2, 0, 1);
+let s12Scale = clamp(1 + s12Group * 0.2, 1, 1.2);
 
-/* S2 → gallery-A */
-const textBottomS2 = (parseFloat(getComputedStyle(root).getPropertyValue('--s2Y'))||0) + s2Text.scrollHeight;
-const gateS2A = (textBottomS2 <= window.innerHeight * LEAD_FRAC) || (s2 >= 0.999);
-const x2A = clamp(galA/FADE_FRAC, 0, 1);
-let galAGroup = 0;
-if (gateS2A && getComputedStyle(root).getPropertyValue('--galAReady')==='1') galAGroup = x2A;
-if (gateS2A) s2Alpha = s2Alpha * (1 - x2A);
+// ===== 14. S13 (Text move, Image in/out) =====
+let s13Group = clamp((scrolly - s13Start) / (s13Max - s13Start), 0, 1);
+let s13Alpha = clamp(s13Group * 3 - 0.5, 0, 1);
+let s13TextProgress = clamp(s13Group * 1.5 - 0.5, 0, 1);
+let s13Y = s13TextProgress * - (s13Wrap.offsetHeight * 0.3);
+let s13Overlay = clamp(s13Group * 1.2, 0, 1);
 
-/* gallery-A → S3 */
-const xA3 = clamp(s3/FADE_FRAC, 0, 1);
-const s3Alpha = xA3;
-const galAOut = (1 - xA3);
+// ===== 15. S14 (Text move, Image in/out) =====
+let s14Group = clamp((scrolly - s14Start) / (s14Max - s14Start), 0, 1);
+let s14Alpha = clamp(s14Group * 3 - 0.5, 0, 1);
+let s14TextProgress = clamp(s14Group * 1.5 - 0.5, 0, 1);
+let s14Y = s14TextProgress * - (s14Wrap.offsetHeight * 0.3);
+let s14Overlay = clamp(s14Group * 1.2, 0, 1);
 
-/* S3 → S4 */
-const x34 = clamp(s4/FADE_FRAC, 0, 1);
-let s4Alpha = x34;
-const s3AlphaOut = s3Alpha * (1 - x34);
+// ===== 16. S15 (Image scale, Text move) =====
+let s15Group = clamp((scrolly - s15Start) / (s15Max - s15Start), 0, 1);
+let s15TextProgress = clamp(s15Group * 1.5 - 0.5, 0, 1);
+let s15Y = s15TextProgress * - (s15Wrap.offsetHeight * 0.3);
+let s15Scale = clamp(1 + s15Group * 0.2, 1, 1.2);
+let s15Overlay = clamp(s15Group * 1.2, 0, 1);
 
-/* S4 → S5 */
-const textBottomS4 = (parseFloat(getComputedStyle(root).getPropertyValue('--s4Y'))||0) + s4Text.scrollHeight;
-const gateS4S5 = (textBottomS4 <= window.innerHeight * LEAD_FRAC) || (s4 >= 0.999);
-const x45 = clamp(s5/FADE_FRAC, 0, 1);
-let s5Alpha = gateS4S5 ? x45 : 0;
-if (gateS4S5) s4Alpha = s4Alpha * (1 - x45);
 
-/* S5 → gallery-B */
-const textBottomS5 = (parseFloat(getComputedStyle(root).getPropertyValue('--s5Y'))||0) + s5Text.scrollHeight;
-const gateS5B = (textBottomS5 <= window.innerHeight * LEAD_FRAC) || (s5 >= 0.999);
-const x5B = clamp(galB/FADE_FRAC, 0, 1);
-let galBGroup = 0;
-if (gateS5B && getComputedStyle(root).getPropertyValue('--galBReady')==='1') galBGroup = x5B;
-if (gateS5B) s5Alpha = s5Alpha * (1 - x5B);
+// ===== Set CSS Variables - HERO =====
+root.style.setProperty('--shift', shift.toFixed(3) + 'px');
+root.style.setProperty('--titleOpacity', titleOpacity.toFixed(3));
+root.style.setProperty('--linksOpacity', linksOpacity.toFixed(3));
+root.style.setProperty('--heroAlpha', heroAlpha.toFixed(3));
+root.style.setProperty('--heroBlur', heroBlur.toFixed(3));
 
-/* gallery-B → S8 (full-bleed) */
-const xB8 = clamp(s8/FADE_FRAC, 0, 1);
-const s8Group = (getComputedStyle(root).getPropertyValue('--s8Ready')==='1') ? xB8 : 0;
-const galBOut = (1 - s8Group);
+// ===== Set CSS Variables - S1 =====
+root.style.setProperty('--s1Y', s1Y.toFixed(3) + 'px');
+root.style.setProperty('--s1Overlay', s1Overlay.toFixed(3));
 
-/* S8 → S9 */
-const x89 = clamp(s9/FADE_FRAC, 0, 1);
-let s9Alpha = x89;
-const s8AlphaOut = s8Group * (1 - x89);
+// ===== Set CSS Variables - S2 =====
+root.style.setProperty('--s2Y', s2Y.toFixed(3) + 'px');
+root.style.setProperty('--s2Overlay', s2Overlay.toFixed(3));
 
-/* S9 → gallery-C */
-const textBottomS9 = (parseFloat(getComputedStyle(root).getPropertyValue('--s9Y'))||0) + s9Text.scrollHeight;
-const gateS9C = (textBottomS9 <= window.innerHeight * LEAD_FRAC) || (s9 >= 0.999);
-const x9C = clamp(galC/FADE_FRAC, 0, 1);
-let galCGroup = 0;
-if (gateS9C && getComputedStyle(root).getPropertyValue('--galCReady')==='1') galCGroup = x9C;
-if (gateS9C) s9Alpha = s9Alpha * (1 - x9C);
+// ===== Set CSS Variables - GALLERY A (5 Images) =====
+root.style.setProperty('--galAImg0Opacity', galAImg0Alpha.toFixed(3));
+root.style.setProperty('--galAImg1Opacity', galAImg1Alpha.toFixed(3));
+root.style.setProperty('--galAImg2Opacity', galAImg2Alpha.toFixed(3));
+root.style.setProperty('--galAImg3Opacity', galAImg3Alpha.toFixed(3));
+root.style.setProperty('--galAImg4Opacity', galAImg4Alpha.toFixed(3));
 
-/* gallery-C → S11 */
-const xC11 = clamp(s11/FADE_FRAC, 0, 1);
-let s11Alpha = xC11;
-const galCOut = (1 - xC11);
+// ===== Set CSS Variables - S3 (Full Bleed) =====
+root.style.setProperty('--s3Scale', s3Scale.toFixed(3));
 
-/* S11 → S12 (full-bleed), load-gated */
-const x11_12 = clamp(s12/FADE_FRAC, 0, 1);
-const s12Group = (getComputedStyle(root).getPropertyValue('--s12Ready')==='1') ? x11_12 : 0;
-s11Alpha = s11Alpha * ((getComputedStyle(root).getPropertyValue('--s12Ready')==='1') ? (1 - x11_12) : 1);
+// ===== Set CSS Variables - S4 =====
+root.style.setProperty('--s4Y', s4Y.toFixed(3) + 'px');
+root.style.setProperty('--s4Overlay', s4Overlay.toFixed(3));
 
-/* S12 → S13 (full-bleed → framed, like S3→S4) */
-const x12_13 = clamp(s13/FADE_FRAC, 0, 1);
-let s13Alpha = x12_13;
-const s12AlphaOut2 = s12Group * (1 - x12_13);
+// ===== Set CSS Variables - S5 =====
+root.style.setProperty('--s5Y', s5Y.toFixed(3) + 'px');
+root.style.setProperty('--s5Overlay', s5Overlay.toFixed(3));
 
-/* S13 → S14 (like S1→S2) */
-const textBottomS13 = (parseFloat(getComputedStyle(root).getPropertyValue('--s13Y'))||0) + s13Text.scrollHeight;
-const gateS13S14 = (textBottomS13 <= window.innerHeight * LEAD_FRAC) || (s13 >= 0.999);
-const x13_14 = clamp(s14/FADE_FRAC, 0, 1);
-let s14Alpha = gateS13S14 ? x13_14 : 0;
-if (gateS13S14) s13Alpha = s13Alpha * (1 - x13_14);
+// ===== Set CSS Variables - GALLERY B (5 Images) =====
+root.style.setProperty('--galBImg0Opacity', galBImg0Alpha.toFixed(3));
+root.style.setProperty('--galBImg1Opacity', galBImg1Alpha.toFixed(3));
+root.style.setProperty('--galBImg2Opacity', galBImg2Alpha.toFixed(3));
+root.style.setProperty('--galBImg3Opacity', galBImg3Alpha.toFixed(3));
+root.style.setProperty('--galBImg4Opacity', galBImg4Alpha.toFixed(3));
 
-/* S14 → S15 (full-bleed; load-gated like S11→S12) */
-const x14_15 = clamp(s15/FADE_FRAC, 0, 1);
-const s15Group = (getComputedStyle(root).getPropertyValue('--s15Ready')==='1') ? x14_15 : 0;
-s14Alpha = s14Alpha * ((getComputedStyle(root).getPropertyValue('--s15Ready')==='1') ? (1 - x14_15) : 1);
+// ===== Set CSS Variables - S8 (Full Bleed) =====
+root.style.setProperty('--s8Scale', s8Scale.toFixed(3));
 
-/* ===== Internal galleries ===== */
-/* gallery-A (4 imgs, stepped crossfade) — unchanged */
-const INTERNAL_START_A = FADE_FRAC;
-const tA = clamp((galA - INTERNAL_START_A) / (1 - INTERNAL_START_A), 0, 1);
-const A_FADE = 0.22; /* fade segment between images */
-const A_HOLD = (1 - 3*A_FADE) / 4; /* 4 holds, 3 fades -> sums to 1 */
-const step=(t,s,w)=>clamp((t-s)/w,0,1);
+// ===== Set CSS Variables - S9 =====
+root.style.setProperty('--s9Y', s9Y.toFixed(3) + 'px');
+root.style.setProperty('--s9Overlay', s9Overlay.toFixed(3));
 
-let a0=1, a1=0, a2=0, a3=0;
-const TA1=A_HOLD;
-const TA2=TA1 + A_FADE + A_HOLD;
-const TA3=TA2 + A_FADE + A_HOLD;
+// ===== Set CSS Variables - GALLERY C (6 Images) =====
+root.style.setProperty('--galCImg0Opacity', galCImg0Alpha.toFixed(3));
+root.style.setProperty('--galCImg1Opacity', galCImg1Alpha.toFixed(3));
+root.style.setProperty('--galCImg2Opacity', galCImg2Alpha.toFixed(3));
+root.style.setProperty('--galCImg3Opacity', galCImg3Alpha.toFixed(3));
+root.style.setProperty('--galCImg4Opacity', galCImg4Alpha.toFixed(3));
+root.style.setProperty('--galCImg5Opacity', galCImg5Alpha.toFixed(3));
 
-const g1=step(tA, TA1, A_FADE); a0*= (1 - g1); a1 = Math.max(a1, g1);
-const g2=step(tA, TA2, A_FADE); a1*= (1 - g2); a2 = Math.max(a2, g2);
-const g3=step(tA, TA3, A_FADE); a2*= (1 - g3); a3 = Math.max(a3, g3);
+// ===== Set CSS Variables - S11 =====
+root.style.setProperty('--s11Y', s11Y.toFixed(3) + 'px');
+root.style.setProperty('--s11Overlay', s11Overlay.toFixed(3));
 
-const galAGroup2 = (getComputedStyle(root).getPropertyValue('--galAReady')==='1') ? clamp(galA/FADE_FRAC,0,1) : 0;
-const galAOut2 = (1 - clamp(s3/FADE_FRAC,0,1));
+// ===== Set CSS Variables - S12 (Full Bleed) =====
+root.style.setProperty('--s12Scale', s12Scale.toFixed(3));
 
-root.style.setProperty('--galAImg0Opacity', (a0 * galAGroup2 * galAOut2).toFixed(3));
-root.style.setProperty('--galAImg1Opacity', (a1 * galAGroup2 * galAOut2).toFixed(3));
-root.style.setProperty('--galAImg2Opacity', (a2 * galAGroup2 * galAOut2).toFixed(3));
-root.style.setProperty('--galAImg3Opacity', (a3 * galAGroup2 * galAOut2).toFixed(3));
+// ===== Set CSS Variables - S13 =====
+root.style.setProperty('--s13Y', s13Y.toFixed(3) + 'px');
+root.style.setProperty('--s13Overlay', s13Overlay.toFixed(3));
 
-/* gallery-B (5 imgs, stepped crossfade) — unchanged */
-const INTERNAL_START_B = FADE_FRAC;
-const tB = clamp(((galB - INTERNAL_START_B) / (1 - INTERNAL_START_B)) * 1.25, 0, 1);
-const B_FADE = 0.22, B_HOLD = (1 - 4*B_FADE)/5 * 1.25;
-const normB = 1/(5*B_HOLD + 4*B_FADE);
-const BF=B_FADE*normB, BH=B_HOLD*normB;
-const TB1=BH, TB2=TB1+BF+BH, TB3=TB2+BF+BH, TB4=TB3+BF+BH;
+// ===== Set CSS Variables - S14 =====
+root.style.setProperty('--s14Y', s14Y.toFixed(3) + 'px');
+root.style.setProperty('--s14Overlay', s14Overlay.toFixed(3));
 
-let b0=1,b1=0,b2=0,b3=0,b4=0;
-const h=(t,s,w)=>clamp((t-s)/w,0,1);
+// ===== Set CSS Variables - S15 (Full Bleed) =====
+root.style.setProperty('--s15Y', s15Y.toFixed(3) + 'px');
+root.style.setProperty('--s15Scale', s15Scale.toFixed(3));
+root.style.setProperty('--s15Overlay', s15Overlay.toFixed(3));
 
-const gB1=h(tB, TB1, BF); b0*= (1 - gB1); b1 = Math.max(b1, gB1);
-const gB2=h(tB, TB2, BF); b1*= (1 - gB2); b2 = Math.max(b2, gB2);
-const gB3=h(tB, TB3, BF); b2*= (1 - gB3); b3 = Math.max(b3, gB3);
-const gB4=h(tB, TB4, BF); b3*= (1 - gB4); b4 = Math.max(b4, gB4);
-
-const galBGroup2 = (getComputedStyle(root).getPropertyValue('--galBReady')==='1') ? clamp(galB/FADE_FRAC,0,1) : 0;
-const galBOut2 = (1 - clamp(s8/FADE_FRAC,0,1));
-
-root.style.setProperty('--galBImg0Opacity', (b0 * galBGroup2 * galBOut2).toFixed(3));
-root.style.setProperty('--galBImg1Opacity', (b1 * galBGroup2 * galBOut2).toFixed(3));
-root.style.setProperty('--galBImg2Opacity', (b2 * galBGroup2 * galBOut2).toFixed(3));
-root.style.setProperty('--galBImg3Opacity', (b3 * galBGroup2 * galBOut2).toFixed(3));
-root.style.setProperty('--galBImg4Opacity', (b4 * galBGroup2 * galBOut2).toFixed(3));
-
-/* gallery-C (now 6 imgs, stepped crossfade; minimal change) */
-const INTERNAL_START_C = FADE_FRAC;
-const tC = clamp(((galC - INTERNAL_START_C) / (1 - INTERNAL_START_C)) * 1.5, 0, 1);
-const C_FADE = 0.22, C_HOLD = (1 - 5*C_FADE)/6 * 1.25; /* match style of B */
-const normC = 1/(6*C_HOLD + 5*C_FADE);
-const CF=C_FADE*normC, CH=C_HOLD*normC;
-const TC1=CH, TC2=TC1+CF+CH, TC3=TC2+CF+CH, TC4=TC3+CF+CH, TC5=TC4+CF+CH;
-
-let c0=1,c1=0,c2=0,c3=0,c4=0,c5=0;
-const stepC=(t,s,w)=>clamp((t-s)/w,0,1);
-
-const gC1=stepC(tC, TC1, CF); c0*= (1 - gC1); c1 = Math.max(c1, gC1);
-const gC2=stepC(tC, TC2, CF); c1*= (1 - gC2); c2 = Math.max(c2, gC2);
-const gC3=stepC(tC, TC3, CF); c2*= (1 - gC3); c3 = Math.max(c3, gC3);
-const gC4=stepC(tC, TC4, CF); c3*= (1 - gC4); c4 = Math.max(c4, gC4);
-const gC5=stepC(tC, TC5, CF); c4*= (1 - gC5); c5 = Math.max(c5, gC5);
-
-const galCGroup2 = (getComputedStyle(root).getPropertyValue('--galCReady')==='1') ? clamp(galC/FADE_FRAC,0,1) : 0;
-const galCOut2 = (1 - clamp(s11/FADE_FRAC,0,1));
-
-root.style.setProperty('--galCImg0Opacity', (c0 * galCGroup2 * galCOut2).toFixed(3));
-root.style.setProperty('--galCImg1Opacity', (c1 * galCGroup2 * galCOut2).toFixed(3));
-root.style.setProperty('--galCImg2Opacity', (c2 * galCGroup2 * galCOut2).toFixed(3));
-root.style.setProperty('--galCImg3Opacity', (c3 * galCGroup2 * galCOut2).toFixed(3));
-root.style.setProperty('--galCImg4Opacity', (c4 * galCGroup2 * galCOut2).toFixed(3));
-root.style.setProperty('--galCImg5Opacity', (c5 * galCGroup2 * galCOut2).toFixed(3));
-
-/* ===== Apply section frame opacities ===== */
-root.style.setProperty('--s1ImgOpacity', s1Alpha.toFixed(3));
-root.style.setProperty('--s2ImgOpacity', s2Alpha.toFixed(3));
+// ===== Set CSS Variables - Image Opacities =====
+root.style.setProperty('--s1ImgOpacity', s1ImgAlpha.toFixed(3));
+root.style.setProperty('--s2ImgOpacity', s2ImgAlpha.toFixed(3));
 root.style.setProperty('--s3ImgOpacity', s3AlphaOut.toFixed(3));
 root.style.setProperty('--s4ImgOpacity', s4Alpha.toFixed(3));
 root.style.setProperty('--s5ImgOpacity', s5Alpha.toFixed(3));
@@ -1158,14 +1099,26 @@ root.style.setProperty('--s15ImgOpacity', s15Group.toFixed(3));
 async function init(){
 if(document.fonts && document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
 measureHero();
-measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15();
+measureS1(); measureS2(); measureGalA(); measureS3(); measureS4(); measureS5(); measureGalB(); 
+measureS8(); measureS9(); measureGalC(); measureS11(); measureS12(); measureS13(); measureS14(); measureS15();
 update();
-addEventListener('load',  ()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15(); update(); });
-addEventListener('resize',  ()=>{ measureHero(); measureS1(); measureS2(); measureS4(); measureS5(); measureS9(); measureS11(); measureS13(); measureS14(); measureS15(); update(); });
-addEventListener('scroll', update, {passive:true});
+addEventListener('load',  ()=>{ 
+    measureHero(); 
+    measureS1(); measureS2(); measureGalA(); measureS3(); measureS4(); measureS5(); measureGalB(); 
+    measureS8(); measureS9(); measureGalC(); measureS11(); measureS12(); measureS13(); measureS14(); measureS15();
+    update();
+});
+addEventListener('resize', ()=>{ 
+    measureHero();
+    measureS1(); measureS2(); measureGalA(); measureS3(); measureS4(); measureS5(); measureGalB(); 
+    measureS8(); measureS9(); measureGalC(); measureS11(); measureS12(); measureS13(); measureS14(); measureS15();
+    update(); 
+});
+addEventListener('scroll', update);
 }
+
 init();
-})();
 </script>
+
 </body>
 </html>
