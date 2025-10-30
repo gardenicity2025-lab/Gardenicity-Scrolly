@@ -21,7 +21,7 @@ font-family:"Acumin Pro",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial
 --s2:0; --s2Overlay:0; --s2Y:0px; --s2ImgOpacity:0;
 /* gallery-A-Left */
 --galA:0;
---galAImg0Opacity:0; --galAImg1Opacity:0; --galAImg2Opacity:0; --galAImg3Opacity:0;
+--galAImg0Opacity:0; --galAImg1Opacity:0; --galAImg2Opacity:0; --galAImg3Opacity:0; --galAImg4Opacity:0;
 --galAReady:0;
 /* S3 (full bleed) */
 --s3:0; --s3ImgOpacity:0; --s3Scale:1;
@@ -35,6 +35,7 @@ font-family:"Acumin Pro",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial
 --galBReady:0;
 /* S8 (full bleed) */
 --s8:0; --s8ImgOpacity:0; --s8Scale:1; --s8Ready:0;
+--s8NowImgOpacity:0;
 /* S9 */
 --s9:0; --s9Overlay:0; --s9Y:0px; --s9ImgOpacity:0;
 /* gallery-C-Right (media left, no text) */
@@ -119,6 +120,8 @@ will-change:opacity;
 #galA-img1{ opacity: var(--galAImg1Opacity); }
 #galA-img2{ opacity: var(--galAImg2Opacity); }
 #galA-img3{ opacity: var(--galAImg3Opacity); }
+#galA-img4 { opacity: var(--galAImg4Opacity); }
+
 
 /* S3 full-bleed */
 .s3-frame{ top:0; right:0; bottom:0; left:0; opacity:var(--s3ImgOpacity); }
@@ -164,14 +167,32 @@ will-change:opacity;
 #galB-img4{ opacity: var(--galBImg4Opacity); }
 
 /* S8 full-bleed */
-.s8-frame{ top:0; right:0; bottom:0; left:0; opacity:var(--s8ImgOpacity); }
-.frame.s8-frame>img{
-width:100%; height:100%;
-object-fit:cover !important; object-position:center;
-transform: scale(var(--s8Scale));
-transform-origin: center center;
-will-change: transform;
+.s8-frame {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 }
+
+.frame.s8-frame > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover !important;
+  object-position: center;
+  transform: scale(var(--s8Scale));
+  transform-origin: center center;
+  will-change: transform;
+}
+
+/* explicit opacity bindings */
+#s8-img {
+  opacity: var(--s8ImgOpacity);
+}
+
+#s8-now-img {
+  opacity: var(--s8NowImgOpacity);
+}
+
 
 /* S9 image RIGHT (like S1/S4) */
 .s9-frame{
@@ -595,6 +616,7 @@ left:0; right:0; top:0; bottom:0;
 <img id="galA-img1" src="assets/gallery-A1.jpg" alt="">
 <img id="galA-img2" src="assets/gallery-A2.jpg" alt="">
 <img id="galA-img3" src="assets/gallery-A3.jpg" alt="">
+<img id="galA-img4" src="assets/gallery-A4.jpg" alt="">
 </figure>
 
 <figure class="frame s3-frame" aria-hidden="true"><img id="s3-img" src="assets/section3.jpg" alt=""></figure>
@@ -610,8 +632,10 @@ left:0; right:0; top:0; bottom:0;
 </figure>
 
 <figure class="frame s8-frame" aria-hidden="true">
-<img id="s8-img" src="assets/section8.jpg" alt="">
+  <img id="s8-img" src="assets/section8.jpg" alt="">
+  <img id="s8-now-img" src="assets/section8-now.jpg" alt="">
 </figure>
+
 
 <figure class="frame s9-frame" aria-hidden="true"><img id="s9-img" src="assets/section9.jpg" alt=""></figure>
 
@@ -878,6 +902,10 @@ function markS8Ready(){ root.style.setProperty('--s8Ready','1'); }
 if (s8Img && s8Img.complete && s8Img.naturalWidth > 0) markS8Ready();
 else if (s8Img) s8Img.addEventListener('load', markS8Ready, { once:true });
 
+const s8NowImg = document.getElementById('s8-now-img');
+if (s8NowImg && s8NowImg.complete && s8NowImg.naturalWidth > 0) markS8Ready();
+else if (s8NowImg) s8NowImg.addEventListener('load', markS8Ready, { once:true });
+
 const galCImg0 = document.getElementById('galC-img0');
 function markGalCReady(){ root.style.setProperty('--galCReady','1'); }
 if (galCImg0 && galCImg0.complete && galCImg0.naturalWidth > 0) markGalCReady();
@@ -929,7 +957,8 @@ root.style.setProperty('--s3',s3.toFixed(3));
 root.style.setProperty('--s4',s4.toFixed(3));
 root.style.setProperty('--s5',s5.toFixed(3));
 root.style.setProperty('--galB',galB.toFixed(3));
-root.style.setProperty('--s8',s8.toFixed(3));
+
+
 root.style.setProperty('--s9',s9.toFixed(3));
 root.style.setProperty('--galC',galC.toFixed(3));
 root.style.setProperty('--s11',s11.toFixed(3));
@@ -1023,6 +1052,19 @@ const xB8 = clamp(s8/FADE_FRAC, 0, 1);
 const s8Group = (getComputedStyle(root).getPropertyValue('--s8Ready')==='1') ? xB8 : 0;
 const galBOut = (1 - s8Group);
 
+/* section 8 internal fade (section8.jpg → section8-now.jpg) */
+const INTERNAL_START_8 = FADE_FRAC;  // start after gallery-B transition
+const t8 = clamp((s8 - INTERNAL_START_8) / (1 - INTERNAL_START_8), 0, 1);
+const s8Fade = clamp((t8 - 0.5) / 0.3, 0, 1); // smooth crossfade in midrange
+const s8Base = s8Group; // keep gating consistent
+
+const s8Primary = (1 - s8Fade) * s8Base;
+const s8Now     = s8Fade * s8Base;
+
+root.style.setProperty('--s8ImgOpacity', s8Primary.toFixed(3));
+root.style.setProperty('--s8NowImgOpacity', s8Now.toFixed(3));
+
+
 /* S8 → S9 */
 const x89 = clamp(s9/FADE_FRAC, 0, 1);
 let s9Alpha = x89;
@@ -1064,21 +1106,24 @@ const s15Group = (getComputedStyle(root).getPropertyValue('--s15Ready')==='1') ?
 s14Alpha = s14Alpha * ((getComputedStyle(root).getPropertyValue('--s15Ready')==='1') ? (1 - x14_15) : 1);
 
 /* ===== Internal galleries ===== */
-/* gallery-A (4 imgs, stepped crossfade) — unchanged */
+/* gallery-A (5 imgs, stepped crossfade – same pacing) */
 const INTERNAL_START_A = FADE_FRAC;
 const tA = clamp((galA - INTERNAL_START_A) / (1 - INTERNAL_START_A), 0, 1);
-const A_FADE = 0.22; /* fade segment between images */
-const A_HOLD = (1 - 3*A_FADE) / 4; /* 4 holds, 3 fades -> sums to 1 */
-const step=(t,s,w)=>clamp((t-s)/w,0,1);
+const A_FADE = 0.22;
+const A_HOLD = (1 - 4*A_FADE) / 5;
+const step = (t,s,w)=>clamp((t-s)/w,0,1);
 
-let a0=1, a1=0, a2=0, a3=0;
+let a0=1,a1=0,a2=0,a3=0,a4=0;
+
 const TA1=A_HOLD;
 const TA2=TA1 + A_FADE + A_HOLD;
 const TA3=TA2 + A_FADE + A_HOLD;
+const TA4=TA3 + A_FADE + A_HOLD;
 
-const g1=step(tA, TA1, A_FADE); a0*= (1 - g1); a1 = Math.max(a1, g1);
-const g2=step(tA, TA2, A_FADE); a1*= (1 - g2); a2 = Math.max(a2, g2);
-const g3=step(tA, TA3, A_FADE); a2*= (1 - g3); a3 = Math.max(a3, g3);
+const g1=step(tA, TA1, A_FADE); a0*= (1-g1); a1=Math.max(a1,g1);
+const g2=step(tA, TA2, A_FADE); a1*= (1-g2); a2=Math.max(a2,g2);
+const g3=step(tA, TA3, A_FADE); a2*= (1-g3); a3=Math.max(a3,g3);
+const g4=step(tA, TA4, A_FADE); a3*= (1-g4); a4=Math.max(a4,g4);
 
 const galAGroup2 = (getComputedStyle(root).getPropertyValue('--galAReady')==='1') ? clamp(galA/FADE_FRAC,0,1) : 0;
 const galAOut2 = (1 - clamp(s3/FADE_FRAC,0,1));
@@ -1087,6 +1132,7 @@ root.style.setProperty('--galAImg0Opacity', (a0 * galAGroup2 * galAOut2).toFixed
 root.style.setProperty('--galAImg1Opacity', (a1 * galAGroup2 * galAOut2).toFixed(3));
 root.style.setProperty('--galAImg2Opacity', (a2 * galAGroup2 * galAOut2).toFixed(3));
 root.style.setProperty('--galAImg3Opacity', (a3 * galAGroup2 * galAOut2).toFixed(3));
+root.style.setProperty('--galAImg4Opacity', (a4 * galAGroup2 * galAOut2).toFixed(3));
 
 /* gallery-B (5 imgs, stepped crossfade) — unchanged */
 const INTERNAL_START_B = FADE_FRAC;
@@ -1146,7 +1192,6 @@ root.style.setProperty('--s2ImgOpacity', s2Alpha.toFixed(3));
 root.style.setProperty('--s3ImgOpacity', s3AlphaOut.toFixed(3));
 root.style.setProperty('--s4ImgOpacity', s4Alpha.toFixed(3));
 root.style.setProperty('--s5ImgOpacity', s5Alpha.toFixed(3));
-root.style.setProperty('--s8ImgOpacity', s8AlphaOut.toFixed(3));
 root.style.setProperty('--s9ImgOpacity', s9Alpha.toFixed(3));
 root.style.setProperty('--s11ImgOpacity', s11Alpha.toFixed(3));
 root.style.setProperty('--s12ImgOpacity', s12AlphaOut2.toFixed(3));
