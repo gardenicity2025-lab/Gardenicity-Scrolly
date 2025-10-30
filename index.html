@@ -1085,8 +1085,8 @@ const s8Base = s8Group;
 const s8Primary = (1 - s8Fade) * s8Base;
 const s8Now     = s8Fade * s8Base;
 
-root.style.setProperty('--s8ImgOpacity', s8Primary.toFixed(3));
-root.style.setProperty('--s8NowImgOpacity', s8Now.toFixed(3));
+root.style.setProperty('--s8ImgOpacity', (s8Primary * s8AlphaOut).toFixed(3));
+root.style.setProperty('--s8NowImgOpacity', (s8Now * s8AlphaOut).toFixed(3));
 
 
 /* S8 → S9 */
