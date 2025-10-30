@@ -1,3 +1,5 @@
+30-10-25 Gardenicity: W Color images. 
+
 <!doctype html>
 <html lang="en" data-baseline="stable-2025-10-01__rails-460px__galC-6-only">
 <head>
@@ -168,26 +170,20 @@ will-change:opacity;
 
 /* S8 full-bleed */
 .s8-frame {
-  position: fixed;
   top: 0;
+  right: 0;
+  bottom: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-  z-index: 1;
 }
 
 .frame.s8-frame > img {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover !important;
   object-position: center;
   transform: scale(var(--s8Scale));
   transform-origin: center center;
-  will-change: transform, opacity;
+  will-change: transform;
 }
 
 /* explicit opacity bindings */
@@ -198,6 +194,7 @@ will-change:opacity;
 #s8-now-img {
   opacity: var(--s8NowImgOpacity);
 }
+
 
 /* S9 image RIGHT (like S1/S4) */
 .s9-frame{
@@ -1066,11 +1063,9 @@ const s8Base = s8Group; // keep gating consistent
 const s8Primary = (1 - s8Fade) * s8Base;
 const s8Now     = s8Fade * s8Base;
 
-// ✅ Safe fade-out matching other bleed sections
-const s8Out = (1 - clamp(s8 / FADE_FRAC, 0, 1));
+root.style.setProperty('--s8ImgOpacity', s8Primary.toFixed(3));
+root.style.setProperty('--s8NowImgOpacity', s8Now.toFixed(3));
 
-root.style.setProperty('--s8ImgOpacity', (s8Primary * s8Out).toFixed(3));
-root.style.setProperty('--s8NowImgOpacity', (s8Now * s8Out).toFixed(3));
 
 /* S8 → S9 */
 const x89 = clamp(s9/FADE_FRAC, 0, 1);
@@ -1220,5 +1215,5 @@ init();
 })();
 </script>
 </body>
-</html>
+</html> 
 
